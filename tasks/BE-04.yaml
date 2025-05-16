@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=./task-schema.json
+id: BE-04
+title: Validate Local Environment with APIs
+owner: backend
+depends_on:
+  - TL-01
+  - TL-13
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task BE-04: Validate Local Environment with APIs"
+artefacts:
+  - docs/testing/api-validation.md
+context_topics:
+  - db-schema
+  - service-pattern
+  - supabase-setup

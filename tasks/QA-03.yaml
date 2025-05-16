@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: QA-03
+title: Participate in Final Alignment Meeting
+owner: qa
+depends_on:
+  - PM-06
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task QA-03: Participate in Final Alignment Meeting"
+artefacts: []
+context_topics:
+  - test-patterns
+  - quality-standards
+  - testing-strategy

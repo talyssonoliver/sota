@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-07
+title: Create Component Library
+owner: ux
+depends_on:
+  - UX-06
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-07: Create Component Library"
+artefacts:
+  - docs/design/component-library.md
+  - designs/components/*.pdf
+context_topics:
+  - project-overview

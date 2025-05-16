@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=./task-schema.json
+id: BE-10
+title: Update Database Migration Scripts
+owner: backend
+depends_on:
+  - BE-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task BE-10: Update Database Migration Scripts"
+artefacts:
+  - supabase/migrations/
+  - docs/setup/database-migrations.md
+context_topics:
+  - db-schema
+  - service-pattern
+  - supabase-setup

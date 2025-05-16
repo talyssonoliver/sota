@@ -1,0 +1,26 @@
+graph TD;
+    %% Define main agent nodes
+    CO[Coordinator Agent]
+    TA[Technical Architect Agent]
+    BA[Backend Agent]
+    QA[QA Agent]
+    DOC[Documentation Agent]
+    FE[Frontend Agent]
+    
+    %% Define the critical path flow
+    CO --> TA
+    TA --> BA
+    BA --> QA
+    QA -->|passed| DOC
+    QA -->|failed| CO
+    CO --> FE
+    
+    %% Node styling
+    classDef coordinator fill:#f96,stroke:#333,stroke-width:2px;
+    classDef agent fill:#bbf,stroke:#333,stroke-width:1px;
+    classDef conditional stroke:#f66,stroke-width:1.5px,stroke-dasharray: 5 5;
+    
+    %% Apply styling
+    class CO coordinator;
+    class TA,BA,QA,DOC,FE agent;
+    class QA-->CO conditional;

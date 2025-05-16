@@ -1,0 +1,44 @@
+{
+  "nodes": [
+    {
+      "id": "product_manager",
+      "agent": "product_manager",
+      "depends_on": []
+    },
+    {
+      "id": "coordinator",
+      "agent": "coordinator",
+      "depends_on": ["product_manager"]
+    },
+    {
+      "id": "technical_architect",
+      "agent": "technical",
+      "depends_on": ["coordinator"]
+    },
+    {
+      "id": "ux_designer",
+      "agent": "ux",
+      "depends_on": ["coordinator"]
+    },
+    {
+      "id": "backend_engineer",
+      "agent": "backend",
+      "depends_on": ["technical_architect"]
+    },
+    {
+      "id": "frontend_engineer",
+      "agent": "frontend",
+      "depends_on": ["ux_designer", "backend_engineer"]
+    },
+    {
+      "id": "qa_tester",
+      "agent": "qa",
+      "depends_on": ["backend_engineer", "frontend_engineer"]
+    },
+    {
+      "id": "documentation",
+      "agent": "doc",
+      "depends_on": ["technical_architect", "backend_engineer", "frontend_engineer", "qa_tester"]
+    }
+  ]
+}

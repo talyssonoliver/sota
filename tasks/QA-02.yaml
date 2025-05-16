@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=./task-schema.json
+id: QA-02
+title: Set Up Testing Environment
+owner: qa
+depends_on:
+  - TL-01
+  - BE-04
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task QA-02: Set Up Testing Environment"
+artefacts:
+  - jest.config.js
+  - tests/e2e/cypress.config.ts
+  - docs/testing/setup.md
+context_topics:
+  - test-patterns
+  - quality-standards
+  - testing-strategy

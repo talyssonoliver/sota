@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-01
+title: Verify GitHub Repository and Branch Structure
+owner: technical
+depends_on: []
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-01: Verify GitHub Repository and Branch Structure"
+artefacts:
+  - docs/setup/github-repository-setup.md
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

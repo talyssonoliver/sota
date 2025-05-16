@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-19
+title: Add Security Headers Configuration
+owner: technical
+depends_on:
+  - TL-04
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-19: Add Security Headers Configuration"
+artefacts:
+  - next.config.js
+  - docs/security/headers-configuration.md
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

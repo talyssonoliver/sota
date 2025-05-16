@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./task-schema.json
+id: BE-13
+title: Test Cloudinary Integration
+owner: backend
+depends_on:
+  - TL-13
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task BE-13: Test Cloudinary Integration"
+artefacts:
+  - docs/setup/cloudinary-tests.md
+context_topics:
+  - db-schema
+  - service-pattern
+  - supabase-setup

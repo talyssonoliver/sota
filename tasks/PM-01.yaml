@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=./task-schema.json
+id: PM-01
+title: Finalise and Document MVP Product Backlog
+owner: product
+depends_on: []
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task PM-01: Finalise and Document MVP Product Backlog"
+artefacts:
+  - docs/product/backlog.md
+context_topics:
+  - project-overview

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-17
+title: Create Icon Set for E-commerce
+owner: ux
+depends_on:
+  - UX-06
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-17: Create Icon Set for E-commerce"
+artefacts:
+  - public/icons/product-icons.svg
+  - public/icons/navigation-icons.svg
+  - docs/design/icon-set.md
+context_topics:
+  - project-overview

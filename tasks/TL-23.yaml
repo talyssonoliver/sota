@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-23
+title: Create Sample Test Cases
+owner: technical
+depends_on:
+  - TL-22
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-23: Create Sample Test Cases"
+artefacts:
+  - tests/unit/components/ProductCard.test.tsx
+  - docs/testing/sample-tests.md
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

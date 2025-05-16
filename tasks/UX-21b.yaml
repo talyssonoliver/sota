@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-21b
+title: Coordinate with Frontend Developer on Component Implementation
+owner: ux
+depends_on:
+  - FE-03
+  - UX-07
+  - UX-08
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-21b: Coordinate with Frontend Developer on Component Implementation"
+artefacts:
+  - docs/design/component-implementation.md
+context_topics:
+  - project-overview

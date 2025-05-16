@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=./task-schema.json
+id: BE-07
+title: Implement Missing Service Functions
+owner: backend
+depends_on:
+  - TL-09
+  - BE-01
+state: PLANNED
+priority: HIGH
+estimation_hours: 3
+description: >
+  Implement CRUD service logic for customers and orders in the Supabase backend.
+  Follow project service-layer pattern and error handling utilities.
+artefacts:
+  - lib/services/customerService.ts
+  - lib/services/orderService.ts
+  - tests/unit/services/
+context_topics:
+  - db-schema
+  - service-pattern
+  - supabase-setup

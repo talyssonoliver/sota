@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=./task-schema.json
+id: BE-09
+title: Create API Documentation
+owner: backend
+depends_on:
+  - BE-04
+  - BE-07
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task BE-09: Create API Documentation"
+artefacts:
+  - openapi.yaml
+  - docs/api/api-documentation.md
+context_topics:
+  - db-schema
+  - service-pattern
+  - supabase-setup

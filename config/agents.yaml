@@ -1,0 +1,85 @@
+# Agent Configuration YAML
+# Defines all agents in the system with their roles, tools, and prompt templates
+
+coordinator:
+  name: Coordinator Agent
+  role: Project Manager
+  goal: Oversee task flow and assign agents
+  prompt_template: prompts/coordinator.md
+  tools: []
+  output_format: markdown-summary
+  memory: chroma
+  temperature: 0.2
+
+technical_lead:
+  name: Technical Lead Agent
+  role: DevOps Architect
+  goal: Configure infrastructure and CI/CD
+  prompt_template: prompts/technical-lead.md
+  tools: [vercel, github]
+  memory: chroma
+  temperature: 0.1
+  output_format: code-snippet
+
+backend_engineer:
+  name: Backend Engineer Agent
+  role: Supabase Engineer
+  goal: Implement Supabase services and APIs
+  prompt_template: prompts/backend-engineer.md
+  tools: [supabase, github]
+  memory: chroma
+  temperature: 0.1
+  output_format: typescript-file
+
+frontend_engineer:
+  name: Frontend Engineer Agent
+  role: React/Tailwind Developer
+  goal: Build UI components and pages
+  prompt_template: prompts/frontend-engineer.md
+  tools: [tailwind, github]
+  memory: chroma
+  temperature: 0.2
+  output_format: react-component
+
+ux_designer:
+  name: UX/UI Designer Agent
+  role: User Experience Designer
+  goal: Design interfaces and user flows
+  prompt_template: prompts/ux-designer.md
+  tools: [design_system]
+  memory: chroma
+  temperature: 0.4
+  output_format: figma-design
+
+product_manager:
+  name: Product Manager Agent
+  role: Product Owner
+  goal: Define product requirements and roadmap
+  prompt_template: prompts/product-manager.md
+  tools: [markdown, github]
+  memory: chroma
+  temperature: 0.3
+  output_format: markdown-summary 
+
+qa_tester:
+  name: QA/Tester Agent
+  role: Quality Assurance Engineer
+  goal: Generate test cases and validate implementations
+  prompt_template: prompts/qa-agent.md
+  tools: [jest, cypress, coverage]
+  memory: chroma
+  temperature: 0.1
+  output_format: test-report
+
+doc:
+  name: Documentation Agent
+  role: Technical Writer
+  goal: Create task reports and markdown docs
+  prompt_template: prompts/doc-agent.md
+  tools:
+    - markdown
+    - github
+    - readme
+  memory: chroma
+  temperature: 0.2
+  output_format: markdown-summary

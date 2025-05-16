@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=./task-schema.json
+id: FE-05
+title: Coordinate with Backend Developer on API Integration
+owner: frontend
+depends_on:
+  - BE-05
+  - BE-04
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task FE-05: Coordinate with Backend Developer on API Integration"
+artefacts:
+  - types/api.ts
+  - docs/integration/frontend-backend.md
+context_topics:
+  - design-system
+  - component-patterns
+  - ui-standards

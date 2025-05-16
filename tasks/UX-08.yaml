@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-08
+title: Design Animation & Interaction Specifications
+owner: ux
+depends_on:
+  - UX-06
+  - UX-07
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-08: Design Animation & Interaction Specifications"
+artefacts:
+  - docs/design/interaction-specifications.md
+  - designs/interaction-specifications.pdf
+context_topics:
+  - project-overview

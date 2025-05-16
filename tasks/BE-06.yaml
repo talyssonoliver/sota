@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: BE-06
+title: Participate in Final Alignment Meeting
+owner: backend
+depends_on:
+  - PM-06
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task BE-06: Participate in Final Alignment Meeting"
+artefacts: []
+context_topics:
+  - db-schema
+  - service-pattern
+  - supabase-setup

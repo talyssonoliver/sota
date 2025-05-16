@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=./task-schema.json
+id: LC-01
+title: Conduct Initial Legal and GDPR Compliance Check
+owner: product
+depends_on: []
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task LC-01: Conduct Initial Legal and GDPR Compliance Check"
+artefacts:
+  - docs/security/gdpr-compliance-checklist.md
+context_topics:
+  - project-overview

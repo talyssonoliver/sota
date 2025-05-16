@@ -1,0 +1,90 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Task Schema",
+    "description": "Defines the structure of a task object, including its properties, types, and constraints. This schema is designed to be comprehensive for typical task management scenarios.",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "Unique identifier for the task. Typically a UUID (Universally Unique Identifier) to ensure global uniqueness. This field is system-generated upon task creation and should be considered read-only.",
+            "type": "string",
+            "format": "uuid",
+            "readOnly": true
+        },
+        "title": {
+            "description": "A concise and descriptive title for the task. This is a primary piece of information for users to quickly understand the task's purpose.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255
+        },
+        "description": {
+            "description": "A more detailed explanation of the task, providing context, requirements, or any other relevant information. This field is optional.",
+            "type": "string"
+        },
+        "status": {
+            "description": "The current state or stage of the task in its lifecycle (e.g., 'todo', 'in-progress', 'done'). This helps in tracking progress and filtering tasks.",
+            "type": "string",
+            "enum": ["todo", "in-progress", "done", "archived"],
+            "default": "todo"
+        },
+        "priority": {
+            "description": "The level of importance or urgency assigned to the task. This aids in prioritization. Optional, with a default value.",
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"],
+            "default": "medium"
+        },
+        "dueDate": {
+            "description": "The date and time by which the task is expected to be completed. Stored in ISO 8601 date-time format. Can be null if no specific due date is set.",
+            "type": ["string", "null"],
+            "format": "date-time"
+        },
+        "createdAt": {
+            "description": "Timestamp indicating when the task was created. Stored in ISO 8601 date-time format. This field is system-generated and read-only.",
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+        },
+        "updatedAt": {
+            "description": "Timestamp indicating when the task was last modified. Stored in ISO 8601 date-time format. This field is system-generated/updated and read-only.",
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+        },
+        "assigneeId": {
+            "description": "Identifier of the user or entity assigned to perform the task. Can be null if the task is unassigned. The format of the ID may vary (e.g., UUID, username).",
+            "type": ["string", "null"]
+        },
+        "tags": {
+            "description": "An array of keywords or labels associated with the task. Tags help in categorizing, filtering, and searching for tasks. Each tag should be unique.",
+            "type": "array",
+            "items": {
+                "type": "string",
+                "minLength": 1
+            },
+            "uniqueItems": true,
+            "default": []
+        },
+        "projectId": {
+            "description": "Optional identifier for a project to which this task belongs. Allows tasks to be grouped under a larger project or initiative.",
+            "type": ["string", "null"],
+            "format": "uuid"
+        },
+        "dependencies": {
+            "description": "An array of task IDs that this task depends on. This task cannot be started or completed until its dependencies are met. Optional.",
+            "type": "array",
+            "items": {
+                "type": "string",
+                "format": "uuid"
+            },
+            "uniqueItems": true,
+            "default": []
+        }
+    },
+    "required": [
+        "id",
+        "title",
+        "status",
+        "createdAt",
+        "updatedAt"
+    ],
+    "additionalProperties": false
+}

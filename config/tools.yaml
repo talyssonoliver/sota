@@ -1,0 +1,79 @@
+# Tools Configuration YAML
+# Defines all available tools and their configurations
+
+supabase:
+  type: SDK
+  description: Allows querying and interacting with Supabase database and auth
+  file: tools/supabase_tool.py
+  class: SupabaseTool
+  env:
+    - SUPABASE_URL
+    - SUPABASE_KEY
+
+github:
+  type: API
+  description: GitHub integration for issues, PRs, and repos
+  file: tools/github_tool.py
+  class: GitHubTool
+  env:
+    - GITHUB_TOKEN
+
+vercel:
+  type: API
+  description: Vercel deployment configuration
+  file: tools/vercel_tool.py
+  class: VercelTool
+  env:
+    - VERCEL_TOKEN
+
+tailwind:
+  type: Utility
+  description: Tailwind CSS configuration helper
+  file: tools/tailwind_tool.py
+  class: TailwindTool
+  env: []
+
+jest:
+  type: Testing
+  description: Jest test generation and execution
+  file: tools/jest_tool.py
+  class: JestTool
+  env: []
+  project_root: "."
+
+cypress:
+  type: Testing
+  description: Cypress E2E test generation
+  file: tools/cypress_tool.py
+  class: CypressTool
+  env: []
+  project_root: "."
+
+design_system:
+  type: Utility
+  description: Design system component generation
+  file: tools/design_system_tool.py
+  class: DesignSystemTool
+  env: []
+
+markdown:
+  type: Utility
+  description: Markdown generation and formatting
+  file: tools/markdown_tool.py
+  class: MarkdownTool
+  env: []
+  docs_dir: "docs"
+
+coverage:
+  type: Testing
+  description: Code coverage analysis tool
+  file: tools/coverage_tool.py
+  class: CoverageTool
+  env: []
+
+readme:
+  type: Utility
+  description: README file generation and formatting
+  file: tools/readme_tool.py
+  class: ReadmeTool
+  env: []

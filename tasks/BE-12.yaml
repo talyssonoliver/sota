@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./task-schema.json
+id: BE-12
+title: Test Stripe Integration
+owner: backend
+depends_on:
+  - TL-13
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task BE-12: Test Stripe Integration"
+artefacts:
+  - docs/setup/stripe-integration.md
+context_topics:
+  - db-schema
+  - service-pattern
+  - supabase-setup

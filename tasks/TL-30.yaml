@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-30
+title: Participate in Final Alignment Meeting
+owner: technical
+depends_on:
+  - PM-06
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-30: Participate in Final Alignment Meeting"
+artefacts: []
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

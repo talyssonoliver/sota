@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-24
+title: Set Up Base Project GitHub Wiki
+owner: technical
+depends_on:
+  - TL-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-24: Set Up Base Project GitHub Wiki"
+artefacts:
+  - docs/onboarding/wiki-setup.md
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

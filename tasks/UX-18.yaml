@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-18
+title: Design Brazilian Artisanal Brand Elements
+owner: ux
+depends_on:
+  - UX-06
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-18: Design Brazilian Artisanal Brand Elements"
+artefacts:
+  - docs/design/brand-elements.md
+  - designs/artisanal-badges.pdf
+context_topics:
+  - project-overview

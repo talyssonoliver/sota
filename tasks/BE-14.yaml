@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=./task-schema.json
+id: BE-14
+title: Implement Authentication Middleware
+owner: backend
+depends_on:
+  - BE-01
+  - BE-08
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task BE-14: Implement Authentication Middleware"
+artefacts:
+  - lib/middleware/authMiddleware.ts
+  - docs/security/auth-middleware.md
+context_topics:
+  - db-schema
+  - service-pattern
+  - supabase-setup

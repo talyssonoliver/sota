@@ -1,0 +1,36 @@
+# Core dependencies
+langchain==0.3.25 
+langchain_openai==0.3.16 
+langgraph==0.4.1 
+crewai==0.118.0 
+chromadb==1.0.8 
+openai==1.77.0 
+tiktoken==0.8.0 
+pyyaml==6.0.1 
+rich==14.0.0
+langchain-chroma==0.1.0
+
+# Database & API integrations
+supabase==2.15.1 
+httpx==0.28.1 
+requests==2.32.3
+
+# Document processing
+beautifulsoup4==4.13.4 
+markdown==3.8 
+python-frontmatter==1.1.0
+
+# Testing & validation
+pytest==8.3.5 
+pytest-cov==6.1.1
+
+# Development utilities
+black==25.1.0 
+isort==6.0.1 
+python-dotenv==1.1.0 
+typer==0.15.3 
+jupyterlab==4.4.1 
+watchdog==6.0.0
+
+# Logging
+python-json-logger

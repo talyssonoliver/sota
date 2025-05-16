@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=./task-schema.json
+id: FE-01
+title: Validate Local Environment Setup
+owner: frontend
+depends_on:
+  - TL-01
+  - TL-13
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task FE-01: Validate Local Environment Setup"
+artefacts:
+  - docs/setup/frontend-environment.md
+context_topics:
+  - design-system
+  - component-patterns
+  - ui-standards

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-11
+title: Verify Stripe Test Account and Integration
+owner: technical
+depends_on: []
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-11: Verify Stripe Test Account and Integration"
+artefacts:
+  - lib/stripe/client.ts
+  - docs/setup/stripe-integration.md
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

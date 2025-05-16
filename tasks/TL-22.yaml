@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-22
+title: Configure Testing Environment
+owner: technical
+depends_on:
+  - TL-04
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-22: Configure Testing Environment"
+artefacts:
+  - jest.config.js
+  - jest.setup.js
+  - docs/testing/jest-setup.md
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-08
+title: Set Up CI/CD Workflows
+owner: technical
+depends_on:
+  - TL-01
+  - TL-07
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-08: Set Up CI/CD Workflows"
+artefacts:
+  - .github/workflows/ci.yml
+  - .github/workflows/deploy.yml
+  - docs/setup/ci-cd.md
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

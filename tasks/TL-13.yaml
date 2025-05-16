@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-13
+title: Distribute Environment Variables
+owner: technical
+depends_on:
+  - TL-09
+  - TL-11
+  - TL-12
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-13: Distribute Environment Variables"
+artefacts:
+  - .env.example
+  - docs/setup/environment-variables.md
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

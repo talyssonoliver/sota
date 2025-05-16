@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=./task-schema.json
+id: BE-11
+title: Implement Rate Limiting for APIs
+owner: backend
+depends_on:
+  - BE-04
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task BE-11: Implement Rate Limiting for APIs"
+artefacts:
+  - lib/utils/rate-limit.ts
+  - docs/security/rate-limiting.md
+context_topics:
+  - db-schema
+  - service-pattern
+  - supabase-setup

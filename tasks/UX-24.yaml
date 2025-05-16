@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-24
+title: Review Analytics Requirements with PM
+owner: ux
+depends_on:
+  - PM-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-24: Review Analytics Requirements with PM"
+artefacts:
+  - docs/design/analytics-requirements.md
+context_topics:
+  - project-overview

@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: PM-04
+title: Align User Stories with Technical Architecture
+owner: product
+depends_on:
+  - TL-01
+  - PM-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task PM-04: Align User Stories with Technical Architecture"
+artefacts:
+  - docs/product/backlog.md
+context_topics:
+  - project-overview

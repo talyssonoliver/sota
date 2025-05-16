@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-06
+title: Refine Design System
+owner: ux
+depends_on: []
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-06: Refine Design System"
+artefacts:
+  - docs/design/design-system.md
+  - design-tokens/colors.json
+  - design-tokens/typography.json
+context_topics:
+  - project-overview

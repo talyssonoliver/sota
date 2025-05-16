@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=./task-schema.json
+id: BE-01
+title: Validate Supabase Setup
+owner: backend
+depends_on:
+  - TL-09
+  - TL-01
+state: DONE
+priority: HIGH
+estimation_hours: 2
+description: >
+  Validate Supabase connection and authentication by testing both local and production
+  environments. Verify that row-level security (RLS) policies are correctly applied
+  and that service accounts have proper permissions.
+artefacts:
+  - docs/setup/supabase-connection.md
+context_topics:
+  - db-schema
+  - supabase-setup
+  - service-pattern

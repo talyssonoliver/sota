@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: QA-01
+title: Draft QA Testing Plan
+owner: qa
+depends_on: []
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task QA-01: Draft QA Testing Plan"
+artefacts:
+  - docs/testing/testing-strategy.md
+context_topics:
+  - test-patterns
+  - quality-standards
+  - testing-strategy

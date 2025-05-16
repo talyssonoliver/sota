@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-11
+title: Create User Flow Diagrams
+owner: ux
+depends_on: []
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-11: Create User Flow Diagrams"
+artefacts:
+  - docs/design/user-flows.md
+  - designs/user-journey-maps.pdf
+context_topics:
+  - project-overview

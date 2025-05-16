@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=./task-schema.json
+id: PM-12
+title: Map Customer Journey for Core Flows
+owner: product
+depends_on:
+  - PM-11
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task PM-12: Map Customer Journey for Core Flows"
+artefacts:
+  - docs/product/customer-journeys.md
+context_topics:
+  - project-overview

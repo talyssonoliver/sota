@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-23
+title: Create Error State Designs
+owner: ux
+depends_on:
+  - UX-06
+  - UX-07
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-23: Create Error State Designs"
+artefacts:
+  - docs/design/error-states.md
+  - designs/error-states.pdf
+context_topics:
+  - project-overview

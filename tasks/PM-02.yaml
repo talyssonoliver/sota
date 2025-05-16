@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: PM-02
+title: Create Visual Product Roadmap for 3 Months
+owner: product
+depends_on:
+  - PM-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task PM-02: Create Visual Product Roadmap for 3 Months"
+artefacts:
+  - docs/product/roadmap.md
+  - docs/product/roadmap-visual.png
+context_topics:
+  - project-overview
