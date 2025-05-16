@@ -27,3 +27,16 @@
 ## Test Accounts
 - Admin: admin@artesanato.com
 - Customer: customer@artesanato.com
+
+# TODO: Summarize infra/supabase-setup.md here. Example format:
+## Setup Steps
+- ...
+
+## Key Configurations
+- ...
+
+## Security/Policies
+- ...
+
+---
+*Drafted by doc_agent. Backend engineer: please review for accuracy and completeness.*

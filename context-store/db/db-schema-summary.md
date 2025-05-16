@@ -1,4 +1,5 @@
 # Database Schema Summary
+**Reviewed: Not yet reviewed**
 
 ## Tables
 - categories: id, name, description, image_url, created_at, updated_at

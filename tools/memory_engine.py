@@ -65,21 +65,100 @@ class MemoryEngine:
         except Exception as e:
             print(f"Error adding directory {directory_path}: {str(e)}")
 
-    def scan_and_summarize(self, source_dir: str = "context-source/", summary_dir: str = "context-store/") -> None:
-        """Scan raw docs, generate summaries, and store them in summary_dir."""
-        for root, _, files in os.walk(source_dir):
-            for fname in files:
-                if fname.endswith('.md') or fname.endswith('.txt'):
-                    src_path = os.path.join(root, fname)
-                    with open(src_path, 'r', encoding='utf-8') as f:
-                        content = f.read()
-                    summary = self.summarize_document(content)
-                    rel_path = os.path.relpath(src_path, source_dir)
-                    summary_path = os.path.join(summary_dir, rel_path)
-                    os.makedirs(os.path.dirname(summary_path), exist_ok=True)
-                    with open(summary_path, 'w', encoding='utf-8') as f:
-                        f.write(summary)
-                    print(f"Summarized {src_path} -> {summary_path}")
+    def scan_and_summarize(self, source_dirs: List[str] = None, summary_dir: str = "context-store/") -> None:
+        """
+        Generate summaries from source documents and store them in summary_dir.
+        
+        Args:
+            source_dirs: List of directories to scan for source documents (defaults to context-source/)
+            summary_dir: Directory to store the generated summaries
+        """
+        if source_dirs is None:
+            # Default to the context-source directory
+            source_dirs = ["context-source/"]
+            
+        for source_dir in source_dirs:
+            if not os.path.exists(source_dir):
+                print(f"Source directory {source_dir} not found. Skipping.")
+                continue
+                
+            print(f"Processing source directory: {source_dir}")
+            for root, _, files in os.walk(source_dir):
+                for fname in files:
+                    if fname.endswith('.md') or fname.endswith('.txt') or fname.endswith('.yaml'):
+                        # Determine the appropriate target location in context-store
+                        src_path = os.path.join(root, fname)
+                        
+                        # Skip if this is already in the context-store directory
+                        if summary_dir in src_path:
+                            continue
+                        
+                        # Determine the domain/category based on the source directory or file type
+                        rel_dir = os.path.relpath(root, source_dir)
+                        if rel_dir == ".":
+                            # File is in the root of source_dir
+                            domain = self._determine_domain_from_filename(fname)
+                        else:
+                            # Use the subdirectory name as domain
+                            domain = rel_dir.split(os.sep)[0]
+                        
+                        # Generate the summary
+                        try:
+                            with open(src_path, 'r', encoding='utf-8') as f:
+                                content = f.read()
+                            
+                            summary = self.summarize_document(content)
+                            
+                            # Create a meaningful name for the summary
+                            base_name = os.path.splitext(fname)[0]
+                            summary_filename = f"{base_name}-summary.md"
+                            summary_path = os.path.join(summary_dir, domain, summary_filename)
+                            
+                            # Ensure the directory exists
+                            os.makedirs(os.path.dirname(summary_path), exist_ok=True)
+                            
+                            # Add "Not yet reviewed" marker at the top
+                            if not summary.startswith("# "):
+                                title = base_name.replace("-", " ").title()
+                                summary = f"# {title} Summary\n**Reviewed: Not yet reviewed**\n\n{summary}"
+                            else:
+                                # Insert the review status after the title
+                                lines = summary.split("\n", 1)
+                                summary = f"{lines[0]}\n**Reviewed: Not yet reviewed**\n\n{lines[1] if len(lines) > 1 else ''}"
+                            
+                            # Add attribution at the bottom
+                            if not "Drafted by doc_agent" in summary:
+                                current_date = os.getenv('CURRENT_DATE', 'May 16, 2025')
+                                summary += f"\n\n---\n*Drafted by doc_agent on {current_date}. Appropriate domain expert: please review for accuracy and completeness.*"
+                            
+                            # Save the summary
+                            with open(summary_path, 'w', encoding='utf-8') as f:
+                                f.write(summary)
+                                
+                            print(f"Summarized {src_path} -> {summary_path}")
+                        except Exception as e:
+                            print(f"Error processing {src_path}: {str(e)}")
+        
+        # Index the generated summaries
+        self.index_summaries(summary_dir)
+
+    def _determine_domain_from_filename(self, filename: str) -> str:
+        """Helper method to determine the domain based on filename patterns."""
+        filename = filename.lower()
+        if any(term in filename for term in ['db', 'schema', 'database']):
+            return 'db'
+        elif any(term in filename for term in ['service', 'api', 'pattern']):
+            return 'patterns'
+        elif any(term in filename for term in ['architecture', 'system', 'design']):
+            return 'technical'
+        elif any(term in filename for term in ['sprint', 'plan', 'roadmap']):
+            return 'sprint'
+        elif any(term in filename for term in ['ui', 'ux', 'interface']):
+            return 'design'
+        elif any(term in filename for term in ['infra', 'deploy', 'cloud']):
+            return 'infra'
+        else:
+            return 'general'
 
     def summarize_document(self, content: str, max_length: int = 2000) -> str:
         """Summarize a document if it's too large. (Stub: replace with LLM call if needed)"""
