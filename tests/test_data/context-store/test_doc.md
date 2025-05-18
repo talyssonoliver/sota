@@ -1,0 +1,1 @@
+This is a test document about RLS rules in Supabase.

@@ -210,7 +210,7 @@ def patch_imports():
     original_import = builtins.__import__
     
     # Set OpenAI API key environment variable to avoid validation errors
-    os.environ["OPENAI_API_KEY"] = "sk-mockapikey"
+    os.environ["OPENAI_API_KEY"] = "dummy-key-for-testing" # Consistent with mock_environment.py
     
     # Patch registry to include get_agent function
     def patch_registry():

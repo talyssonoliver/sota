@@ -585,7 +585,7 @@ Step 3.1 — Create the Knowledge Repository
 Organise Source Material
 Gather and categorise your documentation:
 
-context-source/
+context-store/
 ├── db/
 │   └── schema.sql
 ├── infra/

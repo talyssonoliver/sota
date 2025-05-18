@@ -6,6 +6,14 @@ Uses LangChain and LangGraph to orchestrate the agents
 import os
 import sys
 from dotenv import load_dotenv
+
+# Apply patches to fix external library issues
+try:
+    from patches import apply_all_patches
+    apply_all_patches()
+except ImportError:
+    print("Warning: Could not load patches. Some features may not work correctly.")
+
 from langchain.agents import initialize_agent, AgentType
 from langchain_community.chat_models import ChatOpenAI
 from langchain.tools import Tool

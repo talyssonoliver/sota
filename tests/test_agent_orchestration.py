@@ -37,15 +37,15 @@ class TestAgentRegistry(unittest.TestCase):
         mock_load_config.return_value = {
             "coordinator": {"name": "Coordinator Agent"},
             "technical_lead": {"name": "Technical Lead Agent"},
-            "backend": {"name": "Backend Engineer Agent"},
-            "frontend": {"name": "Frontend Engineer Agent"},
+            "backend_engineer": {"name": "Backend Engineer Agent"},
+            "frontend_engineer": {"name": "Frontend Engineer Agent"},
             "documentation": {"name": "Documentation Agent"},
             "qa": {"name": "QA Agent"}
         }
         
         # Check that all expected agent roles are registered
         expected_roles = [
-            "coordinator", "technical_lead", "backend", "frontend", 
+            "coordinator", "technical_lead", "backend_engineer", "frontend_engineer", 
             "documentation", "qa"
         ]
         

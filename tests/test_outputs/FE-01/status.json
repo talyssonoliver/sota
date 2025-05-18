@@ -1,12 +1,6 @@
 {
-  "output": {
-    "task_id": "FE-01",
-    "status": "CREATED",
-    "title": "Validate Local Environment Setup",
-    "description": "Task FE-01: Validate Local Environment Setup",
-    "context_keys": [],
-    "start_time": "2025-05-14T00:40:17.003509"
-  },
   "task_id": "FE-01",
-  "timestamp": "2025-05-14T00:40:17.004471"
+  "status": "BLOCKED",
+  "error": "Recursion limit of 25 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/GRAPH_RECURSION_LIMIT",
+  "timestamp": "2025-05-18T22:22:01.972500"
 }

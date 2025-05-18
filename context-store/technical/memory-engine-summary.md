@@ -25,6 +25,24 @@
 - **scan_and_summarize()**: Processes source docs into structured summaries
 - **get_filtered_context()**: Retrieves context with metadata filtering
 
+## Enhancements (2025 Update)
+- **Partitioned Vector Database**: Segments by type, domain, and time for efficient, secure retrieval.
+- **Advanced Metadata**: Agent role tags, domain, time, and reliability scores for precise filtering.
+- **Hybrid Search**: Combines vector and keyword search for best recall and precision.
+- **Multi-Tiered Caching**: L1/L2 cache with analytics and preloading.
+- **Semantic Chunking**: Adaptive, overlapping, deduplicated chunks for optimal retrieval.
+- **Security**: Input sanitization, access control, encryption, audit logging, and PII detection.
+- **Lifecycle Management**: Retention, secure deletion, and right-to-be-forgotten support.
+- **Configurable**: All features set via a unified config object; API remains stable.
+
+## Usage Example
+```python
+from tools.memory_engine import MemoryEngine
+config = MemoryEngineConfig(...)
+memory = MemoryEngine(config)
+# Store, retrieve, and manage context as before
+```
+
 ## Integration Pattern
 ```python
 # Using key-based retrieval in agent creation

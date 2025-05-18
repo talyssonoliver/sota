@@ -176,3 +176,32 @@ The Memory Engine can be configured through the following parameters:
 - `chunk_size`: Size of chunks for splitting documents
 - `chunk_overlap`: Overlap between chunks
 - `cache_size`: Size of the context cache
+
+## Production-Ready Features (2025)
+
+### Partitioning and Hybrid Search
+- Vector DB is partitioned by type, domain, and time for efficient, secure retrieval.
+- Hybrid search combines vector similarity and keyword (BM25) search with custom weighting.
+
+### Advanced Metadata and Filtering
+- Metadata includes agent role, domain, time, and reliability for precise filtering.
+- Compound queries leverage ChromaDB's advanced filtering.
+
+### Multi-Tiered Caching and Storage
+- L1/L2 cache with analytics, preloading, and tiered storage (hot/warm/cold).
+- Automatic migration and retention policies.
+
+### Security and Compliance
+- Input sanitization, access control, encryption, audit logging, and PII detection.
+- Data lifecycle management and right-to-be-forgotten support.
+
+### Configuration
+- All features are set via a unified config object.
+- API remains backwards compatible; deprecation warnings for changes.
+
+### Example
+```python
+from tools.memory_engine import MemoryEngine, MemoryEngineConfig
+config = MemoryEngineConfig(...)
+memory = MemoryEngine(config)
+```
