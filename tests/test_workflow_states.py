@@ -384,6 +384,19 @@ class TestFullWorkflowStateSequence(unittest.TestCase):
             self.assertTrue(is_terminal_status(state.get("status")))
             self.assertIn("error", state)
 
+    def tearDown(self):
+        # Clean up any test output directories or files created by these tests
+        test_output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_outputs")
+        if os.path.exists(test_output_dir):
+            for child in os.listdir(test_output_dir):
+                child_path = os.path.join(test_output_dir, child)
+                if os.path.isdir(child_path):
+                    for subchild in os.listdir(child_path):
+                        os.remove(os.path.join(child_path, subchild))
+                    os.rmdir(child_path)
+                else:
+                    os.remove(child_path)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,6 +1,0 @@
-{
-  "task_id": "FE-01",
-  "status": "BLOCKED",
-  "error": "Recursion limit of 25 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.\nFor troubleshooting, visit: https://python.langchain.com/docs/troubleshooting/errors/GRAPH_RECURSION_LIMIT",
-  "timestamp": "2025-05-18T22:22:01.972500"
-}

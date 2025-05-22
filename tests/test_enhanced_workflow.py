@@ -47,9 +47,16 @@ class TestEnhancedWorkflow(unittest.TestCase):
         """Clean up after tests."""
         # Record test timing
         self.timer.stop()
-        
-        # Print test timing information
         print(f"Test execution time: {self.timer.elapsed():.2f}s")
+        # Clean up test output directory
+        if self.test_output_dir.exists():
+            for child in self.test_output_dir.iterdir():
+                if child.is_dir():
+                    for subchild in child.iterdir():
+                        subchild.unlink()
+                    child.rmdir()
+                else:
+                    child.unlink()
     
     def verify_status_file(self, task_id):
         """Verify status file exists and contains valid JSON."""

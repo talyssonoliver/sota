@@ -229,9 +229,26 @@ def build_auto_generated_workflow_graph() -> StateGraph:
                     if "task_id" not in result and "task_id" in state:
                         result["task_id"] = state["task_id"]
                     
-                    # Update the status
-                    current_status = state.get("status", TaskStatus.CREATED)
-                    result["status"] = TaskStatus.IN_PROGRESS
+                    # --- Anti-infinite-loop logic ---
+                    # Track consecutive IN_PROGRESS iterations
+                    in_progress_count = state.get("in_progress_count", 0)
+                    output = result.get("output", "").lower()
+                    if any(term in output for term in ["done", "completed", "success", "passed"]) or result.get("status") in [TaskStatus.DONE, TaskStatus.BLOCKED, TaskStatus.COMPLETED]:
+                        result["status"] = TaskStatus.DONE
+                        result.pop("in_progress_count", None)
+                    elif "fail" in output or "error" in output or result.get("status") == TaskStatus.BLOCKED:
+                        result["status"] = TaskStatus.BLOCKED
+                        result.pop("in_progress_count", None)
+                    else:
+                        # If still in progress, increment the counter
+                        in_progress_count += 1
+                        result["in_progress_count"] = in_progress_count
+                        result["status"] = TaskStatus.IN_PROGRESS
+                        # If we've looped too many times, block the task
+                        if in_progress_count >= 3:
+                            result["status"] = TaskStatus.BLOCKED
+                            result["error"] = "Infinite loop detected: too many consecutive IN_PROGRESS states."
+                            result.pop("in_progress_count", None)
                     
                     # Preserve other context from state
                     result.update({k: v for k, v in state.items() if k not in result})

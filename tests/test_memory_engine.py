@@ -11,15 +11,26 @@ Covers: Initialization, document addition, retrieval, secure deletion, PII scan,
 """
 import os
 import unittest
+from unittest.mock import patch, MagicMock
+import numpy as np
 from tools.memory_engine import MemoryEngine, initialize_memory, get_relevant_context, MemoryEngineConfig, ChunkingConfig
+from tests.mock_openai_embeddings import create_mock_openai_embeddings
 from typing import List
+from tests.helpers import cleanup_test_files
 
 class TestMemoryEngine(unittest.TestCase):
     def setUp(self):
+        # Create mock OpenAI embeddings
+        self.mock_embeddings, self.mock_embeddings_instance = create_mock_openai_embeddings()
+        
+        # Patch OpenAIEmbeddings to use our mock
+        self.patcher = patch('tools.memory_engine.OpenAIEmbeddings', self.mock_embeddings)
+        self.patcher.start()
+        
         # Grant 'tester' read/write permissions for testing and set small chunk size
         test_config = MemoryEngineConfig(
             security_options={
-                "roles": {"tester": ["read", "write"]},
+                "roles": {"tester": ["read", "write"], "fixture_tester": ["read", "write"]},
                 "sanitize_inputs": True
             },
             chunking=ChunkingConfig(
@@ -40,8 +51,14 @@ class TestMemoryEngine(unittest.TestCase):
             f.write("This is a test document.\nContact: test@example.com\nSSN: 123-45-6789\n")
 
     def tearDown(self):
+        # Stop patching
+        self.patcher.stop()
+        
+        # Remove test file
         if os.path.exists(self.test_file):
             os.remove(self.test_file)
+        # Clean up all test files and directories
+        cleanup_test_files()
 
     def test_add_and_retrieve_document(self):
         self.memory.add_document(self.test_file, user="tester")

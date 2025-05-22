@@ -47,12 +47,14 @@ def create_test_file(content, file_path=None):
 
 class LangChainMockFixture:
     """Fixture for mocking LangChain components"""
+    
     def __init__(self):
         """Initialize with default mocks"""
         # Use RunnableChainMock for RetrievalQA and ConversationalRetrievalChain
         self.mock_llm = RunnableLLMMock()
         self.mock_qa_chain = RunnableChainMock()
         self.mock_conv_chain = RunnableChainMock()
+        
         # .invoke returns .invoke.return_value if set, else default, and handles tuple args
         def qa_invoke(input, *a, **kw):
             if hasattr(self.mock_qa_chain.invoke, 'return_value') and self.mock_qa_chain.invoke.return_value is not None:
@@ -61,6 +63,7 @@ class LangChainMockFixture:
             if isinstance(query, tuple):
                 query = query[0]
             return {"result": f"Mock answer for: {query}"}
+            
         def conv_invoke(input, *a, **kw):
             if hasattr(self.mock_conv_chain.invoke, 'return_value') and self.mock_conv_chain.invoke.return_value is not None:
                 return self.mock_conv_chain.invoke.return_value
@@ -68,12 +71,13 @@ class LangChainMockFixture:
             if isinstance(question, tuple):
                 question = question[0]
             return {"answer": f"Mock answer for: {question}"}
+            
         # Set .invoke as MagicMock with side_effect for proper test assertions
         from unittest.mock import MagicMock
         self.mock_qa_chain.invoke = MagicMock(side_effect=qa_invoke)
         self.mock_conv_chain.invoke = MagicMock(side_effect=conv_invoke)
 
-        # Create mock for from_chain_type
+        # Create mock for from_chain_type and from_llm
         mock_from_chain_type = MagicMock(return_value=self.mock_qa_chain)
         mock_from_llm = MagicMock(return_value=self.mock_conv_chain)
 
@@ -91,11 +95,11 @@ class LangChainMockFixture:
         
         # Add the from_llm method to the ConversationalRetrievalChain mock
         self.mocks['ConversationalRetrievalChain'].from_llm = mock_from_llm
-    
+
         self.patchers = []
-            
-        def apply(self):
-            """Apply all patches and return self as context manager"""
+
+    def apply(self):
+        """Apply all patches and return self as context manager"""
         patch_targets = {
             'ChatOpenAI': 'tools.memory_engine.ChatOpenAI',
             'Chroma': 'tools.memory_engine.Chroma',

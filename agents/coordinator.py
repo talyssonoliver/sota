@@ -9,6 +9,7 @@ from typing import Dict, Any, Optional, List
 from langchain_openai import ChatOpenAI
 from prompts.utils import load_and_format_prompt
 from tools.memory_engine import get_context_by_keys
+import os
 
 
 def create_coordinator_agent(
@@ -60,7 +61,6 @@ def create_coordinator_agent(
                 
     except Exception as e:
         # For testing, if tool initialization fails, use empty tool list
-        import os
         if os.environ.get("TESTING", "0") == "1":
             tools = []
             print(f"Using empty tools list for testing due to: {e}")

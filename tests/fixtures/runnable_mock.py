@@ -39,20 +39,9 @@ class RunnableLLMMock(MagicMock):
         self.return_value = None  # Add explicit return_value attribute for mocking
     
     def invoke(self, input, config=None, **kwargs):
-        """Implementation of required Runnable method"""
-        if self.return_value is not None:
-            return self.return_value
-        elif hasattr(self, '_mock_return_value') and self._mock_return_value is not None:
-            return self._mock_return_value
-        
-        # Default behavior based on input type
-        if isinstance(input, dict) and "prompt" in input:
-            return f"Mock response to: {input['prompt']}"
-        elif isinstance(input, str):
-            return f"Mock response to: {input}"
-        
-        return "Default mock LLM response"
-        
+        # This method is now replaced by the MagicMock in __init__
+        pass
+    
     def batch(self, inputs, config=None, **kwargs):
         """Implement batch for Runnable interface"""
         return [self.invoke(input) for input in inputs]
@@ -78,23 +67,20 @@ class RunnableChainMock(MagicMock):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Instead of modifying __mro__, we'll override isinstance behavior
         self.return_value = None  # Add explicit return_value attribute for mocking
-    
-    def invoke(self, input, config=None, **kwargs):
-        """Implementation of required Runnable method for chains"""
+        # Make .invoke a MagicMock so .invoke.return_value can be set in tests
+        self.invoke = MagicMock(side_effect=self._invoke_side_effect)
+
+    def _invoke_side_effect(self, input, config=None, **kwargs):
         if self.return_value is not None:
             return self.return_value
         elif hasattr(self, '_mock_return_value') and self._mock_return_value is not None:
             return self._mock_return_value
-        
-        # Default behavior depends on input shape
         if isinstance(input, dict):
             if "query" in input:
                 return {"result": f"Mock answer for: {input['query']}"}
             elif "question" in input:
                 return {"answer": f"Mock answer for: {input['question']}"}
-        
         return {"result": "Default mock chain response"}
         
     def batch(self, inputs, config=None, **kwargs):

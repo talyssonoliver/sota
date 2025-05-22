@@ -92,6 +92,19 @@ class EnhancedWorkflowExecutor:
         # Initialize workflow
         self.workflow = self._build_workflow()
     
+    def _check_recursion_limit(self, iteration: int, limit: int) -> bool:
+        """
+        Check if the recursion limit has been reached.
+        
+        Args:
+            iteration: Current iteration count
+            limit: Maximum allowed iterations
+            
+        Returns:
+            True if limit is reached, False otherwise
+        """
+        return iteration >= limit
+    
     def _build_workflow(self):
         """
         Build and enhance the workflow with all features.
@@ -239,28 +252,25 @@ class EnhancedWorkflowExecutor:
                 
         except Exception as e:
             logger.error(f"Error checking dependencies for task {task_id}: {str(e)}")
-            return False, f"Error checking dependencies: {str(e)}"
-    
-    def execute_task(self, task_id: str) -> Dict[str, Any]:
+            return False, f"Error checking dependencies: {str(e)}"    
+        
+    def execute_task(self, task_id: str, recursion_limit: int = 25) -> Dict[str, Any]:
         """
         Execute a task through the enhanced workflow.
         
         Args:
             task_id: ID of the task to execute
+            recursion_limit: Maximum allowed recursion/iteration depth
             
         Returns:
             Result of the workflow execution
         """
         logger.info(f"Executing task {task_id}")
-        
-        # Load task metadata
         try:
             task_data = load_task_metadata(task_id)
         except Exception as e:
             logger.error(f"Failed to load task metadata for {task_id}: {str(e)}")
             task_data = {"id": task_id}
-        
-        # Prepare initial state
         initial_state = {
             "task_id": task_id,
             "status": TaskStatus.CREATED,
@@ -269,10 +279,7 @@ class EnhancedWorkflowExecutor:
             "context_keys": task_data.get("context", []),
             "start_time": datetime.now().isoformat()
         }
-        
-        # Save initial status for monitoring
         self.save_task_status(task_id, initial_state)
-        
         def agent_run(agent, input_state):
             if tracing_enabled:
                 @traceable(name="Agent Run")
@@ -281,51 +288,75 @@ class EnhancedWorkflowExecutor:
                 return traced_run(agent, input_state)
             else:
                 return agent.run(input_state)
-        
+        iteration = 0
         try:
-            # Execute the workflow
-            result = self.workflow.invoke(initial_state)
-            
-            # Ensure task_id is in the result (required by tests)
-            if "task_id" not in result:
-                result["task_id"] = task_id
-            
-            # Save final status
-            self.save_task_status(task_id, result)
-            
-            # Save agent outputs
-            if "output" in result:
-                agent = result.get("agent", "unknown")
-                self.save_agent_output(task_id, agent, result["output"])
-            
-            return result
+            state = initial_state
+            # Check recursion limit - this can be overridden in tests
+            while not self._check_recursion_limit(iteration, recursion_limit):
+                # Before invoking workflow, check if agent is valid (if agent is specified in state)
+                agent_name = state.get("agent") or None
+                if agent_name:
+                    from orchestration.registry import get_agent_constructor
+                    if get_agent_constructor(agent_name) is None:
+                        logger.error(f"Unknown agent identifier: {agent_name}")
+                        error_state = {
+                            "task_id": task_id,
+                            "status": TaskStatus.BLOCKED,
+                            "error": f"Unknown agent identifier: {agent_name}",
+                            "timestamp": datetime.now().isoformat()
+                        }
+                        self.save_task_status(task_id, error_state)
+                        return error_state
+                result = self.workflow.invoke(state)
+                if "task_id" not in result:
+                    result["task_id"] = task_id
+                self.save_task_status(task_id, result)
+                if "output" in result:
+                    agent = result.get("agent", "unknown")
+                    self.save_agent_output(task_id, agent, result["output"])
+                # Stop condition: status is completed or blocked
+                if result.get("status") in [TaskStatus.COMPLETED, TaskStatus.BLOCKED, TaskStatus.DONE]:
+                    return result
+                state = result
+                iteration += 1
+            # If we reach here, recursion/iteration limit was hit
+            logger.error(f"Recursion/iteration limit of {recursion_limit} reached for task {task_id}")
+            error_state = {
+                "task_id": task_id,
+                "status": TaskStatus.BLOCKED,
+                "error": f"Recursion/iteration limit of {recursion_limit} reached without hitting a stop condition",
+                "timestamp": datetime.now().isoformat()
+            }
+            self.save_task_status(task_id, error_state)
+            return error_state
         except Exception as e:
-            # Handle execution error
             error_state = {
                 "task_id": task_id,
                 "status": TaskStatus.BLOCKED,
                 "error": str(e),
                 "timestamp": datetime.now().isoformat()
             }
-            
-            # Save error status
             self.save_task_status(task_id, error_state)
-            
-            # Save error to log file
             task_dir = self.prepare_task_directory(task_id)
             error_path = task_dir / "error.log"
             try:
                 with open(error_path, 'w', encoding='utf-8') as f:
-                    # Handle both string and dictionary error objects
                     if isinstance(e, dict):
-                        f.write(json.dumps(e))  # Convert dict to JSON string
+                        f.write(json.dumps(e))
                     else:
                         f.write(str(e))
             except Exception as write_error:
                 logger.error(f"Error writing to error log: {str(write_error)}")
-            
             logger.error(f"Error executing task {task_id}: {str(e)}")
             return error_state
+
+    def _process_workflow_result(self, result):
+        """Process the result from a workflow execution."""
+        if result.get("status") == TaskStatus.COMPLETED:
+            logger.info(f"Task {result.get('task_id')} completed successfully")
+        elif result.get("status") == TaskStatus.FAILED:
+            logger.error(f"Task {result.get('task_id')} failed: {result.get('error')}")
+        return result
 
 def main():
     """Command-line interface for the enhanced workflow executor."""
