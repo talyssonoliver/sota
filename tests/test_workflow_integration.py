@@ -11,6 +11,7 @@ import tempfile
 from pathlib import Path
 from datetime import datetime
 import json
+import shutil
 
 # Add the parent directory to the path so we can import our modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -23,6 +24,18 @@ from orchestration.enhanced_workflow import EnhancedWorkflowExecutor
 from graph.notifications import NotificationLevel
 from orchestration.states import TaskStatus
 from tests.test_utils import TestFeedback, Timer
+
+
+def teardown_module(module):
+    """Cleanup test_outputs directory after tests finish."""
+    test_output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_outputs")
+    if os.path.exists(test_output_dir):
+        for child in os.listdir(test_output_dir):
+            child_path = os.path.join(test_output_dir, child)
+            if os.path.isdir(child_path):
+                shutil.rmtree(child_path)
+            else:
+                os.remove(child_path)
 
 
 class TestIntegratedWorkflowExecution(unittest.TestCase):

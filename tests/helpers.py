@@ -69,3 +69,15 @@ def cleanup_test_files():
                 shutil.rmtree(p)
             except Exception:
                 pass
+
+outputs_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "outputs")
+
+def teardown_module(module):
+    """Cleanup outputs directory after tests finish."""
+    if os.path.exists(outputs_dir):
+        for child in os.listdir(outputs_dir):
+            child_path = os.path.join(outputs_dir, child)
+            if os.path.isdir(child_path):
+                shutil.rmtree(child_path)
+            else:
+                os.remove(child_path)

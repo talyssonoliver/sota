@@ -72,3 +72,75 @@ def load_and_format_prompt(
     
     # Format the template with variables
     return format_prompt_template(template, variables)
+
+
+def load_prompt(prompt_path: str) -> str:
+    """Load prompt template with enhanced error handling"""
+    try:
+        with open(prompt_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    except FileNotFoundError:
+        # Fallback to generic prompt
+        return load_generic_prompt(prompt_path)
+
+
+def load_generic_prompt(prompt_path: str) -> str:
+    """Load generic prompt template as fallback"""
+    agent_role = os.path.basename(prompt_path).replace('.md', '').replace('-agent', '')
+    
+    return f"""# {agent_role.title()} Agent
+
+## Role
+You are a specialized {agent_role} agent in a multi-agent AI system for the Artesanato E-commerce project.
+
+## Context
+{{context}}
+
+## Task
+{{task_description}}
+
+## Instructions
+Use the provided context to complete the assigned task efficiently and accurately. Follow the patterns and standards outlined in the context when implementing solutions.
+
+## Output Format
+Provide clear, implementable solutions with code examples where appropriate. Include explanations of your approach and any assumptions made.
+"""
+
+
+def format_prompt_with_context(prompt_template: str, context: str, task_data: Dict[str, Any] = None, **kwargs) -> str:
+    """Format prompt template with context and task data. Accepts extra kwargs for backward compatibility."""
+    formatted_prompt = prompt_template
+    # If context is a list, join it
+    if isinstance(context, list):
+        context_str = '\n'.join(str(x) for x in context)
+    else:
+        context_str = str(context)
+    # Replace context placeholder
+    if "{context}" in formatted_prompt:
+        formatted_prompt = formatted_prompt.replace("{context}", context_str)
+    else:
+        # For test compatibility, append context if not present
+        formatted_prompt += f"\n{context_str}"
+    # Replace task-specific placeholders
+    if task_data:
+        for key, value in task_data.items():
+            placeholder = f"{{{key}}}"
+            if placeholder in formatted_prompt:
+                formatted_prompt = formatted_prompt.replace(placeholder, str(value))
+    # Replace any additional placeholders from kwargs
+    for key, value in kwargs.items():
+        placeholder = f"{{{key}}}"
+        if placeholder in formatted_prompt:
+            formatted_prompt = formatted_prompt.replace(placeholder, str(value))
+    return formatted_prompt
+
+
+def extract_context_sources(context):
+    """Extract context sources from formatted context. Accepts str or list."""
+    if isinstance(context, list):
+        context = '\n'.join(context)
+    sources = []
+    for line in context.split('\n'):
+        if 'Source:' in line:
+            sources += [s.strip() for s in line.split('Source:')[1].split(',') if s.strip()]
+    return sources

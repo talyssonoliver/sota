@@ -697,7 +697,7 @@ Ensures larger documents like design-system.md are fully searchable.
 
 ⸻
 
-Step 3.7 — (Optional) Context Tracking per Task
+Step 3.7 — Context Tracking per Task
 
 Track which documents were used in each task run:
 

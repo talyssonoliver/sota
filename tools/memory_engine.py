@@ -1419,105 +1419,66 @@ class MemoryEngine:
             retriever=retriever,
             return_source_documents=True
         )
-    def get_retriever(self, metadata_filter=None):
-        """
-        Get a configured retriever with optional metadata filtering.
+    def get_retriever(self, search_kwargs: Dict[str, Any] = None):
+        """Get retriever for agent integration"""
+        if search_kwargs is None:
+            search_kwargs = {"k": 5}
+        return self.vector_store.as_retriever(search_kwargs=search_kwargs)
+
+    def retrieve_context_for_task(self, task_id: str, context_topics: List[str] = None, max_results: int = 5) -> str:
+        """Retrieve task-specific context for agent execution"""
+        if not context_topics:
+            # Fallback to task-based search
+            query = f"task {task_id} implementation requirements"
+        else:
+            query = " ".join(context_topics)
         
-        Args:
-            metadata_filter: Filter to apply on document metadata
-            
-        Returns:
-            A retriever configured for the vector store
-        """
-        return self.vector_store.as_retriever(
-            search_kwargs={"filter": metadata_filter} if metadata_filter else {}
-        )
-        
-    def retrieval_qa(self, query, user=None, use_conversation=False, chat_history=None, 
-                     chain=None, metadata_filter=None, temperature=0.0, **kwargs):
-        """
-        Execute retrieval QA against the memory engine.
-        
-        Args:
-            query (str): Question to ask
-            user (str, optional): User identifier for permission checks
-            use_conversation (bool, optional): Whether to use conversation mode
-            chat_history (list, optional): List of (question, answer) tuples for conversation context
-            chain (object, optional): Pre-configured chain to use
-            metadata_filter (dict, optional): Filters to apply to document metadata
-            temperature (float, optional): Temperature setting for LLM
-            **kwargs: Additional keyword arguments
-            
-        Returns:
-            The answer from the retrieval chain
-        """
         try:
-            # Always use just the query string for the chain input
-            if isinstance(query, tuple):
-                query_str = query[0]
-                if user is None and len(query) > 1:
-                    user = query[1]
-            else:
-                query_str = query
-                
-            query_str = self._sanitize_and_check(query_str, user=user, action="read")
+            docs = self.retriever_store.similarity_search(query, k=max_results)
             
-            # Create retriever with optional metadata filter
-            retriever = self.get_retriever(metadata_filter)
+            # Format context for agent consumption
+            context_sections = []
+            for doc in docs:
+                source = doc.metadata.get('source', 'Context')
+                content = doc.page_content
+                context_sections.append(f"## {source}\n{content}")
             
-            # Build or use provided chain
-            if chain is None:
-                if use_conversation:
-                    chain = self.create_conversation_chain(retriever, temperature=temperature)
-                else:
-                    chain = self.create_retrieval_chain(retriever)
-            
-            # Format parameters properly
-            if use_conversation:
-                # Conversation mode parameters
-                params = {
-                    "question": query_str,  # Use string directly, not a tuple
-                    "chat_history": chat_history or [],
-                    "user": user
-                }
-            else:
-                # Standard retrieval parameters
-                params = {
-                    "query": query_str,  # Use string directly, not a tuple
-                    "user": user
-                }
-            
-            # Execute the chain
-            result = chain.invoke(params)
-            
-            # Extract result based on return format
-            if isinstance(result, dict):
-                if "result" in result:
-                    return result["result"]
-                elif "answer" in result:
-                    return result["answer"]
-                for k, v in result.items():
-                    if v and not k.startswith("_"):
-                        return v
-                        
-            # Handle MagicMock results
-            if hasattr(result, "_mock_return_value") and result._mock_return_value is not None:
-                mock_result = result._mock_return_value
-                if isinstance(mock_result, dict):
-                    if "result" in mock_result:
-                        return mock_result["result"]
-                    elif "answer" in mock_result:
-                        return mock_result["answer"]
-                elif isinstance(mock_result, str):
-                    return mock_result
-                return str(mock_result)
-                
-            # Default result handling
-            return self._extract_result(result)
-            
+            return "\n\n".join(context_sections)
         except Exception as e:
-            self.logger.error(f"Error in retrieval_qa: {str(e)}")
-            return f"Error in retrieval_qa: {str(e)}"
+            self.logger.error(f"Error retrieving context for task {task_id}: {e}")
+            return f"# Context Retrieval Error\nUnable to retrieve context for task {task_id}"
+
+    def get_context_by_domains(self, domains: List[str], max_results: int = 3) -> str:
+        """Retrieve context by specific domains (db, patterns, design, etc.)"""
+        all_context = []
+        
+        for domain in domains:
+            try:
+                # Try with domain filter first
+                docs = self.retriever_store.similarity_search(
+                    f"domain:{domain}",
+                    k=max_results
+                )
+                
+                # If no results with domain filter, try general search
+                if not docs:
+                    docs = self.retriever_store.similarity_search(
+                        domain.replace("-", " "),
+                        k=max_results
+                    )
+                
+                if docs:
+                    domain_context = f"# {domain.upper().replace('-', ' ')} Context\n"
+                    for doc in docs:
+                        title = doc.metadata.get('title', doc.metadata.get('source', 'Section'))
+                        domain_context += f"\n## {title}\n{doc.page_content}\n"
+                    all_context.append(domain_context)
+                    
+            except Exception as e:
+                self.logger.warning(f"Error retrieving context for domain {domain}: {e}")
+                continue
+        
+        return "\n\n".join(all_context) if all_context else f"# No Context Available\nNo context found for domains: {', '.join(domains)}"
 # Patch the MemoryEngine to use the fixed retrieval_qa implementation
 from tools.fixed_retrieval_qa import retrieval_qa as fixed_retrieval_qa
 MemoryEngine.retrieval_qa = fixed_retrieval_qa

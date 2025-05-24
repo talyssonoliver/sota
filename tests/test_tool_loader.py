@@ -229,6 +229,7 @@ def run_all_tests():
 
 # Add cleanup for test outputs if any are created by this test file
 def teardown_module(module):
+    """Cleanup test_outputs directory after tests finish."""
     test_output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_outputs")
     if os.path.exists(test_output_dir):
         for child in os.listdir(test_output_dir):

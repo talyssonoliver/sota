@@ -7,12 +7,17 @@ import argparse
 import sys
 import os
 import json
-from typing import Dict, Any, Optional
+import logging
+from datetime import datetime
+from typing import Dict, Any, Optional, List
 
 from .delegation import delegate_task
+from .inject_context import context_injector
 from tools.memory_engine import initialize_memory
 from utils.task_loader import load_task_metadata, update_task_state
+from prompts.utils import extract_context_sources
 
+memory = None
 
 def load_task_from_file(task_file: str) -> Dict[str, Any]:
     """
@@ -26,6 +31,64 @@ def load_task_from_file(task_file: str) -> Dict[str, Any]:
     """
     with open(task_file, 'r') as f:
         return json.load(f)
+
+
+def execute_task_with_context(task_id: str, agent_role: str = None):
+    """Execute task with memory-enhanced context"""
+    try:
+        # Determine agent role from task if not provided
+        if not agent_role:
+            task_metadata = load_task_metadata(task_id)
+            agent_role = task_metadata.get("owner", "coordinator")
+        
+        # Prepare agent with context
+        agent = context_injector.prepare_agent_with_context(task_id, agent_role)
+        
+        # Log context usage
+        logging.info(f"Executing task {task_id} with {agent_role} agent and MCP context")
+        
+        # Execute task (integrate with existing execution logic)
+        result = agent.execute(task_id)
+        
+        # Log context usage for analysis
+        log_context_usage(task_id, agent_role, agent._context)
+        
+        return result
+        
+    except Exception as e:
+        logging.error(f"Failed to execute task {task_id} with context: {e}")
+        raise
+
+
+def log_context_usage(task_id: str, agent_role: str, context: str):
+    """Log context usage for analysis and optimization. Handles mocks gracefully for tests."""
+    try:
+        if hasattr(context, 'split') or isinstance(context, (str, list)):
+            context_length = len(context)
+            context_sources = extract_context_sources(context)
+        else:
+            context_length = 0
+            context_sources = []
+    except Exception:
+        context_length = 0
+        context_sources = []
+    # Coerce task_id to string for file operations and sanitize for filesystem
+    task_id_str = str(task_id)
+    # Remove characters not allowed in filenames (e.g., <, >, :, ", /, \, |, ?, *)
+    import re
+    task_id_str = re.sub(r'[<>:"/\\|?*]', '_', task_id_str)
+    usage_log = {
+        "task_id": task_id_str,
+        "agent_role": agent_role,
+        "context_length": context_length,
+        "context_sources": context_sources,
+        "timestamp": datetime.now().isoformat()
+    }
+    
+    # Save to context usage log
+    os.makedirs("logs/context_usage", exist_ok=True)
+    with open(f"logs/context_usage/{task_id_str}_context.json", "w") as f:
+        json.dump(usage_log, f, indent=2)
 
 
 def main():

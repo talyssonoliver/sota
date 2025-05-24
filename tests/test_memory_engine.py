@@ -17,6 +17,7 @@ from tools.memory_engine import MemoryEngine, initialize_memory, get_relevant_co
 from tests.mock_openai_embeddings import create_mock_openai_embeddings
 from typing import List
 from tests.helpers import cleanup_test_files
+import shutil
 
 class TestMemoryEngine(unittest.TestCase):
     def setUp(self):
@@ -125,6 +126,17 @@ def benchmark_memory_engine_add_retrieve(iterations: int = 10):
     elapsed = time.time() - start
     print(f"Benchmark: {iterations} add+retrieve cycles in {elapsed:.2f}s ({elapsed/iterations:.3f}s per op)")
     os.remove(test_file)
+
+def teardown_module(module):
+    """Cleanup test_outputs directory after tests finish."""
+    test_output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_outputs")
+    if os.path.exists(test_output_dir):
+        for child in os.listdir(test_output_dir):
+            child_path = os.path.join(test_output_dir, child)
+            if os.path.isdir(child_path):
+                shutil.rmtree(child_path)
+            else:
+                os.remove(child_path)
 
 if __name__ == "__main__":
     unittest.main()

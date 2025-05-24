@@ -5,6 +5,8 @@ Test suite for QA Agent decisions and workflow integration.
 import unittest
 from unittest.mock import patch, MagicMock
 from orchestration.states import TaskStatus
+import shutil
+import os
 
 # Test the QA agent's default behavior in the workflow
 class TestQAAgentDecisions(unittest.TestCase):
@@ -56,6 +58,17 @@ class TestQAAgentMockIntegration(unittest.TestCase):
         self.assertTrue(result["review_required"])
         self.assertIn("review_file", result)
         self.assertEqual(result["agent"], "qa")
+
+def teardown_module(module):
+    """Cleanup test_outputs directory after tests finish."""
+    test_output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_outputs")
+    if os.path.exists(test_output_dir):
+        for child in os.listdir(test_output_dir):
+            child_path = os.path.join(test_output_dir, child)
+            if os.path.isdir(child_path):
+                shutil.rmtree(child_path)
+            else:
+                os.remove(child_path)
 
 if __name__ == "__main__":
     unittest.main()

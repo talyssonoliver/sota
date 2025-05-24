@@ -88,6 +88,10 @@ logs/
 # Output files
 outputs/
 
+# Test outputs and artifacts
+outputs/
+tests/test_outputs/
+
 # OS files
 .DS_Store
 Thumbs.db
