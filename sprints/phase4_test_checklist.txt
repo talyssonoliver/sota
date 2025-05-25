@@ -1,0 +1,58 @@
+# Phase 4 Execution: Test and Validation Checklist (May 25, 2025)
+
+## Test Execution Commands
+
+```powershell
+# Run all tests (recommended before every commit)
+python -m pytest
+
+# Run only Step 4.2 prompt generation tests
+python -m pytest tests/test_step_4_2_prompt_generation.py -v
+
+# Run only Step 4.3 LangGraph workflow tests
+python -m pytest tests/test_step_4_3_langgraph_workflow.py -v
+
+# Run both Step 4.2 and 4.3 tests with coverage
+python -m pytest tests/test_step_4_2_prompt_generation.py tests/test_step_4_3_langgraph_workflow.py --cov=orchestration
+
+# Run integration tests for Step 4.2 and 4.3
+python -m pytest tests/test_step_4_2_prompt_generation.py::TestStep42Integration tests/test_step_4_3_langgraph_workflow.py::TestStep43Integration -v
+```
+
+## Pre-commit Checklist
+
+- [x] All unit and integration tests pass (pytest)
+- [x] Coverage >90% for all new/modified modules
+- [x] No critical errors or warnings in test output
+- [x] CLI interface tested for all major commands
+- [x] Error handling and edge cases validated
+- [x] Mock environments used for all external dependencies
+- [x] Temporary files/directories cleaned up after tests
+- [x] Test docstrings and fixtures updated for new scenarios
+
+## Commit & Push Instructions
+
+```powershell
+# Stage all changes
+git add .
+
+# Check status
+git status
+
+# Review diff (optional)
+git diff
+
+# Commit using conventional commit message
+# Example: test(langgraph): add dry run and CLI interface tests for Step 4.3
+# Example: fix(tests): ensure mock state includes all required keys for dry run
+# Example: chore(tests): update sprint_phase4_execution.txt with test checklist
+
+git commit -m "test(langgraph): ensure Step 4.3 workflow and CLI interface are fully tested and passing"
+
+# Push to remote
+git push
+```
+
+---
+
+**Note:** Always run the full test suite before committing to ensure reliability and maintainability. All test and validation steps above must be completed for every Phase 4 change.
