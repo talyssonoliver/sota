@@ -27,11 +27,10 @@ class TestMemoryEngine(unittest.TestCase):
         # Patch OpenAIEmbeddings to use our mock
         self.patcher = patch('tools.memory_engine.OpenAIEmbeddings', self.mock_embeddings)
         self.patcher.start()
-        
-        # Grant 'tester' read/write permissions for testing and set small chunk size
+          # Grant 'tester' read/write/delete/admin permissions for testing and set small chunk size
         test_config = MemoryEngineConfig(
             security_options={
-                "roles": {"tester": ["read", "write"], "fixture_tester": ["read", "write"]},
+                "roles": {"tester": ["read", "write", "delete", "admin"], "fixture_tester": ["read", "write", "delete", "admin"]},
                 "sanitize_inputs": True
             },
             chunking=ChunkingConfig(

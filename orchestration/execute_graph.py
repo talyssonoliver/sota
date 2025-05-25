@@ -39,11 +39,16 @@ def build_task_state(task_id):
         estimation_hours = task_metadata.get('estimation_hours', 0)
         artefacts = task_metadata.get('artefacts', [])
         state = task_metadata.get('state', TaskStatus.PLANNED)
-        
-        # Get context using context_topics if available
+          # Step 3.5 Implementation: Get context using enhanced context_topics retrieval
         task_context = ""
         if 'context_topics' in task_metadata and task_metadata['context_topics']:
-            task_context = get_context_by_keys(task_metadata['context_topics'])
+            # Use the new Step 3.5 focused context builder
+            from tools.memory_engine import build_focused_context
+            task_context = build_focused_context(
+                task_metadata['context_topics'], 
+                max_tokens=2000,  # Token budget management
+                max_per_topic=2   # Limit documents per topic
+            )
         else:
             # Fall back to vector search
             context_query = f"Task {task_id}: {task_title} - {task_description}"

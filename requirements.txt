@@ -34,3 +34,9 @@ watchdog==6.0.0
 
 # Logging
 python-json-logger
+
+# Optional enterprise dependencies (for secrets management)
+# Install only if needed:
+# pip install azure-keyvault-secrets azure-identity  # For Azure Key Vault
+# pip install boto3  # For AWS Secrets Manager
+# pip install hvac  # For HashiCorp Vault

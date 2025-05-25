@@ -1,0 +1,13 @@
+# Enterprise optional dependencies for Memory Engine
+# These are only needed if using enterprise secret management features
+
+# Azure Key Vault support
+azure-keyvault-secrets>=4.7.0
+azure-identity>=1.15.0
+
+# AWS Secrets Manager support  
+boto3>=1.34.0
+botocore>=1.34.0
+
+# HashiCorp Vault support
+hvac>=2.1.0
