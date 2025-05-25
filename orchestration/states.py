@@ -17,8 +17,12 @@ class TaskStatus(str, Enum):
     QA_PENDING = "QA_PENDING"    # Task is completed and waiting for QA
     DOCUMENTATION = "DOCUMENTATION"  # Task has passed QA and needs documentation
     HUMAN_REVIEW = "HUMAN_REVIEW"    # Task requires human review before proceeding
-    DONE = "DONE"            # Task is completed and passed QA
+    DONE = "DONE"            # Task is completed and passed QA (legacy)
     BLOCKED = "BLOCKED"      # Task is blocked by an issue
+    COMPLETED = "COMPLETED"  # Task is fully completed/completed (for compatibility)
+    FAILED = "FAILED"        # Task failed
+    QA_FAILED = "QA_FAILED"  # Task failed QA
+    REVIEW = "REVIEW"        # Task is under review
 
     def __str__(self):
         return self.value

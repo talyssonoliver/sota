@@ -1,5 +1,17 @@
 # Homepage Wireframe Summary
 
+# TODO: Summarize design/homepage-wireframe.md here. Example format:
+## Main Components
+- ...
+
+## User Flows
+- ...
+
+## Design Notes
+- ...
+
+---
+
 ## Layout Structure
 - Header: Logo, Navigation, User Actions (Search, Account, Cart)
 - Hero Banner: Product carousel with CTA buttons

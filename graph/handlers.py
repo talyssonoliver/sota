@@ -3,6 +3,7 @@ Agent Execution Handlers for LangGraph Workflow
 Implements execution wrappers for agents with status management.
 """
 
+import json
 from typing import Dict, Any
 from orchestration.registry import create_agent_instance
 from orchestration.states import TaskStatus

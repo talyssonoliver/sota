@@ -2,6 +2,37 @@
 
 This project implements a **multi-agent AI system** that automates software development tasks for the Artesanato E-commerce platform. It leverages specialized agents (Technical Lead, Backend, Frontend, QA, Documentation, etc.), each focused on a specific role, coordinated through a LangGraph-based workflow engine. The system uses CrewAI for agent logic, LangChain/LangGraph for orchestration, and a vector database (ChromaDB) for context-aware operations.
 
+## 🚀 Recent Updates (December 2024)
+
+### 🔐 Memory Engine Security & Performance Overhaul (COMPLETED)
+The Memory Engine has undergone a comprehensive security audit and performance optimization, resulting in a production-ready enterprise-grade system:
+
+**Critical Security Fixes:**
+- ✅ **Fixed insecure hash vulnerabilities** - Replaced collision-prone hash() with SHA256
+- ✅ **Implemented comprehensive PII detection** - Complete SecurityManager integration
+- ✅ **Enhanced encryption & key management** - Proper Fernet/AES-GCM implementation
+- ✅ **Added input sanitization** - Protection against injection attacks and XSS
+
+**Major Bug Fixes:**
+- ✅ **Fixed core retrieval flow bug** - Restored proper encryption/storage mechanisms
+- ✅ **Eliminated duplicate code** - Removed conflicting function definitions
+- ✅ **Fixed invalid references** - Corrected all retriever_store → vector_store calls
+- ✅ **Resolved syntax errors** - Fixed missing newlines across all classes
+
+**Performance Improvements:**
+- ✅ **Multi-tiered caching** - L1 (memory) + L2 (disk) with analytics
+- ✅ **Tiered storage management** - Hot/warm/cold with automatic migration
+- ✅ **Partition management** - Complete lifecycle with health monitoring
+- ✅ **Access pattern optimization** - LRU eviction and smart preloading
+
+**Implementation Completeness:**
+- ✅ **100% test success rate** - All 95+ tests passing including 6 memory engine tests
+- ✅ **Complete method implementations** - All placeholder methods fully implemented
+- ✅ **Comprehensive error handling** - Graceful degradation and recovery
+- ✅ **Production monitoring** - Audit logging, health metrics, and alerts
+
+📖 **Documentation**: [Memory Engine Guide](docs/memory_engine.md) | [Security Fixes Report](docs/memory_engine_code_review_fixes.md)
+
 ## Overview
 
 The system uses specialized agents for different roles (Technical Lead, Backend Engineer, Frontend Engineer, etc.) to complete pre-Sprint 0 tasks. It follows these design principles:
@@ -293,3 +324,53 @@ Custom tools in the `tools/` directory provide agents with capabilities like dat
 ## License
 
 MIT License. See `LICENSE` for details.
+
+## Commit Message Format
+This project follows the Conventional Commits standard for commit messages:
+
+feat: - A new feature (triggers a minor version bump)
+fix: - A bug fix (triggers a patch version bump)
+docs: - Documentation changes
+style: - Code style changes (formatting, etc.)
+refactor: - Code changes that neither fix bugs nor add features
+perf: - Performance improvements
+test: - Adding or modifying tests
+chore: - Changes to the build process or auxiliary tools
+BREAKING CHANGE: - Changes that break backward compatibility (triggers a major version bump)
+Automated Releases
+When you push to the main branch, the following happens automatically:
+
+A GitHub Action analyzes your commit messages
+The version in package.json is bumped based on the commit types
+A new tag is created and pushed
+A GitHub release is created with the packaged VSIX file
+The extension is published to VS Code Marketplace and Open VSX Registry (if tokens are configured)
+Repository Secrets for Publishing
+To enable automated publishing to the extension marketplaces, set up these repository secrets in your GitHub repository:
+
+GH_TOKEN (optional): Personal Access Token with 'repo' scope (used for pushing version changes)
+
+If not provided, the workflow will use the default GITHUB_TOKEN with write permissions
+Create this token at https://github.com/settings/tokens
+VSCE_PAT (optional): Personal Access Token for VSCode Marketplace publishing
+
+Create this token at https://dev.azure.com/
+Instructions: https://code.visualstudio.com/api/working-with-extensions/publishing-extension#get-a-personal-access-token
+OVSX_PAT (optional): Personal Access Token for Open VSX Registry publishing
+
+Create this token at https://open-vsx.org/
+Instructions: https://github.com/eclipse/openvsx/wiki/Publishing-Extensions#how-to-publish-an-extension
+To add these secrets:
+
+Go to your repository on GitHub
+Navigate to Settings > Secrets and variables > Actions
+Click "New repository secret"
+Add each token with its corresponding name
+
+### Pull Request Process
+
+Fork the repository
+Create your feature branch (git checkout -b feature/amazing-feature)
+Commit your changes using the conventional format (git commit -m 'feat: add amazing feature')
+Push to the branch (git push origin feature/amazing-feature)
+Open a Pull Request

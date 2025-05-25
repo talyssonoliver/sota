@@ -9,6 +9,7 @@ import time
 import threading
 import unittest
 import json
+import shutil
 from pathlib import Path
 from datetime import datetime
 
@@ -47,9 +48,16 @@ class TestEnhancedWorkflow(unittest.TestCase):
         """Clean up after tests."""
         # Record test timing
         self.timer.stop()
-        
-        # Print test timing information
         print(f"Test execution time: {self.timer.elapsed():.2f}s")
+        # Clean up test output directory
+        if self.test_output_dir.exists():
+            for child in self.test_output_dir.iterdir():
+                if child.is_dir():
+                    for subchild in child.iterdir():
+                        subchild.unlink()
+                    child.rmdir()
+                else:
+                    child.unlink()
     
     def verify_status_file(self, task_id):
         """Verify status file exists and contains valid JSON."""
@@ -301,6 +309,18 @@ class FeedbackTestRunner:
             details=details,
             execution_time=execution_time
         )
+
+
+def teardown_module(module):
+    """Cleanup test_outputs directory after tests finish."""
+    test_output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_outputs")
+    if os.path.exists(test_output_dir):
+        for child in os.listdir(test_output_dir):
+            child_path = os.path.join(test_output_dir, child)
+            if os.path.isdir(child_path):
+                shutil.rmtree(child_path)
+            else:
+                os.remove(child_path)
 
 
 if __name__ == "__main__":

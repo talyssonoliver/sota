@@ -8,6 +8,7 @@ import os
 import unittest
 from unittest.mock import patch, MagicMock
 from typing import Dict, Any
+import shutil
 
 # Add the parent directory to the path so we can import our modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -383,6 +384,31 @@ class TestFullWorkflowStateSequence(unittest.TestCase):
             self.assertEqual(state.get("status"), TaskStatus.BLOCKED)
             self.assertTrue(is_terminal_status(state.get("status")))
             self.assertIn("error", state)
+
+    def tearDown(self):
+        # Clean up any test output directories or files created by these tests
+        test_output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_outputs")
+        if os.path.exists(test_output_dir):
+            for child in os.listdir(test_output_dir):
+                child_path = os.path.join(test_output_dir, child)
+                if os.path.isdir(child_path):
+                    for subchild in os.listdir(child_path):
+                        os.remove(os.path.join(child_path, subchild))
+                    os.rmdir(child_path)
+                else:
+                    os.remove(child_path)
+
+
+def teardown_module(module):
+    """Cleanup test_outputs directory after tests finish."""
+    test_output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_outputs")
+    if os.path.exists(test_output_dir):
+        for child in os.listdir(test_output_dir):
+            child_path = os.path.join(test_output_dir, child)
+            if os.path.isdir(child_path):
+                shutil.rmtree(child_path)
+            else:
+                os.remove(child_path)
 
 
 if __name__ == "__main__":

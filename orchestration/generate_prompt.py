@@ -29,9 +29,15 @@ def get_task_context(task_id):
         # Try to load task metadata from YAML
         task_metadata = load_task_metadata(task_id)
         
-        # Use context_topics from metadata if available
+        # Step 3.5 Implementation: Use enhanced context_topics retrieval
         if 'context_topics' in task_metadata and task_metadata['context_topics']:
-            topic_context = get_context_by_keys(task_metadata['context_topics'])
+            # Use the new Step 3.5 focused context builder
+            from tools.memory_engine import build_focused_context
+            topic_context = build_focused_context(
+                task_metadata['context_topics'], 
+                max_tokens=2000,  # Token budget management
+                max_per_topic=2   # Limit documents per topic
+            )
             return topic_context
     except FileNotFoundError:
         # If no metadata file exists, fall back to the old method

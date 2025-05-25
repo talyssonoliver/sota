@@ -1,17 +1,69 @@
 """
 MCP Context Injection Utility
 Injects relevant context from MCP memory into existing prompts or templates.
+Enhanced version with agent integration support.
 """
 
 import sys
 import os
 import argparse
+import logging
 from pathlib import Path
+from datetime import datetime
+from typing import Dict, Any
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tools.memory_engine import get_relevant_context
+from utils.task_loader import load_task_metadata
+
+memory = None
+
+class ContextInjector:
+    """Handles context injection for task execution"""
+    
+    def __init__(self):
+        # Import here to avoid circular imports
+        from agents import agent_builder
+        self.agent_builder = agent_builder
+        self.logger = logging.getLogger(__name__)
+
+    def inject_task_context(self, task_id: str, agent_role: str) -> Dict[str, Any]:
+        """Inject context for specific task and agent"""
+        try:
+            # Load task metadata
+            task_metadata = load_task_metadata(task_id)
+            
+            # Get context for agent role and task
+            context = self.agent_builder._get_context_for_agent(agent_role, task_metadata)
+            
+            return {
+                "task_metadata": task_metadata,
+                "context": context,
+                "agent_role": agent_role,
+                "task_id": task_id
+            }
+        except Exception as e:
+            self.logger.error(f"Failed to inject context for task {task_id}: {e}")
+            return {}
+
+    def prepare_agent_with_context(self, agent_or_task, task_metadata=None):
+        """Prepare agent with injected context. Accepts agent instance or task id."""
+        # If agent_or_task is a string, treat as task_id
+        if isinstance(agent_or_task, str):
+            task_id = agent_or_task
+            if task_metadata is None or not isinstance(task_metadata, dict):
+                task_metadata = load_task_metadata(task_id)
+            agent_role = task_metadata.get("role") or task_metadata.get("owner") or "coordinator"
+            return self.agent_builder.build_agent(role=agent_role, task_metadata=task_metadata)
+        # If agent_or_task is an agent instance, inject context
+        else:
+            # Fallback: just return the agent
+            return agent_or_task
+
+# Global context injector
+context_injector = ContextInjector()
 
 def inject_context(prompt, query, position="top", marker="{{CONTEXT}}"):
     """

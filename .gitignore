@@ -10,6 +10,11 @@ yarn.lock
 logs/
 *.log
 
+# filepath: .gitignore
+cache/
+mock-api-key/
+*.pkl
+
 # OS
 .DS_Store
 Thumbs.db
@@ -82,6 +87,10 @@ logs/
 
 # Output files
 outputs/
+
+# Test outputs and artifacts
+outputs/
+tests/test_outputs/
 
 # OS files
 .DS_Store
