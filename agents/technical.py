@@ -31,22 +31,29 @@ def build_technical_agent(task_metadata: Dict = None, **kwargs):
         **kwargs
     )
 
-def get_technical_context(task_id: str = None) -> list:
-    """Get technical-specific context for external use. Always returns a list, or None on error if required by tests."""
+def get_context_with_error_handling(domains: List[str], max_results: int, testing_env_var: str = "TESTING") -> list:
+    """Retrieve context with error handling and fallback logic."""
     from agents import agent_builder
     try:
         result = agent_builder.memory.get_context_by_domains(
-            domains=["infrastructure", "deployment", "architecture"],
-            max_results=5
+            domains=domains,
+            max_results=max_results
         )
         if isinstance(result, list):
             return result
         return [result]
     except Exception:
         import os
-        if os.environ.get("TESTING", "0") == "1":
+        if os.environ.get(testing_env_var, "0") == "1":
             return None
-        return ["# No Context Available\nNo context found for domains: infrastructure, deployment, architecture"]
+        return [f"# No Context Available\nNo context found for domains: {', '.join(domains)}"]
+
+def get_technical_context(task_id: str = None) -> list:
+    """Get technical-specific context for external use. Always returns a list, or None on error if required by tests."""
+    return get_context_with_error_handling(
+        domains=["infrastructure", "deployment", "architecture"],
+        max_results=5
+    )
 
 def create_technical_lead_agent(
     llm_model: str = "gpt-4-turbo",
