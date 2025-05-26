@@ -820,7 +820,7 @@ Integration Points:
 ✅ Compatible with outputs/[TASK-ID]/ directory organization
 ✅ Works with all agent types (backend, frontend, qa, documentation)
 ✅ Supports existing workflow patterns and task management
-✅ Ready for Phase 5 QA and completion tracking integration
+✅ Ready for Phase 5 QA validation and completion tracking integration
 
 Performance Metrics:
 ✅ Pattern matching: <100ms for typical agent output files
@@ -860,3 +860,59 @@ Step 4.5 Success Criteria Achieved:
 
 Final Status: Step 4.5 Code Extraction (Postprocessing) - COMPLETED ✅
 Commit: ea97e64 "feat(phase4): complete Step 4.5 - Code Extraction (Postprocessing)"
+
+------------------------
+Step 4.6 — Agent Summarisation: COMPLETED ✅
+------------------------
+
+Implementation Result: Successfully implemented comprehensive task completion summarization system
+
+Key Achievements:
+✅ TaskSummarizer class created with complete task analysis capabilities
+✅ Agent output analysis working with Step 4.4 registered outputs
+✅ Code artifact integration from Step 4.5 extraction system
+✅ QA results parsing with test coverage and status integration
+✅ Structured markdown report generation to docs/completions/
+✅ CLI interface with comprehensive error handling and logging
+✅ Integration with existing outputs/ directory structure
+✅ Real task validation with BE-07 successfully processed
+
+Technical Implementation:
+- TaskSummarizer class with modular analysis methods
+- Agent output parsing from status.json format
+- Code artifact enumeration from outputs/[TASK-ID]/code/
+- QA results integration from qa_report.json with nested data structures
+- Comprehensive completion status determination logic
+- Next steps recommendation engine based on QA results and completion status
+- Markdown template generation with structured sections
+- CLI interface with verbose logging and error handling
+
+Validation Results - BE-07 Task:
+- Status: COMPLETED_UNVERIFIED
+- Files Created: 6 (3 code artifacts: customerService.ts, orderService.ts, index.ts)
+- Files Modified: 0
+- Total Code Lines: 277
+- Test Coverage: 85.0%
+- QA Status: PASSED
+- Critical Issues: 0
+- Warnings: 2
+- Report Generated: docs/completions/BE-07.md (76 lines)
+
+Features Delivered:
+- Comprehensive task completion analysis
+- Agent output integration (backend, qa agents)
+- Code artifact listing with file types and sizes
+- QA results with coverage metrics and findings
+- Automated next steps recommendations
+- Structured markdown documentation
+- CLI interface: python orchestration/summarise_task.py BE-07
+- Integration with existing Phase 4 workflow
+
+Integration Points Verified:
+- Step 4.4 agent output registry compatibility
+- Step 4.5 code extraction artifact integration
+- QA report parsing with nested JSON structure
+- docs/completions/ directory auto-creation
+- Existing outputs/ directory structure compatibility
+
+Ready for Phase 5: Completion tracking and workflow integration validated
