@@ -17,7 +17,7 @@ import shutil
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import our test helper
-from tests.workflow_test_helpers import ensure_check_recursion_method
+from tests.test_workflow_helpers import ensure_check_recursion_method
 
 # Import modules
 from orchestration.enhanced_workflow import EnhancedWorkflowExecutor

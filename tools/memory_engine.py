@@ -2519,8 +2519,7 @@ class MemoryEngine:
             # Step 3.5: Combine context with token budget management
             combined_parts = []
             current_tokens = 0
-            
-            # Group by topic for better organization
+              # Group by topic for better organization
             topics_dict = {}
             for doc in context_docs:
                 topic = doc["metadata"].get("topic", "general")
@@ -2541,6 +2540,10 @@ class MemoryEngine:
                     
                     topic_content += f"{doc['page_content']}\n\n"
                     current_tokens += estimated_tokens
+                
+                # Add the topic content to combined parts
+                if topic_content.strip() != f"## {topic.replace('-', ' ').title()}":
+                    combined_parts.append(topic_content)
             
             # Step 3.5: Join with proper formatting
             combined_context = "\n\n".join(combined_parts)
