@@ -63,12 +63,25 @@ def teardown_module(module):
     """Cleanup test_outputs directory after tests finish."""
     test_output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_outputs")
     if os.path.exists(test_output_dir):
+        import time
         for child in os.listdir(test_output_dir):
             child_path = os.path.join(test_output_dir, child)
-            if os.path.isdir(child_path):
-                shutil.rmtree(child_path)
-            else:
-                os.remove(child_path)
+            try:
+                if os.path.isdir(child_path):
+                    shutil.rmtree(child_path)
+                else:
+                    os.remove(child_path)
+            except PermissionError:
+                # File is in use on Windows, try again after delay
+                time.sleep(0.1)
+                try:
+                    if os.path.isdir(child_path):
+                        shutil.rmtree(child_path)
+                    else:
+                        os.remove(child_path)
+                except PermissionError:
+                    # Still in use, skip for now
+                    pass
 
 if __name__ == "__main__":
     unittest.main()

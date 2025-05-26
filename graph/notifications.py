@@ -27,12 +27,13 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.setLevel(logging.INFO)
 
-class NotificationLevel(str, Enum):
-    """Notification level for filtering events"""
-    ALL = "all"           # Send all notifications
-    ERROR = "error"       # Send only error notifications
-    STATE_CHANGE = "state_change"  # Send only state change notifications
-    COMPLETION = "completion"  # Send only task completion notifications
+class NotificationLevel(Enum):
+    """Notification level enumeration"""
+    ALL = "all"
+    ERROR = "error"
+    STATE_CHANGE = "state_change"
+    COMPLETION = "completion"
+    INFO = "info"  # Add INFO level
     NONE = "none"         # Do not send notifications
 
 

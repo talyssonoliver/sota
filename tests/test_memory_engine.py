@@ -54,9 +54,27 @@ class TestMemoryEngine(unittest.TestCase):
         # Stop patching
         self.patcher.stop()
         
-        # Remove test file
+        # Clear memory engine to release file handles
+        try:
+            if hasattr(self, 'memory'):
+                self.memory.clear(user="test_cleanup")
+        except Exception:
+            pass
+        
+        # Remove test file with retry for Windows file locking
         if os.path.exists(self.test_file):
-            os.remove(self.test_file)
+            try:
+                os.remove(self.test_file)
+            except PermissionError:
+                # File is still in use, try after brief delay
+                import time
+                time.sleep(0.1)
+                try:
+                    os.remove(self.test_file)
+                except PermissionError:
+                    # Still locked, skip for now - cleanup will handle it
+                    pass
+        
         # Clean up all test files and directories
         cleanup_test_files()
 

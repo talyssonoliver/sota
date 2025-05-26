@@ -243,17 +243,16 @@ def build_state_workflow_graph() -> StateGraph:
                 
                 if status == TaskStatus.BLOCKED:
                     return "human_review"
-                    
-                # Route based on task ID prefix
+                      # Route based on task ID prefix
                 if task_id.startswith("BE-"):
                     return "backend" if "backend" in agent_nodes.values() else "technical"
                 elif task_id.startswith("FE-"):
                     return "frontend" if "frontend" in agent_nodes.values() else "technical"
                 elif task_id.startswith("TL-"):
-                    return "technical" if "technical" in agent_nodes.values() else "coordinator"
+                    return "technical" if "technical" in agent_nodes.values() else "human_review"
                 else:
-                    # Default to technical for other task types if available, otherwise coordinator
-                    return "technical" if "technical" in agent_nodes.values() else "coordinator"
+                    # Default to technical for other task types if available, otherwise human_review
+                    return "technical" if "technical" in agent_nodes.values() else "human_review"
             
             workflow.add_conditional_edge(node_id, coordinator_router)
         else:
@@ -314,12 +313,24 @@ def build_advanced_workflow_graph() -> StateGraph:
     workflow.add_node("qa", qa_handler)
     workflow.add_node("doc", documentation_handler)
     workflow.add_node("human_review", human_review_handler)
-    
-    # Define status-based conditional routing
+      # Define status-based conditional routing with cycle detection
     def status_based_router(state):
         status = state.get("status")
         agent = state.get("agent", "")
         task_id = state.get("task_id", "UNKNOWN")
+        
+        # Track routing attempts to prevent infinite loops
+        routing_history = state.get("routing_history", [])
+        current_route = f"{agent}->{status}"
+        
+        # Check for potential infinite loops (same route repeated more than 3 times)
+        if routing_history.count(current_route) >= 3:
+            # Force completion to prevent infinite loops
+            return END
+        
+        # Add current route to history
+        routing_history.append(current_route)
+        state["routing_history"] = routing_history
         
         # First, route based on explicit task status
         if status == TaskStatus.CREATED:
@@ -339,7 +350,7 @@ def build_advanced_workflow_graph() -> StateGraph:
             elif task_id.startswith("FE-"):
                 return "frontend"
             else:
-                return "technical"  # Return a valid node instead of None
+                return "technical"
         elif status == TaskStatus.QA_PENDING:
             return "qa"
         elif status == TaskStatus.DOCUMENTATION:
@@ -347,9 +358,9 @@ def build_advanced_workflow_graph() -> StateGraph:
         elif status == TaskStatus.HUMAN_REVIEW:
             return "human_review"
         elif status == TaskStatus.BLOCKED:
-            return "coordinator"  # Send blocked tasks back to coordinator
-        elif status == TaskStatus.DONE:
-            return END  # Use END constant instead of None
+            return END  # End workflow for blocked tasks to prevent loops
+        elif status in [TaskStatus.DONE, TaskStatus.COMPLETED]:
+            return END
             
         # If no explicit status routing matched, use agent-based routing
         if agent == "coordinator":
@@ -372,21 +383,31 @@ def build_advanced_workflow_graph() -> StateGraph:
         elif agent == "qa":
             # QA results determine next step
             qa_result = state.get("qa_result", "")
+            qa_retry_count = state.get("qa_retry_count", 0)
+            
             if qa_result in ["passed", "approve", "correct"]:
                 return "doc"
             else:
-                # QA failed, send back to the appropriate implementation team
-                if task_id.startswith("BE-"):
-                    return "backend"
-                elif task_id.startswith("FE-"):
-                    return "frontend"
+                # Limit QA retries to prevent infinite loops
+                if qa_retry_count >= 2:
+                    # Too many QA failures, escalate to human review
+                    return "human_review"
                 else:
-                    return "coordinator"
+                    # Increment retry count and send back for rework
+                    state["qa_retry_count"] = qa_retry_count + 1
+                    if task_id.startswith("BE-"):
+                        return "backend"
+                    elif task_id.startswith("FE-"):
+                        return "frontend"
+                    else:
+                        return "coordinator"
         elif agent == "doc":
-            return END  # Use END constant instead of None
+            return END
+        elif agent == "human_review":
+            return END
         
-        # Default fallback routing
-        return "coordinator"
+        # Default fallback - end workflow instead of routing to coordinator
+        return END
     
     # Add explicit multi-path conditional edge for all nodes
     # Define all potential destinations, including END for terminal states
@@ -555,12 +576,11 @@ def build_dynamic_workflow_graph(task_id: str = None) -> StateGraph:
         elif current_agent == "doc" or current_agent == "documentation":
             return END  # End of workflow
         elif current_agent == "product_manager":
-            return END  # End of workflow
-        elif current_agent == "ux_designer":
+            return END  # End of workflow        elif current_agent == "ux_designer":
             return END  # End of workflow
         
-        # Default fallback - never return None
-        return "coordinator"
+        # Default fallback - end workflow to prevent infinite loops
+        return END
     
     # Add conditional edges for all nodes
     # Define all potential destinations with valid target values

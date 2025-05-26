@@ -15,11 +15,13 @@ from enum import Enum
 from typing import Dict, List, Any, Optional
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+from pathlib import Path
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from orchestration.states import TaskStatus
+from utils.execution_monitor import get_execution_monitor, get_dashboard_logger
 
 # Configure structured JSON logging for production
 logger = logging.getLogger("workflow_monitor")
@@ -50,24 +52,14 @@ class WorkflowMonitor:
     Monitor for LangGraph workflow executions.
     """
     
-    def __init__(self, task_id: Optional[str] = None, output_dir: Optional[str] = None):
-        """
-        Initialize the workflow monitor.
-        
-        Args:
-            task_id: Task ID to monitor, or None to monitor all tasks
-            output_dir: Directory where task outputs are stored, or None to use the default
-        """
+    def __init__(self, task_id=None, output_dir="outputs", simple_mode=False):
         self.task_id = task_id
-        self.base_output_dir = output_dir or os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 
-            "outputs"
-        )
+        self.output_dir = Path(output_dir)
+        self.simple_mode = simple_mode
         
-        if task_id:
-            self.output_dir = os.path.join(self.base_output_dir, task_id)
-        else:
-            self.output_dir = self.base_output_dir
+        # Step 4.8: Initialize monitoring components
+        self.execution_monitor = get_execution_monitor()
+        self.dashboard_logger = get_dashboard_logger()
         
         # Current state of the workflow
         self.nodes_status = {}
@@ -246,6 +238,69 @@ class WorkflowMonitor:
                         self.nodes_status[self.current_node] = NodeStatus.FAILED
                 except Exception as e:
                     self.add_log_message(f"Error processing error file {error_file}: {str(e)}", "ERROR", task_id=task_id)
+
+    def display_dashboard_data(self):
+        """Display real-time dashboard data."""
+        dashboard_data = self.dashboard_logger.get_dashboard_data()
+        
+        print("\n" + "="*60)
+        print("📊 REAL-TIME EXECUTION DASHBOARD")
+        print("="*60)
+        
+        # Current execution
+        if dashboard_data.get('live_execution'):
+            live = dashboard_data['live_execution']
+            print(f"🔴 CURRENT EXECUTION:")
+            print(f"   Task: {live.get('current_task', 'None')}")
+            print(f"   Agent: {live.get('current_agent', 'None')}")
+            print(f"   Status: {live.get('status', 'Unknown')}")
+            print(f"   Duration: {live.get('duration_minutes', 0)} minutes")
+            print(f"   Last Update: {live.get('last_update', 'Unknown')}")
+        else:
+            print("🔴 CURRENT EXECUTION: No active executions")
+        
+        # Summary statistics
+        if dashboard_data.get('summary_stats'):
+            stats = dashboard_data['summary_stats']
+            print(f"\n📈 EXECUTION STATISTICS:")
+            print(f"   Total Executions: {stats.get('total_executions', 0)}")
+            print(f"   Success Rate: {stats.get('successful_executions', 0)}/{stats.get('total_executions', 0)}")
+            print(f"   Average Duration: {stats.get('average_duration_minutes', 0)} minutes")
+            print(f"   Active Agents: {len(stats.get('agents_used', []))}")
+        
+        # Agent status
+        if dashboard_data.get('agent_status'):
+            print(f"\n🤖 AGENT STATUS:")
+            for task_id, agents in dashboard_data['agent_status'].items():
+                print(f"   Task {task_id}:")
+                for agent_name, agent_info in agents.items():
+                    status_icon = "✅" if agent_info['status'] == "COMPLETED" else "🔄" if agent_info['status'] == "RUNNING" else "❌"
+                    print(f"     {status_icon} {agent_name}: {agent_info['status']}")
+    
+    def run_simple_monitor(self):
+        """Run the monitoring in simple console mode with dashboard data."""
+        print("🎯 Starting Workflow Monitoring (Simple Mode)")
+        print("Press Ctrl+C to stop monitoring\n")
+        
+        try:
+            while True:
+                clear_screen()
+                print(f"Workflow Monitor - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+                
+                # Display dashboard data
+                self.display_dashboard_data()
+                
+                # Display execution summary
+                if self.task_id:
+                    report = self.execution_monitor.create_execution_summary_report(self.task_id)
+                    print(f"\n📋 TASK SUMMARY ({self.task_id}):")
+                    print(report)
+                
+                print(f"\n⏰ Monitoring... (refreshing every 5 seconds)")
+                time.sleep(5)
+                
+        except KeyboardInterrupt:
+            print("\n✅ Monitoring stopped by user")
 
 class OutputDirectoryEventHandler(FileSystemEventHandler):
     """

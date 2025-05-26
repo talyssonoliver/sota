@@ -12,6 +12,7 @@ import json
 import shutil
 from pathlib import Path
 from datetime import datetime
+from unittest.mock import patch, MagicMock
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -177,29 +178,35 @@ class TestEnhancedWorkflow(unittest.TestCase):
         self.test_results["execution_times"]["test_resilient_workflow"] = test_timer.elapsed()
         
         print(f"✅ Resilient workflow test passed in {test_timer.elapsed():.2f}s")
-    
     def test_notification_integration(self):
         """Test notification system integration."""
         test_timer = Timer().start()
         TestFeedback.print_section("Notification Integration Test")
-        
-        # Set to error-only notifications to reduce noise
-        executor = EnhancedWorkflowExecutor(
-            workflow_type="dynamic",
-            notification_level=NotificationLevel.ERROR,
-            output_dir=str(self.test_output_dir)
-        )
-        
-        # Test with a task that should succeed
-        task_id = "FE-01"
-        result = executor.execute_task(task_id)
-        
-        # Verify the task was executed
-        self.assertEqual(result["task_id"], task_id)
-        
-        # Verify the status file contains valid data
-        status_data = self.verify_status_file(task_id)
-        
+          # PHASE 2 OPTIMIZATION: Use fast notification config
+        with patch('time.sleep'), \
+             patch('requests.post') as mock_post, \
+             patch('graph.notifications.SlackNotifier.send_notification') as mock_notify:
+            
+            mock_post.return_value.status_code = 200
+            mock_notify.return_value = {"success": True}
+            
+            # Set to error-only notifications to reduce noise
+            executor = EnhancedWorkflowExecutor(
+                workflow_type="dynamic",
+                notification_level=NotificationLevel.ERROR,
+                output_dir=str(self.test_output_dir)
+            )
+            
+            # Test with a task that should succeed
+            task_id = "FE-01"
+            result = executor.execute_task(task_id)
+            
+            # Verify the task was executed
+            self.assertEqual(result["task_id"], task_id)
+            
+            # Verify the status file contains valid data
+            status_data = self.verify_status_file(task_id)
+            
         # Update test statistics
         test_timer.stop()
         self.test_results["tests_run"] += 1

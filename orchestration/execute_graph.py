@@ -48,6 +48,7 @@ from orchestration.states import TaskStatus
 from orchestration.generate_prompt import generate_prompt
 from tools.memory_engine import get_relevant_context, get_context_by_keys
 from utils.task_loader import load_task_metadata, update_task_state
+from utils.execution_monitor import get_execution_monitor, create_langgraph_hook
 
 # Configure structured JSON logging for Step 4.3 execution tracking
 logger = logging.getLogger("step_4_3_executor")
@@ -207,9 +208,21 @@ def run_task_graph(task_id, workflow_type="advanced", dry_run=False, output_dir=
         
     Returns:
         The result of the workflow execution
-    """
-    # Initialize Step 4.3 execution logger
+    """    # Initialize Step 4.3 execution logger
     execution_id = f"{task_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    
+    # Step 4.8: Initialize execution monitoring
+    if enable_monitoring:
+        monitor = get_execution_monitor()
+        workflow_execution_data = monitor.start_agent_execution(task_id, "workflow", {
+            'workflow_type': workflow_type,
+            'execution_id': execution_id,
+            'dry_run': dry_run
+        })
+        monitor.log_event(task_id, "workflow_start", {
+            'workflow_type': workflow_type,
+            'execution_id': execution_id
+        })
     
     logger.info("Starting Step 4.3 execution", extra={
         'event': 'workflow_start',
@@ -331,6 +344,25 @@ def run_task_graph(task_id, workflow_type="advanced", dry_run=False, output_dir=
         
         monitoring_thread = threading.Thread(target=monitor_execution, daemon=True)
         monitoring_thread.start()
+    
+    # Step 4.8: Create LangGraph execution hook for real-time monitoring
+    if enable_monitoring:
+        langgraph_hook = create_langgraph_hook(task_id)
+        
+        # Attach hook to workflow execution
+        def monitored_workflow_invoke(state):
+            langgraph_hook.on_workflow_start(state)
+            try:
+                result = workflow.invoke(state)
+                langgraph_hook.on_workflow_end(result)
+                return result
+            except Exception as e:
+                langgraph_hook.on_workflow_end(state, error=str(e))
+                raise
+        
+        # Replace workflow invoke with monitored version
+        original_invoke = workflow.invoke
+        workflow.invoke = monitored_workflow_invoke
     
     # Execute the Step 4.3 workflow with enhanced error handling
     result = None
@@ -461,8 +493,35 @@ def run_task_graph(task_id, workflow_type="advanced", dry_run=False, output_dir=
     
     if result.get('error'):
         print(f"Error: {result['error']}")
-    
     print("="*60)
+    
+    # Step 4.8: Complete workflow execution monitoring
+    if enable_monitoring:
+        workflow_status = "COMPLETED" if result.get('status') != TaskStatus.FAILED else "FAILED"
+        workflow_error = result.get('error') if workflow_status == "FAILED" else None
+        
+        monitor.complete_agent_execution(
+            workflow_execution_data,
+            status=workflow_status,
+            output=result,
+            error=workflow_error
+        )
+        
+        # Log final workflow statistics
+        monitor.log_event(task_id, "workflow_complete", {
+            'final_status': result.get('status'),
+            'execution_duration': (datetime.now() - execution_start).total_seconds(),
+            'workflow_type': workflow_type,
+            'agents_executed': result.get('agents_executed', [])
+        })
+        
+        # Print execution statistics
+        stats = monitor.get_execution_stats(task_id)
+        print(f"\n📊 Execution Statistics for {task_id}:")
+        print(f"   Total Executions: {stats['total_executions']}")
+        print(f"   Success Rate: {stats['successful_executions']}/{stats['total_executions']}")
+        print(f"   Average Duration: {stats['average_duration_minutes']} minutes")
+        print(f"   Agents Used: {', '.join(stats['agents_used'])}")
     
     logger.info("Step 4.3 execution completed", extra={
         'event': 'step_4_3_complete',

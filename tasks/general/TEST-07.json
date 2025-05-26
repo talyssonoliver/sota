@@ -1,0 +1,16 @@
+{
+  "task_id": "TEST-07",
+  "title": "Test Task for Status Updates",
+  "description": "A test task used for validating status update functionality",
+  "status": "CREATED",
+  "agent": "backend",
+  "priority": "medium",
+  "dependencies": [],
+  "context_topics": [
+    "testing",
+    "status_management"
+  ],
+  "estimated_hours": 2,
+  "created_at": "2025-05-26T13:00:00Z",
+  "updated_at": "2025-05-26T13:00:00Z"
+}

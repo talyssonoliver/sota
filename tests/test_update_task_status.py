@@ -11,7 +11,7 @@ def test_update_task_status_sets_done(tmp_path):
     # Setup: create a temporary tasks directory and task YAML
     task_id = "TEST-07"
     tasks_dir = tmp_path / "tasks"
-    tasks_dir.mkdir()
+    tasks_dir.mkdir(exist_ok=True)  # Allow directory to exist
     task_file = tasks_dir / f"{task_id}.yaml"
     initial_data = {
         "id": task_id,

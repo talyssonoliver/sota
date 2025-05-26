@@ -270,16 +270,30 @@ class EnhancedWorkflowExecutor:
             task_data = load_task_metadata(task_id)
         except Exception as e:
             logger.error(f"Failed to load task metadata for {task_id}: {str(e)}")
-            task_data = {"id": task_id}
+            task_data = None
+        
+        # Handle None task_data gracefully
+        if task_data is None:
+            task_data = {
+                "id": task_id,
+                "title": f"Task {task_id}",
+                "description": "",
+                "owner": "unknown",
+                "state": "CREATED"
+            }
+        
         initial_state = {
             "task_id": task_id,
             "status": TaskStatus.CREATED,
-            "title": task_data.get("title", ""),
+            "title": task_data.get("title", f"Task {task_id}"),
             "description": task_data.get("description", ""),
             "context_keys": task_data.get("context", []),
-            "start_time": datetime.now().isoformat()
+            "start_time": datetime.now().isoformat(),
+            "iteration_count": 0  # Track iterations to prevent infinite loops
         }
+        
         self.save_task_status(task_id, initial_state)
+        
         def agent_run(agent, input_state):
             if tracing_enabled:
                 @traceable(name="Agent Run")
@@ -293,6 +307,9 @@ class EnhancedWorkflowExecutor:
             state = initial_state
             # Check recursion limit - this can be overridden in tests
             while not self._check_recursion_limit(iteration, recursion_limit):
+                # Increment iteration counter in state
+                state["iteration_count"] = iteration
+                
                 # Before invoking workflow, check if agent is valid (if agent is specified in state)
                 agent_name = state.get("agent") or None
                 if agent_name:
@@ -307,18 +324,36 @@ class EnhancedWorkflowExecutor:
                         }
                         self.save_task_status(task_id, error_state)
                         return error_state
-                result = self.workflow.invoke(state)
+                
+                try:
+                    result = self.workflow.invoke(state)
+                except RecursionError:
+                    logger.error(f"Recursion error detected for task {task_id} at iteration {iteration}")
+                    error_state = {
+                        "task_id": task_id,
+                        "status": TaskStatus.BLOCKED,
+                        "error": "Maximum recursion depth exceeded",
+                        "timestamp": datetime.now().isoformat()
+                    }
+                    self.save_task_status(task_id, error_state)
+                    return error_state
+                
                 if "task_id" not in result:
                     result["task_id"] = task_id
+                    
                 self.save_task_status(task_id, result)
+                
                 if "output" in result:
                     agent = result.get("agent", "unknown")
                     self.save_agent_output(task_id, agent, result["output"])
+                
                 # Stop condition: status is completed or blocked
                 if result.get("status") in [TaskStatus.COMPLETED, TaskStatus.BLOCKED, TaskStatus.DONE]:
                     return result
+                
                 state = result
                 iteration += 1
+                
             # If we reach here, recursion/iteration limit was hit
             logger.error(f"Recursion/iteration limit of {recursion_limit} reached for task {task_id}")
             error_state = {
@@ -329,6 +364,7 @@ class EnhancedWorkflowExecutor:
             }
             self.save_task_status(task_id, error_state)
             return error_state
+            
         except Exception as e:
             error_state = {
                 "task_id": task_id,
