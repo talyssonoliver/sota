@@ -4,7 +4,7 @@ owner: backend
 depends_on:
 - TL-09
 - BE-01
-state: COMPLETED
+state: DONE
 priority: HIGH
 estimation_hours: 3
 description: 'Implement CRUD service logic for customers and orders in the Supabase
