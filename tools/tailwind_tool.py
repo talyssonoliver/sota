@@ -2,24 +2,27 @@
 Tailwind Tool - Provides utilities for Tailwind CSS configuration and usage
 """
 
-from langchain.tools import BaseTool
-from typing import Dict, Any
-import os
 import json
+import os
 import re
+from typing import Any, Dict
+
 from dotenv import load_dotenv
-from pydantic import Field, BaseModel, ValidationError
+from langchain.tools import BaseTool
+from pydantic import BaseModel, Field, ValidationError
+
 from tools.base_tool import ArtesanatoBaseTool
 
 load_dotenv()
 
+
 class TailwindTool(ArtesanatoBaseTool):
     """Tool for working with Tailwind CSS."""
-    
+
     name: str = "tailwind_tool"
     description: str = "Tool for generating Tailwind CSS classes and utilities"
     config_cache: Dict[str, Any] = Field(default_factory=dict)
-    
+
     class InputSchema(BaseModel):
         query: str
 
@@ -32,34 +35,34 @@ class TailwindTool(ArtesanatoBaseTool):
                     self.config_cache = json.load(f)
             except Exception as e:
                 print(f"Error loading Tailwind config: {e}")
-        
+
     def _run(self, query: str) -> str:
         try:
             validated = self.InputSchema(query=query)
             query = validated.query
             query_lower = query.lower()
-            
+
             if "config" in query_lower:
                 return self._get_tailwind_config()
-            
+
             elif any(term in query_lower for term in ["color", "palette", "theme"]):
                 return self._get_color_palette()
-            
+
             elif any(term in query_lower for term in ["typography", "font", "text"]):
                 return self._get_typography_config()
-            
+
             elif "spacing" in query_lower:
                 return self._get_spacing_config()
-            
+
             elif any(term in query_lower for term in ["responsive", "breakpoint", "mobile", "desktop"]):
                 return self._get_responsive_config()
-            
+
             elif any(term in query_lower for term in ["layout", "flex", "grid", "container"]):
                 return self._get_layout_utilities(query)
-            
+
             elif any(term in query_lower for term in ["class", "utility", "component"]):
                 return self._generate_utility_classes(query)
-            
+
             return (
                 "Tailwind operation processed. Please specify if you need information about:\n"
                 "- configuration (tailwind.config.js)\n"
@@ -68,17 +71,16 @@ class TailwindTool(ArtesanatoBaseTool):
                 "- spacing (padding, margin)\n"
                 "- responsive (breakpoints)\n"
                 "- layout (flex, grid, container)\n"
-                "- utility classes (buttons, cards, forms, etc.)"
-            )
+                "- utility classes (buttons, cards, forms, etc.)")
         except ValidationError as ve:
             return self.handle_error(ve, f"{self.name}._run.input_validation")
         except Exception as e:
             return self.handle_error(e, f"{self.name}._run")
-    
+
     def _arun(self, query: str) -> str:
         """Async version of _run."""
         return self._run(query)
-    
+
     def _get_tailwind_config(self) -> str:
         """Get the Tailwind configuration."""
         return """
@@ -130,7 +132,7 @@ module.exports = {
 }
 ```
 """
-    
+
     def _get_color_palette(self) -> str:
         """Get the color palette."""
         return """
@@ -161,7 +163,7 @@ Usage Examples:
 - Success Alert: bg-success text-white
 - Error Message: text-error
 """
-    
+
     def _get_typography_config(self) -> str:
         """Get the typography configuration."""
         return """
@@ -190,7 +192,7 @@ Usage Examples:
 - Body Text: <p class="text-body font-body text-charcoal">Body text content...</p>
 - Small Text: <p class="text-body-small font-body text-slate">Small text content...</p>
 """
-    
+
     def _get_spacing_config(self) -> str:
         """Get the spacing configuration."""
         return """
@@ -222,7 +224,7 @@ Usage Examples:
 - Button Padding: <button class="px-6 py-3">...</button>
 - Form Field Spacing: <div class="space-y-4">...</div>
 """
-    
+
     def _get_responsive_config(self) -> str:
         """Get the responsive configuration."""
         return """
@@ -258,7 +260,7 @@ We follow a mobile-first approach, which means styles are applied to mobile by d
     def _get_layout_utilities(self, query: str) -> str:
         """Get layout utilities based on the query."""
         result = "Layout Utilities:\n\n"
-        
+
         if "flex" in query.lower():
             result += """
 Flexbox Layout:
@@ -285,7 +287,7 @@ Example: Centered content both horizontally and vertically:
 </div>
 ```
 """
-        
+
         if "grid" in query.lower():
             result += """
 Grid Layout:
@@ -317,7 +319,7 @@ Example: Responsive grid with different column counts:
 </div>
 ```
 """
-        
+
         if "container" in query.lower():
             result += """
 Container:
@@ -340,14 +342,14 @@ Common Container Utilities:
 - Width constraints: max-w-xs, max-w-sm, max-w-md, max-w-lg, max-w-xl, max-w-2xl, max-w-3xl, max-w-4xl, max-w-5xl, max-w-6xl, max-w-7xl
 - Responsive padding: px-4 sm:px-6 lg:px-8
 """
-        
+
         return result
-    
+
     def _generate_utility_classes(self, query: str) -> str:
         """Generate utility classes based on the query."""
         # Analyze the query to determine which utility classes to generate
         result = "Tailwind Utility Classes:\n\n"
-        
+
         if "button" in query.lower():
             result += """
 Button Classes:
@@ -390,7 +392,7 @@ Icon Button:
 </button>
 ```
 """
-        
+
         elif "card" in query.lower():
             result += """
 Card Classes:
@@ -443,7 +445,7 @@ Interactive Card with Hover Effect:
 </div>
 ```
 """
-        
+
         elif "form" in query.lower() or "input" in query.lower():
             result += """
 Form Elements Classes:
@@ -553,7 +555,7 @@ Complete Form:
       placeholder="Enter your name"
     />
   </div>
-  
+
   <div class="space-y-2">
     <label class="text-body-small font-medium text-midnight-black">Email Address</label>
     <input
@@ -562,7 +564,7 @@ Complete Form:
       placeholder="Enter your email"
     />
   </div>
-  
+
   <div class="space-y-2">
     <label class="text-body-small font-medium text-midnight-black">Message</label>
     <textarea
@@ -570,7 +572,7 @@ Complete Form:
       placeholder="Enter your message"
     ></textarea>
   </div>
-  
+
   <div class="flex items-center space-x-2">
     <input
       type="checkbox"
@@ -579,14 +581,14 @@ Complete Form:
     />
     <label for="terms" class="text-body-small text-charcoal">I agree to the terms and conditions</label>
   </div>
-  
+
   <button type="submit" class="w-full inline-flex items-center justify-center rounded-md bg-brazilian-sun text-midnight-black px-4 py-2 text-button font-medium">
     Submit Form
   </button>
 </form>
 ```
 """
-        
+
         elif "alert" in query.lower() or "notification" in query.lower():
             result += """
 Alert/Notification Classes:
@@ -605,7 +607,7 @@ Success Alert:
 </div>
 ```
 """
-        
+
         elif "nav" in query.lower() or "navigation" in query.lower():
             result += """
 Navigation Classes:
@@ -617,20 +619,20 @@ Navbar:
     <div class="flex items-center">
       <span class="text-heading-4 font-heading font-bold text-midnight-black">Logo</span>
     </div>
-    
+
     <div class="hidden md:flex space-x-6">
       <a href="#" class="text-body font-medium text-midnight-black border-b-2 border-brazilian-sun">Home</a>
       <a href="#" class="text-body font-medium text-charcoal hover:text-midnight-black">About</a>
       <a href="#" class="text-body font-medium text-charcoal hover:text-midnight-black">Services</a>
       <a href="#" class="text-body font-medium text-charcoal hover:text-midnight-black">Contact</a>
     </div>
-    
+
     <div>
       <button class="inline-flex items-center justify-center rounded-md bg-brazilian-sun text-midnight-black px-4 py-2 text-button font-medium">
         Sign In
       </button>
     </div>
-    
+
     <button class="md:hidden">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -686,38 +688,43 @@ Pagination:
 </nav>
 ```
 """
-        
+
         return result
-    
-    def generate_component(self, component_type: str, variant: str = "default", props: Dict = None) -> str:
+
+    def generate_component(
+            self,
+            component_type: str,
+            variant: str = "default",
+            props: Dict = None) -> str:
         """
         Generate a specific Tailwind component with customizable props.
-        
+
         Args:
             component_type: Type of component (button, card, input, etc.)
             variant: Variant of the component (primary, secondary, etc.)
             props: Dictionary of properties to customize the component
-            
+
         Returns:
             HTML string of the generated component
         """
         props = props or {}
-        
-        # Implementation would create HTML with Tailwind classes based on parameters
+
+        # Implementation would create HTML with Tailwind classes based on
+        # parameters
         query = f"{component_type} {variant}"
         component_html = self._generate_utility_classes(query)
-        
+
         # In a real implementation, we'd parse the HTML and inject props
         # For now, we'll just return the component HTML
         return component_html
-    
+
     def analyze_tailwind_classes(self, html_snippet: str) -> str:
         """
         Analyze Tailwind classes in an HTML snippet and provide explanations.
-        
+
         Args:
             html_snippet: HTML code containing Tailwind classes
-            
+
         Returns:
             Explanation of the Tailwind classes used
         """
@@ -725,18 +732,18 @@ Pagination:
         # 1. Extract all classes from the HTML
         # 2. Group them by category (layout, color, typography, etc.)
         # 3. Provide explanations for each class
-        
+
         # Example implementation (simplified):
         class_pattern = re.compile(r'class="([^"]*)"')
         matches = class_pattern.findall(html_snippet)
-        
+
         if not matches:
             return "No Tailwind classes found in the HTML snippet."
-        
+
         all_classes = []
         for match in matches:
             all_classes.extend(match.split())
-        
+
         # Group classes by category (simplified)
         categories = {
             "Layout": [],
@@ -749,7 +756,7 @@ Pagination:
             "Interactions": [],
             "Other": []
         }
-        
+
         for cls in all_classes:
             if cls.startswith(("w-", "h-", "max-w-", "min-h-")):
                 categories["Layout"].append(cls)
@@ -769,13 +776,13 @@ Pagination:
                 categories["Interactions"].append(cls)
             else:
                 categories["Other"].append(cls)
-        
+
         # Build explanation
         explanation = "Tailwind Class Analysis:\n\n"
-        
+
         for category, classes in categories.items():
             if classes:
                 explanation += f"{category}:\n"
                 explanation += ", ".join(classes) + "\n\n"
-        
+
         return explanation

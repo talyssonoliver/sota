@@ -4,19 +4,20 @@ Test Suite for Step 4.3: LangGraph Workflow Execution
 Tests for orchestration/execute_graph.py functionality.
 """
 
-import pytest
 import json
 import os
 import sys
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from orchestration.execute_graph import build_task_state, main, run_task_graph
+from orchestration.states import TaskStatus
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from orchestration.execute_graph import build_task_state, run_task_graph, main
-from orchestration.states import TaskStatus
 
 
 class TestStep43WorkflowExecution:
@@ -37,13 +38,13 @@ class TestStep43WorkflowExecution:
     def test_build_task_state_success(self, mock_task_metadata):
         """Test successful task state building."""
         with patch('orchestration.execute_graph.load_task_metadata') as mock_load_task, \
-             patch('orchestration.execute_graph.get_relevant_context') as mock_get_context:
-            
+                patch('orchestration.execute_graph.get_relevant_context') as mock_get_context:
+
             mock_load_task.return_value = mock_task_metadata
             mock_get_context.return_value = {'backend': 'Backend context'}
-            
+
             result = build_task_state('BE-07')
-            
+
             assert result['task_id'] == 'BE-07'
             assert result['title'] == 'Test Backend Task'
             mock_load_task.assert_called_once_with('BE-07')
@@ -56,11 +57,11 @@ class TestStep43WorkflowExecution:
                 'title': 'Test Task',
                 'status': 'IN_PROGRESS',
                 'dependencies': [],
-                'context': ''            }
+                'context': ''}
             mock_build_state.return_value = mock_state
-            
+
             result = run_task_graph('BE-07', dry_run=True)
-            
+
             assert result == mock_state
             mock_build_state.assert_called_once_with('BE-07')
 
@@ -68,14 +69,13 @@ class TestStep43WorkflowExecution:
     def mock_workflow_execution(self):
         """Mock workflow execution for testing."""
         return {
-            'execute_workflow': lambda task_id, workflow_type="basic": {
+            'execute_workflow': lambda task_id,
+            workflow_type="basic": {
                 'result': 'Mock workflow completed',
                 'status': 'success',
                 'execution_duration': 0.1,
                 'task_id': task_id,
-                'enhanced_prompt': 'You are a test agent. Task completed successfully.'
-            }
-        }
+                'enhanced_prompt': 'You are a test agent. Task completed successfully.'}}
 
     def test_run_task_graph_advanced_workflow(self, mock_workflow_execution):
         """Test advanced workflow execution."""
@@ -85,32 +85,33 @@ class TestStep43WorkflowExecution:
             'status': 'success',
             'execution_duration': 0.1,
             'task_id': 'BE-07',
-            'enhanced_prompt': 'You are a test agent. Task completed successfully.'
-        }
-        
-        # Call the mock workflow execution directly 
-        result = mock_workflow_execution['execute_workflow']('BE-07', workflow_type="advanced")
-        
+            'enhanced_prompt': 'You are a test agent. Task completed successfully.'}
+
+        # Call the mock workflow execution directly
+        result = mock_workflow_execution['execute_workflow'](
+            'BE-07', workflow_type="advanced")
+
         assert 'result' in result
         assert result['status'] == 'success'
 
 
 class TestStep43CLIInterface:
     """Test Step 4.3 CLI interface."""
-    
+
     def test_main_with_task_argument(self):
         """Test main function with task argument."""
         test_args = ['execute_graph.py', '--task', 'BE-07']
-        
+
         with patch('sys.argv', test_args), \
-             patch('orchestration.execute_graph.run_task_graph') as mock_run:
-            
-            mock_run.return_value = {'result': 'Success', 'status': 'COMPLETED'}
-            
+                patch('orchestration.execute_graph.run_task_graph') as mock_run:
+
+            mock_run.return_value = {
+                'result': 'Success', 'status': 'COMPLETED'}
+
             with pytest.raises(SystemExit) as excinfo:
                 main()
             assert excinfo.value.code == 0
-            
+
             mock_run.assert_called_once()
 
 

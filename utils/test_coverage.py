@@ -2,10 +2,11 @@
 Test Coverage Reporter - Step 5.3
 Generates and summarizes test coverage for the AI Agent System.
 """
+import json
 import os
 import sys
-import json
 from pathlib import Path
+
 
 def generate_coverage_summary():
     """Stub: Generate a summary of test coverage (expand with real logic)."""
@@ -18,6 +19,7 @@ def generate_coverage_summary():
         ]
     }
     return summary
+
 
 if __name__ == "__main__":
     summary = generate_coverage_summary()

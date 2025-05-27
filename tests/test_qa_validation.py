@@ -1,6 +1,7 @@
+import json
 import os
 from pathlib import Path
-import json
+
 
 def test_qa_report_exists():
     """Test that the QA report for BE-07 is generated and contains required fields."""
@@ -19,4 +20,5 @@ def test_qa_report_exists():
         assert field in data, f"Missing field in QA report: {field}"
     assert data['task_id'] == 'BE-07', "QA report task_id mismatch"
     # Accept both 'PASSED' and legacy values for overall_status
-    assert data['overall_status'] in ("PASS", "FAIL", "WARN", "PASSED", "FAILED"), "Invalid overall_status in QA report"
+    assert data['overall_status'] in (
+        "PASS", "FAIL", "WARN", "PASSED", "FAILED"), "Invalid overall_status in QA report"

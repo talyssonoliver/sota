@@ -2,17 +2,20 @@
 Echo Tool - A simple tool for testing agent setup and configuration
 """
 
-from langchain.tools import BaseTool
 from typing import Optional
-from tools.base_tool import ArtesanatoBaseTool
+
+from langchain.tools import BaseTool
 from pydantic import BaseModel, ValidationError
+
+from tools.base_tool import ArtesanatoBaseTool
+
 
 class EchoTool(ArtesanatoBaseTool):
     """A simple tool that echoes back the input, used for testing agent functionality."""
-    
+
     name: str = "echo_tool"
     description: str = "A simple tool that echoes back the input. Use this when you need to test if the tool system is working."
-    
+
     class InputSchema(BaseModel):
         query: str
 

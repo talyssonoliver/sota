@@ -7,31 +7,31 @@ import os
 import sys
 from pathlib import Path
 
+from graph.graph_builder import (build_advanced_workflow_graph,
+                                 build_dynamic_workflow_graph,
+                                 build_state_workflow_graph,
+                                 build_workflow_graph)
+
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from graph.graph_builder import (
-    build_workflow_graph,
-    build_state_workflow_graph,
-    build_advanced_workflow_graph,
-    build_dynamic_workflow_graph
-)
 
-
-def visualize_workflow(output_path: str = "graph/critical_path_output.html", workflow_type: str = "basic"):
+def visualize_workflow(
+        output_path: str = "graph/critical_path_output.html",
+        workflow_type: str = "basic"):
     """
     Generate an HTML visualization of the specified workflow type.
-    
+
     Args:
         output_path: Path where the visualization should be saved
         workflow_type: Type of workflow to visualize ('basic', 'state', 'advanced', or 'dynamic')
-    
+
     Returns:
         Path to the generated visualization file
     """
     # Create directory if it doesn't exist
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    
+
     # Build the requested workflow type
     if workflow_type == "basic":
         print(f"Building basic workflow graph...")
@@ -47,7 +47,7 @@ def visualize_workflow(output_path: str = "graph/critical_path_output.html", wor
         workflow = build_dynamic_workflow_graph()
     else:
         raise ValueError(f"Unknown workflow type: {workflow_type}")
-    
+
     # Generate visualization
     print(f"Generating visualization at {output_path}...")
     try:
@@ -62,17 +62,21 @@ def visualize_workflow(output_path: str = "graph/critical_path_output.html", wor
 def main():
     """Command-line interface for generating workflow visualizations."""
     import argparse
-    
-    parser = argparse.ArgumentParser(description="Generate workflow visualizations")
-    
-    parser.add_argument("--output", "-o", default="graph/critical_path_output.html",
-                       help="Output path for the visualization")
-    parser.add_argument("--type", "-t", default="basic", 
-                       choices=["basic", "state", "advanced", "dynamic"],
-                       help="Type of workflow to visualize")
-    
+
+    parser = argparse.ArgumentParser(
+        description="Generate workflow visualizations")
+
+    parser.add_argument(
+        "--output",
+        "-o",
+        default="graph/critical_path_output.html",
+        help="Output path for the visualization")
+    parser.add_argument("--type", "-t", default="basic",
+                        choices=["basic", "state", "advanced", "dynamic"],
+                        help="Type of workflow to visualize")
+
     args = parser.parse_args()
-    
+
     try:
         visualize_workflow(args.output, args.type)
     except Exception as e:

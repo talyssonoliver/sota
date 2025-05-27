@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Debug script to test code extraction patterns."""
 
+import os
 import re
 import sys
-import os
+
+from orchestration.extract_code import CodeExtractor
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from orchestration.extract_code import CodeExtractor
 
 # Sample test data from the test file
 sample_output_advanced = """# Backend Agent Output for BE-07
@@ -23,32 +24,32 @@ Successfully implemented the customer service layer with advanced features.
 // filename: customerService.ts
 export class CustomerService {
     constructor(private supabase: SupabaseClient) {}
-    
+
     async getCustomer(id: string): Promise<Customer | null> {
         const { data, error } = await this.supabase
             .from('customers')
             .select('*')
             .eq('id', id)
             .single();
-        
+
         if (error) {
             throw new Error(`Failed to fetch customer: ${error.message}`);
         }
-        
+
         return data;
     }
 }
 ```
 
-### Order Service  
+### Order Service
 ```typescript
 // filename: orderService.ts
 export class OrderService {
     constructor(private supabase: SupabaseClient) {}
-    
+
     async createOrder(customerId: string, items: OrderItem[]): Promise<Order> {
         const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        
+
         const { data, error } = await this.supabase
             .from('orders')
             .insert({
@@ -59,11 +60,11 @@ export class OrderService {
             })
             .select()
             .single();
-        
+
         if (error) {
             throw new Error(`Failed to create order: ${error.message}`);
         }
-        
+
         return data;
     }
 }
@@ -84,11 +85,11 @@ database:
   host: localhost
   port: 5432
   name: artesanato_db
-  
+
 supabase:
   url: https://your-project.supabase.co
   anon_key: your-anon-key
-  
+
 redis:
   host: localhost
   port: 6379
@@ -103,20 +104,20 @@ import re
 
 def validate_email(email: str) -> bool:
     \"\"\"Validate email format.\"\"\"
-    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
     return bool(re.match(pattern, email))
 
 def validate_order_data(data: Dict[str, Any]) -> Optional[str]:
     \"\"\"Validate order data structure.\"\"\"
     required_fields = ['customer_id', 'total_amount']
-    
+
     for field in required_fields:
         if field not in data:
             return f"Missing required field: {field}"
-    
+
     if not isinstance(data['total_amount'], (int, float)) or data['total_amount'] <= 0:
         return "Total amount must be a positive number"
-    
+
     return None
 
 class ValidationError(Exception):
@@ -155,22 +156,23 @@ npm start
 ## Summary
 All service functions implemented successfully with proper error handling and TypeScript types."""
 
+
 def debug_patterns():
     """Debug the regex patterns to see what's being matched."""
-    
+
     extractor = CodeExtractor()
-    
+
     print("=== DEBUGGING CODE EXTRACTION PATTERNS ===\n")
-    
+
     # Test each pattern individually
     patterns = extractor.code_patterns
-    
+
     for i, pattern_str in enumerate(patterns, 1):
         print(f"Pattern {i}: {pattern_str[:100]}...")
         pattern = re.compile(pattern_str, re.DOTALL)
         matches = list(pattern.finditer(sample_output_advanced))
         print(f"Found {len(matches)} matches")
-        
+
         for j, match in enumerate(matches, 1):
             groups = match.groups()
             print(f"  Match {j}:")
@@ -179,13 +181,15 @@ def debug_patterns():
                 if group:
                     print(f"    Group {k}: {repr(group[:50])}...")
         print()
-    
+
     # Test the actual extraction
     print("=== ACTUAL EXTRACTION RESULTS ===")
     result = extractor._extract_code_blocks(sample_output_advanced)
     print(f"Total extracted files: {len(result.extracted_files)}")
     for file_info in result.extracted_files:
-        print(f"  - {file_info['filename']} ({file_info['language']}, {len(file_info['content'])} chars)")
+        print(
+            f"  - {file_info['filename']} ({file_info['language']}, {len(file_info['content'])} chars)")
+
 
 if __name__ == "__main__":
     debug_patterns()
