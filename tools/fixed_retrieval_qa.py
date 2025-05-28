@@ -2,16 +2,19 @@
 Fixed implementation of retrieval_qa method to handle different parameter formats and pass all tests.
 """
 
-from typing import Dict, Any, List, Optional, Tuple
-from tools.memory_engine import ChatOpenAI, ConversationBufferMemory
+from typing import Any, Dict, List, Optional, Tuple
+
 import langchain.chains
+
+from tools.memory_engine import ChatOpenAI, ConversationBufferMemory
+
 
 def retrieval_qa(
     self,
     query: Any,
     user=None,
     use_conversation=False,
-    chat_history=None, 
+    chat_history=None,
     chain=None,
     metadata_filter=None,
     temperature=0.0,
@@ -42,20 +45,26 @@ def retrieval_qa(
             query_str = query
         query_str = self._sanitize_and_check(query_str, user, "read")
         if hasattr(self, 'rate_limiter'):
-            allowed = self.rate_limiter.check() if hasattr(self.rate_limiter, 'check') else True
+            allowed = self.rate_limiter.check() if hasattr(
+                self.rate_limiter, 'check') else True
             if not allowed:
                 return "Rate limit exceeded. Please try again later."
         if not hasattr(self, 'llm') or self.llm is None:
-            self.llm = ChatOpenAI(temperature=temperature, model_name="gpt-3.5-turbo-16k")
+            self.llm = ChatOpenAI(temperature=temperature,
+                                  model_name="gpt-3.5-turbo-16k")
         elif temperature != 0.0:
-            self.llm = ChatOpenAI(temperature=temperature, model_name="gpt-3.5-turbo-16k")
+            self.llm = ChatOpenAI(temperature=temperature,
+                                  model_name="gpt-3.5-turbo-16k")
         k = kwargs.get("k", 5)
         retriever = None
         if hasattr(self, 'vector_store') and self.vector_store is not None:
             if metadata_filter:
-                retriever = self.vector_store.as_retriever(search_type="similarity", search_kwargs={"k": k, "filter": metadata_filter})
+                retriever = self.vector_store.as_retriever(
+                    search_type="similarity", search_kwargs={
+                        "k": k, "filter": metadata_filter})
             else:
-                retriever = self.vector_store.as_retriever(search_type="similarity", search_kwargs={"k": k})
+                retriever = self.vector_store.as_retriever(
+                    search_type="similarity", search_kwargs={"k": k})
         else:
             raise ValueError("No vector store available for retrieval.")
         # Use chain parameter directly if provided, otherwise check kwargs
@@ -84,7 +93,9 @@ def retrieval_qa(
                     for k, v in result.items():
                         if v and not k.startswith("_"):
                             return v
-                if hasattr(result, "_mock_return_value") and result._mock_return_value is not None:
+                if hasattr(
+                        result,
+                        "_mock_return_value") and result._mock_return_value is not None:
                     mock_val = result._mock_return_value
                     if isinstance(mock_val, dict):
                         if "result" in mock_val:
@@ -96,35 +107,39 @@ def retrieval_qa(
                     return str(mock_val)
                 return result
             except Exception as e:
-                    if not use_conversation:
-                        # Use the RetrievalQA class from the instance for test patching compatibility
-                        RetrievalQA = getattr(self, 'RetrievalQA', langchain.chains.RetrievalQA)
-                        chain = RetrievalQA.from_chain_type(
-                            llm=self.llm,
-                            chain_type="stuff",
-                            retriever=retriever,
-                            return_source_documents=True
-                        )
-                        query_params = {"query": query_str}
-                        if user is not None:
-                            query_params["user"] = user
-                            
-                        result = chain.invoke(query_params)
-                        
-                        # Handle MagicMock and dict results robustly
-                        if isinstance(result, dict) and "result" in result:
-                            return result["result"]
-                        elif isinstance(result, str):
-                            return result
-                        elif hasattr(result, "_mock_return_value") and result._mock_return_value is not None:
-                            mock_result = result._mock_return_value
-                            if isinstance(mock_result, dict) and "result" in mock_result:
-                                return mock_result["result"]
-                            elif isinstance(mock_result, str):
-                                return mock_result
-                            return str(mock_result)
-                        return str(result)
-                    return f"Error in chain execution: {str(e)}"
+                if not use_conversation:
+                    # Use the RetrievalQA class from the instance for test
+                    # patching compatibility
+                    RetrievalQA = getattr(
+                        self, 'RetrievalQA', langchain.chains.RetrievalQA)
+                    chain = RetrievalQA.from_chain_type(
+                        llm=self.llm,
+                        chain_type="stuff",
+                        retriever=retriever,
+                        return_source_documents=True
+                    )
+                    query_params = {"query": query_str}
+                    if user is not None:
+                        query_params["user"] = user
+
+                    result = chain.invoke(query_params)
+
+                    # Handle MagicMock and dict results robustly
+                    if isinstance(result, dict) and "result" in result:
+                        return result["result"]
+                    elif isinstance(result, str):
+                        return result
+                    elif hasattr(result, "_mock_return_value") and result._mock_return_value is not None:
+                        mock_result = result._mock_return_value
+                        if isinstance(
+                                mock_result,
+                                dict) and "result" in mock_result:
+                            return mock_result["result"]
+                        elif isinstance(mock_result, str):
+                            return mock_result
+                        return str(mock_result)
+                    return str(result)
+                return f"Error in chain execution: {str(e)}"
         else:
             # Create appropriate chains based on conversation mode
             if use_conversation:
@@ -137,49 +152,62 @@ def retrieval_qa(
                 )
                 if chat_history:
                     memory_obj.chat_memory.messages = [
-                        {"role": "user", "content": q} if i % 2 == 0 else {"role": "assistant", "content": a}
+                        {"role": "user", "content": q} if i % 2 == 0 else {
+                            "role": "assistant", "content": a}
                         for i, (q, a) in enumerate(chat_history)
                     ]
-                # Use ConversationalRetrievalChain from the instance for test patching compatibility
-                ConversationalRetrievalChain = getattr(self, 'ConversationalRetrievalChain', 
-                                                      langchain.chains.conversational_retrieval.base.ConversationalRetrievalChain)
+                # Use ConversationalRetrievalChain from the instance for test
+                # patching compatibility
+                ConversationalRetrievalChain = getattr(
+                    self,
+                    'ConversationalRetrievalChain',
+                    langchain.chains.conversational_retrieval.base.ConversationalRetrievalChain)
                 chain = ConversationalRetrievalChain.from_llm(
                     llm=self.llm,
                     retriever=retriever,
                     memory=memory_obj
                 )
                 # Properly build the query parameters dictionary
-                query_params = {"question": query_str, "chat_history": chat_history or []}
+                query_params = {"question": query_str,
+                                "chat_history": chat_history or []}
                 if user is not None:
                     query_params["user"] = user
             else:                # Use standard RetrievalQA
                 from langchain.chains.retrieval_qa.base import RetrievalQA
-                # First try to use the class method if it exists (for patching in tests)
-                if hasattr(RetrievalQA, 'from_chain_type') and callable(RetrievalQA.from_chain_type):
+
+                # First try to use the class method if it exists (for patching
+                # in tests)
+                if hasattr(
+                        RetrievalQA,
+                        'from_chain_type') and callable(
+                        RetrievalQA.from_chain_type):
                     chain = RetrievalQA.from_chain_type(
                         llm=self.llm,
                         chain_type="stuff",
                         retriever=retriever,
                         return_source_documents=True
-                    )                
+                    )
                 query_params = {"query": query_str}
                 if user is not None:
                     query_params["user"] = user
-                    
+
             result = chain.invoke(query_params)
-            
+
             # Handle result extraction
             if isinstance(result, dict):
                 if "result" in result:
                     return result["result"]
                 elif "answer" in result:
                     return result["answer"]
-                # Try to find any non-empty value that's not a private attribute
+                # Try to find any non-empty value that's not a private
+                # attribute
                 for k, v in result.items():
                     if v and not k.startswith("_"):
                         return v
             # Handle mock results
-            if hasattr(result, "_mock_return_value") and result._mock_return_value is not None:
+            if hasattr(
+                    result,
+                    "_mock_return_value") and result._mock_return_value is not None:
                 mock_result = result._mock_return_value
                 if isinstance(mock_result, dict):
                     if "result" in mock_result:
@@ -193,4 +221,3 @@ def retrieval_qa(
             return str(result)
     except Exception as e:
         return f"Error in retrieval_qa: {str(e)}"
-

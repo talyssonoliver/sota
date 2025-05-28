@@ -1,21 +1,25 @@
-id: BE-07
-title: Implement Missing Service Functions
-owner: backend
-depends_on:
-- TL-09
-- BE-01
-state: DONE
-priority: HIGH
-estimation_hours: 3
-description: 'Implement CRUD service logic for customers and orders in the Supabase
-  backend. Follow project service-layer pattern and error handling utilities.
-
-  '
+agent_id: backend_engineer
 artefacts:
-- lib/services/customerService.ts
-- lib/services/orderService.ts
-- tests/unit/services/
+- backend_service.py
+- api_endpoints.py
+- order_service.py
+- customer_service.py
+assignee: backend-agent
+complexity: medium
 context_topics:
 - db-schema
-- service-pattern
-- supabase-setup
+- service-layer-pattern
+created_date: '2025-05-26'
+dependencies:
+- TL-09
+- BE-01
+description: Create service layer for orders and customers using Supabase
+estimate: 3h
+estimation_hours: 3
+id: BE-07
+owner: backend
+priority: HIGH
+sprint: 1
+state: FAILED
+task_id: BE-07
+title: Backend Service Layer Implementation

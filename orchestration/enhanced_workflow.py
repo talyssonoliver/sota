@@ -4,16 +4,27 @@ Integrates all PHASE 2 enhancements: auto-generated graphs, resilience features,
 notifications, and support for monitoring.
 """
 
+import argparse
+import json
+import logging
 import os
 import sys
-import json
-import argparse
-import logging
-from typing import Dict, Any, Optional, Union
 from datetime import datetime
 from pathlib import Path
-from pythonjsonlogger import jsonlogger
+from typing import Any, Dict, Optional, Union
+
 from dotenv import load_dotenv
+from pythonjsonlogger import jsonlogger
+
+from graph.auto_generate_graph import build_auto_generated_workflow_graph
+from graph.graph_builder import (build_advanced_workflow_graph,
+                                 build_dynamic_workflow_graph,
+                                 build_workflow_graph)
+from graph.notifications import (NotificationLevel, SlackNotifier,
+                                 attach_notifications_to_workflow)
+from graph.resilient_workflow import create_resilient_workflow
+from orchestration.states import TaskStatus
+from utils.task_loader import load_task_metadata, update_task_state
 
 # Load environment variables
 load_dotenv()
@@ -21,40 +32,33 @@ load_dotenv()
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from graph.auto_generate_graph import build_auto_generated_workflow_graph
-from graph.graph_builder import (
-    build_workflow_graph,
-    build_advanced_workflow_graph,
-    build_dynamic_workflow_graph
-)
-from graph.resilient_workflow import create_resilient_workflow
-from graph.notifications import SlackNotifier, attach_notifications_to_workflow, NotificationLevel
-from orchestration.states import TaskStatus
-from utils.task_loader import load_task_metadata, update_task_state
 
 # Configure structured JSON logging for production
 logger = logging.getLogger("enhanced_workflow")
 handler = logging.StreamHandler()
-formatter = jsonlogger.JsonFormatter('%(asctime)s %(levelname)s %(name)s %(message)s %(agent)s %(task_id)s %(event)s')
+formatter = jsonlogger.JsonFormatter(
+    '%(asctime)s %(levelname)s %(name)s %(message)s %(agent)s %(task_id)s %(event)s')
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.setLevel(logging.INFO)
 
 # LangSmith tracing integration
 try:
-    from langsmith import traceable
     import os
+
+    from langsmith import traceable
     os.environ["LANGCHAIN_TRACING_V2"] = "true"
     tracing_enabled = True
 except ImportError:
     tracing_enabled = False
+
 
 class EnhancedWorkflowExecutor:
     """
     Executor for LangGraph workflows with enhanced features.
     Integrates auto-generated graphs, resilience, notifications, and monitoring support.
     """
-    
+
     def __init__(
         self,
         workflow_type: str = "dynamic",
@@ -64,7 +68,7 @@ class EnhancedWorkflowExecutor:
     ):
         """
         Initialize the enhanced workflow executor.
-        
+
         Args:
             workflow_type: Type of workflow to use ('basic', 'advanced', 'dynamic', or 'auto')
             resilience_config: Configuration for resilience features
@@ -78,37 +82,38 @@ class EnhancedWorkflowExecutor:
             "timeout_seconds": 300
         }
         self.notification_level = notification_level
-        
+
         # Set up output directory
         if output_dir:
             self.output_dir = Path(output_dir)
         else:
-            base_dir = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            base_dir = Path(os.path.dirname(
+                os.path.dirname(os.path.abspath(__file__))))
             self.output_dir = base_dir / "outputs"
-            
+
         # Create output directory if it doesn't exist
         os.makedirs(self.output_dir, exist_ok=True)
-        
+
         # Initialize workflow
         self.workflow = self._build_workflow()
-    
+
     def _check_recursion_limit(self, iteration: int, limit: int) -> bool:
         """
         Check if the recursion limit has been reached.
-        
+
         Args:
             iteration: Current iteration count
             limit: Maximum allowed iterations
-            
+
         Returns:
             True if limit is reached, False otherwise
         """
         return iteration >= limit
-    
+
     def _build_workflow(self):
         """
         Build and enhance the workflow with all features.
-        
+
         Returns:
             Enhanced workflow with resilience and notifications
         """
@@ -124,61 +129,63 @@ class EnhancedWorkflowExecutor:
             base_workflow = build_auto_generated_workflow_graph()
         else:
             raise ValueError(f"Unknown workflow type: {self.workflow_type}")
-        
+
         # Step 2: Add resilience features
         logger.info("Adding resilience features")
         resilient_workflow = create_resilient_workflow(
             lambda: base_workflow,
             config=self.resilience_config
         )
-        
+
         # Step 3: Add notification support
-        logger.info(f"Adding notifications with level: {self.notification_level}")
+        logger.info(
+            f"Adding notifications with level: {self.notification_level}")
         notifier = SlackNotifier(notification_level=self.notification_level)
         enhanced_workflow = attach_notifications_to_workflow(
             resilient_workflow,
             notifier,
             self.notification_level
         )
-        
+
         return enhanced_workflow
-    
+
     def prepare_task_directory(self, task_id: str) -> Path:
         """
         Prepare the output directory for a task.
-        
+
         Args:
             task_id: ID of the task to prepare for
-            
+
         Returns:
             Path to the task output directory
         """
         task_dir = self.output_dir / task_id
         os.makedirs(task_dir, exist_ok=True)
         return task_dir
-    
+
     def save_task_status(self, task_id: str, status: Dict[str, Any]):
         """
         Save the task status to a file for monitoring.
-        
+
         Args:
             task_id: ID of the task
             status: Current status information
         """
         task_dir = self.prepare_task_directory(task_id)
         status_path = task_dir / "status.json"
-        
+
         # Add timestamp
         status_with_time = status.copy()
         status_with_time["timestamp"] = datetime.now().isoformat()
-        
+
         with open(status_path, 'w') as f:
             json.dump(status_with_time, f, indent=2)
-    
-    def save_agent_output(self, task_id: str, agent: str, output: Union[str, dict, Any]):
+
+    def save_agent_output(self, task_id: str, agent: str,
+                          output: Union[str, dict, Any]):
         """
         Save agent output to a file for monitoring and review.
-        
+
         Args:
             task_id: ID of the task
             agent: Name of the agent
@@ -186,7 +193,7 @@ class EnhancedWorkflowExecutor:
         """
         task_dir = self.prepare_task_directory(task_id)
         output_path = task_dir / f"output_{agent}.md"
-        
+
         try:
             with open(output_path, 'w', encoding='utf-8') as f:
                 f.write(f"# {agent.capitalize()} Output for {task_id}\n\n")
@@ -206,18 +213,19 @@ class EnhancedWorkflowExecutor:
             # Write a simplified error output if the original attempt fails
             try:
                 with open(output_path, 'w', encoding='utf-8') as f:
-                    f.write(f"# Error saving output for {agent} on task {task_id}\n\n")
+                    f.write(
+                        f"# Error saving output for {agent} on task {task_id}\n\n")
                     f.write(f"Error: {str(e)}")
             except Exception:
                 pass  # Silently fail if we can't even write the error
-    
+
     def check_dependencies(self, task_id: str) -> tuple[bool, str]:
         """
         Check if all dependencies for a task are satisfied.
-        
+
         Args:
             task_id: ID of the task to check
-            
+
         Returns:
             Tuple of (is_satisfied, message)
         """
@@ -225,43 +233,45 @@ class EnhancedWorkflowExecutor:
             # Load task metadata
             task_data = load_task_metadata(task_id)
             dependencies = task_data.get("depends_on", [])
-            
+
             # If no dependencies, return satisfied
             if not dependencies:
                 return True, "No dependencies"
-            
+
             # Check each dependency
             unsatisfied = []
             for dep_id in dependencies:
                 try:
                     dep_data = load_task_metadata(dep_id)
                     dep_state = dep_data.get("state", "")
-                    
+
                     # Only DONE state is considered satisfied
                     if dep_state != "DONE" and dep_state != TaskStatus.DONE:
                         unsatisfied.append(dep_id)
                 except Exception:
                     # If we can't load the dependency, consider it unsatisfied
                     unsatisfied.append(dep_id)
-            
+
             # Return result
             if unsatisfied:
                 return False, f"Missing dependencies: {', '.join(unsatisfied)}"
             else:
                 return True, "All dependencies satisfied"
-                
+
         except Exception as e:
-            logger.error(f"Error checking dependencies for task {task_id}: {str(e)}")
-            return False, f"Error checking dependencies: {str(e)}"    
-        
-    def execute_task(self, task_id: str, recursion_limit: int = 25) -> Dict[str, Any]:
+            logger.error(
+                f"Error checking dependencies for task {task_id}: {str(e)}")
+            return False, f"Error checking dependencies: {str(e)}"
+
+    def execute_task(self, task_id: str,
+                     recursion_limit: int = 25) -> Dict[str, Any]:
         """
         Execute a task through the enhanced workflow.
-        
+
         Args:
             task_id: ID of the task to execute
             recursion_limit: Maximum allowed recursion/iteration depth
-            
+
         Returns:
             Result of the workflow execution
         """
@@ -269,17 +279,32 @@ class EnhancedWorkflowExecutor:
         try:
             task_data = load_task_metadata(task_id)
         except Exception as e:
-            logger.error(f"Failed to load task metadata for {task_id}: {str(e)}")
-            task_data = {"id": task_id}
+            logger.error(
+                f"Failed to load task metadata for {task_id}: {str(e)}")
+            task_data = None
+
+        # Handle None task_data gracefully
+        if task_data is None:
+            task_data = {
+                "id": task_id,
+                "title": f"Task {task_id}",
+                "description": "",
+                "owner": "unknown",
+                "state": "CREATED"
+            }
+
         initial_state = {
             "task_id": task_id,
             "status": TaskStatus.CREATED,
-            "title": task_data.get("title", ""),
+            "title": task_data.get("title", f"Task {task_id}"),
             "description": task_data.get("description", ""),
             "context_keys": task_data.get("context", []),
-            "start_time": datetime.now().isoformat()
+            "start_time": datetime.now().isoformat(),
+            "iteration_count": 0  # Track iterations to prevent infinite loops
         }
+
         self.save_task_status(task_id, initial_state)
+
         def agent_run(agent, input_state):
             if tracing_enabled:
                 @traceable(name="Agent Run")
@@ -293,7 +318,11 @@ class EnhancedWorkflowExecutor:
             state = initial_state
             # Check recursion limit - this can be overridden in tests
             while not self._check_recursion_limit(iteration, recursion_limit):
-                # Before invoking workflow, check if agent is valid (if agent is specified in state)
+                # Increment iteration counter in state
+                state["iteration_count"] = iteration
+
+                # Before invoking workflow, check if agent is valid (if agent
+                # is specified in state)
                 agent_name = state.get("agent") or None
                 if agent_name:
                     from orchestration.registry import get_agent_constructor
@@ -307,28 +336,51 @@ class EnhancedWorkflowExecutor:
                         }
                         self.save_task_status(task_id, error_state)
                         return error_state
-                result = self.workflow.invoke(state)
+
+                try:
+                    result = self.workflow.invoke(state)
+                except RecursionError:
+                    logger.error(
+                        f"Recursion error detected for task {task_id} at iteration {iteration}")
+                    error_state = {
+                        "task_id": task_id,
+                        "status": TaskStatus.BLOCKED,
+                        "error": "Maximum recursion depth exceeded",
+                        "timestamp": datetime.now().isoformat()
+                    }
+                    self.save_task_status(task_id, error_state)
+                    return error_state
+
                 if "task_id" not in result:
                     result["task_id"] = task_id
+
                 self.save_task_status(task_id, result)
+
                 if "output" in result:
                     agent = result.get("agent", "unknown")
                     self.save_agent_output(task_id, agent, result["output"])
+
                 # Stop condition: status is completed or blocked
-                if result.get("status") in [TaskStatus.COMPLETED, TaskStatus.BLOCKED, TaskStatus.DONE]:
+                if result.get("status") in [
+                        TaskStatus.COMPLETED,
+                        TaskStatus.BLOCKED,
+                        TaskStatus.DONE]:
                     return result
+
                 state = result
                 iteration += 1
+
             # If we reach here, recursion/iteration limit was hit
-            logger.error(f"Recursion/iteration limit of {recursion_limit} reached for task {task_id}")
+            logger.error(
+                f"Recursion/iteration limit of {recursion_limit} reached for task {task_id}")
             error_state = {
                 "task_id": task_id,
                 "status": TaskStatus.BLOCKED,
                 "error": f"Recursion/iteration limit of {recursion_limit} reached without hitting a stop condition",
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat()}
             self.save_task_status(task_id, error_state)
             return error_state
+
         except Exception as e:
             error_state = {
                 "task_id": task_id,
@@ -355,26 +407,32 @@ class EnhancedWorkflowExecutor:
         if result.get("status") == TaskStatus.COMPLETED:
             logger.info(f"Task {result.get('task_id')} completed successfully")
         elif result.get("status") == TaskStatus.FAILED:
-            logger.error(f"Task {result.get('task_id')} failed: {result.get('error')}")
+            logger.error(
+                f"Task {result.get('task_id')} failed: {result.get('error')}")
         return result
+
 
 def main():
     """Command-line interface for the enhanced workflow executor."""
-    parser = argparse.ArgumentParser(description="Execute tasks with enhanced LangGraph workflow")
-    parser.add_argument("--task", "-t", help="Task ID to execute (e.g., BE-07)")
-    parser.add_argument("--workflow", "-w", default="dynamic", 
+    parser = argparse.ArgumentParser(
+        description="Execute tasks with enhanced LangGraph workflow")
+    parser.add_argument(
+        "--task", "-t", help="Task ID to execute (e.g., BE-07)")
+    parser.add_argument("--workflow", "-w", default="dynamic",
                         choices=["basic", "advanced", "dynamic", "auto"],
                         help="Workflow type to use")
     parser.add_argument("--notifications", "-n", default="all",
-                        choices=["all", "error", "state_change", "completion", "none"],
+                        choices=["all", "error", "state_change",
+                                 "completion", "none"],
                         help="Notification level")
-    parser.add_argument("--output", "-o", help="Output directory for task results")
-    
+    parser.add_argument(
+        "--output", "-o", help="Output directory for task results")
+
     args = parser.parse_args()
-    
+
     if not args.task:
         parser.error("Task ID is required")
-    
+
     # Map notification level
     notification_level_map = {
         "all": NotificationLevel.ALL,
@@ -383,17 +441,18 @@ def main():
         "completion": NotificationLevel.COMPLETION,
         "none": NotificationLevel.NONE
     }
-    notification_level = notification_level_map.get(args.notifications, NotificationLevel.ALL)
-    
+    notification_level = notification_level_map.get(
+        args.notifications, NotificationLevel.ALL)
+
     # Create and run the enhanced workflow
     executor = EnhancedWorkflowExecutor(
         workflow_type=args.workflow,
         notification_level=notification_level,
         output_dir=args.output
     )
-    
+
     result = executor.execute_task(args.task)
-    
+
     # Print result summary
     print(f"\nTask Execution Summary for {args.task}:")
     print(f"Status: {result.get('status', 'Unknown')}")
@@ -403,6 +462,7 @@ def main():
     print(f"Output saved to: {executor.output_dir / args.task}")
     print("\nFor real-time monitoring, run:")
     print(f"python scripts/monitor_workflow.py --task {args.task}")
+
 
 if __name__ == "__main__":
     main()

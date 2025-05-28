@@ -2,24 +2,26 @@
 Supabase Tool - Provides database querying and schema information
 """
 
-from typing import Dict, Any, Optional, Union
-import os
 import json
+import os
+from typing import Any, Dict, Optional, Union
+
 from dotenv import load_dotenv
-from supabase import create_client, Client
-from pydantic import Field, BaseModel, ValidationError
+from pydantic import BaseModel, Field, ValidationError
+from supabase import Client, create_client
 
 from tools.base_tool import ArtesanatoBaseTool
 
 load_dotenv()
 
+
 class SupabaseTool(ArtesanatoBaseTool):
     """Tool for interacting with Supabase database."""
-    
+
     name: str = "supabase_tool"
     description: str = "Tool for querying Supabase database and retrieving schema information"
     client: Optional[Any] = None
-    
+
     class InputSchema(BaseModel):
         query: str
 
@@ -28,10 +30,11 @@ class SupabaseTool(ArtesanatoBaseTool):
         super().__init__(**kwargs)
         supabase_url = os.getenv("SUPABASE_URL")
         supabase_key = os.getenv("SUPABASE_KEY")
-        
+
         if not supabase_url or not supabase_key:
             self.client = None
-            self.log("Warning: Supabase credentials not found. Using mock responses.")
+            self.log(
+                "Warning: Supabase credentials not found. Using mock responses.")
         else:
             try:
                 self.client = create_client(supabase_url, supabase_key)
@@ -39,20 +42,22 @@ class SupabaseTool(ArtesanatoBaseTool):
             except Exception as e:
                 self.client = None
                 self.log(f"Error initializing Supabase client: {str(e)}")
-    
+
     def _check_env_vars(self) -> None:
         """Check for required environment variables."""
-        # Just log warning if not available, since mock functionality is provided
+        # Just log warning if not available, since mock functionality is
+        # provided
         if not os.getenv("SUPABASE_URL") or not os.getenv("SUPABASE_KEY"):
-            self.log("Supabase environment variables (SUPABASE_URL, SUPABASE_KEY) not found.")
-    
+            self.log(
+                "Supabase environment variables (SUPABASE_URL, SUPABASE_KEY) not found.")
+
     def plan(self, query: str) -> Dict[str, Any]:
         """
         Generate an execution plan for the Supabase query.
-        
+
         Args:
             query: The input query string
-            
+
         Returns:
             Dict containing the execution plan
         """
@@ -62,18 +67,18 @@ class SupabaseTool(ArtesanatoBaseTool):
             "params": {"query": query},
             "description": "Execute Supabase operation"
         }
-        
+
         # Determine the action based on the query
         if "schema" in query_lower:
             plan["action"] = "get_schema"
             plan["description"] = "Retrieve database schema information"
         elif "service pattern" in query_lower or "service template" in query_lower:
-            plan["action"] = "get_service_pattern" 
+            plan["action"] = "get_service_pattern"
             plan["description"] = "Retrieve service pattern examples"
         elif "select" in query_lower or "query" in query_lower:
             plan["action"] = "execute_query"
             plan["description"] = "Execute database query"
-            
+
             # Try to extract table name for better planning
             if "from" in query_lower:
                 parts = query_lower.split("from")
@@ -83,26 +88,27 @@ class SupabaseTool(ArtesanatoBaseTool):
         else:
             plan["action"] = "generic_response"
             plan["description"] = "Generic Supabase information"
-            
+
         return plan
-    
-    def execute(self, query: str, plan: Optional[Dict[str, Any]] = None) -> str:
+
+    def execute(self, query: str,
+                plan: Optional[Dict[str, Any]] = None) -> str:
         """
         Execute the Supabase tool based on the provided plan.
-        
+
         Args:
             query: The input query string
             plan: The execution plan
-            
+
         Returns:
             Result of the Supabase operation
         """
         if not plan:
             plan = self.plan(query)
-            
+
         action = plan.get("action")
         self.log(f"Executing action: {action}")
-        
+
         try:
             if action == "get_schema":
                 return self._get_schema_info()
@@ -113,12 +119,11 @@ class SupabaseTool(ArtesanatoBaseTool):
             else:
                 return (
                     "Supabase query processed. Please specify if you need schema information, "
-                    "service pattern examples, or want to execute a specific database query."
-                )
+                    "service pattern examples, or want to execute a specific database query.")
         except Exception as e:
             self.log(f"Error during execution: {str(e)}")
             return f"Error processing Supabase request: {str(e)}"
-    
+
     def _run(self, query: str) -> str:
         """Execute a query against the Supabase database (LangChain compatibility)."""
         try:
@@ -135,16 +140,17 @@ class SupabaseTool(ArtesanatoBaseTool):
     def _arun(self, query: str) -> str:
         """Async version of _run."""
         return self._run(query)
-    
+
     def _get_schema_info(self) -> str:
         """Return database schema information by querying Supabase system tables."""
         if not self.client:
             # Use static schema from context store if client is not available
             return self._get_mock_schema()
-        
+
         try:
             # Define schema introspection query for PostgreSQL (which Supabase uses)
-            # This is an actual implementation that queries the information_schema
+            # This is an actual implementation that queries the
+            # information_schema
             schema_query = """
             SELECT
                 table_name,
@@ -164,10 +170,11 @@ class SupabaseTool(ArtesanatoBaseTool):
             ORDER BY
                 table_name, ordinal_position;
             """
-            
+
             # Execute the SQL query using POST rpc function call
-            response = self.client.rpc("exec_sql", {"sql": schema_query}).execute()
-            
+            response = self.client.rpc(
+                "exec_sql", {"sql": schema_query}).execute()
+
             # Process response
             if hasattr(response, 'data') and response.data:
                 # Group columns by table
@@ -176,27 +183,31 @@ class SupabaseTool(ArtesanatoBaseTool):
                     table_name = column.get('table_name')
                     if table_name not in tables:
                         tables[table_name] = []
-                    
+
                     # Format data type with constraints
                     data_type = column.get('data_type', 'unknown')
                     if column.get('character_maximum_length'):
                         data_type += f"({column.get('character_maximum_length')})"
                     elif column.get('numeric_precision') and column.get('numeric_scale'):
                         data_type += f"({column.get('numeric_precision')},{column.get('numeric_scale')})"
-                    
+
                     # Add nullability
-                    nullable = "NULL" if column.get('is_nullable') == "YES" else "NOT NULL"
-                    
+                    nullable = "NULL" if column.get(
+                        'is_nullable') == "YES" else "NOT NULL"
+
                     # Add default value if present
-                    default = f" DEFAULT {column.get('column_default')}" if column.get('column_default') else ""
-                    
+                    default = f" DEFAULT {
+                        column.get('column_default')}" if column.get('column_default') else ""
+
                     # Add identity/serial info
-                    identity = f" {column.get('identity_generation')}" if column.get('identity_generation') else ""
-                    
+                    identity = f" {column.get('identity_generation')}" if column.get(
+                        'identity_generation') else ""
+
                     # Format the complete column definition
-                    column_def = f"{column.get('column_name')}: {data_type} {nullable}{default}{identity}"
+                    column_def = f"{
+                        column.get('column_name')}: {data_type} {nullable}{default}{identity}"
                     tables[table_name].append(column_def)
-                
+
                 # Extract foreign key constraints
                 fk_query = """
                 SELECT
@@ -217,9 +228,10 @@ class SupabaseTool(ArtesanatoBaseTool):
                 AND
                     tc.table_schema = 'public';
                 """
-                
-                fk_response = self.client.rpc("exec_sql", {"sql": fk_query}).execute()
-                
+
+                fk_response = self.client.rpc(
+                    "exec_sql", {"sql": fk_query}).execute()
+
                 # Add foreign key constraints to column definitions
                 if hasattr(fk_response, 'data') and fk_response.data:
                     for fk in fk_response.data:
@@ -227,13 +239,13 @@ class SupabaseTool(ArtesanatoBaseTool):
                         column = fk.get('column_name')
                         ref_table = fk.get('foreign_table_name')
                         ref_column = fk.get('foreign_column_name')
-                        
+
                         if table in tables:
                             # Find the column and append foreign key info
                             for i, col_def in enumerate(tables[table]):
                                 if col_def.startswith(f"{column}:"):
                                     tables[table][i] += f" REFERENCES {ref_table}({ref_column})"
-                
+
                 # Format the schema information into a readable string
                 schema_text = "Database Schema for Artesanato E-commerce:\n\n## Tables\n\n"
                 for table_name, columns in tables.items():
@@ -241,7 +253,7 @@ class SupabaseTool(ArtesanatoBaseTool):
                     for column in columns:
                         schema_text += f"- {column}\n"
                     schema_text += "\n"
-                
+
                 # Get primary key information
                 pk_query = """
                 SELECT
@@ -259,27 +271,31 @@ class SupabaseTool(ArtesanatoBaseTool):
                 ORDER BY
                     tc.table_name;
                 """
-                
-                pk_response = self.client.rpc("exec_sql", {"sql": pk_query}).execute()
-                
+
+                pk_response = self.client.rpc(
+                    "exec_sql", {"sql": pk_query}).execute()
+
                 # Add primary key annotations
                 if hasattr(pk_response, 'data') and pk_response.data:
                     schema_text += "## Primary Keys\n\n"
                     for pk in pk_response.data:
-                        schema_text += f"- {pk.get('table_name')}: {pk.get('column_name')}\n"
-                
+                        schema_text += f"- {
+                            pk.get('table_name')}: {
+                            pk.get('column_name')}\n"
+
                 return schema_text
             else:
                 return "Error retrieving schema information from Supabase."
         except Exception as e:
             print(f"Error getting schema from Supabase: {str(e)}")
             return self._get_mock_schema()
-    
+
     def _get_mock_schema(self) -> str:
         """Return mock schema information from context store."""
         try:
-            schema_file = os.path.join(os.getcwd(), "context-store", "db", "db-schema-summary.md")
-            
+            schema_file = os.path.join(
+                os.getcwd(), "context-store", "db", "db-schema-summary.md")
+
             if os.path.exists(schema_file):
                 with open(schema_file, 'r') as f:
                     return f.read()
@@ -364,17 +380,20 @@ class SupabaseTool(ArtesanatoBaseTool):
             """
         except Exception as e:
             return f"Error loading mock schema: {str(e)}"
-    
+
     def _get_service_pattern(self) -> str:
         """Return service pattern examples."""
         try:
             # Try the new organized path first
-            service_pattern_file = os.path.join(os.getcwd(), "context-store", "patterns", "service-pattern.md")
-            
-            # If not found, fall back to original path for backward compatibility
+            service_pattern_file = os.path.join(
+                os.getcwd(), "context-store", "patterns", "service-pattern.md")
+
+            # If not found, fall back to original path for backward
+            # compatibility
             if not os.path.exists(service_pattern_file):
-                service_pattern_file = os.path.join(os.getcwd(), "context-store", "service-pattern.md")
-            
+                service_pattern_file = os.path.join(
+                    os.getcwd(), "context-store", "service-pattern.md")
+
             if os.path.exists(service_pattern_file):
                 with open(service_pattern_file, 'r') as f:
                     return f.read()
@@ -391,15 +410,15 @@ class SupabaseTool(ArtesanatoBaseTool):
                       .from('table_name')
                       .select('*')
                       .eq('field', value);
-                      
+
                     if (result.error) {
                       return { data: null, error: result.error };
                     }
-                    
+
                     return { data: result.data, error: null };
                       return { data: null, error: result.error };
                     }
-                    
+
                     return { data: result.data, error: null };
                   } catch (error) {
                     return handleError(error, 'ServiceName.functionName');
@@ -409,40 +428,40 @@ class SupabaseTool(ArtesanatoBaseTool):
                 """
         except Exception as e:
             return f"Error loading service pattern: {str(e)}"
-    
+
     def _handle_db_query(self, query: str) -> str:
         """Execute database queries against Supabase."""
         if not self.client:
             return self._handle_mock_db_query(query)
-        
+
         try:
             # Parse the query to extract table and conditions
             # This is a simplified parser for demonstration
             # In a real implementation, you would use a more robust SQL parser
             query_lower = query.lower()
-            
+
             # Extract table name and fields
             if "from" not in query_lower:
                 return "Invalid query. Please specify the table using FROM clause."
-            
+
             # Simple parsing of SELECT query
             if "select" in query_lower:
                 parts = query_lower.split("from")
                 if len(parts) < 2:
                     return "Invalid query format. Expected 'SELECT fields FROM table'."
-                
+
                 select_part = parts[0].replace("select", "").strip()
                 fields = "*" if select_part == "" else select_part
-                
+
                 table_part = parts[1].strip().split(" ")[0]
                 table_name = table_part
-                
+
                 # Execute the query using Supabase client
                 result = self.client.from_(table_name).select(fields).execute()
-                
+
                 if hasattr(result, 'error') and result.error:
                     return f"Error executing query: {result.error.message}"
-                
+
                 if hasattr(result, 'data'):
                     # Format the result as a readable string
                     response = f"Query results from {table_name}:\n\n"
@@ -456,15 +475,15 @@ class SupabaseTool(ArtesanatoBaseTool):
         except Exception as e:
             print(f"Error executing Supabase query: {str(e)}")
             return self._handle_mock_db_query(query)
-    
+
     def _handle_mock_db_query(self, query: str) -> str:
         """Return mock responses for database queries."""
         query_lower = query.lower()
-        
+
         if "product" in query_lower:
             return """
             Query results from products:
-            
+
             [
               {
                 "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -493,7 +512,7 @@ class SupabaseTool(ArtesanatoBaseTool):
         elif "categor" in query_lower:
             return """
             Query results from categories:
-            
+
             [
               {
                 "id": "c9d4c844-4b4d-4d1a-b4a4-c3d4d5e6f7g8",
@@ -516,7 +535,7 @@ class SupabaseTool(ArtesanatoBaseTool):
         elif "customer" in query_lower or "user" in query_lower:
             return """
             Query results from customers:
-            
+
             [
               {
                 "id": "a1a2a3a4-b1b2-c1c2-d1d2-e1e2f1f2g1g2",
@@ -539,7 +558,7 @@ class SupabaseTool(ArtesanatoBaseTool):
         elif "order" in query_lower:
             return """
             Query results from orders:
-            
+
             [
               {
                 "id": "e1e2e3e4-f1f2-g1g2-h1h2-i1i2j1j2k1k2",

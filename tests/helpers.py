@@ -1,6 +1,7 @@
 import os
 import shutil
 
+
 def setup_test_directories():
     """Create necessary test directories and files for retrieval QA tests."""
     dirs = [
@@ -13,12 +14,15 @@ def setup_test_directories():
 
     content = "This is a test document about RLS rules in Supabase."
     files = [
-        os.path.join(os.path.dirname(__file__), "test_data", "context-store", "test_doc.md"),
-        os.path.join(os.path.dirname(__file__), "..", "context-store", "test_doc.md"),
+        os.path.join(os.path.dirname(__file__), "test_data",
+                     "context-store", "test_doc.md"),
+        os.path.join(os.path.dirname(__file__), "..",
+                     "context-store", "test_doc.md"),
     ]
     for f in files:
         with open(f, "w") as file:
             file.write(content)
+
 
 def setup_test_files():
     """Create test directories and files needed for tests."""
@@ -38,8 +42,10 @@ def setup_test_files():
     # Create test files with sample content in all relevant locations
     test_content = "This is a test document about RLS rules in Supabase."
     files = [
-        os.path.join(os.path.dirname(__file__), "test_data", "context-store", "test_doc.md"),
-        os.path.join(os.path.dirname(__file__), "..", "context-store", "test_doc.md"),
+        os.path.join(os.path.dirname(__file__), "test_data",
+                     "context-store", "test_doc.md"),
+        os.path.join(os.path.dirname(__file__), "..",
+                     "context-store", "test_doc.md"),
         os.path.join("test_data", "context-store", "test_doc.md"),
         os.path.join("context-store", "test_doc.md"),
         os.path.join("tests", "test_data", "context-store", "test_doc.md"),
@@ -49,11 +55,13 @@ def setup_test_files():
             file.write(test_content)
     return files
 
+
 def cleanup_test_files():
     """Remove all test files and directories created for tests."""
     paths = [
         os.path.join(os.path.dirname(__file__), "test_data"),
-        os.path.join(os.path.dirname(__file__), "..", "context-store", "test_doc.md"),
+        os.path.join(os.path.dirname(__file__), "..",
+                     "context-store", "test_doc.md"),
         os.path.join("test_data"),
         os.path.join("context-store", "test_doc.md"),
         os.path.join("tests", "test_data"),
@@ -70,7 +78,10 @@ def cleanup_test_files():
             except Exception:
                 pass
 
-outputs_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "outputs")
+
+outputs_dir = os.path.join(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))), "outputs")
+
 
 def teardown_module(module):
     """Cleanup outputs directory after tests finish."""

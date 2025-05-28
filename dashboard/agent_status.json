@@ -1,154 +1,159 @@
 {
   "FE-01": {
     "coordinator": {
-      "status": "FAILED",
-      "timestamp": "2025-05-26T13:55:43.006172",
-      "last_seen": "2025-05-26T13:55:43.006172"
+      "status": "RUNNING",
+      "timestamp": "2025-05-26T16:41:08.723788",
+      "last_seen": "2025-05-26T16:41:08.723788"
     },
     "frontend": {
-      "status": "COMPLETED",
-      "timestamp": "2025-05-26T13:56:01.551226",
-      "last_seen": "2025-05-26T13:56:01.551226"
+      "status": "FAILED",
+      "timestamp": "2025-05-26T16:39:34.522094",
+      "last_seen": "2025-05-26T16:39:34.522094"
     }
   },
   "QA-01": {
     "coordinator": {
+      "status": "COMPLETED",
+      "timestamp": "2025-05-26T16:39:47.116611",
+      "last_seen": "2025-05-26T16:39:47.116611"
+    },
+    "technical": {
       "status": "FAILED",
-      "timestamp": "2025-05-26T13:56:01.078099",
-      "last_seen": "2025-05-26T13:56:01.078099"
+      "timestamp": "2025-05-26T16:39:44.812128",
+      "last_seen": "2025-05-26T16:39:44.812128"
     }
   },
   "BE-07": {
     "backend": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:19:13.525349",
-      "last_seen": "2025-05-26T14:19:13.525349"
+      "timestamp": "2025-05-26T16:41:08.451226",
+      "last_seen": "2025-05-26T16:41:08.451226"
     },
     "workflow": {
-      "status": "FAILED",
-      "timestamp": "2025-05-26T13:56:06.376357",
-      "last_seen": "2025-05-26T13:56:06.376357"
+      "status": "RUNNING",
+      "timestamp": "2025-05-26T16:41:08.948652",
+      "last_seen": "2025-05-26T16:41:08.948652"
     },
     "coordinator": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:19:13.469890",
-      "last_seen": "2025-05-26T14:19:13.469890"
+      "timestamp": "2025-05-26T16:41:08.358462",
+      "last_seen": "2025-05-26T16:41:08.358462"
     },
     "qa": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T13:56:02.196444",
-      "last_seen": "2025-05-26T13:56:02.196444"
+      "timestamp": "2025-05-26T16:39:26.278096",
+      "last_seen": "2025-05-26T16:39:26.278096"
     },
     "documentation": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:19:13.554126",
-      "last_seen": "2025-05-26T14:19:13.554126"
+      "timestamp": "2025-05-26T16:41:08.500618",
+      "last_seen": "2025-05-26T16:41:08.500618"
     },
     "technical": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:19:13.500487",
-      "last_seen": "2025-05-26T14:19:13.500487"
+      "timestamp": "2025-05-26T16:41:08.404772",
+      "last_seen": "2025-05-26T16:41:08.404772"
     }
   },
   "TEST-001": {
     "test_agent": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:33:18.209634",
-      "last_seen": "2025-05-26T14:33:18.209634"
+      "timestamp": "2025-05-26T16:39:26.731169",
+      "last_seen": "2025-05-26T16:39:26.731169"
     }
   },
   "LANGGRAPH-001": {
     "coordinator": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:33:18.230469",
-      "last_seen": "2025-05-26T14:33:18.230469"
+      "timestamp": "2025-05-26T16:39:26.771829",
+      "last_seen": "2025-05-26T16:39:26.771829"
     }
   },
   "CREWAI-001": {
     "backend_agent": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:33:18.264304",
-      "last_seen": "2025-05-26T14:33:18.264304"
+      "timestamp": "2025-05-26T16:41:08.590064",
+      "last_seen": "2025-05-26T16:41:08.590064"
     }
   },
   "REPORT-000": {
     "test_agent": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:33:18.339452",
-      "last_seen": "2025-05-26T14:33:18.339452"
+      "timestamp": "2025-05-26T16:41:08.753520",
+      "last_seen": "2025-05-26T16:41:08.753520"
     }
   },
   "REPORT-001": {
     "test_agent": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:33:18.375206",
-      "last_seen": "2025-05-26T14:33:18.375206"
+      "timestamp": "2025-05-26T16:41:08.803825",
+      "last_seen": "2025-05-26T16:41:08.803825"
     }
   },
   "REPORT-002": {
     "test_agent": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:33:18.410338",
-      "last_seen": "2025-05-26T14:33:18.410338"
+      "timestamp": "2025-05-26T16:41:08.848967",
+      "last_seen": "2025-05-26T16:41:08.848967"
     }
   },
   "DECORATOR-001": {
     "decorated_agent": {
-      "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:33:18.474642",
-      "last_seen": "2025-05-26T14:33:18.474642"
+      "status": "RUNNING",
+      "timestamp": "2025-05-26T16:41:08.938713",
+      "last_seen": "2025-05-26T16:41:08.938713"
     }
   },
   "FILTER-001": {
     "test_agent": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:33:18.527485",
-      "last_seen": "2025-05-26T14:33:18.527485"
+      "timestamp": "2025-05-26T16:39:15.581623",
+      "last_seen": "2025-05-26T16:39:15.581623"
     }
   },
   "FILTER-002": {
     "test_agent": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:33:18.562704",
-      "last_seen": "2025-05-26T14:33:18.562704"
+      "timestamp": "2025-05-26T16:39:15.614945",
+      "last_seen": "2025-05-26T16:39:15.614945"
     }
   },
   "OTHER-001": {
     "test_agent": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:33:18.594842",
-      "last_seen": "2025-05-26T14:33:18.594842"
+      "timestamp": "2025-05-26T16:39:15.660455",
+      "last_seen": "2025-05-26T16:39:15.660455"
     }
   },
   "ERROR-001": {
     "error_agent": {
       "status": "FAILED",
-      "timestamp": "2025-05-26T14:33:18.651782",
-      "last_seen": "2025-05-26T14:33:18.651782"
+      "timestamp": "2025-05-26T16:39:15.713639",
+      "last_seen": "2025-05-26T16:39:15.713639"
     }
   },
   "BE-01": {
     "backend": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:18:50.646963",
-      "last_seen": "2025-05-26T14:18:50.646963"
+      "timestamp": "2025-05-26T16:41:08.074883",
+      "last_seen": "2025-05-26T16:41:08.074883"
     },
     "documentation": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:18:50.706765",
-      "last_seen": "2025-05-26T14:18:50.706765"
+      "timestamp": "2025-05-26T16:41:08.198812",
+      "last_seen": "2025-05-26T16:41:08.198812"
     }
   },
   "TL-01": {
     "coordinator": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:18:50.675704",
-      "last_seen": "2025-05-26T14:18:50.675704"
+      "timestamp": "2025-05-26T16:41:08.142343",
+      "last_seen": "2025-05-26T16:41:08.142343"
     },
     "technical": {
       "status": "COMPLETED",
-      "timestamp": "2025-05-26T14:18:50.744948",
-      "last_seen": "2025-05-26T14:18:50.744948"
+      "timestamp": "2025-05-26T16:41:08.299206",
+      "last_seen": "2025-05-26T16:41:08.299206"
     }
   },
   "TEST-INTEGRATION": {
@@ -165,4 +170,5 @@
       "last_seen": "2025-05-26T14:29:58.211987"
     }
   }
+}}
 }

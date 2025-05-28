@@ -1,0 +1,17 @@
+{
+  "task_id": "BE-07",
+  "title": "Implement Missing Service Functions",
+  "description": "Implement missing service functions for the backend system",
+  "status": "CREATED",
+  "agent": "backend",
+  "priority": "high",
+  "dependencies": [],
+  "context_topics": [
+    "backend_development",
+    "service_architecture",
+    "error_handling"
+  ],
+  "estimated_hours": 8,
+  "created_at": "2025-05-26T13:00:00Z",
+  "updated_at": "2025-05-26T13:00:00Z"
+}

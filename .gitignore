@@ -95,3 +95,15 @@ tests/test_outputs/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Dashboard generated files
+dashboard/completion_metrics.json
+dashboard/dashboard_summary.json
+dashboard/charts_data.json
+dashboard/completion_summary.json
+
+# Progress reports (generated files)
+progress_reports/
+
+# Execution reports (generated files)
+reports/execution-summary.csv
