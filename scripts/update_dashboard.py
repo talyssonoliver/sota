@@ -64,12 +64,16 @@ class DashboardUpdater:
         task_data = next((t for t in task_metrics if t["task_id"] == task_id), None)
 
         if task_data:
+            # Safely handle duration_minutes which can be None
+            duration_minutes = task_data.get("duration_minutes")
+            duration_seconds = (duration_minutes * 60) if duration_minutes is not None else 0
+            
             # Update live execution status
             self.dashboard_logger.update_live_dashboard(
                 task_id=task_id,
                 agent="completion",
                 status=task_data["status"],
-                duration=task_data.get("duration_minutes", 0) * 60
+                duration=duration_seconds
             )
 
             print(f"   📊 Updated status for {task_id}: {task_data['status']}")
