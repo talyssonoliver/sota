@@ -1,0 +1,24 @@
+{
+    "email": {
+        "enabled": true,
+        "smtp_server": "new.smtp.com",
+        "smtp_port": 465,
+        "use_tls": true,
+        "username": "new@test.com",
+        "password": "newpass",
+        "from_address": "new-ai@test.com",
+        "recipients": {
+            "team_leads": [
+                "lead@test.com"
+            ],
+            "stakeholders": [
+                "stakeholder@test.com"
+            ],
+            "developers": [
+                "dev@test.com"
+            ]
+        },
+        "retry_attempts": 2,
+        "retry_delay": 5
+    }
+}

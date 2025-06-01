@@ -117,7 +117,7 @@ class CompletionMetricsCalculator:
         if status_file.exists():
             try:
                 with open(status_file) as f:
-                    status_data = json.load(f)
+                    status_data = json.load(f)                    
                     status = status_data.get("status", "UNKNOWN")
                     completion_time = status_data.get("completion_time")
                     duration_minutes = status_data.get("duration_minutes")
@@ -154,12 +154,13 @@ class CompletionMetricsCalculator:
         coverage = None
         tests_passed = None
         tests_failed = None
+
         if qa_report_file.exists():
             try:
                 with open(qa_report_file) as f:
                     qa_data = json.load(f)
-                    qa_status = qa_data.get("overall_status", qa_data.get("status", "NOT_RUN"))
-                    coverage = qa_data.get("coverage_percentage", qa_data.get("coverage"))
+                    qa_status = qa_data.get("status", "NOT_RUN")
+                    coverage = qa_data.get("coverage")
                     tests_passed = qa_data.get("tests_passed")
                     tests_failed = qa_data.get("tests_failed")
             except Exception:
@@ -342,7 +343,7 @@ class CompletionMetricsCalculator:
 """
         # Add task breakdown
         task_metrics = metrics["task_metrics"]
-        status_counts = {}
+        status_counts = {}        
         for task in task_metrics:
             status = task["status"]
             status_counts[status] = status_counts.get(status, 0) + 1

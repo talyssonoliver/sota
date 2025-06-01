@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Task Dashboard - Phase 6</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .header .subtitle {
+            margin: 10px 0 0 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .live-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #28a745;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .last-updated {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 0.8em;
+            opacity: 0.8;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .metric-card.updating {
+            border-left-color: #ffc107;
+            background: linear-gradient(90deg, #f8f9fa 0%, #fff3cd 50%, #f8f9fa 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .metric-title {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: 300;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .metric-subtitle {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .health-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .health-status {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .health-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .health-text {
+            font-size: 1.2em;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+        
+        .health-message {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .recommendations {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .recommendations h4 {
+            margin: 0 0 10px 0;
+            color: #17a2b8;
+            font-size: 1em;
+        }
+        
+        .recommendations ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .recommendations li {
+            margin-bottom: 5px;
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+          .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 400px; /* Fixed height to prevent canvas growth */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chart-card canvas {
+            max-height: 300px !important; /* Prevent excessive canvas height */
+            width: 100% !important;
+            height: auto !important;
+        }
+        
+        .chart-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .recent-activity {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .activity-time {
+            font-size: 0.8em;
+            color: #666;
+        }
+        
+        .automation-status {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .status-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .status-value {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .status-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+          @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-card {
+                height: 350px; /* Smaller height on mobile */
+            }
+            
+            .chart-card canvas {
+                max-height: 250px !important; /* Smaller canvas on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Real-Time Task Dashboard</h1>
+        <p class="subtitle">Phase 6 Daily Automation & Live Monitoring</p>
+        <div class="live-indicator">
+            <div class="live-dot"></div>
+            <span>LIVE</span>
+        </div>
+        <div class="last-updated" id="lastUpdated">
+            Last updated: Loading...
+        </div>
+    </div>
+
+    <!-- Sprint Health Status -->
+    <div class="health-card" id="healthCard">
+        <div class="health-status">
+            <div class="health-indicator" id="healthIndicator">
+                <span id="healthIcon">●</span>
+            </div>
+            <div>
+                <div class="health-text" id="healthStatus">Loading...</div>
+                <div class="health-message" id="healthMessage">Checking sprint health...</div>
+            </div>
+        </div>
+        <div class="recommendations" id="recommendationsSection" style="display: none;">
+            <h4>Recommendations</h4>
+            <ul id="recommendations"></ul>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="metrics-grid">
+        <div class="metric-card" id="completionCard">
+            <div class="metric-title">Completion Rate</div>
+            <div class="metric-value" id="completionRate">--%</div>
+            <div class="metric-subtitle" id="completionSubtitle">Loading...</div>
+        </div>
+        
+        <div class="metric-card" id="velocityCard">
+            <div class="metric-title">Daily Velocity</div>
+            <div class="metric-value" id="velocity">--</div>
+            <div class="metric-subtitle">tasks per day</div>
+        </div>
+        
+        <div class="metric-card" id="totalTasksCard">
+            <div class="metric-title">Total Tasks</div>
+            <div class="metric-value" id="totalTasks">--</div>
+            <div class="metric-subtitle" id="tasksBreakdown">Loading...</div>
+        </div>
+        
+        <div class="metric-card" id="activeTasksCard">
+            <div class="metric-title">Active Tasks</div>
+            <div class="metric-value" id="activeTasks">--</div>
+            <div class="metric-subtitle">in progress</div>
+        </div>
+    </div>
+
+    <!-- Progress Charts -->
+    <div class="charts-container">        <div class="chart-card">
+            <div class="chart-title">Progress Trend (7 Days)</div>
+            <canvas id="progress-chart" width="400" height="200"></canvas>
+        </div>
+          <div class="chart-card">
+            <div class="chart-title">Progress Trend - Task Status Over Time</div>
+            <canvas id="velocity-chart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="recent-activity">
+        <div class="chart-title">Recent Activity</div>
+        <div id="recentActivityList">
+            <div class="activity-item">
+                <div class="activity-icon" style="background: #17a2b8;">📊</div>
+                <div class="activity-content">
+                    <div class="activity-title">Loading recent activity...</div>
+                    <div class="activity-time">Please wait</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Automation Status -->
+    <div class="automation-status">
+        <div class="chart-title">Automation System Status</div>
+        <div class="status-grid" id="automationStatusGrid">
+            <div class="status-item">
+                <div class="status-value" id="systemUptime">--%</div>
+                <div class="status-label">System Uptime</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value" id="dailyCycleStatus">--</div>
+                <div class="status-label">Daily Cycle</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value" id="errorCount">--</div>
+                <div class="status-label">Error Count</div>
+            </div>
+            <div class="status-item">
+                <div class="status-value" id="activeJobs">--</div>
+                <div class="status-label">Active Jobs</div>
+            </div>
+        </div>
+    </div>    
+    <!-- Load enhanced dashboard script -->
+    <script src="enhanced_dashboard.js"></script>
+    
+</body>
+</html>

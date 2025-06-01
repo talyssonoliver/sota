@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Loading Diagnostic</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 4px solid #4CAF50;
+        }
+        .error {
+            border-left-color: #F44336;
+            background: rgba(244, 67, 54, 0.1);
+        }
+        .loading {
+            border-left-color: #FFC107;
+            background: rgba(255, 193, 7, 0.1);
+        }
+        .result {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-pass { background: #4CAF50; }
+        .status-fail { background: #F44336; }
+        .status-warn { background: #FFC107; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Dashboard Loading Diagnostic Tool</h1>
+        <p>This tool will help diagnose why the dashboard is stuck on "Loading..."</p>
+
+        <div class="test-section" id="backend-test">
+            <h3>1. Backend API Connectivity Test</h3>
+            <button onclick="testBackendAPIs()">Test All API Endpoints</button>
+            <div id="api-results" class="result"></div>
+        </div>
+
+        <div class="test-section" id="frontend-test">
+            <h3>2. Frontend JavaScript Execution Test</h3>
+            <button onclick="testFrontendJS()">Test Dashboard JS Loading</button>
+            <div id="js-results" class="result"></div>
+        </div>
+
+        <div class="test-section" id="cors-test">
+            <h3>3. CORS and Network Test</h3>
+            <button onclick="testCORS()">Test Cross-Origin Requests</button>
+            <div id="cors-results" class="result"></div>
+        </div>
+
+        <div class="test-section" id="data-test">
+            <h3>4. Data Contract Validation</h3>
+            <button onclick="testDataContract()">Validate API Response Structure</button>
+            <div id="data-results" class="result"></div>
+        </div>
+
+        <div class="test-section" id="console-test">
+            <h3>5. Console Error Capture</h3>
+            <button onclick="captureErrors()">Capture JavaScript Errors</button>
+            <div id="error-results" class="result"></div>
+        </div>
+
+        <div class="test-section" id="solution-test">
+            <h3>6. Suggested Solutions</h3>
+            <button onclick="showSolutions()">Generate Fix Recommendations</button>
+            <div id="solution-results" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        let errorLog = [];
+        let testResults = {};
+
+        // Capture all console errors
+        const originalConsoleError = console.error;
+        console.error = function(...args) {
+            errorLog.push({
+                timestamp: new Date().toISOString(),
+                message: args.join(' '),
+                stack: new Error().stack
+            });
+            originalConsoleError.apply(console, args);
+        };
+
+        // Capture unhandled errors
+        window.addEventListener('error', function(e) {
+            errorLog.push({
+                timestamp: new Date().toISOString(),
+                message: e.message,
+                filename: e.filename,
+                lineno: e.lineno,
+                colno: e.colno,
+                stack: e.error ? e.error.stack : 'No stack trace'
+            });
+        });
+
+        async function testBackendAPIs() {
+            const resultDiv = document.getElementById('api-results');
+            resultDiv.innerHTML = '⏳ Testing API endpoints...';
+            
+            const endpoints = [
+                '/api/metrics',
+                '/api/sprint/health', 
+                '/api/automation/status',
+                '/api/tasks/recent',
+                '/api/progress/trend'
+            ];
+            
+            let results = [];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const startTime = performance.now();
+                    const response = await fetch(`http://localhost:5000${endpoint}`);
+                    const endTime = performance.now();
+                    const responseTime = Math.round(endTime - startTime);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        results.push(`✅ ${endpoint} - Status: ${response.status} (${responseTime}ms)`);
+                        results.push(`   📄 Response size: ${JSON.stringify(data).length} bytes`);
+                        testResults[endpoint] = { status: 'pass', data };
+                    } else {
+                        results.push(`❌ ${endpoint} - Status: ${response.status} ${response.statusText}`);
+                        testResults[endpoint] = { status: 'fail', error: response.statusText };
+                    }
+                } catch (error) {
+                    results.push(`❌ ${endpoint} - Error: ${error.message}`);
+                    testResults[endpoint] = { status: 'error', error: error.message };
+                }
+            }
+            
+            resultDiv.innerHTML = results.join('\n');
+            updateSectionStatus('backend-test', results.every(r => r.includes('✅')));
+        }
+
+        async function testFrontendJS() {
+            const resultDiv = document.getElementById('js-results');
+            resultDiv.innerHTML = '⏳ Testing frontend JavaScript...';
+            
+            let results = [];
+            
+            try {
+                // Test if Chart.js is available
+                if (typeof Chart !== 'undefined') {
+                    results.push('✅ Chart.js library loaded successfully');
+                } else {
+                    results.push('❌ Chart.js library not found');
+                }
+                
+                // Test if enhanced_dashboard.js loaded
+                try {
+                    const response = await fetch('http://localhost:5000/dashboard/enhanced_dashboard.js');
+                    if (response.ok) {
+                        results.push('✅ enhanced_dashboard.js accessible');
+                        const jsContent = await response.text();
+                        if (jsContent.includes('DashboardManager')) {
+                            results.push('✅ DashboardManager class found in JS');
+                        } else {
+                            results.push('❌ DashboardManager class not found in JS');
+                        }
+                    } else {
+                        results.push(`❌ enhanced_dashboard.js not accessible - Status: ${response.status}`);
+                    }
+                } catch (error) {
+                    results.push(`❌ Error loading enhanced_dashboard.js: ${error.message}`);
+                }
+                
+                // Test DOM elements
+                const elements = ['progress-chart', 'velocity-chart'];
+                for (const elementId of elements) {
+                    const element = document.getElementById(elementId);
+                    if (element) {
+                        results.push(`✅ Element found: ${elementId}`);
+                    } else {
+                        results.push(`❌ Element missing: ${elementId}`);
+                    }
+                }
+                
+            } catch (error) {
+                results.push(`❌ Frontend test error: ${error.message}`);
+            }
+            
+            resultDiv.innerHTML = results.join('\n');
+            updateSectionStatus('frontend-test', results.every(r => r.includes('✅')));
+        }
+
+        async function testCORS() {
+            const resultDiv = document.getElementById('cors-results');
+            resultDiv.innerHTML = '⏳ Testing CORS and network...';
+            
+            let results = [];
+            
+            try {
+                // Test CORS headers
+                const response = await fetch('http://localhost:5000/api/metrics');
+                const corsHeader = response.headers.get('Access-Control-Allow-Origin');
+                
+                if (corsHeader) {
+                    results.push(`✅ CORS header present: ${corsHeader}`);
+                } else {
+                    results.push('❌ CORS header missing');
+                }
+                
+                // Test from different origin simulation
+                const testCORS = await fetch('http://localhost:5000/api/metrics', {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (testCORS.ok) {
+                    results.push('✅ CORS request successful');
+                } else {
+                    results.push(`❌ CORS request failed: ${testCORS.status}`);
+                }
+                
+            } catch (error) {
+                results.push(`❌ CORS test error: ${error.message}`);
+            }
+            
+            resultDiv.innerHTML = results.join('\n');
+            updateSectionStatus('cors-test', results.every(r => r.includes('✅')));
+        }
+
+        async function testDataContract() {
+            const resultDiv = document.getElementById('data-results');
+            resultDiv.innerHTML = '⏳ Validating data contracts...';
+            
+            let results = [];
+            
+            try {
+                // Test metrics endpoint structure
+                const metricsResponse = await fetch('http://localhost:5000/api/metrics');
+                if (metricsResponse.ok) {
+                    const metricsData = await metricsResponse.json();
+                    
+                    const expectedFields = ['data', 'timestamp', 'status'];
+                    const actualFields = Object.keys(metricsData);
+                    
+                    for (const field of expectedFields) {
+                        if (actualFields.includes(field)) {
+                            results.push(`✅ Metrics field present: ${field}`);
+                        } else {
+                            results.push(`❌ Metrics field missing: ${field}`);
+                        }
+                    }
+                    
+                    // Check data structure
+                    if (metricsData.data) {
+                        const dataFields = ['completed_tasks', 'in_progress_tasks', 'pending_tasks'];
+                        for (const field of dataFields) {
+                            if (field in metricsData.data) {
+                                results.push(`✅ Data field present: ${field}`);
+                            } else {
+                                results.push(`❌ Data field missing: ${field}`);
+                            }
+                        }
+                    }
+                } else {
+                    results.push(`❌ Cannot validate metrics contract - API error: ${metricsResponse.status}`);
+                }
+                
+            } catch (error) {
+                results.push(`❌ Data contract test error: ${error.message}`);
+            }
+            
+            resultDiv.innerHTML = results.join('\n');
+            updateSectionStatus('data-test', results.every(r => r.includes('✅')));
+        }
+
+        function captureErrors() {
+            const resultDiv = document.getElementById('error-results');
+            
+            if (errorLog.length === 0) {
+                resultDiv.innerHTML = '✅ No JavaScript errors captured';
+                updateSectionStatus('console-test', true);
+            } else {
+                let results = [`❌ Found ${errorLog.length} JavaScript errors:`];
+                
+                errorLog.forEach((error, index) => {
+                    results.push(`\n${index + 1}. [${error.timestamp}] ${error.message}`);
+                    if (error.filename) {
+                        results.push(`   File: ${error.filename}:${error.lineno}:${error.colno}`);
+                    }
+                    if (error.stack) {
+                        results.push(`   Stack: ${error.stack.split('\n')[1] || 'No stack trace'}`);
+                    }
+                });
+                
+                resultDiv.innerHTML = results.join('\n');
+                updateSectionStatus('console-test', false);
+            }
+        }
+
+        function showSolutions() {
+            const resultDiv = document.getElementById('solution-results');
+            
+            let solutions = [];
+            
+            // Analyze test results and suggest solutions
+            if (testResults['/api/metrics'] && testResults['/api/metrics'].status !== 'pass') {
+                solutions.push('🔧 Backend API Issue: Check if api_server.py is running on localhost:5000');
+            }
+            
+            if (errorLog.length > 0) {
+                solutions.push('🔧 JavaScript Errors: Check browser console for detailed error messages');
+                solutions.push('🔧 Suggestion: Reload page and check if enhanced_dashboard.js loads correctly');
+            }
+            
+            // General solutions
+            solutions.push('\n📋 General Troubleshooting Steps:');
+            solutions.push('1. Ensure backend server is running: python dashboard/api_server.py');
+            solutions.push('2. Check browser console (F12) for errors');
+            solutions.push('3. Verify all API endpoints return 200 status');
+            solutions.push('4. Clear browser cache and reload page');
+            solutions.push('5. Check if enhanced_dashboard.js DashboardManager is initializing');
+            
+            solutions.push('\n🔗 Quick Links:');
+            solutions.push('• API Test: http://localhost:5000/api/metrics');
+            solutions.push('• Dashboard: http://localhost:5000/dashboard/realtime_dashboard.html');
+            
+            resultDiv.innerHTML = solutions.join('\n');
+        }
+
+        function updateSectionStatus(sectionId, passed) {
+            const section = document.getElementById(sectionId);
+            section.className = passed ? 'test-section' : 'test-section error';
+        }
+
+        // Auto-run basic tests on load
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                testBackendAPIs();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

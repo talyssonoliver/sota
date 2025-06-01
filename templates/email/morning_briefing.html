@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background-color: #2196F3; color: white; padding: 20px; border-radius: 5px; }
+        .section { margin: 20px 0; padding: 15px; border-left: 4px solid #2196F3; }
+        .metric { display: inline-block; margin: 10px; padding: 10px; background-color: #f5f5f5; border-radius: 3px; }
+        .priority { color: #FF6B35; font-weight: bold; }
+        .blocker { color: #FF0000; font-weight: bold; }
+        .completed { color: #4CAF50; font-weight: bold; }
+        .table { border-collapse: collapse; width: 100%; }
+        .table th, .table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .table th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌅 Daily Morning Briefing - {{date}}</h1>
+        <p>Sprint Health: <span class="{{sprint_health_class}}">{{sprint_health}}</span></p>
+    </div>
+    
+    <div class="section">
+        <h2>📊 Sprint Metrics</h2>
+        <div class="metric">📋 Total Tasks: {{total_tasks}}</div>
+        <div class="metric">✅ Completed: {{completed_tasks}}</div>
+        <div class="metric">📈 Progress: {{completion_rate}}%</div>
+        <div class="metric">🎯 Team Velocity: {{team_velocity}}</div>
+    </div>
+    
+    {% if today_priorities %}
+    <div class="section">
+        <h2>🎯 Today's Priorities</h2>
+        {% for priority in today_priorities %}
+        <div class="priority">• {{priority}}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if blockers %}
+    <div class="section">
+        <h2>🚫 Active Blockers</h2>
+        {% for blocker in blockers %}
+        <div class="blocker">🚫 {{blocker.title}} - {{blocker.impact}}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if recommendations %}
+    <div class="section">
+        <h2>💡 Recommendations</h2>
+        {% for rec in recommendations %}
+        <div class="priority">💡 {{rec}}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="section">
+        <p><a href="{{dashboard_url}}">View Full Dashboard</a> | <a href="{{report_url}}">Detailed Report</a></p>
+    </div>
+</body>
+</html>
+        

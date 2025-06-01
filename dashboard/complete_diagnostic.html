@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Dashboard Diagnostic</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .warning { background-color: #fff3cd; color: #856404; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        .console-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Complete Dashboard Diagnostic Tool</h1>
+    
+    <div class="section">
+        <h2>🚀 Quick Actions</h2>
+        <button onclick="runAllTests()">🔍 Run All Tests</button>
+        <button onclick="testDashboardLoad()">📊 Test Dashboard Load</button>
+        <button onclick="clearConsole()">🗑️ Clear Console</button>
+        <button onclick="location.href='/dashboard/'" target="_blank">🌐 Open Full Dashboard</button>
+    </div>
+
+    <div class="grid">
+        <div class="section">
+            <h2>📋 Test Results</h2>
+            <div id="test-summary" class="status info">Ready to run tests...</div>
+            <div id="test-results"></div>
+        </div>
+        
+        <div class="section">
+            <h2>🌐 API Endpoints</h2>
+            <div id="api-results"></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📚 Library Status</h2>
+        <div id="library-status"></div>
+    </div>
+
+    <div class="section">
+        <h2>🔍 Console Output</h2>
+        <div id="console-output" class="console-output">Diagnostic tool loaded successfully.
+Ready to begin testing...
+</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let testCount = 0;
+        let passedTests = 0;
+        let failedTests = 0;        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const consoleOutput = document.getElementById('console-output');
+            const typeEmojis = {
+                info: 'ℹ️',
+                success: '✅',
+                error: '❌',
+                warning: '⚠️'
+            };
+            
+            consoleOutput.textContent += `[${timestamp}] ${typeEmojis[type]} ${message}\n`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            
+            // Also log to browser console
+            window.console[type === 'error' ? 'error' : 'log'](message);
+        }
+
+        function clearConsole() {
+            document.getElementById('console-output').textContent = 'Console cleared.\n';
+        }
+
+        function addTestResult(testName, passed, details = '') {
+            testCount++;
+            if (passed) passedTests++; else failedTests++;
+            
+            const resultsDiv = document.getElementById('test-results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `status ${passed ? 'success' : 'error'}`;
+            resultDiv.innerHTML = `
+                <strong>${passed ? '✅' : '❌'} ${testName}</strong>
+                ${details ? `<br><small>${details}</small>` : ''}
+            `;
+            resultsDiv.appendChild(resultDiv);
+            
+            updateTestSummary();
+        }
+
+        function updateTestSummary() {
+            const summary = document.getElementById('test-summary');
+            summary.textContent = `Tests: ${testCount} | Passed: ${passedTests} | Failed: ${failedTests}`;
+            summary.className = `status ${failedTests === 0 ? 'success' : 'warning'}`;
+        }
+
+        function addApiResult(endpoint, status, details = '') {
+            const resultsDiv = document.getElementById('api-results');
+            const resultDiv = document.createElement('div');
+            const isSuccess = status >= 200 && status < 300;
+            resultDiv.className = `status ${isSuccess ? 'success' : 'error'}`;
+            resultDiv.innerHTML = `
+                <strong>${isSuccess ? '✅' : '❌'} ${endpoint}</strong><br>
+                <small>Status: ${status} ${details ? `| ${details}` : ''}</small>
+            `;
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        function testLibraryStatus() {
+            const libDiv = document.getElementById('library-status');
+            
+            // Test Chart.js
+            if (typeof Chart !== 'undefined') {
+                libDiv.innerHTML += `<div class="status success">✅ Chart.js v${Chart.version}</div>`;
+                log('Chart.js loaded successfully', 'success');
+                addTestResult('Chart.js Library', true, `Version ${Chart.version}`);
+            } else {
+                libDiv.innerHTML += `<div class="status error">❌ Chart.js not loaded</div>`;
+                log('Chart.js failed to load', 'error');
+                addTestResult('Chart.js Library', false, 'Library not found');
+            }
+
+            // Test for exports error
+            if (typeof exports !== 'undefined') {
+                libDiv.innerHTML += `<div class="status warning">⚠️ exports variable detected</div>`;
+                log('WARNING: exports variable found - may cause conflicts', 'warning');
+                addTestResult('Exports Check', false, 'exports variable present');
+            } else {
+                libDiv.innerHTML += `<div class="status success">✅ No exports conflicts</div>`;
+                log('No exports conflicts detected', 'success');
+                addTestResult('Exports Check', true, 'Clean environment');
+            }
+
+            // Test fetch API
+            if (typeof fetch !== 'undefined') {
+                libDiv.innerHTML += `<div class="status success">✅ Fetch API available</div>`;
+                addTestResult('Fetch API', true);
+            } else {
+                libDiv.innerHTML += `<div class="status error">❌ Fetch API not available</div>`;
+                addTestResult('Fetch API', false);
+            }
+        }
+
+        async function testApiEndpoints() {
+            const endpoints = [
+                '/health',
+                '/api/metrics',
+                '/api/sprint/health',
+                '/api/automation/status',
+                '/api/tasks/recent',
+                '/api/progress/trend',
+                '/api/timeline'
+            ];
+
+            log('Testing API endpoints...', 'info');
+
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(endpoint);
+                    const status = response.status;
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        addApiResult(endpoint, status, 'Success');
+                        log(`✅ ${endpoint}: ${status}`, 'success');
+                        addTestResult(`API ${endpoint}`, true, `Status ${status}`);
+                    } else {
+                        addApiResult(endpoint, status, 'Error');
+                        log(`❌ ${endpoint}: ${status}`, 'error');
+                        addTestResult(`API ${endpoint}`, false, `Status ${status}`);
+                    }
+                } catch (error) {
+                    addApiResult(endpoint, 'ERR', error.message);
+                    log(`❌ ${endpoint}: ${error.message}`, 'error');
+                    addTestResult(`API ${endpoint}`, false, error.message);
+                }
+            }
+        }
+
+        async function testDashboardLoad() {
+            log('Testing dashboard components...', 'info');
+            
+            // Test if dashboard HTML loads
+            try {
+                const response = await fetch('/dashboard/');
+                if (response.ok) {
+                    const html = await response.text();
+                    if (html.includes('Real-Time Task Dashboard')) {
+                        addTestResult('Dashboard HTML', true, 'HTML content loads correctly');
+                        log('Dashboard HTML loads correctly', 'success');
+                    } else {
+                        addTestResult('Dashboard HTML', false, 'HTML content malformed');
+                        log('Dashboard HTML content appears malformed', 'error');
+                    }
+                } else {
+                    addTestResult('Dashboard HTML', false, `HTTP ${response.status}`);
+                    log(`Dashboard HTML failed: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                addTestResult('Dashboard HTML', false, error.message);
+                log(`Dashboard HTML error: ${error.message}`, 'error');
+            }
+
+            // Test if dashboard JS loads
+            try {
+                const response = await fetch('/dashboard/enhanced_dashboard.js');
+                if (response.ok) {
+                    const js = await response.text();
+                    if (js.includes('DashboardManager')) {
+                        addTestResult('Dashboard JS', true, 'JavaScript loads correctly');
+                        log('Dashboard JavaScript loads correctly', 'success');
+                    } else {
+                        addTestResult('Dashboard JS', false, 'JavaScript content malformed');
+                        log('Dashboard JavaScript content appears malformed', 'error');
+                    }
+                } else {
+                    addTestResult('Dashboard JS', false, `HTTP ${response.status}`);
+                    log(`Dashboard JavaScript failed: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                addTestResult('Dashboard JS', false, error.message);
+                log(`Dashboard JavaScript error: ${error.message}`, 'error');
+            }
+        }
+
+        async function runAllTests() {
+            log('🚀 Starting comprehensive dashboard diagnostic...', 'info');
+            
+            // Clear previous results
+            document.getElementById('test-results').innerHTML = '';
+            document.getElementById('api-results').innerHTML = '';
+            document.getElementById('library-status').innerHTML = '';
+            testCount = 0;
+            passedTests = 0;
+            failedTests = 0;
+
+            // Run all tests
+            testLibraryStatus();
+            await testApiEndpoints();
+            await testDashboardLoad();
+
+            log(`🏁 Diagnostic complete: ${passedTests}/${testCount} tests passed`, 
+                 failedTests === 0 ? 'success' : 'warning');
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            log('Diagnostic tool initialized', 'success');
+        });
+
+        // Capture and log errors
+        window.addEventListener('error', function(event) {
+            log(`JavaScript Error: ${event.error.message} at ${event.filename}:${event.lineno}`, 'error');
+        });
+
+        // Capture unhandled promise rejections
+        window.addEventListener('unhandledrejection', function(event) {
+            log(`Unhandled Promise Rejection: ${event.reason}`, 'error');
+        });
+    </script>
+</body>
+</html>

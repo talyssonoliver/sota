@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Route Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5; 
+        }
+        .test { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin: 10px 0; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+        }
+        .success { border-left: 4px solid #28a745; }
+        .error { border-left: 4px solid #dc3545; }
+        .loading { border-left: 4px solid #17a2b8; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Dashboard Route Diagnostic</h1>
+    
+    <div class="test loading">
+        <h3>Testing Dashboard Routes</h3>
+        <div id="test-results">Loading...</div>
+    </div>
+
+    <script>
+        const results = document.getElementById('test-results');
+        
+        async function testRoutes() {
+            const tests = [
+                { name: 'Health Check', url: '/health' },
+                { name: 'API Metrics', url: '/api/metrics' },
+                { name: 'Dashboard Root', url: '/dashboard/' },
+                { name: 'Dashboard HTML', url: '/dashboard/realtime_dashboard.html' },
+                { name: 'Dashboard JS', url: '/dashboard/enhanced_dashboard.js' }
+            ];
+            
+            let html = '<ul>';
+            
+            for (const test of tests) {
+                try {
+                    const response = await fetch(test.url);
+                    const status = response.status;
+                    const statusText = response.statusText;
+                    
+                    if (status === 200) {
+                        html += `<li style="color: green;">✅ ${test.name}: ${status} ${statusText}</li>`;
+                    } else {
+                        html += `<li style="color: red;">❌ ${test.name}: ${status} ${statusText}</li>`;
+                    }
+                } catch (error) {
+                    html += `<li style="color: red;">❌ ${test.name}: Error - ${error.message}</li>`;
+                }
+            }
+            
+            html += '</ul>';
+            results.innerHTML = html;
+            
+            // Update container class
+            const container = document.querySelector('.test');
+            container.className = 'test success';
+        }
+        
+        testRoutes();
+    </script>
+</body>
+</html>
