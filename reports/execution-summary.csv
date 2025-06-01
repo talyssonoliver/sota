@@ -3331,3 +3331,183 @@ timestamp,task_id,agent,status,duration_seconds,duration_minutes,output_size,suc
 2025-06-01T11:42:22.129232,QA-01,coordinator,COMPLETED,0.8,0.01,155,True,
 2025-06-01T11:42:22.136919,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
 2025-06-01T11:42:22.905368,QA-01,coordinator,COMPLETED,0.77,0.01,155,True,
+2025-06-01T14:03:36.184149,TEST-INTEGRATION,test_agent,COMPLETED,0.21,0.0,41,True,
+2025-06-01T14:03:41.088581,BE-01,backend,COMPLETED,0.01,0.0,150,True,
+2025-06-01T14:03:41.159108,TL-01,coordinator,COMPLETED,0.02,0.0,147,True,
+2025-06-01T14:03:41.232215,BE-01,documentation,COMPLETED,0.02,0.0,155,True,
+2025-06-01T14:03:41.374957,TL-01,technical,COMPLETED,0.03,0.0,151,True,
+2025-06-01T14:03:41.451546,BE-07,coordinator,COMPLETED,0.03,0.0,126,True,
+2025-06-01T14:03:41.497789,BE-07,technical,COMPLETED,0.02,0.0,170,True,
+2025-06-01T14:03:41.546742,BE-07,backend,COMPLETED,0.02,0.0,180,True,
+2025-06-01T14:03:41.593739,BE-07,documentation,COMPLETED,0.02,0.0,156,True,
+2025-06-01T14:03:42.155368,DECORATOR-001,decorated_agent,COMPLETED,0.01,0.0,33,True,
+2025-06-01T14:03:42.643988,FE-01,coordinator,COMPLETED,2.48,0.04,155,True,
+2025-06-01T14:03:44.289390,FE-01,frontend,FAILED,0.02,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:03:46.124506,FE-01,coordinator,COMPLETED,1.81,0.03,155,True,
+2025-06-01T14:03:47.542190,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:03:48.552886,FE-01,coordinator,COMPLETED,1.0,0.02,155,True,
+2025-06-01T14:03:49.625673,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:03:50.511605,FE-01,coordinator,COMPLETED,0.87,0.01,155,True,
+2025-06-01T14:03:51.282583,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:03:52.061638,FE-01,coordinator,COMPLETED,0.77,0.01,155,True,
+2025-06-01T14:03:52.836691,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:03:53.592289,FE-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:03:54.491626,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:03:55.249279,FE-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:03:56.119907,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:03:56.879605,FE-01,coordinator,COMPLETED,0.76,0.01,155,True,
+2025-06-01T14:03:57.690176,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:03:58.568235,FE-01,coordinator,COMPLETED,0.87,0.01,155,True,
+2025-06-01T14:03:59.390078,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:04:00.148315,FE-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:04:00.940631,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:04:01.743818,FE-01,coordinator,COMPLETED,0.8,0.01,155,True,
+2025-06-01T14:04:02.547776,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:04:03.353653,FE-01,coordinator,COMPLETED,0.8,0.01,155,True,
+2025-06-01T14:04:04.108206,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:04:04.913499,FE-01,coordinator,COMPLETED,0.8,0.01,155,True,
+2025-06-01T14:04:05.865941,QA-01,coordinator,COMPLETED,0.88,0.01,155,True,
+2025-06-01T14:04:05.875489,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:06.655005,QA-01,coordinator,COMPLETED,0.78,0.01,155,True,
+2025-06-01T14:04:06.660451,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:07.456223,QA-01,coordinator,COMPLETED,0.79,0.01,155,True,
+2025-06-01T14:04:07.462116,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:08.207832,QA-01,coordinator,COMPLETED,0.74,0.01,155,True,
+2025-06-01T14:04:08.215516,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:08.956771,QA-01,coordinator,COMPLETED,0.74,0.01,155,True,
+2025-06-01T14:04:08.962284,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:09.814097,QA-01,coordinator,COMPLETED,0.85,0.01,155,True,
+2025-06-01T14:04:09.821755,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:10.626316,QA-01,coordinator,COMPLETED,0.8,0.01,155,True,
+2025-06-01T14:04:10.634323,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:11.380169,QA-01,coordinator,COMPLETED,0.74,0.01,155,True,
+2025-06-01T14:04:11.387560,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:12.140498,QA-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:04:12.146497,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:12.879953,QA-01,coordinator,COMPLETED,0.73,0.01,155,True,
+2025-06-01T14:04:12.888684,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:13.662344,QA-01,coordinator,COMPLETED,0.77,0.01,155,True,
+2025-06-01T14:04:13.670343,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:14.545639,QA-01,coordinator,COMPLETED,0.87,0.01,155,True,
+2025-06-01T14:04:14.553029,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:04:15.323097,QA-01,coordinator,COMPLETED,0.77,0.01,155,True,
+2025-06-01T14:05:37.501594,TEST-INTEGRATION,test_agent,COMPLETED,0.21,0.0,41,True,
+2025-06-01T14:05:42.578374,DECORATOR-001,decorated_agent,COMPLETED,0.0,0.0,33,True,
+2025-06-01T14:05:43.293227,BE-01,backend,COMPLETED,0.0,0.0,150,True,
+2025-06-01T14:05:43.332647,TL-01,coordinator,COMPLETED,0.0,0.0,147,True,
+2025-06-01T14:05:43.374055,BE-01,documentation,COMPLETED,0.01,0.0,155,True,
+2025-06-01T14:05:43.493605,TL-01,technical,COMPLETED,0.01,0.0,151,True,
+2025-06-01T14:05:43.527404,BE-07,coordinator,COMPLETED,0.0,0.0,126,True,
+2025-06-01T14:05:43.539488,BE-07,technical,COMPLETED,0.01,0.0,170,True,
+2025-06-01T14:05:43.552100,BE-07,backend,COMPLETED,0.01,0.0,180,True,
+2025-06-01T14:05:43.563140,BE-07,documentation,COMPLETED,0.01,0.0,156,True,
+2025-06-01T14:05:43.956928,FE-01,coordinator,COMPLETED,2.47,0.04,155,True,
+2025-06-01T14:05:45.717735,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:05:47.288203,FE-01,coordinator,COMPLETED,1.56,0.03,155,True,
+2025-06-01T14:05:48.695513,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:05:49.573387,FE-01,coordinator,COMPLETED,0.87,0.01,155,True,
+2025-06-01T14:05:50.380666,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:05:51.203525,FE-01,coordinator,COMPLETED,0.82,0.01,155,True,
+2025-06-01T14:05:52.046460,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:05:52.825238,FE-01,coordinator,COMPLETED,0.77,0.01,155,True,
+2025-06-01T14:05:53.593695,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:05:54.373643,FE-01,coordinator,COMPLETED,0.77,0.01,155,True,
+2025-06-01T14:05:55.169442,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:05:55.947889,FE-01,coordinator,COMPLETED,0.77,0.01,155,True,
+2025-06-01T14:05:56.748435,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:05:57.513359,FE-01,coordinator,COMPLETED,0.76,0.01,155,True,
+2025-06-01T14:05:58.280244,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:05:59.071927,FE-01,coordinator,COMPLETED,0.78,0.01,155,True,
+2025-06-01T14:05:59.884837,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:06:00.681822,FE-01,coordinator,COMPLETED,0.79,0.01,155,True,
+2025-06-01T14:06:01.458185,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:06:02.208169,FE-01,coordinator,COMPLETED,0.74,0.01,155,True,
+2025-06-01T14:06:02.966802,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:06:03.862239,FE-01,coordinator,COMPLETED,0.89,0.01,155,True,
+2025-06-01T14:06:04.641006,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:06:05.400625,FE-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:06:06.274640,QA-01,coordinator,COMPLETED,0.82,0.01,155,True,
+2025-06-01T14:06:06.283205,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:07.034594,QA-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:06:07.041590,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:07.936901,QA-01,coordinator,COMPLETED,0.89,0.01,155,True,
+2025-06-01T14:06:07.943090,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:08.720838,QA-01,coordinator,COMPLETED,0.77,0.01,155,True,
+2025-06-01T14:06:08.728638,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:09.482656,QA-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:06:09.489651,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:10.265415,QA-01,coordinator,COMPLETED,0.77,0.01,155,True,
+2025-06-01T14:06:10.272364,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:11.032691,QA-01,coordinator,COMPLETED,0.76,0.01,155,True,
+2025-06-01T14:06:11.041140,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:11.827049,QA-01,coordinator,COMPLETED,0.78,0.01,155,True,
+2025-06-01T14:06:11.832936,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:12.621578,QA-01,coordinator,COMPLETED,0.78,0.01,155,True,
+2025-06-01T14:06:12.627335,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:13.377402,QA-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:06:13.386417,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:14.149187,QA-01,coordinator,COMPLETED,0.76,0.01,155,True,
+2025-06-01T14:06:14.155183,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:14.910566,QA-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:06:14.917366,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:06:15.743054,QA-01,coordinator,COMPLETED,0.82,0.01,155,True,
+2025-06-01T14:33:15.659054,TEST-INTEGRATION,test_agent,COMPLETED,0.2,0.0,41,True,
+2025-06-01T14:33:20.678567,BE-01,backend,COMPLETED,0.01,0.0,150,True,
+2025-06-01T14:33:20.706794,TL-01,coordinator,COMPLETED,0.0,0.0,147,True,
+2025-06-01T14:33:20.739027,BE-01,documentation,COMPLETED,0.0,0.0,155,True,
+2025-06-01T14:33:20.841794,TL-01,technical,COMPLETED,0.01,0.0,151,True,
+2025-06-01T14:33:20.886065,BE-07,coordinator,COMPLETED,0.01,0.0,126,True,
+2025-06-01T14:33:20.901095,BE-07,technical,COMPLETED,0.01,0.0,170,True,
+2025-06-01T14:33:20.909108,BE-07,backend,COMPLETED,0.01,0.0,180,True,
+2025-06-01T14:33:20.920256,BE-07,documentation,COMPLETED,0.01,0.0,156,True,
+2025-06-01T14:33:21.240422,DECORATOR-001,decorated_agent,COMPLETED,0.0,0.0,33,True,
+2025-06-01T14:33:21.990721,FE-01,coordinator,COMPLETED,2.71,0.05,155,True,
+2025-06-01T14:33:23.786375,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:26.039432,FE-01,coordinator,COMPLETED,2.24,0.04,155,True,
+2025-06-01T14:33:26.917293,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:27.698126,FE-01,coordinator,COMPLETED,0.77,0.01,155,True,
+2025-06-01T14:33:28.546736,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:29.270654,FE-01,coordinator,COMPLETED,0.72,0.01,155,True,
+2025-06-01T14:33:30.043358,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:30.766988,FE-01,coordinator,COMPLETED,0.72,0.01,155,True,
+2025-06-01T14:33:31.510049,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:32.293122,FE-01,coordinator,COMPLETED,0.78,0.01,155,True,
+2025-06-01T14:33:33.038342,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:33.770768,FE-01,coordinator,COMPLETED,0.73,0.01,155,True,
+2025-06-01T14:33:34.530564,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:35.259065,FE-01,coordinator,COMPLETED,0.72,0.01,155,True,
+2025-06-01T14:33:36.032869,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:36.813487,FE-01,coordinator,COMPLETED,0.77,0.01,155,True,
+2025-06-01T14:33:37.543633,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:38.283192,FE-01,coordinator,COMPLETED,0.73,0.01,155,True,
+2025-06-01T14:33:39.043498,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:39.764753,FE-01,coordinator,COMPLETED,0.71,0.01,155,True,
+2025-06-01T14:33:40.552850,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:41.305522,FE-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:33:42.034863,FE-01,frontend,FAILED,0.0,0.0,0,False,'Agent' object has no attribute 'run'
+2025-06-01T14:33:42.775759,FE-01,coordinator,COMPLETED,0.73,0.01,155,True,
+2025-06-01T14:33:43.563199,QA-01,coordinator,COMPLETED,0.74,0.01,155,True,
+2025-06-01T14:33:43.571783,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:44.370145,QA-01,coordinator,COMPLETED,0.8,0.01,155,True,
+2025-06-01T14:33:44.376585,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:45.132025,QA-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:33:45.138024,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:45.880315,QA-01,coordinator,COMPLETED,0.74,0.01,155,True,
+2025-06-01T14:33:45.887731,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:46.614367,QA-01,coordinator,COMPLETED,0.72,0.01,155,True,
+2025-06-01T14:33:46.620362,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:47.350201,QA-01,coordinator,COMPLETED,0.73,0.01,155,True,
+2025-06-01T14:33:47.355732,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:48.123058,QA-01,coordinator,COMPLETED,0.76,0.01,155,True,
+2025-06-01T14:33:48.130789,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:49.030381,QA-01,coordinator,COMPLETED,0.9,0.01,155,True,
+2025-06-01T14:33:49.035604,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:49.814556,QA-01,coordinator,COMPLETED,0.78,0.01,155,True,
+2025-06-01T14:33:49.820505,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:50.576905,QA-01,coordinator,COMPLETED,0.75,0.01,155,True,
+2025-06-01T14:33:50.585458,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:51.312932,QA-01,coordinator,COMPLETED,0.72,0.01,155,True,
+2025-06-01T14:33:51.318468,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:52.108077,QA-01,coordinator,COMPLETED,0.79,0.01,155,True,
+2025-06-01T14:33:52.115279,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+2025-06-01T14:33:52.876330,QA-01,coordinator,COMPLETED,0.76,0.01,155,True,
