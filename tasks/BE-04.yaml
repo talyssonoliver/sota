@@ -5,7 +5,7 @@ owner: backend
 depends_on:
   - TL-01
   - TL-13
-state: PLANNED
+state: DONE
 priority: MEDIUM
 estimation_hours: 2
 description: "Task BE-04: Validate Local Environment with APIs"

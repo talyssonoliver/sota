@@ -4,7 +4,7 @@ title: Implement Error Handling Middleware
 owner: backend
 depends_on:
   - TL-01
-state: PLANNED
+state: DONE
 priority: MEDIUM
 estimation_hours: 2
 description: "Task BE-08: Implement Error Handling Middleware"

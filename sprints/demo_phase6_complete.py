@@ -7,7 +7,9 @@ Demonstrates the full automated daily cycle with scheduled tasks
 import asyncio
 import sys
 from pathlib import Path
-sys.path.append(str(Path(__file__).parent))
+
+# Add parent directory to path for imports
+sys.path.append(str(Path(__file__).parent.parent))
 
 from orchestration.daily_cycle import DailyCycleOrchestrator
 

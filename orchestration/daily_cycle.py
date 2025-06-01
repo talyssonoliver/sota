@@ -170,7 +170,7 @@ class DailyCycleOrchestrator:
         except Exception as e:
             self.logger.error(f"Error in morning briefing: {e}")
             return {"status": "error", "message": str(e)}
-    
+
     async def run_midday_check(self):
         """Run midday progress check."""
         self.logger.info("Starting midday progress check")
@@ -184,12 +184,21 @@ class DailyCycleOrchestrator:
                 "python", "scripts/generate_task_report.py", "--mode", "progress"
             ])
             
-            # Log progress status
-            self.logger.info(f"Midday check completed - {metrics.completed_tasks} tasks completed today")
+            # Log progress status - handle both dict and object types
+            if hasattr(metrics, 'completed_tasks'):
+                completed_count = metrics.completed_tasks
+            elif isinstance(metrics, dict):
+                completed_count = metrics.get('completed_tasks', 0)
+            else:
+                completed_count = 0
+                
+            self.logger.info(f"Midday check completed - {completed_count} tasks completed today")
             return {
                 "status": "success",
                 "metrics": metrics,
-                "report": report_result
+                "report": report_result,
+                "tasks_analyzed": getattr(metrics, 'total_tasks', 0) if hasattr(metrics, 'total_tasks') else 0,
+                "issues_count": 0  # Add actual issue detection logic here
             }
             
         except Exception as e:

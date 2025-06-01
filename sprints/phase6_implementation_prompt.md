@@ -22,7 +22,7 @@
 ## Implementation Plan
 
 ### Step 6.1: Daily Scheduler Script (`orchestration/daily_cycle.py`)
-**PRIORITY:** HIGH | **ESTIMATED TIME:** 2-3 hours
+**PRIORITY:** HIGH 
 
 **Requirements:**
 - Create automated daily task processing orchestrator

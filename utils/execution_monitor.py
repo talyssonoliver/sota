@@ -28,317 +28,11 @@ except ImportError:
     class JsonFormatter:
         def __init__(self, *args, **kwargs):
             pass
+
+        def format(self, record):
+            return f"{record.asctime} {record.levelname} {record.getMessage()}"
+
     jsonlogger = type('JsonLogger', (), {'JsonFormatter': JsonFormatter})
-
-# Execution Monitor for AI System
-
-# Provides real-time monitoring and logging of agent executions,
-# task progress, and system performance metrics.
-
-
-class ExecutionMonitor:
-    """
-    Monitors and tracks agent execution progress and performance.
-    """
-
-    def __init__(self, log_dir: str = None):
-        """
-        Initialize the execution monitor.
-
-        Args:
-            log_dir: Directory to store execution logs
-        """
-        self.log_dir = Path(log_dir) if log_dir else Path("logs/executions")
-        self.log_dir.mkdir(parents=True, exist_ok=True)
-
-        self.executions: Dict[str, Dict] = {}
-        self.lock = threading.Lock()
-
-    def start_agent_execution(
-            self,
-            task_id: str,
-            agent_id: str,
-            context: Dict = None) -> Dict:
-        """
-        Start tracking a new agent execution.
-
-        Args:
-            task_id: Unique task identifier
-            agent_id: Agent performing the task
-            context: Additional context data
-
-        Returns:
-            Execution data dictionary
-        """
-        execution_id = f"{task_id}_{agent_id}_{int(time.time())}"
-
-        execution_data = {
-            "execution_id": execution_id,
-            "task_id": task_id,
-            "agent_id": agent_id,
-            "start_time": datetime.now().isoformat(),
-            "status": "RUNNING",
-            "context": context or {},
-            "steps": [],
-            "metrics": {}
-        }
-
-        with self.lock:
-            self.executions[execution_id] = execution_data
-
-        self._save_execution_log(execution_data)
-        return execution_data
-
-    def complete_agent_execution(
-            self,
-            execution_data: Dict,
-            status: str,
-            results: Dict = None,
-            error: str = None,
-            output: Any = None):
-        """
-        Mark an agent execution as complete.
-
-        Args:
-            execution_data: Execution data from start_agent_execution
-            status: Final status (COMPLETED, FAILED, etc.)
-            results: Execution results (legacy parameter)
-            error: Error message if failed
-            output: Agent output (modern parameter)
-        """
-        execution_id = execution_data["execution_id"]
-
-        with self.lock:
-            if execution_id in self.executions:
-                self.executions[execution_id].update({
-                    "end_time": datetime.now().isoformat(),
-                    "status": status,
-                    "results": results or {},
-                    "output": output,
-                    "error": error,
-                    "duration_seconds": self._calculate_duration(execution_data["start_time"])
-                })
-
-                self._save_execution_log(self.executions[execution_id])
-
-    def log_event(self, task_id: str, event: str,
-                  details: Dict[str, Any] = None) -> None:
-        """
-        Log a workflow event.
-
-        Args:
-            task_id: The task identifier
-            event: Event name
-            details: Additional event details
-        """
-        try:
-            event_data = {
-                "task_id": task_id,
-                "event": event,
-                "details": details or {},
-                "timestamp": datetime.now().isoformat()
-            }
-
-            # Log to a general events log
-            events_log = self.log_dir / "workflow_events.log"
-            with open(events_log, 'a', encoding='utf-8') as f:
-                f.write(json.dumps(event_data) + '\n')
-
-        except Exception as e:
-            print(
-                f"Warning: Could not log event {event} for task {task_id}: {e}")
-
-    def get_execution_stats(self) -> Dict:
-        """
-        Get summary statistics for all executions.
-
-        Returns:
-            Dictionary with execution statistics
-        """
-        with self.lock:
-            total = len(self.executions)
-            successful = sum(1 for e in self.executions.values()
-                             if e.get("status") == "COMPLETED")
-
-            durations = [
-                e.get("duration_seconds", 0)
-                for e in self.executions.values()
-                if e.get("duration_seconds")
-            ]
-
-            avg_duration = sum(durations) / len(durations) if durations else 0
-
-            return {
-                "total_executions": total,
-                "successful_executions": successful,
-                "failed_executions": total - successful,
-                "success_rate": (successful / total * 100) if total > 0 else 0,
-                "average_duration_minutes": avg_duration / 60
-            }
-
-    def _calculate_duration(self, start_time_iso: str) -> float:
-        """Calculate duration in seconds from start time."""
-        start_time = datetime.fromisoformat(start_time_iso)
-        return (datetime.now() - start_time).total_seconds()
-
-    def _save_execution_log(self, execution_data: Dict):
-        """Save execution data to log file."""
-        log_file = self.log_dir / f"{execution_data['execution_id']}.json"
-        try:
-            with open(log_file, 'w', encoding='utf-8') as f:
-                json.dump(execution_data, f, indent=2, ensure_ascii=False)
-        except Exception as e:
-            print(f"Warning: Could not save execution log: {e}")
-
-
-# Global monitor instance
-_monitor_instance: Optional[ExecutionMonitor] = None
-
-
-def get_execution_monitor() -> ExecutionMonitor:
-    """
-    Get or create the global execution monitor instance.
-
-    Returns:
-        ExecutionMonitor instance
-    """
-    global _monitor_instance
-    if _monitor_instance is None:
-        _monitor_instance = ExecutionMonitor()
-    return _monitor_instance
-
-
-def reset_execution_monitor():
-    """Reset the global monitor instance (mainly for testing)."""
-    global _monitor_instance
-    _monitor_instance = None
-
-
-# LangGraph Integration for Step 4.8
-class LangGraphExecutionHook:
-    """
-    LangGraph callback hook for real-time execution monitoring.
-    Integrates with LangGraph's event system for live agent tracking.
-    """
-
-    def __init__(self, monitor: ExecutionMonitor, task_id: str):
-        self.monitor = monitor
-        self.task_id = task_id
-        self.active_executions = {}
-
-    def on_node_start(self, node_name: str, state: Dict[str, Any]) -> None:
-        """Called when a LangGraph node starts execution."""
-        try:
-            execution_data = self.monitor.start_agent_execution(
-                self.task_id,
-                node_name,
-                {'node_state': state, 'event': 'node_start'}
-            )
-            self.active_executions[node_name] = execution_data
-        except Exception as e:
-            print(
-                f"Warning: Failed to start monitoring for node {node_name}: {e}")
-
-    def on_node_end(self, node_name: str, result: Any,
-                    error: Optional[str] = None) -> None:
-        """Called when a LangGraph node completes execution."""
-        try:
-            if node_name in self.active_executions:
-                execution_data = self.active_executions[node_name]
-                status = "FAILED" if error else "COMPLETED"
-
-                self.monitor.complete_agent_execution(
-                    execution_data,
-                    status=status,
-                    output=result,
-                    error=error
-                )
-                del self.active_executions[node_name]
-        except Exception as e:
-            print(
-                f"Warning: Failed to complete monitoring for node {node_name}: {e}")
-
-    def on_workflow_start(self, initial_state: Dict[str, Any]) -> None:
-        """Called when LangGraph workflow starts."""
-        try:
-            self.monitor.log_event(self.task_id, "workflow_start", {
-                'initial_state': initial_state,
-                'workflow_type': 'langgraph'
-            })
-        except Exception as e:
-            print(f"Warning: Failed to log workflow start: {e}")
-
-    def on_workflow_end(self,
-                        final_state: Dict[str,
-                                          Any],
-                        error: Optional[str] = None) -> None:
-        """Called when LangGraph workflow completes."""
-        try:
-            self.monitor.log_event(self.task_id, "workflow_complete", {
-                'final_state': final_state,
-                'success': error is None,
-                'error': error
-            })
-        except Exception as e:
-            print(f"Warning: Failed to log workflow end: {e}")
-
-
-class CrewAIExecutionHook:
-    """
-    CrewAI post-processing hook for real-time execution monitoring.
-    Integrates with CrewAI's agent execution lifecycle.
-    """
-
-    def __init__(self, monitor: ExecutionMonitor, task_id: str):
-        self.monitor = monitor
-        self.task_id = task_id
-        self.crew_executions = {}
-
-    def on_agent_start(self, agent_name: str, task_description: str) -> None:
-        """Called when a CrewAI agent starts task execution."""
-        execution_data = self.monitor.start_agent_execution(
-            self.task_id,
-            agent_name,
-            {'task_description': task_description, 'framework': 'crewai'}
-        )
-        self.crew_executions[agent_name] = execution_data
-
-    def on_agent_complete(
-            self,
-            agent_name: str,
-            result: str,
-            success: bool = True) -> None:
-        """Called when a CrewAI agent completes task execution."""
-        if agent_name in self.crew_executions:
-            execution_data = self.crew_executions[agent_name]
-            status = "COMPLETED" if success else "FAILED"
-
-            self.monitor.complete_agent_execution(
-                execution_data,
-                status=status,
-                output=result,
-                error=None if success else "CrewAI execution failed"
-            )
-            del self.crew_executions[agent_name]
-
-    def on_crew_result(self, crew_result: Any) -> None:
-        """Called when CrewAI crew execution completes."""
-        self.monitor.log_event(self.task_id, "crew_execution_complete", {
-            'result_type': type(crew_result).__name__,
-            'framework': 'crewai'
-        })
-
-
-def create_langgraph_hook(task_id: str) -> LangGraphExecutionHook:
-    """Create a LangGraph execution hook for monitoring."""
-    monitor = get_execution_monitor()
-    return LangGraphExecutionHook(monitor, task_id)
-
-
-def create_crewai_hook(task_id: str) -> CrewAIExecutionHook:
-    """Create a CrewAI execution hook for monitoring."""
-    monitor = get_execution_monitor()
-    return CrewAIExecutionHook(monitor, task_id)
 
 
 class DashboardLogger:
@@ -444,9 +138,12 @@ class DashboardLogger:
                 with open(self.status_file, 'r', encoding='utf-8') as f:
                     dashboard_data['agent_status'] = json.load(f)
 
-            # Get summary statistics
-            monitor = get_execution_monitor()
-            dashboard_data['summary_stats'] = monitor.get_execution_stats()
+            # Get summary statistics from monitor (will be set later)
+            try:
+                monitor = get_execution_monitor()
+                dashboard_data['summary_stats'] = monitor.get_execution_stats()
+            except:
+                dashboard_data['summary_stats'] = {}
         except Exception as e:
             # Return default data if anything fails
             pass
@@ -454,7 +151,6 @@ class DashboardLogger:
         return dashboard_data
 
 
-# Enhanced ExecutionMonitor with dashboard integration
 class ExecutionMonitor:
     """
     Monitors and logs agent execution in real-time.
@@ -657,6 +353,8 @@ class ExecutionMonitor:
                         output_size = len(output)
                     elif isinstance(output, dict):
                         output_size = len(json.dumps(output))
+                    else:
+                        output_size = len(str(output))
             except Exception:
                 output_size = 0  # Safe fallback
 
@@ -747,14 +445,21 @@ class ExecutionMonitor:
 
     def _write_csv_summary(self, summary_data: Dict[str, Any]) -> None:
         """Write execution summary to CSV file."""
-        with open(self.summary_csv, 'a', newline='', encoding='utf-8') as f:
-            writer = csv.DictWriter(f, fieldnames=summary_data.keys())
-            writer.writerow(summary_data)
+        try:
+            with open(self.summary_csv, 'a', newline='', encoding='utf-8') as f:
+                writer = csv.DictWriter(f, fieldnames=[
+                    'timestamp', 'task_id', 'agent', 'status',
+                    'duration_seconds', 'duration_minutes', 'output_size',
+                    'success', 'error_message'
+                ])
+                writer.writerow(summary_data)
+        except Exception as e:
+            print(f"Warning: Failed to write CSV summary: {e}")
 
     def log_event(self, task_id: str, event: str,
                   details: Dict[str, Any] = None) -> None:
         """
-        Log a workflow event with enhanced error handling and rate limiting.
+        Log a workflow event with enhanced error handling.
 
         Args:
             task_id: The task identifier
@@ -762,25 +467,23 @@ class ExecutionMonitor:
             details: Additional event details
         """
         try:
-            # Rate limiting: prevent spam logging of the same event
-            event_key = f"{task_id}_{event}"
+            # Rate limiting to prevent spam
             current_time = time.time()
-
+            event_key = f"{task_id}_{event}"
             if event_key in self._last_event_time:
-                # 0.5 second rate limit
-                if current_time - self._last_event_time[event_key] < 0.5:
+                if current_time - self._last_event_time[event_key] < 1.0:
                     return  # Skip this event to prevent spam
-
             self._last_event_time[event_key] = current_time
 
+            # Log to task-specific logger
             task_logger = self.create_task_logger(task_id)
             try:
                 task_logger.info(
                     f"Workflow event: {event}",
                     extra={
                         'task_id': task_id,
+                        'agent': '',
                         'event': event,
-                        'details': details or {},
                         'duration': ''
                     }
                 )
@@ -794,10 +497,10 @@ class ExecutionMonitor:
     def get_execution_stats(
             self, task_id: Optional[str] = None) -> Dict[str, Any]:
         """
-        Get execution statistics from the CSV summary with enhanced error handling.
+        Get execution statistics from CSV summary file.
 
         Args:
-            task_id: Optional task ID to filter stats
+            task_id: Filter by specific task ID (optional)
 
         Returns:
             Dictionary with execution statistics
@@ -815,9 +518,9 @@ class ExecutionMonitor:
             if not self.summary_csv.exists():
                 return stats
 
+            total_duration = 0
             agents_used = set()
             tasks_executed = set()
-            total_duration = 0
 
             with open(self.summary_csv, 'r', encoding='utf-8') as f:
                 reader = csv.DictReader(f)
@@ -855,8 +558,7 @@ class ExecutionMonitor:
             stats['tasks_executed'] = list(tasks_executed)
 
         except Exception as e:
-            # Return default stats if anything fails
-            print(f"Warning: Failed to get execution stats: {e}")
+            print(f"Warning: Failed to calculate execution stats: {e}")
 
         return stats
 
@@ -879,37 +581,149 @@ class ExecutionMonitor:
             f"  Failed: {stats['failed_executions']} ({(stats['failed_executions'] / max(stats['total_executions'], 1) * 100):.1f}%)",
             f"  Average Duration: {stats['average_duration_minutes']} minutes",
             "",
-            "🤖 AGENTS USED:",
+            f"🤖 AGENTS USED ({len(stats['agents_used'])}):",
+            *[f"  • {agent}" for agent in sorted(stats['agents_used'])],
+            "",
+            f"📋 TASKS EXECUTED ({len(stats['tasks_executed'])}):",
+            *[f"  • {task}" for task in sorted(stats['tasks_executed'])],
+            "",
+            "🔄 LIVE STATUS:",
+            f"  Current Task: {dashboard_data.get('live_execution', {}).get('current_task', 'None')}",
+            f"  Current Agent: {dashboard_data.get('live_execution', {}).get('current_agent', 'None')}",
+            f"  Status: {dashboard_data.get('live_execution', {}).get('status', 'None')}",
+            f"  Last Update: {dashboard_data.get('live_execution', {}).get('last_update', 'None')}",
+            "",
+            "=" * 60
         ]
 
-        for agent in stats['agents_used']:
-            report_lines.append(f"  - {agent}")
-
-        report_lines.extend([
-            "",
-            "📋 TASKS EXECUTED:",
-        ])
-
-        for task in stats['tasks_executed']:
-            report_lines.append(f"  - {task}")
-
-        if dashboard_data['live_execution']:
-            live = dashboard_data['live_execution']
-            report_lines.extend([
-                "",
-                "🔴 CURRENT EXECUTION:",
-                f"  Task: {live.get('current_task', 'None')}",
-                f"  Agent: {live.get('current_agent', 'None')}",
-                f"  Status: {live.get('status', 'Unknown')}",
-                f"  Duration: {live.get('duration_minutes', 0)} minutes",
-            ])
-
-        report_lines.extend([
-            "",
-            "=" * 60,
-        ])
-
         return "\n".join(report_lines)
+
+
+# LangGraph Integration for Step 4.8
+class LangGraphExecutionHook:
+    """
+    LangGraph callback hook for real-time execution monitoring.
+    Integrates with LangGraph's event system for live agent tracking.
+    """
+
+    def __init__(self, monitor: ExecutionMonitor, task_id: str):
+        self.monitor = monitor
+        self.task_id = task_id
+        self.active_executions = {}
+
+    def on_node_start(self, node_name: str, state: Dict[str, Any]) -> None:
+        """Called when a LangGraph node starts execution."""
+        try:
+            execution_data = self.monitor.start_agent_execution(
+                self.task_id,
+                node_name,
+                {'node_state': state, 'event': 'node_start'}
+            )
+            self.active_executions[node_name] = execution_data
+        except Exception as e:
+            print(
+                f"Warning: Failed to start monitoring for node {node_name}: {e}")
+
+    def on_node_end(self, node_name: str, result: Any,
+                    error: Optional[str] = None) -> None:
+        """Called when a LangGraph node completes execution."""
+        try:
+            if node_name in self.active_executions:
+                execution_data = self.active_executions[node_name]
+                status = "FAILED" if error else "COMPLETED"
+
+                self.monitor.complete_agent_execution(
+                    execution_data,
+                    status=status,
+                    output=result,
+                    error=error
+                )
+                del self.active_executions[node_name]
+        except Exception as e:
+            print(
+                f"Warning: Failed to complete monitoring for node {node_name}: {e}")
+
+    def on_workflow_start(self, initial_state: Dict[str, Any]) -> None:
+        """Called when LangGraph workflow starts."""
+        try:
+            self.monitor.log_event(self.task_id, "workflow_start", {
+                'initial_state': initial_state,
+                'workflow_type': 'langgraph'
+            })
+        except Exception as e:
+            print(f"Warning: Failed to log workflow start: {e}")
+
+    def on_workflow_end(self,
+                        final_state: Dict[str,
+                                          Any],
+                        error: Optional[str] = None) -> None:
+        """Called when LangGraph workflow completes."""
+        try:
+            self.monitor.log_event(self.task_id, "workflow_complete", {
+                'final_state': final_state,
+                'success': error is None,
+                'error': error
+            })
+        except Exception as e:
+            print(f"Warning: Failed to log workflow end: {e}")
+
+
+class CrewAIExecutionHook:
+    """
+    CrewAI post-processing hook for real-time execution monitoring.
+    Integrates with CrewAI's agent execution lifecycle.
+    """
+
+    def __init__(self, monitor: ExecutionMonitor, task_id: str):
+        self.monitor = monitor
+        self.task_id = task_id
+        self.crew_executions = {}
+
+    def on_agent_start(self, agent_name: str, task_description: str) -> None:
+        """Called when a CrewAI agent starts task execution."""
+        execution_data = self.monitor.start_agent_execution(
+            self.task_id,
+            agent_name,
+            {'task_description': task_description, 'framework': 'crewai'}
+        )
+        self.crew_executions[agent_name] = execution_data
+
+    def on_agent_complete(
+            self,
+            agent_name: str,
+            result: str,
+            success: bool = True) -> None:
+        """Called when a CrewAI agent completes task execution."""
+        if agent_name in self.crew_executions:
+            execution_data = self.crew_executions[agent_name]
+            status = "COMPLETED" if success else "FAILED"
+
+            self.monitor.complete_agent_execution(
+                execution_data,
+                status=status,
+                output=result,
+                error=None if success else "CrewAI execution failed"
+            )
+            del self.crew_executions[agent_name]
+
+    def on_crew_result(self, crew_result: Any) -> None:
+        """Called when CrewAI crew execution completes."""
+        self.monitor.log_event(self.task_id, "crew_execution_complete", {
+            'result_type': type(crew_result).__name__,
+            'framework': 'crewai'
+        })
+
+
+def create_langgraph_hook(task_id: str) -> LangGraphExecutionHook:
+    """Create a LangGraph execution hook for monitoring."""
+    monitor = get_execution_monitor()
+    return LangGraphExecutionHook(monitor, task_id)
+
+
+def create_crewai_hook(task_id: str) -> CrewAIExecutionHook:
+    """Create a CrewAI execution hook for monitoring."""
+    monitor = get_execution_monitor()
+    return CrewAIExecutionHook(monitor, task_id)
 
 
 # Global monitor instance
@@ -924,6 +738,12 @@ def get_execution_monitor() -> ExecutionMonitor:
     return _execution_monitor
 
 
+def reset_execution_monitor():
+    """Reset the global monitor instance (mainly for testing)."""
+    global _execution_monitor
+    _execution_monitor = None
+
+
 # Global dashboard logger instance
 _dashboard_logger = None
 
@@ -936,18 +756,26 @@ def get_dashboard_logger() -> DashboardLogger:
     return _dashboard_logger
 
 
+def reset_dashboard_logger():
+    """Reset the global dashboard logger instance (mainly for testing)."""
+    global _dashboard_logger
+    _dashboard_logger = None
+
+
 # Decorator for monitoring agent executions
 def monitor_execution(task_id: str, agent: str):
     """
-    Decorator to automatically monitor agent execution.
+    Decorator to automatically monitor function execution.
 
-    Usage:
-        @monitor_execution("BE-07", "backend")
-        def my_agent_function(state):
-            # Agent logic here
-            return result
+    Args:
+        task_id: Task identifier
+        agent: Agent name
+
+    Returns:
+        Decorated function
     """
     def decorator(func):
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):
             monitor = get_execution_monitor()
             execution_data = monitor.start_agent_execution(task_id, agent)

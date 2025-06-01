@@ -101,9 +101,27 @@ dashboard/completion_metrics.json
 dashboard/dashboard_summary.json
 dashboard/charts_data.json
 dashboard/completion_summary.json
+dashboard/agent_status.json
+dashboard/live_execution.json
+.copilot-instructions.md
 
 # Progress reports (generated files)
 progress_reports/
 
 # Execution reports (generated files)
 reports/execution-summary.csv
+
+# Daily reports and briefings (generated files)
+docs/sprint/daily_reports/
+docs/sprint/briefings/
+
+# Generated task index files
+tasks/tasks.json
+
+# Backup files
+*_backup.py
+*_clean.py
+
+# Debug and check files
+debug_*.py
+check_*.py
