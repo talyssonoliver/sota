@@ -14,6 +14,8 @@ from prompts.utils import load_prompt_template
 from tools.memory_engine import memory
 from tools.tool_loader import get_tools_for_agent
 
+from .agent_builder import create_generic_agent
+
 
 class MemoryEnabledAgentBuilder:
     """Enhanced agent builder with MCP context integration"""
@@ -275,6 +277,7 @@ MemoryEnabledAgentBuilder.MemoryEnabledAgentBuilder = MemoryEnabledAgentBuilder
 
 # Export all for easy imports
 __all__ = [
+    'create_generic_agent',
     'MemoryEnabledAgentBuilder',
     'agent_builder',
     'create_backend_engineer_agent',

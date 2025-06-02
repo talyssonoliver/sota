@@ -45,7 +45,7 @@ import shutil
 import threading
 import time
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import psutil  # Added missing import
@@ -639,9 +639,9 @@ class PartitionManager:
         with self._lock:
             if partition_key not in self.partitions:
                 self.partitions[partition_key] = {
-                    "created_at": datetime.now(UTC),
+                    "created_at": datetime.now(timezone.utc),
                     "document_count": 0,
-                    "last_accessed": datetime.now(UTC)
+                    "last_accessed": datetime.now(timezone.utc)
                 }
                 self.health_stats[partition_key] = {
                     "queries": 0,
@@ -665,7 +665,7 @@ class PartitionManager:
                 "total_partitions": len(self.partitions),
                 "oldest_partition": min(
                     (p["created_at"] for p in self.partitions.values()),
-                    default=None
+                    default=None # type: ignore
                 ),
                 "most_active": max(
                     self.health_stats.items(),
@@ -693,11 +693,11 @@ class PartitionManager:
 
             if partition_key in self.partitions:
                 self.partitions[partition_key]["last_accessed"] = datetime.now(
-                    UTC)
+                    timezone.utc)
 
     def cleanup_inactive_partitions(self, max_age_days: int = 30):
         """Remove partitions that haven't been accessed recently."""
-        cutoff = datetime.now(UTC) - timedelta(days=max_age_days)
+        cutoff = datetime.now(timezone.utc) - timedelta(days=max_age_days)
         to_remove = []
 
         with self._lock:
@@ -1239,7 +1239,7 @@ class AccessControlManager:
                 if attributes.get(k) != v:
                     return False
         # Time-bound access
-        now = datetime.now(UTC)
+        now = datetime.now(timezone.utc)
         tb = self.time_bounds.get(resource)
         if tb and not (tb[0] <= now <= tb[1]):
             return False
@@ -1298,7 +1298,7 @@ class AuditLogger:
             success: bool = True,
             extra: Dict[str,
                         Any] = None):
-        ts = datetime.now(UTC).isoformat(timespec="milliseconds")
+        ts = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
 
         # Convert any non-serializable objects (like MagicMock) to strings
         safe_extra = {}
@@ -1486,13 +1486,11 @@ class MemoryEngine:
                 persist_directory=self.config.chroma_persist_directory
             )
             self.logger.info(
-                f"Loaded existing Chroma vector store from {
-                    self.config.chroma_persist_directory}")
+                f"Loaded existing Chroma vector store from {self.config.chroma_persist_directory}")
         except Exception as e:
             # Create a new vector store if one doesn't exist
             self.logger.info(
-                f"Creating new Chroma vector store at {
-                    self.config.chroma_persist_directory}")
+                f"Creating new Chroma vector store at {self.config.chroma_persist_directory}")
             self.vector_store = Chroma(
                 collection_name=self.config.collection_name,
                 embedding_function=self.embedding_function,
@@ -1631,7 +1629,7 @@ class MemoryEngine:
             doc_metadata = metadata or {}
             doc_metadata.update({
                 "source": file_path,
-                "added_at": datetime.now(UTC).isoformat(),
+                "added_at": datetime.now(timezone.utc).isoformat(),
                 "added_by": user
             })
 
@@ -1681,7 +1679,7 @@ class MemoryEngine:
                             "source": metadata["source"],
                             "chunk_id": metadata["chunk_id"],
                             "chunk_count": metadata["chunk_count"],
-                            "timestamp": metadata.get("timestamp", datetime.now(UTC).isoformat()),
+                            "timestamp": metadata.get("timestamp", datetime.now(timezone.utc).isoformat()),
                             # DO NOT store actual content in vector store
                         }
                         secure_metadatas.append(secure_metadata)
@@ -1691,12 +1689,10 @@ class MemoryEngine:
                     self._add_secure_embeddings(chunk_texts, secure_metadatas)
 
                     self.logger.info(
-                        f"Added {
-                            len(chunk_texts)} secure chunks to vector store for {file_path}")
+                        f"Added {len(chunk_texts)} secure chunks to vector store for {file_path}")
                 except Exception as e:
                     self.logger.error(
-                        f"Error adding to vector store for {file_path}: {
-                            str(e)}", exc_info=True)
+                        f"Error adding to vector store for {file_path}: {str(e)}", exc_info=True)
             self.audit_logger.log(
                 who=user,
                 what="add_document",
@@ -1769,7 +1765,7 @@ class MemoryEngine:
                 doc_specific_metadata = metadata or {}
                 doc_specific_metadata.update({
                     "source": file_path,
-                    "added_at": datetime.now(UTC).isoformat(),
+                    "added_at": datetime.now(timezone.utc).isoformat(),
                     "added_by": user,
                     **doc_obj.metadata  # Preserve original metadata from loader
                 })
@@ -1814,7 +1810,7 @@ class MemoryEngine:
                             "source": metadata["source"],
                             "chunk_id": metadata["chunk_id"],
                             "chunk_count": metadata["chunk_count"],
-                            "timestamp": metadata.get("timestamp", datetime.now(UTC).isoformat()),
+                            "timestamp": metadata.get("timestamp", datetime.now(timezone.utc).isoformat()),
                             # DO NOT store actual content in vector store
                         }
                         secure_metadatas.append(secure_metadata)
@@ -1824,13 +1820,11 @@ class MemoryEngine:
                     self._add_secure_embeddings(chunk_texts, secure_metadatas)
 
                     self.logger.info(
-                        f"Added {
-                            len(chunk_texts)} secure chunks to vector store for {file_path}")
+                        f"Added {len(chunk_texts)} secure chunks to vector store for {file_path}")
                     files_processed_count += 1
                 except Exception as e:
                     self.logger.error(
-                        f"Error adding to vector store for {file_path}: {
-                            str(e)}", exc_info=True)
+                        f"Error adding to vector store for {file_path}: {str(e)}", exc_info=True)
 
             self.audit_logger.log(
                 who=user,
@@ -1852,8 +1846,7 @@ class MemoryEngine:
                 extra={
                     "error": str(e)})
             self.logger.error(
-                f"Error adding directory {directory_path}: {
-                    str(e)}", exc_info=True)
+                f"Error adding directory {directory_path}: {str(e)}", exc_info=True)
 
     def get_context(
             self,
@@ -1942,8 +1935,7 @@ class MemoryEngine:
                         "No similarity search method found on vector_store.")
 
                 self.logger.info(
-                    f"Found {
-                        len(candidates) if candidates else 0} relevant documents")
+                    f"Found {len(candidates) if candidates else 0} relevant documents")
             except Exception as e:
                 self.logger.error(
                     f"Error during vector search: {str(e)}", exc_info=True)
@@ -2596,9 +2588,7 @@ class MemoryEngine:
                     )
 
                 if docs:
-                    domain_context = f"# {
-                        domain.upper().replace(
-                            '-', ' ')} Context\n"
+                    domain_context = f"# {domain.upper().replace('-', ' ')} Context\n"
                     for doc in docs:
                         title = doc.metadata.get(
                             'title', doc.metadata.get('source', 'Section'))
@@ -2610,8 +2600,7 @@ class MemoryEngine:
                     f"Error retrieving context for domain {domain}: {e}")
                 continue
 
-        return "\n\n".join(all_context) if all_context else f"# No Context Available\nNo context found for domains: {
-            ', '.join(domains)}"
+        return "\n\n".join(all_context) if all_context else f"# No Context Available\nNo context found for domains: {', '.join(domains)}"
 
     def get_documents(self,
                       context_topics: List[str],
@@ -2693,7 +2682,7 @@ class MemoryEngine:
                                         **doc.metadata,
                                         "topic": topic,
                                         "query_used": query,
-                                        "retrieved_at": datetime.now(UTC).isoformat()}}
+                                        "retrieved_at": datetime.now(timezone.utc).isoformat()}}
 
                                 # Avoid duplicates
                                 if not any(
@@ -2708,24 +2697,18 @@ class MemoryEngine:
                     # If no documents found, try fallback search
                     if not topic_documents:
                         try:
-                            fallback_query = f"information about {
-                                topic.replace(
-                                    '-', ' ')}"
+                            fallback_query = f"information about {topic.replace('-', ' ')}"
                             docs = self.vector_store.similarity_search(
                                 fallback_query, k=1)
 
                             if docs:
                                 doc_dict = {
-                                    "page_content": f"# {
-                                        topic.replace(
-                                            '-',
-                                            ' ').title()}\n\n{
-                                        docs[0].page_content}",
+                                    "page_content": f"# {topic.replace('-', ' ').title()}\n\n{docs[0].page_content}",
                                     "metadata": {
                                         **docs[0].metadata,
                                         "topic": topic,
                                         "query_used": fallback_query,
-                                        "retrieved_at": datetime.now(UTC).isoformat(),
+                                        "retrieved_at": datetime.now(timezone.utc).isoformat(),
                                         "fallback": True}}
                                 topic_documents.append(doc_dict)
 
@@ -2735,22 +2718,18 @@ class MemoryEngine:
 
                     all_documents.extend(topic_documents)
                     self.logger.info(
-                        f"Retrieved {
-                            len(topic_documents)} documents for topic '{topic}'")
+                        f"Retrieved {len(topic_documents)} documents for topic '{topic}'")
 
                 except Exception as e:
                     self.logger.error(f"Error processing topic '{topic}': {e}")
                     # Add a placeholder for missing context
                     all_documents.append(
                         {
-                            "page_content": f"# {
-                                topic.replace(
-                                    '-',
-                                    ' ').title()}\n\nContext not available for this topic.",
+                            "page_content": f"# {topic.replace('-', ' ').title()}\n\nContext not available for this topic.",
                             "metadata": {
                                 "topic": topic,
                                 "error": str(e),
-                                "retrieved_at": datetime.now(UTC).isoformat(),
+                                "retrieved_at": datetime.now(timezone.utc).isoformat(),
                                 "placeholder": True}})
 
             # Log context usage for Step 3.7 (Context Tracking per Task)
@@ -2758,8 +2737,7 @@ class MemoryEngine:
                 who=user,
                 what="get_documents",
                 how="context_topics",
-                resource=f"topics:{
-                    ','.join(context_topics)}",
+                resource=f"topics:{','.join(context_topics)}",
                 success=True,
                 extra={
                     "topics_requested": context_topics,
@@ -2852,7 +2830,7 @@ class MemoryEngine:
             doc_metadata = metadata or {}
             doc_metadata.update({
                 "source": file_path,
-                "added_at": datetime.now(UTC).isoformat(),
+                "added_at": datetime.now(timezone.utc).isoformat(),
                 "added_by": user,
                 "chunk_strategy": "enhanced_langchain",
                 "chunk_size": chunk_size,
@@ -2880,8 +2858,7 @@ class MemoryEngine:
             # Split into chunks
             chunks = splitter.split_documents([doc])
             self.logger.info(
-                f"Document split into {
-                    len(chunks)} chunks using LangChain TextSplitter")
+                f"Document split into {len(chunks)} chunks using LangChain TextSplitter")
 
             # Process each chunk
             chunk_texts = []
@@ -2983,8 +2960,7 @@ class MemoryEngine:
                 context_topics, max_per_topic=max_per_topic, user=user)
 
             if not context_docs:
-                return f"# Context Topics: {
-                    ', '.join(context_topics)}\n\nNo relevant context found for the specified topics."
+                return f"# Context Topics: {', '.join(context_topics)}\n\nNo relevant context found for the specified topics."
 
             # Step 3.5: Combine context with token budget management
             combined_parts = []
@@ -3013,27 +2989,21 @@ class MemoryEngine:
                     current_tokens += estimated_tokens
 
                 # Add the topic content to combined parts
-                if topic_content.strip() != f"## {
-                    topic.replace(
-                        '-',
-                        ' ').title()}":
+                if topic_content.strip() != f"## {topic.replace('-', ' ').title()}":
                     combined_parts.append(topic_content)
 
             # Step 3.5: Join with proper formatting
             combined_context = "\n\n".join(combined_parts)
 
             self.logger.info(
-                f"Built focused context: {
-                    len(context_docs)} documents, ~{current_tokens} tokens")
+                f"Built focused context: {len(context_docs)} documents, ~{current_tokens} tokens")
 
             return combined_context
 
         except Exception as e:
             self.logger.error(
                 f"Error building focused context: {e}", exc_info=True)
-            return f"# Context Error\n\nUnable to build context for topics: {
-                ', '.join(context_topics)}\nError: {
-                str(e)}"
+            return f"# Context Error\n\nUnable to build context for topics: {', '.join(context_topics)}\nError: {str(e)}"
 
 
 # Provide a singleton memory engine for compatibility with legacy imports
