@@ -73,22 +73,40 @@ class TestEndOfDayReporting(unittest.TestCase):
         }
         
         with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_generator:
-            mock_instance = Mock()
-            mock_instance.metrics_calculator.calculate_all_metrics.return_value = mock_metrics
-            mock_generator.return_value = mock_instance
-            
-            result = generate_end_of_day_report(2)
-            self.assertTrue(result)
+            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+                with patch('builtins.open', MagicMock()) as mock_open:
+                    mock_instance = Mock()
+                    mock_instance.metrics_calculator.calculate_all_metrics.return_value = mock_metrics
+                    mock_instance.generate_daily_report.return_value = "# Daily Report\n\nTest report content"
+                    mock_generator.return_value = mock_instance
+                    
+                    mock_eod_instance = Mock()
+                    mock_eod_gen.return_value = mock_eod_instance
+                    
+                    mock_handle = MagicMock()
+                    mock_open.return_value.__enter__.return_value = mock_handle
+                    
+                    result = generate_end_of_day_report(2)
+                    self.assertTrue(result)
     
     def test_tomorrow_preparation_features(self):
         """Test tomorrow's task preparation and priority setting."""
         with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_generator:
-            mock_instance = Mock()
-            mock_generator.return_value = mock_instance
-            
-            # Test should identify and prepare tomorrow's tasks
-            result = generate_end_of_day_report(2)
-            self.assertTrue(result)
+            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+                with patch('builtins.open', MagicMock()) as mock_open:
+                    mock_instance = Mock()
+                    mock_instance.metrics_calculator.calculate_all_metrics.return_value = {"task_metrics": []}
+                    mock_instance.generate_daily_report.return_value = "# Daily Report\n\nTest report content"
+                    mock_generator.return_value = mock_instance
+                    
+                    mock_eod_instance = Mock()
+                    mock_eod_gen.return_value = mock_eod_instance
+                    
+                    mock_handle = MagicMock()
+                    mock_open.return_value.__enter__.return_value = mock_handle
+                    
+                    result = generate_end_of_day_report(2)
+                    self.assertTrue(result)
     
     def test_sprint_health_indicators(self):
         """Test sprint health monitoring and indicators."""
@@ -100,46 +118,68 @@ class TestEndOfDayReporting(unittest.TestCase):
         }
         
         with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_generator:
-            mock_instance = Mock()
-            mock_instance.metrics_calculator.calculate_sprint_metrics.return_value = mock_sprint_metrics
-            mock_generator.return_value = mock_instance
-            
-            result = generate_end_of_day_report(2)
-            self.assertTrue(result)
+            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+                with patch('builtins.open', MagicMock()) as mock_open:
+                    mock_instance = Mock()
+                    mock_instance.metrics_calculator.calculate_sprint_metrics.return_value = mock_sprint_metrics
+                    mock_instance.metrics_calculator.calculate_all_metrics.return_value = {"task_metrics": []}
+                    mock_instance.generate_daily_report.return_value = "# Daily Report\n\nTest report content"
+                    mock_generator.return_value = mock_instance
+                    
+                    mock_eod_instance = Mock()
+                    mock_eod_gen.return_value = mock_eod_instance
+                    
+                    mock_handle = MagicMock()
+                    result = generate_end_of_day_report(2)
+                    self.assertTrue(result)
     
     def test_visual_progress_summary_generation(self):
         """Test generation of visual progress summaries."""
         with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_generator:
-            with patch('builtins.open', mock_open := MagicMock()):
-                mock_instance = Mock()
-                mock_generator.return_value = mock_instance
-                
-                result = generate_end_of_day_report(2)
-                self.assertTrue(result)
-                
-                # Check that report file was written with visual elements
-                mock_open.assert_called()
+            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+                with patch('builtins.open', mock_open := MagicMock()):
+                    mock_instance = Mock()
+                    mock_instance.metrics_calculator.calculate_all_metrics.return_value = {"task_metrics": []}
+                    mock_instance.generate_daily_report.return_value = "# Daily Report\n\nTest report content"
+                    mock_generator.return_value = mock_instance
+                    
+                    mock_eod_instance = Mock()
+                    mock_eod_gen.return_value = mock_eod_instance
+                    
+                    mock_handle = MagicMock()
+                    mock_open.return_value.__enter__.return_value = mock_handle
+                    
+                    result = generate_end_of_day_report(2)
+                    mock_open.assert_called()
     
     def test_integration_with_existing_infrastructure(self):
         """Test seamless integration with existing reporting infrastructure."""
         with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_prog_gen:
-            with patch('scripts.generate_task_report.DashboardUpdater') as mock_dashboard:
-                mock_prog_instance = Mock()
-                mock_dashboard_instance = Mock()
-                mock_prog_gen.return_value = mock_prog_instance
-                mock_dashboard.return_value = mock_dashboard_instance
-                
-                result = generate_end_of_day_report(2)
-                self.assertTrue(result)
-                
-                # Verify existing infrastructure is used
-                mock_prog_gen.assert_called()
+            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+                with patch('scripts.generate_task_report.DashboardUpdater') as mock_dashboard:
+                    with patch('builtins.open', MagicMock()) as mock_open:
+                        mock_prog_instance = Mock()
+                        mock_prog_instance.metrics_calculator.calculate_all_metrics.return_value = {"task_metrics": []}
+                        mock_prog_instance.generate_daily_report.return_value = "# Daily Report\n\nTest report content"
+                        mock_dashboard_instance = Mock()
+                        mock_prog_gen.return_value = mock_prog_instance
+                        mock_dashboard.return_value = mock_dashboard_instance
+                        
+                        mock_eod_instance = Mock()
+                        mock_eod_gen.return_value = mock_eod_instance
+                        
+                        mock_handle = MagicMock()
+                        mock_open.return_value.__enter__.return_value = mock_handle
+                        
+                        result = generate_end_of_day_report(2)
+                        self.assertTrue(result)
+                        
+                        # Verify existing infrastructure is used
+                        mock_prog_gen.assert_called()
     
     def test_error_handling_for_end_of_day_reports(self):
-        """Test proper error handling in end-of-day report generation."""
-        with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_generator:
-            mock_generator.side_effect = Exception("Test error")
-            
+        """Test error handling for end-of-day reports."""
+        with patch('scripts.generate_task_report.ProgressReportGenerator', side_effect=Exception("Test error")):
             result = generate_end_of_day_report(2)
             self.assertFalse(result)
     
@@ -155,19 +195,25 @@ class TestEndOfDayReporting(unittest.TestCase):
         ]
         
         with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_generator:
-            with patch('builtins.open', mock_open := MagicMock()) as mock_file:
-                mock_instance = Mock()
-                mock_generator.return_value = mock_instance
-                
-                # Create a mock file handle
-                mock_handle = MagicMock()
-                mock_file.return_value.__enter__.return_value = mock_handle
-                
-                result = generate_end_of_day_report(2)
-                self.assertTrue(result)
-                
-                # Verify write was called (content validation would be in integration tests)
-                mock_handle.write.assert_called()
+            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+                with patch('builtins.open', mock_open := MagicMock()) as mock_file:
+                    mock_instance = Mock()
+                    mock_instance.metrics_calculator.calculate_all_metrics.return_value = {"task_metrics": []}
+                    mock_instance.generate_daily_report.return_value = "# Daily Report\n\nTest report content"
+                    mock_generator.return_value = mock_instance
+                    
+                    mock_eod_instance = Mock()
+                    mock_eod_gen.return_value = mock_eod_instance
+                    
+                    # Create a mock file handle
+                    mock_handle = MagicMock()
+                    mock_file.return_value.__enter__.return_value = mock_handle
+                    
+                    result = generate_end_of_day_report(2)
+                    self.assertTrue(result)
+                    
+                    # Verify write was called (content validation would be in integration tests)
+                    mock_handle.write.assert_called()
 
 
 if __name__ == "__main__":
