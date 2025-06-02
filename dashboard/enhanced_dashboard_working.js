@@ -20,17 +20,70 @@ class DashboardManager {
             sprintHealth: '/api/sprint/health',
             automationStatus: '/api/automation/status',
             recentActivity: '/api/tasks/recent',
-            progressTrend: '/api/progress/trend'
+            progressTrend: '/api/progress/trend',
+            systemHealth: '/api/system/health',
+            timelineData: '/api/timeline/data',
+            // New business metrics endpoints
+            qaPassRate: '/api/qa_pass_rate',
+            codeCoverage: '/api/code_coverage',
+            sprintVelocity: '/api/sprint_velocity',
+            completionTrend: '/api/completion_trend',
+            qaResults: '/api/qa_results',
+            coverageTrend: '/api/coverage_trend'
+        };
+        
+        // Enhanced automation monitoring state
+        this.automationMonitoring = {
+            lastHealthCheck: null,
+            systemComponents: {},
+            performanceMetrics: {},
+            alertsEnabled: true
         };
         
         this.initializeCharts();
         this.setupEventHandlers();
+        this.initializeAutomationMonitoring();
     }
     
-    async initialize() {
+    initializeAutomationMonitoring() {
+        // Set up enhanced automation monitoring
+        this.automationMonitoring.alertsEnabled = true;
+        this.automationMonitoring.lastHealthCheck = null;
+        
+        // Initialize component status tracking
+        this.automationMonitoring.systemComponents = {
+            'dashboard_api': 'unknown',
+            'metrics_engine': 'unknown', 
+            'automation_system': 'unknown',
+            'reporting_system': 'unknown'
+        };
+        
+        console.log('Automation monitoring initialized');
+    }
+      async initialize() {
         console.log('Initializing Dashboard Manager...');
+        
+        // Wait a bit for global charts to be initialized
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // Initialize chart references from global scope
+        this.initializeChartReferences();
+        
         await this.loadInitialData();
         this.startAutoUpdate();
+    }
+    
+    initializeChartReferences() {
+        // Get chart instances from global scope if they exist
+        if (typeof window !== 'undefined') {
+            if (window.completionChart) this.charts.completionChart = window.completionChart;
+            if (window.progressChart) this.charts.progressChart = window.progressChart;
+            if (window.qaChart) this.charts.qaChart = window.qaChart;
+            if (window.coverageChart) this.charts.coverageChart = window.coverageChart;
+            if (window.timelineChart) this.charts.timelineChart = window.timelineChart;
+            
+            console.log('Chart references initialized:', Object.keys(this.charts));
+        }
     }
     
     initializeCharts() {
@@ -111,8 +164,7 @@ class DashboardManager {
             });
         }
     }
-    
-    async loadInitialData() {
+      async loadInitialData() {
         try {
             console.log('Loading initial dashboard data...');
             
@@ -124,15 +176,29 @@ class DashboardManager {
                 this.fetchData(this.endpoints.recentActivity)
             ]);
             
+            // Load business metrics in parallel
+            const [qaPassRateData, codeCoverageData, sprintVelocityData, completionTrendData, qaResultsData, coverageTrendData] = await Promise.all([
+                this.fetchData(this.endpoints.qaPassRate),
+                this.fetchData(this.endpoints.codeCoverage),
+                this.fetchData(this.endpoints.sprintVelocity),
+                this.fetchData(this.endpoints.completionTrend),
+                this.fetchData(this.endpoints.qaResults),
+                this.fetchData(this.endpoints.coverageTrend)
+            ]);
+            
             // Update dashboard with loaded data
             this.updateMetricsDisplay(metrics.data);
             this.updateHealthIndicators(health.data);
             this.updateAutomationStatus(automation.data);
             this.updateRecentActivity(activity.data);
             
+            // Update business metrics displays
+            this.updateBusinessMetrics(qaPassRateData.data, codeCoverageData.data, sprintVelocityData.data);
+            
             // Update charts
             const trends = await this.fetchData(this.endpoints.progressTrend);
             this.updateProgressCharts(metrics.data, trends.data);
+            this.updateBusinessCharts(qaPassRateData.data, codeCoverageData.data, sprintVelocityData.data, completionTrendData.data, qaResultsData.data, coverageTrendData.data);
             
             this.lastUpdate = new Date();
             this.updateLastRefreshTime();
@@ -196,45 +262,55 @@ class DashboardManager {
         // Schedule next update
         setTimeout(() => this.updateLoop(), this.refreshInterval);
     }
-    
-    async refreshData() {
+      async refreshData() {
         if (this.isUpdating) return;
         
         this.isUpdating = true;
-        
         try {
-            // Show updating indicator
-            this.showRefreshIndicator();
+            console.log('Refreshing dashboard data...');
             
-            // Fetch updated data
-            const [metrics, health, automation, activity] = await Promise.all([
+            // Fetch all data in parallel
+            const [metrics, sprintHealth, automation, recentActivity, progressTrend, systemHealth, timelineData] = await Promise.all([
                 this.fetchData(this.endpoints.metrics),
                 this.fetchData(this.endpoints.sprintHealth),
                 this.fetchData(this.endpoints.automationStatus),
-                this.fetchData(this.endpoints.recentActivity)
+                this.fetchData(this.endpoints.recentActivity),
+                this.fetchData(this.endpoints.progressTrend),
+                this.fetchData(this.endpoints.systemHealth),
+                this.fetchData(this.endpoints.timelineData)
+            ]);
+
+            // Fetch business metrics in parallel
+            const [qaPassRateData, codeCoverageData, sprintVelocityData, completionTrendData, qaResultsData, coverageTrendData] = await Promise.all([
+                this.fetchData(this.endpoints.qaPassRate),
+                this.fetchData(this.endpoints.codeCoverage),
+                this.fetchData(this.endpoints.sprintVelocity),
+                this.fetchData(this.endpoints.completionTrend),
+                this.fetchData(this.endpoints.qaResults),
+                this.fetchData(this.endpoints.coverageTrend)
             ]);
             
-            // Update dashboard
-            this.updateMetricsDisplay(metrics.data);
-            this.updateHealthIndicators(health.data);
-            this.updateAutomationStatus(automation.data);
-            this.updateRecentActivity(activity.data);
+            // Update dashboard components
+            this.updateMetricsDisplay(metrics);
+            this.updateHealthIndicators(sprintHealth);
+            this.updateAutomationStatus(automation);
+            this.updateRecentActivity(recentActivity);
+            this.updateProgressCharts(metrics, progressTrend);
+            this.updateSystemHealthDisplay(systemHealth);
+            this.updateTimelineDisplay(timelineData);
+
+            // Update business metrics
+            this.updateBusinessMetrics(qaPassRateData.data, codeCoverageData.data, sprintVelocityData.data);
+            this.updateBusinessCharts(qaPassRateData.data, codeCoverageData.data, sprintVelocityData.data, completionTrendData.data, qaResultsData.data, coverageTrendData.data);
             
             this.lastUpdate = new Date();
-            this.updateLastRefreshTime();
-            this.showRefreshSuccess();
+            console.log('Dashboard data refreshed successfully');
             
         } catch (error) {
-            console.error('Refresh error:', error);
-            this.showRefreshError();
+            console.error('Error refreshing dashboard data:', error);
         } finally {
             this.isUpdating = false;
         }
-    }
-    
-    async manualRefresh() {
-        console.log('Manual refresh triggered');
-        await this.refreshData();
     }
     
     updateMetricsDisplay(metrics) {
@@ -398,6 +474,103 @@ class DashboardManager {
         }
     }
     
+    updateSystemHealthDisplay(systemHealth) {
+        try {
+            if (!systemHealth || !systemHealth.data) return;
+            
+            const healthData = systemHealth.data;
+            
+            // Update overall system status
+            const overallStatusElement = document.getElementById('overallSystemStatus');
+            if (overallStatusElement) {
+                overallStatusElement.textContent = healthData.overall_status || 'Unknown';
+                overallStatusElement.className = `status-value status-${healthData.overall_status}`;
+            }
+            
+            // Update component health statuses
+            if (healthData.components) {
+                Object.entries(healthData.components).forEach(([component, status]) => {
+                    const componentElement = document.getElementById(`component-${component.replace('_', '-')}`);
+                    if (componentElement) {
+                        const statusText = status.status || 'unknown';
+                        componentElement.textContent = statusText;
+                        componentElement.className = `component-status status-${statusText}`;
+                    }
+                });
+            }
+            
+            // Update performance metrics
+            if (healthData.performance) {
+                this.updateElement('cpu-usage', healthData.performance.cpu_usage);
+                this.updateElement('memory-usage', healthData.performance.memory_usage);
+                this.updateElement('api-response-time', healthData.performance.api_response_time);
+            }
+            
+            // Update recommendations
+            if (healthData.recommendations && healthData.recommendations.length > 0) {
+                const recommendationsElement = document.getElementById('system-recommendations');
+                if (recommendationsElement) {
+                    recommendationsElement.innerHTML = healthData.recommendations
+                        .map(rec => `<li class="recommendation-item">${rec}</li>`)
+                        .join('');
+                }
+            }
+            
+            // Update automation monitoring state
+            this.automationMonitoring.lastHealthCheck = healthData.last_full_check;
+            this.automationMonitoring.systemComponents = healthData.components || {};
+            
+        } catch (error) {
+            console.error('Error updating system health display:', error);
+        }
+    }
+    
+    updateTimelineDisplay(timelineData) {
+        try {
+            if (!timelineData || !timelineData.data) return;
+            
+            const timeline = timelineData.data;
+            
+            // Update timeline summary
+            if (timeline.summary) {
+                this.updateElement('timeline-total-days', timeline.summary.total_days);
+                this.updateElement('timeline-completion', `${timeline.summary.current_completion}%`);
+                this.updateElement('timeline-velocity', timeline.summary.average_velocity?.toFixed(1));
+                this.updateElement('timeline-tasks-completed', timeline.summary.total_tasks_completed);
+            }
+            
+            // Update timeline chart if available
+            if (this.charts.timelineChart && timeline.timeline_events) {
+                this.updateTimelineChart(timeline.timeline_events, timeline.milestones);
+            }
+            
+        } catch (error) {
+            console.error('Error updating timeline display:', error);
+        }
+    }
+    
+    updateTimelineChart(events, milestones) {
+        try {
+            const dates = events.map(e => e.date);
+            const completions = events.map(e => e.completion_percentage);
+            const velocities = events.map(e => e.velocity);
+            
+            if (this.charts.timelineChart) {
+                this.charts.timelineChart.data.labels = dates;
+                this.charts.timelineChart.data.datasets[0].data = completions;
+                
+                if (this.charts.timelineChart.data.datasets[1]) {
+                    this.charts.timelineChart.data.datasets[1].data = velocities;
+                }
+                
+                this.charts.timelineChart.update();
+            }
+            
+        } catch (error) {
+            console.error('Error updating timeline chart:', error);
+        }
+    }
+    
     updateElement(id, value) {
         const element = document.getElementById(id);
         if (element) {
@@ -513,6 +686,237 @@ class DashboardManager {
             notification.style.opacity = '0';
             setTimeout(() => document.body.removeChild(notification), 300);
         }, 3000);
+    }
+    
+    updateBusinessMetrics(qaPassRateData, codeCoverageData, sprintVelocityData) {
+        try {
+            // Update QA Pass Rate
+            if (qaPassRateData && qaPassRateData.current_rate !== undefined) {
+                this.updateElement('qaPassRate', `${qaPassRateData.current_rate.toFixed(1)}%`);
+                
+                // Update change indicator if trend data available
+                if (qaPassRateData.daily_trends && qaPassRateData.daily_trends.length >= 2) {
+                    const latestTrend = qaPassRateData.daily_trends[qaPassRateData.daily_trends.length - 1];
+                    const previousTrend = qaPassRateData.daily_trends[qaPassRateData.daily_trends.length - 2];
+                    const change = latestTrend.pass_rate - previousTrend.pass_rate;
+                    const changeElement = document.getElementById('qaChange');
+                    if (changeElement) {
+                        changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+                        changeElement.className = `metric-change ${change >= 0 ? 'change-positive' : 'change-negative'}`;
+                    }
+                }
+            }
+
+            // Update Code Coverage
+            if (codeCoverageData && codeCoverageData.overall_coverage !== undefined) {
+                this.updateElement('avgCoverage', `${codeCoverageData.overall_coverage.toFixed(1)}%`);
+                
+                // Update change indicator if trend available
+                if (codeCoverageData.trend_direction) {
+                    const changeElement = document.getElementById('coverageChange');
+                    if (changeElement) {
+                        const change = codeCoverageData.coverage_change || 0;
+                        changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(1)}%`;
+                        changeElement.className = `metric-change ${change >= 0 ? 'change-positive' : 'change-negative'}`;
+                    }
+                }
+            }
+
+            // Update Sprint Velocity
+            if (sprintVelocityData && sprintVelocityData.current_velocity !== undefined) {
+                this.updateElement('sprintVelocity', sprintVelocityData.current_velocity.toFixed(1));
+                
+                // Update change indicator based on velocity trend
+                if (sprintVelocityData.sprint_history && sprintVelocityData.sprint_history.length >= 2) {
+                    const latest = sprintVelocityData.sprint_history[sprintVelocityData.sprint_history.length - 1];
+                    const previous = sprintVelocityData.sprint_history[sprintVelocityData.sprint_history.length - 2];
+                    const change = latest.completed_points - previous.completed_points;
+                    const changeElement = document.getElementById('velocityChange');
+                    if (changeElement) {
+                        changeElement.textContent = `${change >= 0 ? '+' : ''}${change.toFixed(1)}`;
+                        changeElement.className = `metric-change ${change >= 0 ? 'change-positive' : 'change-negative'}`;
+                    }
+                }
+            }
+
+            console.log('Business metrics updated successfully');
+        } catch (error) {
+            console.error('Error updating business metrics:', error);
+        }
+    }
+
+    updateBusinessCharts(qaPassRateData, codeCoverageData, sprintVelocityData, completionTrendData, qaResultsData, coverageTrendData) {
+        try {
+            // Update QA Results Chart
+            this.updateQaChart(qaResultsData);
+            
+            // Update Code Coverage Trend Chart
+            this.updateCoverageChart(coverageTrendData);
+            
+            // Update Sprint Velocity Chart (Timeline Chart)
+            this.updateTimelineChart(sprintVelocityData, completionTrendData);
+
+            console.log('Business charts updated successfully');
+        } catch (error) {
+            console.error('Error updating business charts:', error);
+        }
+    }
+
+    updateQaChart(qaResultsData) {
+        try {
+            const qaChart = this.charts.qaChart || this.getOrCreateChart('qaChart', 'bar');
+            
+            if (qaResultsData && qaResultsData.test_summary) {
+                const summary = qaResultsData.test_summary;
+                qaChart.data.datasets[0].data = [
+                    summary.passed,
+                    summary.failed,
+                    summary.skipped || 0
+                ];
+                qaChart.update('none');
+                
+                console.log('QA Chart updated with real data');
+            }
+        } catch (error) {
+            console.error('Error updating QA chart:', error);
+        }
+    }
+
+    updateCoverageChart(coverageTrendData) {
+        try {
+            const coverageChart = this.charts.coverageChart || this.getOrCreateChart('coverageChart', 'line');
+            
+            if (coverageTrendData && coverageTrendData.coverage_history) {
+                const history = coverageTrendData.coverage_history;
+                coverageChart.data.labels = history.map(item => item.date);
+                coverageChart.data.datasets[0].data = history.map(item => item.coverage_percentage);
+                coverageChart.update('none');
+                
+                console.log('Coverage Chart updated with real data');
+            }
+        } catch (error) {
+            console.error('Error updating coverage chart:', error);
+        }
+    }
+
+    updateTimelineChart(sprintVelocityData, completionTrendData) {
+        try {
+            const timelineChart = this.charts.timelineChart || this.getOrCreateChart('timelineChart', 'line');
+            
+            if (sprintVelocityData && sprintVelocityData.sprint_history) {
+                const history = sprintVelocityData.sprint_history;
+                timelineChart.data.labels = history.map(item => `Sprint ${item.sprint_id}`);
+                
+                // Update velocity data
+                if (timelineChart.data.datasets[0]) {
+                    timelineChart.data.datasets[0].data = history.map(item => item.completed_points);
+                    timelineChart.data.datasets[0].label = 'Completed Points';
+                }
+                
+                // Update completion rate data if second dataset exists
+                if (timelineChart.data.datasets[1]) {
+                    timelineChart.data.datasets[1].data = history.map(item => item.completion_rate);
+                    timelineChart.data.datasets[1].label = 'Completion Rate %';
+                }
+                
+                timelineChart.update('none');
+                
+                // Update timeline summary metrics
+                if (sprintVelocityData.average_velocity !== undefined) {
+                    this.updateElement('timeline-avg-velocity', sprintVelocityData.average_velocity.toFixed(1));
+                }
+                
+                console.log('Timeline Chart updated with real data');
+            }
+        } catch (error) {
+            console.error('Error updating timeline chart:', error);
+        }
+    }    getOrCreateChart(canvasId, chartType) {
+        // Try to get existing chart from this.charts
+        if (this.charts[canvasId]) {
+            return this.charts[canvasId];
+        }
+        
+        // Try to get chart from global scope (unified dashboard)
+        if (typeof window !== 'undefined') {
+            const globalChart = window[canvasId];
+            if (globalChart) {
+                this.charts[canvasId] = globalChart;
+                return globalChart;
+            }
+        }
+        
+        // Try to create chart if canvas exists
+        const canvas = document.getElementById(canvasId);
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let chartConfig;
+            
+            // Create appropriate chart configuration
+            switch (chartType) {
+                case 'bar':
+                    chartConfig = {
+                        type: 'bar',
+                        data: {
+                            labels: [],
+                            datasets: [{
+                                label: 'Data',
+                                data: [],
+                                backgroundColor: ['#28a745', '#dc3545', '#6c757d']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    };
+                    break;
+                case 'line':
+                    chartConfig = {
+                        type: 'line',
+                        data: {
+                            labels: [],
+                            datasets: [{
+                                label: 'Data',
+                                data: [],
+                                borderColor: '#2196F3',
+                                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                                fill: true
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    };
+                    break;
+                default:
+                    chartConfig = {
+                        type: chartType,
+                        data: { labels: [], datasets: [{ data: [] }] },
+                        options: { responsive: true, maintainAspectRatio: false }
+                    };
+            }
+            
+            try {
+                const chart = new Chart(ctx, chartConfig);
+                this.charts[canvasId] = chart;
+                return chart;
+            } catch (error) {
+                console.error(`Error creating chart ${canvasId}:`, error);
+            }
+        }
+        
+        // Return a simple mock object if all else fails
+        return {
+            data: {
+                labels: [],
+                datasets: [{ data: [] }, { data: [] }]
+            },
+            update: (mode) => {
+                console.log(`Chart ${canvasId} update called (mode: ${mode})`);
+            }
+        };
     }
 }
 

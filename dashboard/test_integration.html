@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Integration Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Dashboard Integration Test</h1>
+    <div id="test-results"></div>
+    
+    <h2>Test Charts</h2>
+    <div style="width: 400px; height: 300px;">
+        <canvas id="testChart"></canvas>
+    </div>
+    
+    <script>
+        const testResults = document.getElementById('test-results');
+        
+        function logResult(test, result, details = '') {
+            const div = document.createElement('div');
+            div.innerHTML = `<strong>${test}:</strong> ${result ? '✅ PASS' : '❌ FAIL'} ${details}`;
+            div.style.color = result ? 'green' : 'red';
+            div.style.margin = '10px 0';
+            testResults.appendChild(div);
+        }
+        
+        // Test 1: Chart.js availability
+        logResult('Chart.js Library', typeof Chart !== 'undefined', Chart ? `Version available` : 'Not loaded');
+        
+        // Test 2: API endpoints
+        async function testEndpoints() {
+            const endpoints = [
+                '/api/qa_pass_rate',
+                '/api/completion_trend', 
+                '/api/code_coverage',
+                '/api/coverage_trend'
+            ];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(`http://localhost:5000${endpoint}`);
+                    const data = await response.json();
+                    logResult(`API ${endpoint}`, response.ok && data, 
+                        `Status: ${response.status}, Data: ${JSON.stringify(data).substring(0, 100)}...`);
+                } catch (error) {
+                    logResult(`API ${endpoint}`, false, `Error: ${error.message}`);
+                }
+            }
+        }
+        
+        // Test 3: Chart creation
+        function testChartCreation() {
+            try {
+                const ctx = document.getElementById('testChart').getContext('2d');
+                const chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar'],
+                        datasets: [{
+                            label: 'Test Data',
+                            data: [10, 20, 30],
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Test Chart'
+                            }
+                        }
+                    }
+                });
+                logResult('Chart Creation', true, 'Chart instance created successfully');
+                return chart;
+            } catch (error) {
+                logResult('Chart Creation', false, `Error: ${error.message}`);
+                return null;
+            }
+        }
+        
+        // Run tests
+        testEndpoints();
+        testChartCreation();
+        
+        // Test 4: DashboardManager if available
+        setTimeout(() => {
+            if (typeof DashboardManager !== 'undefined') {
+                try {
+                    const dashboard = new DashboardManager();
+                    logResult('DashboardManager', true, 'DashboardManager class available');
+                } catch (error) {
+                    logResult('DashboardManager', false, `Error: ${error.message}`);
+                }
+            } else {
+                logResult('DashboardManager', false, 'DashboardManager class not found');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

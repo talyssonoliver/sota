@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Charts</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .chart-container { width: 400px; height: 300px; margin: 20px 0; border: 1px solid #ddd; padding: 10px; }
+        .status { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>Chart Debug Dashboard</h1>
+    
+    <div id="status"></div>
+    
+    <div class="chart-container">
+        <h3>QA Pass Rate Chart</h3>
+        <canvas id="qaChart" width="400" height="300"></canvas>
+    </div>
+    
+    <div class="chart-container">
+        <h3>Coverage Trend Chart</h3>
+        <canvas id="coverageChart" width="400" height="300"></canvas>
+    </div>
+    
+    <div class="chart-container">
+        <h3>Completion Trend Chart</h3>
+        <canvas id="completionChart" width="400" height="300"></canvas>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000';
+        
+        function addStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `status ${type}`;
+            msgDiv.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            statusDiv.appendChild(msgDiv);
+        }
+        
+        async function testAndCreateChart(endpoint, chartId, chartConfig) {
+            try {
+                addStatus(`Testing ${endpoint}...`);
+                
+                const response = await fetch(API_BASE_URL + endpoint);
+                const data = await response.json();
+                
+                if (response.ok && data.status === 'success') {
+                    addStatus(`✅ ${endpoint} returned data successfully`, 'success');
+                    console.log(`${endpoint} data:`, data);
+                    
+                    // Create chart with real data
+                    const ctx = document.getElementById(chartId).getContext('2d');
+                    new Chart(ctx, chartConfig(data.data));
+                    
+                    return data.data;
+                } else {
+                    addStatus(`❌ ${endpoint} failed: ${data.message || 'Unknown error'}`, 'error');
+                    return null;
+                }
+            } catch (error) {
+                addStatus(`❌ ${endpoint} error: ${error.message}`, 'error');
+                console.error(`${endpoint} error:`, error);
+                return null;
+            }
+        }
+        
+        function createQaChart(data) {
+            return {
+                type: 'line',
+                data: {
+                    labels: data.daily_trends.map(item => item.date),
+                    datasets: [{
+                        label: 'QA Pass Rate %',
+                        data: data.daily_trends.map(item => item.pass_rate),
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            };
+        }
+        
+        function createCoverageChart(data) {
+            return {
+                type: 'line',
+                data: {
+                    labels: data.daily_trends.map(item => item.date),
+                    datasets: [{
+                        label: 'Coverage %',
+                        data: data.daily_trends.map(item => item.coverage),
+                        borderColor: '#17a2b8',
+                        backgroundColor: 'rgba(23, 162, 184, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            };
+        }
+        
+        function createCompletionChart(data) {
+            return {
+                type: 'line',
+                data: {
+                    labels: data.trend_data.dates,
+                    datasets: [{
+                        label: 'Completed Tasks',
+                        data: data.trend_data.datasets.completed,
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: 'In Progress',
+                        data: data.trend_data.datasets.in_progress,
+                        borderColor: '#2196F3',
+                        backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            };
+        }
+        
+        async function initializeDebugCharts() {
+            addStatus('Starting chart debug tests...');
+            
+            // Test all chart endpoints
+            await testAndCreateChart('/api/qa_pass_rate', 'qaChart', createQaChart);
+            await testAndCreateChart('/api/coverage_trend', 'coverageChart', createCoverageChart);
+            await testAndCreateChart('/api/completion_trend', 'completionChart', createCompletionChart);
+            
+            addStatus('Chart debug tests completed!', 'success');
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeDebugCharts);
+    </script>
+</body>
+</html>

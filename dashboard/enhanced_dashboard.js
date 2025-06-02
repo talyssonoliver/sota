@@ -19,11 +19,22 @@ class DashboardManager {
             sprintHealth: '/api/sprint/health',
             automationStatus: '/api/automation/status',
             recentActivity: '/api/tasks/recent',
-            progressTrend: '/api/progress/trend'
+            progressTrend: '/api/progress/trend',
+            systemHealth: '/api/system/health',
+            timelineData: '/api/timeline/data'
+        };
+        
+        // Enhanced automation monitoring state
+        this.automationMonitoring = {
+            lastHealthCheck: null,
+            systemComponents: {},
+            performanceMetrics: {},
+            alertsEnabled: true
         };
         
         this.initializeCharts();
         this.setupEventHandlers();
+        this.initializeAutomationMonitoring();
     }
     
     async initialize() {
@@ -117,16 +128,10 @@ class DashboardManager {
     }
     
     setupEventHandlers() {
-        // Manual refresh button
-        const refreshBtn = document.getElementById('manual-refresh');
-        if (refreshBtn) {
-            refreshBtn.addEventListener('click', () => this.manualRefresh());
-        }
-        
         // Auto-refresh toggle
-        const autoRefreshToggle = document.getElementById('auto-refresh-toggle');
-        if (autoRefreshToggle) {
-            autoRefreshToggle.addEventListener('change', (e) => {
+        const toggle = document.getElementById('auto-refresh-toggle');
+        if (toggle) {
+            toggle.addEventListener('change', (e) => {
                 if (e.target.checked) {
                     this.startAutoUpdate();
                 } else {
@@ -135,17 +140,45 @@ class DashboardManager {
             });
         }
         
-        // Refresh interval selector
-        const intervalSelector = document.getElementById('refresh-interval');
-        if (intervalSelector) {
-            intervalSelector.addEventListener('change', (e) => {
-                this.refreshInterval = parseInt(e.target.value) * 1000;
-                if (this.isRunning) {
-                    this.stopAutoUpdate();
-                    this.startAutoUpdate();
-                }
+        // Manual refresh button
+        const refreshBtn = document.getElementById('manual-refresh');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => {
+                this.manualRefresh();
             });
         }
+        
+        // System health drill-down
+        const healthCard = document.getElementById('healthCard');
+        if (healthCard) {
+            healthCard.addEventListener('click', () => {
+                this.showSystemHealthDetails();
+            });
+        }
+        
+        // Automation status details
+        const automationSection = document.querySelector('.automation-status');
+        if (automationSection) {
+            automationSection.addEventListener('click', () => {
+                this.showAutomationDetails();
+            });
+        }
+    }
+    
+    initializeAutomationMonitoring() {
+        // Set up enhanced automation monitoring
+        this.automationMonitoring.alertsEnabled = true;
+        this.automationMonitoring.lastHealthCheck = null;
+        
+        // Initialize component status tracking
+        this.automationMonitoring.systemComponents = {
+            'dashboard_api': 'unknown',
+            'metrics_engine': 'unknown', 
+            'automation_system': 'unknown',
+            'reporting_system': 'unknown'
+        };
+        
+        console.log('Automation monitoring initialized');
     }
     
     async loadInitialData() {
@@ -228,36 +261,55 @@ class DashboardManager {
         }
     }
       async refreshData() {
-        // Prevent overlapping refresh calls
-        if (this.isUpdating) {
-            console.log('⏭️ Skipping refresh - update already in progress');
-            return;
-        }
-
+        if (this.isUpdating) return;
+        
+        this.isUpdating = true;
+        
         try {
-            this.isUpdating = true;
-            
-            const [metrics, health, automation] = await Promise.all([
-                this.fetchData(this.endpoints.metrics),
-                this.fetchData(this.endpoints.sprintHealth),
-                this.fetchData(this.endpoints.automationStatus)
+            // Fetch all data in parallel for better performance
+            const [metricsData, healthData, automationData, activityData, trendsData, systemHealthData] = await Promise.all([
+                this.fetchData(this.endpoints.metrics).catch(e => ({ error: e.message })),
+                this.fetchData(this.endpoints.sprintHealth).catch(e => ({ error: e.message })),
+                this.fetchData(this.endpoints.automationStatus).catch(e => ({ error: e.message })),
+                this.fetchData(this.endpoints.recentActivity).catch(e => ({ error: e.message })),
+                this.fetchData(this.endpoints.progressTrend).catch(e => ({ error: e.message })),
+                this.fetchData(this.endpoints.systemHealth).catch(e => ({ error: e.message }))
             ]);
             
-            this.updateMetricsDisplay(metrics);
-            this.updateHealthIndicators(health);
-            this.updateAutomationStatus(automation);
+            // Update UI components
+            if (metricsData && !metricsData.error) {
+                this.updateMetricsDisplay(metricsData);
+            }
             
-            // Update charts with new data (without recreation)
-            this.updateDistributionChart(metrics);
+            if (healthData && !healthData.error) {
+                this.updateHealthIndicators(healthData);
+            }
+            
+            if (automationData && !automationData.error) {
+                this.updateAutomationStatus(automationData);
+            }
+            
+            if (activityData && !activityData.error) {
+                this.updateRecentActivity(activityData);
+            }
+            
+            if (trendsData && !trendsData.error && metricsData && !metricsData.error) {
+                this.updateProgressCharts(metricsData, trendsData);
+            }
+            
+            // Update enhanced system health monitoring
+            if (systemHealthData && !systemHealthData.error) {
+                this.updateSystemHealthMonitoring(systemHealthData);
+            }
+            
+            // Update automation monitoring
+            this.updateAutomationMonitoring(automationData, systemHealthData);
             
             this.lastUpdate = new Date();
-            this.updateLastRefreshTime();
-            
-            // Update progress indicator
-            this.showRefreshSuccess();
+            this.updateElement('lastUpdated', `Last updated: ${this.lastUpdate.toLocaleTimeString()}`);
             
         } catch (error) {
-            console.error('Refresh error:', error);
+            console.error('Error refreshing dashboard data:', error);
             this.showRefreshError();
         } finally {
             this.isUpdating = false;
