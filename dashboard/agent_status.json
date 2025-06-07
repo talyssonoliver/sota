@@ -1,174 +1,96 @@
 {
+  "TEST-INTEGRATION": {
+    "test_agent": {
+      "status": "COMPLETED",
+      "timestamp": "2025-06-07T19:27:53.299819",
+      "last_seen": "2025-06-07T19:27:53.299819"
+    }
+  },
   "FE-01": {
     "coordinator": {
       "status": "RUNNING",
-      "timestamp": "2025-06-02T18:19:21.829180",
-      "last_seen": "2025-06-02T18:19:21.829180"
+      "timestamp": "2025-06-07T19:28:00.002101",
+      "last_seen": "2025-06-07T19:28:00.002101"
     },
     "frontend": {
       "status": "FAILED",
-      "timestamp": "2025-06-02T18:12:33.663994",
-      "last_seen": "2025-06-02T18:12:33.663994"
-    }
-  },
-  "QA-01": {
-    "coordinator": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:43.910226",
-      "last_seen": "2025-06-02T18:12:43.910226"
-    },
-    "technical": {
-      "status": "FAILED",
-      "timestamp": "2025-06-02T18:12:41.722582",
-      "last_seen": "2025-06-02T18:12:41.722582"
-    }
-  },
-  "BE-07": {
-    "backend": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:15.870190",
-      "last_seen": "2025-06-02T18:12:15.870190"
-    },
-    "workflow": {
-      "status": "RUNNING",
-      "timestamp": "2025-06-02T18:12:19.116276",
-      "last_seen": "2025-06-02T18:12:19.116276"
-    },
-    "coordinator": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:19:23.316953",
-      "last_seen": "2025-06-02T18:19:23.316953"
-    },
-    "qa": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:14.688958",
-      "last_seen": "2025-06-02T18:12:14.688958"
-    },
-    "documentation": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:14.822513",
-      "last_seen": "2025-06-02T18:12:14.822513"
-    },
-    "technical": {
-      "status": "RUNNING",
-      "timestamp": "2025-06-02T18:19:23.331617",
-      "last_seen": "2025-06-02T18:19:23.331617"
-    }
-  },
-  "TEST-001": {
-    "test_agent": {
-      "status": "RUNNING",
-      "timestamp": "2025-06-02T18:19:23.190529",
-      "last_seen": "2025-06-02T18:19:23.190529"
-    }
-  },
-  "LANGGRAPH-001": {
-    "coordinator": {
-      "status": "RUNNING",
-      "timestamp": "2025-06-02T18:19:23.357304",
-      "last_seen": "2025-06-02T18:19:23.357304"
-    }
-  },
-  "CREWAI-001": {
-    "backend_agent": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:13.414483",
-      "last_seen": "2025-06-02T18:12:13.414483"
-    }
-  },
-  "REPORT-000": {
-    "test_agent": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:13.548345",
-      "last_seen": "2025-06-02T18:12:13.548345"
-    }
-  },
-  "REPORT-001": {
-    "test_agent": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:13.592019",
-      "last_seen": "2025-06-02T18:12:13.592019"
-    }
-  },
-  "REPORT-002": {
-    "test_agent": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:13.633500",
-      "last_seen": "2025-06-02T18:12:13.633500"
-    }
-  },
-  "DECORATOR-001": {
-    "decorated_agent": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:13.714570",
-      "last_seen": "2025-06-02T18:12:13.714570"
-    }
-  },
-  "FILTER-001": {
-    "test_agent": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:13.818850",
-      "last_seen": "2025-06-02T18:12:13.818850"
-    }
-  },
-  "FILTER-002": {
-    "test_agent": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:13.857947",
-      "last_seen": "2025-06-02T18:12:13.857947"
-    }
-  },
-  "OTHER-001": {
-    "test_agent": {
-      "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:12:13.891541",
-      "last_seen": "2025-06-02T18:12:13.891541"
-    }
-  },
-  "ERROR-001": {
-    "error_agent": {
-      "status": "FAILED",
-      "timestamp": "2025-06-02T18:12:13.941699",
-      "last_seen": "2025-06-02T18:12:13.941699"
+      "timestamp": "2025-06-07T19:27:59.984206",
+      "last_seen": "2025-06-07T19:27:59.984206"
     }
   },
   "BE-01": {
     "backend": {
       "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:19:23.016641",
-      "last_seen": "2025-06-02T18:19:23.016641"
+      "timestamp": "2025-06-07T19:27:58.953455",
+      "last_seen": "2025-06-07T19:27:58.953455"
     },
     "documentation": {
       "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:19:23.128822",
-      "last_seen": "2025-06-02T18:19:23.128822"
+      "timestamp": "2025-06-07T19:27:59.057268",
+      "last_seen": "2025-06-07T19:27:59.057268"
     }
   },
   "TL-01": {
     "coordinator": {
       "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:19:23.070150",
-      "last_seen": "2025-06-02T18:19:23.070150"
+      "timestamp": "2025-06-07T19:27:59.005269",
+      "last_seen": "2025-06-07T19:27:59.005269"
     },
     "technical": {
       "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:19:23.260022",
-      "last_seen": "2025-06-02T18:19:23.260022"
+      "timestamp": "2025-06-07T19:27:59.142325",
+      "last_seen": "2025-06-07T19:27:59.142325"
     }
   },
-  "TEST-INTEGRATION": {
+  "BE-07": {
+    "coordinator": {
+      "status": "COMPLETED",
+      "timestamp": "2025-06-07T19:27:59.189324",
+      "last_seen": "2025-06-07T19:27:59.189324"
+    },
+    "technical": {
+      "status": "COMPLETED",
+      "timestamp": "2025-06-07T19:27:59.226326",
+      "last_seen": "2025-06-07T19:27:59.226326"
+    },
+    "backend": {
+      "status": "COMPLETED",
+      "timestamp": "2025-06-07T19:27:59.253452",
+      "last_seen": "2025-06-07T19:27:59.253452"
+    },
+    "documentation": {
+      "status": "COMPLETED",
+      "timestamp": "2025-06-07T19:27:59.285484",
+      "last_seen": "2025-06-07T19:27:59.285484"
+    }
+  },
+  "TEST-001": {
     "test_agent": {
       "status": "COMPLETED",
-      "timestamp": "2025-06-02T18:19:18.044850",
-      "last_seen": "2025-06-02T18:19:18.044850"
+      "timestamp": "2025-06-07T19:27:59.826129",
+      "last_seen": "2025-06-07T19:27:59.826129"
     }
   },
-  "E2E-TEST": {
-    "test_runner": {
-      "status": "PARTIAL",
-      "timestamp": "2025-05-26T14:29:58.211987",
-      "last_seen": "2025-05-26T14:29:58.211987"
+  "LANGGRAPH-001": {
+    "coordinator": {
+      "status": "COMPLETED",
+      "timestamp": "2025-06-07T19:27:59.861136",
+      "last_seen": "2025-06-07T19:27:59.861136"
+    }
+  },
+  "CREWAI-001": {
+    "backend_agent": {
+      "status": "COMPLETED",
+      "timestamp": "2025-06-07T19:27:59.902219",
+      "last_seen": "2025-06-07T19:27:59.902219"
     }
   }
-}}
+}
+  "REPORT-000": {
+    "test_agent": {
+      "status": "RUNNING",
+      "timestamp": "2025-06-07T19:28:00.007104",
+      "last_seen": "2025-06-07T19:28:00.007104"
+    }
+  }
 }

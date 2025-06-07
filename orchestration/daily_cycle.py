@@ -282,32 +282,13 @@ class DailyCycleOrchestrator:
             return {
                 "exit_code": -1,
                 "stdout": "",
-                "stderr": str(e),
-                "success": False
+                "stderr": str(e),                "success": False
             }
     
     def schedule_daily_tasks(self):
-        """Schedule daily automation tasks."""
-        # Clear existing schedules
-        schedule.clear()
-        
-        # Schedule morning briefing
-        schedule.every().day.at(self.config["automation"]["morning_briefing_time"]).do(
-            self._run_async_task, self.run_morning_briefing
-        )
-        
-        # Schedule end-of-day report
-        schedule.every().day.at(self.config["automation"]["eod_report_time"]).do(
-            self._run_async_task, self.run_end_of_day_report
-        )
-        
-        # Schedule periodic dashboard updates
-        update_interval = self.config["dashboard"]["refresh_interval"]
-        schedule.every(update_interval).minutes.do(
-            self._run_async_task, self._update_dashboard
-        )
-        
-        self.logger.info(f"Daily tasks scheduled: {len(schedule.get_jobs())} jobs")
+        """Schedule daily automation tasks (deprecated - use schedule_enhanced_tasks)."""
+        self.logger.warning("schedule_daily_tasks is deprecated, using schedule_enhanced_tasks")
+        self.schedule_enhanced_tasks()
     
     def _run_async_task(self, coro):
         """Helper to run async tasks in sync context."""
@@ -317,22 +298,45 @@ class DailyCycleOrchestrator:
             self.logger.error(f"Error running async task: {e}")
     
     def start_scheduler(self):
-        """Start the daily scheduler."""
-        self.logger.info("Starting daily cycle scheduler")
+        """Start the enhanced daily scheduler."""
+        self.logger.info("Starting enhanced daily cycle scheduler")
         
-        # Schedule all daily tasks
-        self.schedule_daily_tasks()
+        # Schedule all daily tasks with enhanced features
+        self.schedule_enhanced_tasks()
         
-        # Main scheduler loop
+        # Log schedule status
+        schedule_status = self.get_schedule_status()
+        self.logger.info(f"Scheduler started with {schedule_status['total_jobs']} jobs")
+        
+        # Main scheduler loop with enhanced error handling
+        error_count = 0
+        max_errors = self.config.get("monitoring", {}).get("error_threshold", 5)
+        
         try:
             while True:
-                schedule.run_pending()
-                time.sleep(60)  # Check every minute
+                try:
+                    schedule.run_pending()
+                    error_count = 0  # Reset error count on successful run
+                    time.sleep(60)  # Check every minute
+                    
+                except Exception as e:
+                    error_count += 1
+                    self.logger.error(f"Scheduler error ({error_count}/{max_errors}): {e}")
+                    
+                    if error_count >= max_errors:
+                        self.logger.critical("Maximum error threshold reached, stopping scheduler")
+                        break
+                    
+                    time.sleep(30)  # Wait before retrying
                 
         except KeyboardInterrupt:
             self.logger.info("Daily cycle scheduler stopped by user")
         except Exception as e:
-            self.logger.error(f"Scheduler error: {e}")
+            self.logger.error(f"Critical scheduler error: {e}")
+        finally:
+            # Cleanup
+            schedule.clear()
+            self.logger.info("Scheduler shutdown completed")
     
     async def run_manual_cycle(self, cycle_type: str = "full"):
         """Run a manual daily cycle for testing."""
@@ -359,29 +363,309 @@ class DailyCycleOrchestrator:
         current_date = date.today()
         return (current_date - start_date).days + 1
 
+    async def run_health_check(self):
+        """Run system health check."""
+        self.logger.info("Starting system health check")
+        
+        try:
+            health_status = {
+                "timestamp": datetime.now().isoformat(),
+                "components": {},
+                "overall_status": "healthy"
+            }
+            
+            # Check execution monitor
+            try:
+                monitor_status = self.execution_monitor.get_system_status()
+                health_status["components"]["execution_monitor"] = {
+                    "status": "healthy" if monitor_status else "degraded",
+                    "details": monitor_status
+                }
+            except Exception as e:
+                health_status["components"]["execution_monitor"] = {
+                    "status": "error",
+                    "error": str(e)
+                }
+                health_status["overall_status"] = "degraded"
+            
+            # Check metrics calculator
+            try:
+                metrics = self.metrics_calculator.calculate_team_metrics()
+                health_status["components"]["metrics_calculator"] = {
+                    "status": "healthy",
+                    "last_calculation": datetime.now().isoformat()
+                }
+            except Exception as e:
+                health_status["components"]["metrics_calculator"] = {
+                    "status": "error",
+                    "error": str(e)
+                }
+                health_status["overall_status"] = "degraded"
+            
+            # Check dashboard API
+            try:
+                import requests
+                response = requests.get(f"http://localhost:{self.config['dashboard']['api_port']}/api/system/health", timeout=5)
+                if response.status_code == 200:
+                    health_status["components"]["dashboard_api"] = {
+                        "status": "healthy",
+                        "response_time": response.elapsed.total_seconds()
+                    }
+                else:
+                    health_status["components"]["dashboard_api"] = {
+                        "status": "degraded",
+                        "http_status": response.status_code
+                    }
+                    health_status["overall_status"] = "degraded"
+            except Exception as e:
+                health_status["components"]["dashboard_api"] = {
+                    "status": "unavailable",
+                    "error": str(e)
+                }
+                health_status["overall_status"] = "degraded"
+            
+            # Check email integration
+            if self.config.get("email", {}).get("enabled", False):
+                health_status["components"]["email_integration"] = {
+                    "status": "configured" if self.email_integration.enabled else "disabled"
+                }
+            else:
+                health_status["components"]["email_integration"] = {
+                    "status": "disabled"
+                }
+            
+            self.logger.info(f"Health check completed - Status: {health_status['overall_status']}")
+            return health_status
+            
+        except Exception as e:
+            self.logger.error(f"Error in health check: {e}")
+            return {
+                "timestamp": datetime.now().isoformat(),
+                "overall_status": "error",
+                "error": str(e)
+            }
 
+    async def run_performance_check(self):
+        """Run performance monitoring check."""
+        self.logger.info("Starting performance check")
+        
+        try:
+            performance_metrics = {
+                "timestamp": datetime.now().isoformat(),
+                "system_metrics": {},
+                "process_metrics": {}
+            }
+            
+            # System metrics
+            import psutil
+            performance_metrics["system_metrics"] = {
+                "cpu_percent": psutil.cpu_percent(interval=1),
+                "memory_percent": psutil.virtual_memory().percent,
+                "disk_usage": psutil.disk_usage('.').percent
+            }
+            
+            # Process metrics
+            process = psutil.Process()
+            performance_metrics["process_metrics"] = {
+                "memory_mb": process.memory_info().rss / 1024 / 1024,
+                "cpu_percent": process.cpu_percent()
+            }
+            
+            # Log directory size
+            logs_dir = Path(self.config["paths"]["logs_dir"])
+            if logs_dir.exists():
+                total_size = sum(f.stat().st_size for f in logs_dir.rglob('*') if f.is_file())
+                performance_metrics["logs_size_mb"] = total_size / 1024 / 1024
+            
+            self.logger.info("Performance check completed")
+            return performance_metrics
+            
+        except Exception as e:
+            self.logger.error(f"Error in performance check: {e}")
+            return {"error": str(e)}
+
+    def schedule_enhanced_tasks(self):
+        """Schedule enhanced daily automation tasks with monitoring."""
+        # Clear existing schedules
+        schedule.clear()
+        
+        automation_config = self.config["automation"]
+        
+        if not automation_config.get("enabled", True):
+            self.logger.info("Daily automation is disabled")
+            return
+        
+        # Skip weekends if weekend_mode is disabled
+        if not automation_config.get("weekend_mode", False):
+            # Schedule only on weekdays
+            schedule.every().monday.at(automation_config["morning_briefing_time"]).do(
+                self._run_async_task, self.run_morning_briefing
+            )
+            schedule.every().tuesday.at(automation_config["morning_briefing_time"]).do(
+                self._run_async_task, self.run_morning_briefing
+            )
+            schedule.every().wednesday.at(automation_config["morning_briefing_time"]).do(
+                self._run_async_task, self.run_morning_briefing
+            )
+            schedule.every().thursday.at(automation_config["morning_briefing_time"]).do(
+                self._run_async_task, self.run_morning_briefing
+            )
+            schedule.every().friday.at(automation_config["morning_briefing_time"]).do(
+                self._run_async_task, self.run_morning_briefing
+            )
+            
+            # Schedule EOD reports on weekdays
+            schedule.every().monday.at(automation_config["eod_report_time"]).do(
+                self._run_async_task, self.run_end_of_day_report
+            )
+            schedule.every().tuesday.at(automation_config["eod_report_time"]).do(
+                self._run_async_task, self.run_end_of_day_report
+            )
+            schedule.every().wednesday.at(automation_config["eod_report_time"]).do(
+                self._run_async_task, self.run_end_of_day_report
+            )
+            schedule.every().thursday.at(automation_config["eod_report_time"]).do(
+                self._run_async_task, self.run_end_of_day_report
+            )
+            schedule.every().friday.at(automation_config["eod_report_time"]).do(
+                self._run_async_task, self.run_end_of_day_report
+            )
+            
+            # Schedule midday checks on weekdays if configured
+            if "midday_check_time" in automation_config:
+                for day in ["monday", "tuesday", "wednesday", "thursday", "friday"]:
+                    getattr(schedule.every(), day).at(automation_config["midday_check_time"]).do(
+                        self._run_async_task, self.run_midday_check
+                    )
+        else:
+            # Schedule daily tasks including weekends
+            schedule.every().day.at(automation_config["morning_briefing_time"]).do(
+                self._run_async_task, self.run_morning_briefing
+            )
+            
+            schedule.every().day.at(automation_config["eod_report_time"]).do(
+                self._run_async_task, self.run_end_of_day_report
+            )
+            
+            if "midday_check_time" in automation_config:
+                schedule.every().day.at(automation_config["midday_check_time"]).do(
+                    self._run_async_task, self.run_midday_check
+                )
+        
+        # Schedule periodic health checks
+        monitoring_config = self.config.get("monitoring", {})
+        if monitoring_config.get("health_check_interval", 0) > 0:
+            schedule.every(monitoring_config["health_check_interval"]).seconds.do(
+                self._run_async_task, self.run_health_check
+            )
+        
+        # Schedule periodic dashboard updates
+        update_interval = self.config["dashboard"]["refresh_interval"]
+        schedule.every(update_interval).minutes.do(
+            self._run_async_task, self._update_dashboard
+        )
+        
+        self.logger.info(f"Enhanced daily tasks scheduled: {len(schedule.get_jobs())} jobs")
+
+    def get_schedule_status(self) -> Dict[str, Any]:
+        """Get current schedule status."""
+        jobs = schedule.get_jobs()
+        
+        return {
+            "total_jobs": len(jobs),
+            "jobs": [
+                {
+                    "job_func": str(job.job_func),
+                    "next_run": job.next_run.isoformat() if job.next_run else None,
+                    "interval": str(job.interval),
+                    "unit": job.unit
+                }
+                for job in jobs
+            ],
+            "scheduler_running": True
+        }
+
+    async def run_emergency_stop(self):
+        """Emergency stop procedure for the orchestrator."""
+        self.logger.warning("Emergency stop initiated")
+        
+        try:
+            # Clear all scheduled jobs
+            schedule.clear()
+            
+            # Send emergency notification if email is enabled
+            if self.config.get("email", {}).get("enabled", False):
+                emergency_data = {
+                    "timestamp": datetime.now().isoformat(),
+                    "reason": "Emergency stop initiated",
+                    "system_status": await self.run_health_check()
+                }
+                
+                # Send to all recipients
+                recipients = self.email_integration._get_all_recipients()
+                await self.email_integration._send_email(
+                    recipients=recipients,
+                    subject="🚨 AI System Daily Orchestrator - Emergency Stop",
+                    html_content=f"<h1>Emergency Stop</h1><p>Emergency stop initiated at {datetime.now()}</p>",
+                    text_content=f"Emergency stop initiated at {datetime.now()}"
+                )
+            
+            self.logger.info("Emergency stop completed")
+            return {"status": "stopped", "timestamp": datetime.now().isoformat()}
+            
+        except Exception as e:
+            self.logger.error(f"Error during emergency stop: {e}")
+            return {"status": "error", "message": str(e)}
+
+    # ...existing code...
 def main():
     """Main function for CLI usage."""
     import argparse
     
-    parser = argparse.ArgumentParser(description="Daily Cycle Automation Orchestrator")
+    parser = argparse.ArgumentParser(description="Enhanced Daily Cycle Automation Orchestrator")
     parser.add_argument("--config", help="Path to configuration file")
-    parser.add_argument("--mode", choices=["schedule", "manual"], default="manual",
-                       help="Run mode: schedule (continuous) or manual (one-time)")
-    parser.add_argument("--cycle", choices=["full", "morning", "midday", "eod"], 
+    parser.add_argument("--mode", choices=["schedule", "manual", "health", "status"], default="manual",
+                       help="Run mode: schedule (continuous), manual (one-time), health (health check), status (show status)")
+    parser.add_argument("--cycle", choices=["full", "morning", "midday", "eod", "health", "performance"], 
                        default="full", help="Cycle type for manual mode")
+    parser.add_argument("--enable-weekend", action="store_true", 
+                       help="Enable weekend mode for scheduling")
+    parser.add_argument("--dry-run", action="store_true",
+                       help="Show what would be scheduled without actually running")
     
     args = parser.parse_args()
     
     # Initialize orchestrator
     orchestrator = DailyCycleOrchestrator(config_path=args.config)
     
+    # Override weekend mode if specified
+    if args.enable_weekend:
+        orchestrator.config["automation"]["weekend_mode"] = True
+    
     if args.mode == "schedule":
         # Run continuous scheduler
         orchestrator.start_scheduler()
+    elif args.mode == "health":
+        # Run health check
+        asyncio.run(orchestrator.run_health_check())
+    elif args.mode == "status":
+        # Show schedule status
+        if args.dry_run:
+            orchestrator.schedule_enhanced_tasks()
+            status = orchestrator.get_schedule_status()
+            print(f"Schedule Status: {status['total_jobs']} jobs configured")
+            for job in status['jobs']:
+                print(f"  - {job['job_func']} (next: {job['next_run']})")
+        else:
+            print("Use --dry-run to see schedule status without running")
     else:
         # Run manual cycle
-        asyncio.run(orchestrator.run_manual_cycle(cycle_type=args.cycle))
+        if args.cycle == "health":
+            asyncio.run(orchestrator.run_health_check())
+        elif args.cycle == "performance":
+            asyncio.run(orchestrator.run_performance_check())
+        else:
+            asyncio.run(orchestrator.run_manual_cycle(cycle_type=args.cycle))
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent))
 
-from dashboard.api_server import DashboardAPI
+from dashboard.unified_api_server import UnifiedDashboardAPI as DashboardAPI
 
 def test_timeline_method():
     """Test the timeline calculation method directly."""

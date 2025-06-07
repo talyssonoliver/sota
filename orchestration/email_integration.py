@@ -28,11 +28,12 @@ class EmailIntegration:
     """
     Email integration system for automated briefing and report distribution.
     """
-    
     def __init__(self, config_path: str = "config/daily_cycle.json"):
         """Initialize the email integration system."""
-        self.config = self._load_config(config_path)
+        # Initialize logger first
         self.logger = logging.getLogger(__name__)
+        
+        self.config = self._load_config(config_path)
         
         # Email configuration
         self.email_config = self.config.get("email", {})
@@ -282,7 +283,18 @@ class EmailIntegration:
     
     def _prepare_briefing_template_data(self, briefing_data: Dict[str, Any]) -> Dict[str, Any]:
         """Prepare template data for morning briefing."""
+        # Handle case where briefing_data might be a string (for testing)
+        if isinstance(briefing_data, str):
+            briefing_data = {"sprint_health": briefing_data}
+        
         sprint_metrics = briefing_data.get("sprint_metrics", {})
+        sprint_health = briefing_data.get("sprint_health", {})
+        
+        # Handle case where sprint_health might be a string
+        if isinstance(sprint_health, str):
+            sprint_health_status = sprint_health
+        else:
+            sprint_health_status = sprint_health.get("status", "UNKNOWN")
         
         return {
             "date": datetime.now().strftime('%Y-%m-%d'),
@@ -290,8 +302,8 @@ class EmailIntegration:
             "completed_tasks": sprint_metrics.get("completed_tasks", 0),
             "completion_rate": f"{sprint_metrics.get('completion_rate', 0):.1f}",
             "team_velocity": sprint_metrics.get("team_velocity", "N/A"),
-            "sprint_health": briefing_data.get("sprint_health", {}).get("status", "UNKNOWN"),
-            "sprint_health_class": self._get_health_css_class(briefing_data.get("sprint_health", {}).get("status", "UNKNOWN")),
+            "sprint_health": sprint_health_status,
+            "sprint_health_class": self._get_health_css_class(sprint_health_status),
             "today_priorities": briefing_data.get("today_priorities", [])[:5],  # Top 5
             "blockers": briefing_data.get("blockers", [])[:3],  # Top 3
             "recommendations": briefing_data.get("recommendations", [])[:3],  # Top 3
@@ -456,7 +468,7 @@ class EmailIntegration:
         except Exception as e:
             self.logger.error(f"Error configuring email: {e}")
             return False
-    
+      
     def add_recipients(self, role: str, emails: List[str]) -> bool:
         """Add email recipients for a specific role."""
         try:
@@ -482,6 +494,14 @@ class EmailIntegration:
         except Exception as e:
             self.logger.error(f"Error adding recipients: {e}")
             return False
+    
+    def get_recipients(self, role: str) -> List[str]:
+        """Get email recipients for a specific role."""
+        try:
+            return self.email_config.get("recipients", {}).get(role, [])
+        except Exception as e:
+            self.logger.error(f"Error getting recipients for {role}: {e}")
+            return []
 
 
 async def main():

@@ -1,15 +1,16 @@
 {
     "email": {
-        "enabled": true,
-        "smtp_server": "new.smtp.com",
-        "smtp_port": 465,
+        "enabled": false,
+        "smtp_server": "smtp.test.com",
+        "smtp_port": 587,
         "use_tls": true,
-        "username": "new@test.com",
-        "password": "newpass",
-        "from_address": "new-ai@test.com",
+        "username": "test@test.com",
+        "password": "testpass",
+        "from_address": "ai-system@test.com",
         "recipients": {
             "team_leads": [
-                "lead@test.com"
+                "lead@test.com",
+                "new_lead@test.com"
             ],
             "stakeholders": [
                 "stakeholder@test.com"
