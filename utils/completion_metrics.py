@@ -128,7 +128,24 @@ class CompletionMetricsCalculator:
             try:
                 with open(task_declaration_file) as f:
                     task_data = json.load(f)
-                    agent_type = task_data.get("agent", "unknown")
+                    agent_type = task_data.get("owner", task_data.get("agent", "unknown"))
+                    
+                    # If no status.json, try to get status from task_declaration.json
+                    if not status_file.exists():
+                        state = task_data.get("state", "UNKNOWN")
+                        # Map task_declaration states to standard status values
+                        status_mapping = {
+                            "DONE": "COMPLETED",
+                            "IN_PROGRESS": "IN_PROGRESS", 
+                            "TODO": "PENDING",
+                            "BLOCKED": "FAILED",
+                            "CANCELLED": "FAILED"
+                        }
+                        status = status_mapping.get(state, state)
+                        
+                        # Use current time as completion time for DONE tasks
+                        if state == "DONE":
+                            completion_time = datetime.now().isoformat()
             except Exception:
                 pass
 
@@ -137,13 +154,12 @@ class CompletionMetricsCalculator:
         coverage = None
         tests_passed = None
         tests_failed = None
-
         if qa_report_file.exists():
             try:
                 with open(qa_report_file) as f:
                     qa_data = json.load(f)
-                    qa_status = qa_data.get("status", "NOT_RUN")
-                    coverage = qa_data.get("coverage")
+                    qa_status = qa_data.get("overall_status", qa_data.get("status", "NOT_RUN"))
+                    coverage = qa_data.get("coverage_percentage", qa_data.get("coverage"))
                     tests_passed = qa_data.get("tests_passed")
                     tests_failed = qa_data.get("tests_failed")
             except Exception:
@@ -279,7 +295,9 @@ class CompletionMetricsCalculator:
         # Save as JSON for API consumption
         metrics_file = self.dashboard_dir / "completion_metrics.json"
         with open(metrics_file, 'w') as f:
-            json.dump(metrics, f, indent=2)        # Save summary for quick access
+            json.dump(metrics, f, indent=2)
+        
+        # Save summary for quick access
         summary_file = self.dashboard_dir / "completion_summary.json"
         summary = {
             "last_updated": metrics.get("last_updated", datetime.now().isoformat()),
@@ -333,6 +351,69 @@ class CompletionMetricsCalculator:
             report += f"- **{status}:** {count} tasks\n"
 
         return report
+
+    # Public interface methods for daily cycle integration
+    def calculate_team_metrics(self) -> Dict[str, Any]:
+        """Public interface for team metrics calculation"""
+        all_metrics = self.calculate_all_metrics()
+        return all_metrics["team_metrics"]
+    
+    def calculate_sprint_metrics(self) -> Dict[str, Any]:
+        """Public interface for sprint metrics calculation"""
+        all_metrics = self.calculate_all_metrics()
+        
+        # Calculate sprint-specific metrics
+        task_metrics = all_metrics["task_metrics"]
+        team_metrics = all_metrics["team_metrics"]
+        progress_metrics = all_metrics["progress_metrics"]
+        
+        # Sprint health assessment
+        completion_rate = team_metrics["completion_rate"]
+        qa_pass_rate = team_metrics["qa_pass_rate"]
+        
+        sprint_health = "excellent" if completion_rate >= 90 and qa_pass_rate >= 95 else \
+                       "good" if completion_rate >= 75 and qa_pass_rate >= 85 else \
+                       "needs_attention" if completion_rate >= 50 else "critical"
+        
+        # Identify blockers and priorities
+        blockers = []
+        high_priority_tasks = []
+        
+        for task in task_metrics:
+            if task["status"] == "FAILED":
+                blockers.append({
+                    "task_id": task["task_id"],
+                    "agent_type": task["agent_type"],
+                    "reason": "Task failed"
+                })
+            elif task["status"] == "IN_PROGRESS" and task.get("duration_minutes", 0) > 480:  # > 8 hours
+                blockers.append({
+                    "task_id": task["task_id"],
+                    "agent_type": task["agent_type"],
+                    "reason": "Long-running task"
+                })
+            elif task["qa_status"] == "FAILED":
+                high_priority_tasks.append({
+                    "task_id": task["task_id"],
+                    "agent_type": task["agent_type"],
+                    "reason": "QA failed, needs rework"
+                })
+        
+        return {
+            "sprint_health": sprint_health,
+            "completion_rate": completion_rate,
+            "qa_pass_rate": qa_pass_rate,
+            "total_tasks": team_metrics["total_tasks"],
+            "completed_tasks": team_metrics["completed_tasks"],
+            "in_progress_tasks": team_metrics["in_progress_tasks"],
+            "failed_tasks": team_metrics["failed_tasks"],
+            "blockers": blockers,
+            "high_priority_tasks": high_priority_tasks,
+            "daily_trend": progress_metrics["completion_trend"][-7:],  # Last 7 days
+            "coverage_trend": progress_metrics["coverage_trend"][-7:],
+            "average_coverage": team_metrics["average_coverage"],
+            "average_completion_time": team_metrics["average_completion_time"]
+        }
 
 
 def main():

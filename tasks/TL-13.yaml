@@ -6,7 +6,7 @@ depends_on:
   - TL-09
   - TL-11
   - TL-12
-state: PLANNED
+state: DONE
 priority: MEDIUM
 estimation_hours: 2
 description: "Task TL-13: Distribute Environment Variables"
