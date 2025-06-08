@@ -187,8 +187,8 @@ def enhanced_workflow():
         def execute_task(self, task_id):
             if self.iteration_count >= self.max_iterations:
                 raise Exception(
-                    f"Task {task_id} exceeded {
-                        self.max_iterations} iterations")
+                    f"Task {task_id} exceeded {self.max_iterations} iterations"
+                )
             self.iteration_count += 1
             return {"status": "completed", "task_id": task_id}
 
