@@ -1,0 +1,763 @@
+/* Gantt Chart Component Styles - Phase 6 Step 6.7 */
+
+.gantt-component {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+/* Header Styles */
+.gantt-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.gantt-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.gantt-title h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.gantt-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    backdrop-filter: blur(10px);
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-indicator.status-loading {
+    background: #feca57;
+    animation: pulse 2s infinite;
+}
+
+.status-indicator.status-ready {
+    background: #48dbfb;
+}
+
+.status-indicator.status-error {
+    background: #ff6b6b;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Controls Styles */
+.gantt-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.gantt-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: #4CAF50;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #45a049;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary.active {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+}
+
+.btn-info {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-info:hover {
+    background: #138496;
+}
+
+.btn-outline {
+    background: transparent;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.btn-outline:hover {
+    background: #f8f9fa;
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+}
+
+.btn-group {
+    display: flex;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.btn-group .btn {
+    border-radius: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-group .btn:first-child {
+    border-radius: 6px 0 0 6px;
+}
+
+.btn-group .btn:last-child {
+    border-radius: 0 6px 6px 0;
+    border-right: none;
+}
+
+.time-range-selector select {
+    padding: 8px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.time-range-selector select option {
+    background: #333;
+    color: white;
+}
+
+/* Metrics Row */
+.gantt-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.gantt-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.metric-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.metric-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #333;
+}
+
+/* Main Container */
+.gantt-main-container {
+    min-height: 600px;
+}
+
+/* Gantt Chart Container */
+.gantt-chart-container {
+    padding: 20px;
+}
+
+.mermaid-gantt {
+    overflow-x: auto;
+    min-height: 500px;
+}
+
+.mermaid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.frappe-gantt {
+    overflow-x: auto;
+}
+
+/* Critical Path View */
+.critical-path-container {
+    padding: 20px;
+}
+
+.critical-path-summary {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.critical-path-summary h4 {
+    margin: 0 0 15px 0;
+    color: #856404;
+}
+
+.critical-path-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.cp-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cp-label {
+    font-size: 0.85rem;
+    color: #856404;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.cp-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.risk-level.risk-high {
+    color: #dc3545;
+}
+
+.risk-level.risk-medium {
+    color: #fd7e14;
+}
+
+.risk-level.risk-low {
+    color: #28a745;
+}
+
+/* Critical Tasks Table */
+.critical-tasks-list {
+    margin-bottom: 30px;
+}
+
+.critical-tasks-list h5 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.tasks-table-container {
+    overflow-x: auto;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+}
+
+.critical-tasks-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.critical-tasks-table th,
+.critical-tasks-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.critical-tasks-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+}
+
+.critical-tasks-table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.risk-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.risk-badge.risk-high {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.risk-badge.risk-medium {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.risk-badge.risk-low {
+    background: #d1edff;
+    color: #0c5460;
+}
+
+/* Dependency Graph */
+.dependency-graph {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.dependency-graph h5 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Resource Optimization View */
+.resource-optimization-container {
+    padding: 20px;
+}
+
+.resource-summary {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.resource-summary h4 {
+    margin: 0 0 15px 0;
+    color: #1565c0;
+}
+
+.resource-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.resource-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.resource-label {
+    font-size: 0.85rem;
+    color: #1565c0;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.resource-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.resource-allocation-chart {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    height: 400px;
+}
+
+/* Optimization Recommendations */
+.optimization-recommendations {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.optimization-recommendations h5 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.recommendations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.recommendation-item {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    background: #fff;
+}
+
+.recommendation-item.priority-high {
+    border-left: 4px solid #dc3545;
+}
+
+.recommendation-item.priority-medium {
+    border-left: 4px solid #fd7e14;
+}
+
+.recommendation-item.priority-low {
+    border-left: 4px solid #28a745;
+}
+
+.recommendation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.recommendation-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.recommendation-impact {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.recommendation-description {
+    color: #495057;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.recommendation-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Optimization Panel (Modal) */
+.optimization-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.panel-content {
+    background: white;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.panel-header {
+    padding: 20px;
+    border-bottom: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h4 {
+    margin: 0;
+    color: #333;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6c757d;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-btn:hover {
+    background: #f8f9fa;
+    color: #333;
+}
+
+.panel-body {
+    padding: 20px;
+}
+
+.optimization-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.option-group label {
+    font-weight: 500;
+    color: #333;
+}
+
+.option-group select,
+.option-group input[type="range"] {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.optimization-results {
+    border-top: 1px solid #dee2e6;
+    padding-top: 20px;
+}
+
+.optimization-summary h6 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.result-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.result-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.optimization-changes h6 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.changes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.change-item {
+    padding: 8px 12px;
+    background: #e8f5e8;
+    border-left: 3px solid #28a745;
+    margin-bottom: 5px;
+    border-radius: 0 6px 6px 0;
+}
+
+.panel-footer {
+    padding: 20px;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .gantt-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .gantt-controls {
+        justify-content: center;
+    }
+    
+    .gantt-toolbar {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .gantt-metrics-row {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    
+    .critical-path-metrics,
+    .resource-metrics {
+        grid-template-columns: 1fr;
+    }
+    
+    .recommendation-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .panel-content {
+        width: 95%;
+        margin: 10px;
+    }
+    
+    .panel-footer {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .gantt-component {
+        margin: 10px 0;
+        border-radius: 8px;
+    }
+    
+    .gantt-header {
+        padding: 15px;
+    }
+    
+    .gantt-title h3 {
+        font-size: 1.2rem;
+    }
+    
+    .gantt-metrics-row {
+        padding: 15px;
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+    }
+    
+    .btn-group .btn {
+        border-radius: 6px;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn-group .btn:last-child {
+        border-bottom: none;
+    }
+}
+
+/* Custom Mermaid Gantt Styling */
+.mermaid .section0, .mermaid .section1, .mermaid .section2, .mermaid .section3 {
+    fill: #f8f9fa;
+    stroke: #dee2e6;
+}
+
+.mermaid .cScale0, .mermaid .cScale1, .mermaid .cScale2 {
+    fill: #667eea;
+}
+
+.mermaid .taskText {
+    fill: #333 !important;
+    font-size: 11px !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+.mermaid .taskTextOutsideRight {
+    fill: #333 !important;
+    text-anchor: start !important;
+}
+
+.mermaid .taskTextOutsideLeft {
+    fill: #333 !important;
+    text-anchor: end !important;
+}
+
+/* Critical task styling */
+.mermaid .critText {
+    fill: #fff !important;
+    font-weight: bold !important;
+}
+
+.mermaid .task.crit0, .mermaid .task.crit1, .mermaid .task.crit2, .mermaid .task.crit3 {
+    fill: #ff6b6b;
+    stroke: #d63447;
+    stroke-width: 2px;
+}
+
+/* Done task styling */
+.mermaid .task.done0, .mermaid .task.done1, .mermaid .task.done2, .mermaid .task.done3 {
+    fill: #48dbfb;
+    stroke: #0abde3;
+}
+
+/* Active task styling */
+.mermaid .task.active0, .mermaid .task.active1, .mermaid .task.active2, .mermaid .task.active3 {
+    fill: #feca57;
+    stroke: #ff9ff3;
+}
+
+/* Grid and axis styling */
+.mermaid .grid .tick {
+    stroke: #e9ecef;
+    stroke-width: 1px;
+}
+
+.mermaid .grid .tick text {
+    fill: #6c757d;
+    font-size: 10px;
+}
