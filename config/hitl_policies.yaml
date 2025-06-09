@@ -1,0 +1,250 @@
+# Human-in-the-Loop (HITL) Policy Configuration
+# Defines checkpoints, triggers, and escalation policies for human review
+
+hitl_policies:
+  # Global configuration settings
+  global_settings:
+    enabled: true
+    default_timeout_hours: 24
+    auto_escalation_enabled: true
+    escalation_timeout_hours: 48
+    notification_channels: ["slack", "email", "dashboard"]
+    max_reviewers_per_checkpoint: 3
+    require_explicit_approval: true
+    max_retries: 3
+    escalation_delay_hours: 2
+
+  # Checkpoint triggers per workflow phase
+  checkpoint_triggers:
+    # Agent Prompt Generation Phase
+    agent_prompt:
+      enabled: true
+      description: "Review agent prompts for clarity and safety"
+      conditions:
+        - "ambiguous_goal"
+        - "sensitive_logic"
+        - "high_risk_operation"
+        - "external_api_integration"
+        - "data_modification"
+      auto_approve_threshold: 0.85
+      required_approvals: 1
+      reviewers: ["Technical Lead", "Product Manager"]
+      timeout_action: "escalate"
+
+    # Output Evaluation Phase
+    output_evaluation:
+      enabled: true
+      description: "Review critical code and schema changes"
+      conditions:
+        - "critical_service_changes"
+        - "schema_modifications"
+        - "security_implications"
+        - "performance_impact"
+        - "breaking_changes"
+        - "api_modifications"
+      auto_approve_threshold: 0.90
+      required_approvals: 2
+      reviewers: ["Backend Engineer", "Technical Lead", "Security Lead"]
+      timeout_action: "block"
+
+    # QA Validation Phase
+    qa_validation:
+      enabled: true
+      description: "Review quality assurance results and coverage"
+      conditions:
+        - "coverage_below_threshold"
+        - "test_failures"
+        - "performance_regression"
+        - "security_vulnerabilities"
+        - "accessibility_issues"
+      auto_approve_threshold: 0.95
+      required_approvals: 1
+      reviewers: ["QA Engineer", "Technical Lead"]
+      timeout_action: "block"
+
+    # Documentation Phase
+    documentation:
+      enabled: true
+      description: "Review documentation quality and completeness"
+      conditions:
+        - "clarity_verification_needed"
+        - "technical_accuracy_check"
+        - "completeness_review"
+        - "user_facing_changes"
+        - "api_documentation"
+      auto_approve_threshold: 0.80
+      required_approvals: 1
+      reviewers: ["Technical Writer", "Product Manager"]
+      timeout_action: "auto_approve"
+
+    # Task Transition Phase
+    task_transitions:
+      enabled: true
+      description: "Review critical task status transitions"
+      conditions:
+        - "status_change_to_done"
+        - "merge_pr_request"
+        - "production_deployment"
+        - "release_candidate"
+        - "hotfix_deployment"
+      auto_approve_threshold: 0.92
+      required_approvals: 1
+      reviewers: ["Technical Lead", "Release Manager"]
+      timeout_action: "escalate"
+
+  # Task type-specific policies
+  task_type_policies:
+    backend_tasks:
+      prefix: "BE-"
+      auto_approve_enabled: true
+      auto_approve_threshold: 0.90
+      required_reviewers: ["Backend Engineer", "Technical Lead"]
+      critical_checkpoints:
+        - "schema_changes"
+        - "api_modifications"
+        - "security_updates"
+        - "performance_optimizations"
+        - "database_migrations"
+      risk_assessment:
+        high_risk_patterns:
+          - "DELETE FROM"
+          - "ALTER TABLE"
+          - "GRANT ALL"
+          - "sudo"
+          - "eval("
+          - "complex_logic"
+          - "external_dependency"
+          - "security_sensitive"
+          - "auth_implementation"
+          - "security_config"
+          - "database_migration"
+          - "production_deployment"
+        medium_risk_patterns:
+          - "INSERT INTO"
+          - "UPDATE SET"
+          - "os.system"
+          - "subprocess"
+        low_risk_patterns:
+          - "simple_crud"
+          - "styling"
+          - "documentation_update"
+      risk_multiplier: 1.2
+      timeout_hours: 8
+
+    frontend_tasks:
+      prefix: "FE-"
+      auto_approve_enabled: true
+      auto_approve_threshold: 0.85
+      required_reviewers: ["Frontend Engineer", "UX Lead"]
+      critical_checkpoints:
+        - "ui_component_changes"
+        - "accessibility_updates"
+        - "performance_optimizations"
+        - "routing_changes"
+        - "state_management"
+      risk_assessment:
+        high_risk_patterns:
+          - "dangerouslySetInnerHTML"
+          - "eval("
+          - "Function("
+          - "localStorage.clear"
+        medium_risk_patterns:
+          - "useEffect"
+          - "setState"
+          - "localStorage"
+          - "sessionStorage"
+        low_risk_patterns:
+          - "styling"
+          - "css_changes"
+          - "simple_component"
+      risk_multiplier: 1.0
+      timeout_hours: 12
+
+    infrastructure_tasks:
+      prefix: "INFRA-"
+      auto_approve_enabled: false
+      auto_approve_low_risk: false
+      required_reviewers: ["DevOps Engineer", "Technical Lead", "Security Lead"]
+      critical_checkpoints:
+        - "security_configurations"
+        - "network_changes"
+        - "deployment_scripts"
+        - "monitoring_setup"
+        - "backup_procedures"
+      risk_assessment:
+        high_risk_patterns:
+          - "rm -rf"
+          - "chmod 777"
+          - "EXPOSE"
+          - "privileged: true"
+          - "production_deployment"
+          - "database_config"
+        medium_risk_patterns:
+          - "docker run"
+          - "kubectl apply"
+          - "terraform apply"
+      default_risk_level: "high"
+      risk_multiplier: 1.5
+      timeout_hours: 6
+
+  # Risk-based escalation policies
+  escalation_policies:
+    high:
+      description: "Critical security or system-wide impact"
+      escalation_levels:
+        - level: 1
+          timeout_hours: 2
+          notify: ["team_lead"]
+        - level: 2
+          timeout_hours: 4
+          notify: ["technical_director"]
+        - level: 3
+          timeout_hours: 8
+          notify: ["cto"]
+      notification_channels: ["slack", "email"]
+      auto_block_enabled: true
+
+    medium:
+      description: "Moderate impact on functionality or performance"
+      escalation_levels:
+        - level: 1
+          timeout_hours: 8
+          notify: ["Technical Lead"]
+        - level: 2
+          timeout_hours: 16
+          notify: ["Engineering Manager"]
+      auto_block_enabled: false
+
+    low:
+      description: "Minor changes with limited impact"
+      escalation_levels:
+        - level: 1
+          timeout_hours: 24
+          notify: ["Technical Lead"]
+      auto_block_enabled: false
+      auto_approve_after_timeout: true
+
+  # Integration settings
+  integrations:
+    dashboard:
+      enabled: true
+      real_time_updates: true
+      refresh_interval_seconds: 30
+
+    cli:
+      enabled: true
+
+    api:
+      enabled: true
+
+    notifications:
+      slack:
+        enabled: true
+        channels:
+          high_risk: "#critical-reviews"
+          medium_risk: "#engineering-reviews"
+          low_risk: "#general-reviews"
+      email:
+        enabled: true
+      dashboard:
+        enabled: true
