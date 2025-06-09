@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from tools.context_tracker import get_context_log, track_context_usage
-from tools.memory_engine import MemoryEngine
+from tools.memory import get_memory_instance
 from utils.task_loader import load_task_metadata
 
 # Add project root to path
@@ -38,7 +38,7 @@ class ContextReviewer:
     """
 
     def __init__(self):
-        self.memory_engine = MemoryEngine()
+        self.memory_engine = get_memory_instance()
         self.reviewed_context = {}
         self.modifications_made = []
 

@@ -9,6 +9,7 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Dict, List, Optional, Any
 
 from orchestration.execute_graph import run_task_graph
 from orchestration.execute_workflow import get_dependency_ordered_tasks
@@ -18,7 +19,7 @@ from orchestration.generate_prompt import generate_prompt
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-def get_agent_for_task(task_id):
+def get_agent_for_task(task_id: str) -> str:
     """
     Determine which agent should handle a given task.
 
@@ -45,10 +46,10 @@ def get_agent_for_task(task_id):
 
 
 def run_single_task(
-        task_id,
-        generate_only=False,
-        dry_run=False,
-        output_dir=None):
+        task_id: str,
+        generate_only: bool = False,
+        dry_run: bool = False,
+        output_dir: Optional[str] = None) -> str:
     """
     Run workflow for a single task.
 
@@ -88,10 +89,10 @@ def run_single_task(
 
 
 def run_task_sequence(
-        tasks=None,
-        generate_only=False,
-        dry_run=False,
-        output_base_dir="outputs"):
+        tasks: Optional[List[str]] = None,
+        generate_only: bool = False,
+        dry_run: bool = False,
+        output_base_dir: str = "outputs") -> None:
     """
     Run a sequence of tasks in dependency order.
 
@@ -165,7 +166,7 @@ def run_task_sequence(
     print(f"\nWorkflow execution complete. Summary saved to {summary_path}")
 
 
-def main():
+def main() -> None:
     """Command-line interface for running agent workflows."""
     parser = argparse.ArgumentParser(
         description="Run agent tasks through the LangGraph workflow"

@@ -11,7 +11,7 @@ from langchain_core.tools import Tool
 from langchain_openai import ChatOpenAI
 
 from prompts.utils import format_prompt_template, load_and_format_prompt
-from tools.memory_engine import get_context_by_keys
+from tools.memory import get_context_by_keys
 
 memory = None
 

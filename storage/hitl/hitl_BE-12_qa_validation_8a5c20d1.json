@@ -1,0 +1,28 @@
+{
+  "checkpoint_id": "hitl_BE-12_qa_validation_8a5c20d1",
+  "task_id": "BE-12",
+  "checkpoint_type": "qa_validation",
+  "task_type": "backend",
+  "content": {
+    "test_results": "All tests passing"
+  },
+  "risk_level": "medium",
+  "status": "pending",
+  "created_at": "2025-06-09T20:33:06.664243",
+  "timeout_at": "2025-06-10T04:33:06.664243",
+  "resolved_at": null,
+  "risk_factors": [
+    "integration"
+  ],
+  "required_approvals": 1,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-10T04:33:06.664243",
+  "reviewers": []
+}

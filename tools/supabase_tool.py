@@ -294,7 +294,7 @@ class SupabaseTool(ArtesanatoBaseTool):
         """Return mock schema information from context store."""
         try:
             schema_file = os.path.join(
-                os.getcwd(), "context-store", "db", "db-schema-summary.md")
+                os.getcwd(), "data/context", "db", "db-schema-summary.md")
 
             if os.path.exists(schema_file):
                 with open(schema_file, 'r') as f:
@@ -386,13 +386,13 @@ class SupabaseTool(ArtesanatoBaseTool):
         try:
             # Try the new organized path first
             service_pattern_file = os.path.join(
-                os.getcwd(), "context-store", "patterns", "service-pattern.md")
+                os.getcwd(), "data/context", "patterns", "service-pattern.md")
 
             # If not found, fall back to original path for backward
             # compatibility
             if not os.path.exists(service_pattern_file):
                 service_pattern_file = os.path.join(
-                    os.getcwd(), "context-store", "service-pattern.md")
+                    os.getcwd(), "data/context", "service-pattern.md")
 
             if os.path.exists(service_pattern_file):
                 with open(service_pattern_file, 'r') as f:

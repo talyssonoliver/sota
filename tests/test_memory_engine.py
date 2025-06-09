@@ -11,9 +11,9 @@ import numpy as np
 from tests.helpers import cleanup_test_files
 from tests.mock_environment import setup_mock_environment
 from tests.mock_openai_embeddings import create_mock_openai_embeddings
-from tools.memory_engine import (ChunkingConfig, MemoryEngine,
-                                 MemoryEngineConfig, get_relevant_context,
-                                 initialize_memory)
+from tools.memory import (MemoryEngine, MemoryEngineConfig, 
+                          get_relevant_context, initialize_memory)
+from tools.memory.config import ChunkingConfig
 
 sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..")))
@@ -32,28 +32,19 @@ class TestMemoryEngine(unittest.TestCase):
 
         # Patch OpenAIEmbeddings to use our mock
         self.patcher = patch(
-            'tools.memory_engine.OpenAIEmbeddings', self.mock_embeddings)
+            'tools.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
         self.patcher.start()
         # Grant 'tester' read/write/delete/admin permissions for testing and
         # set small chunk size
         test_config = MemoryEngineConfig(
-            security_options={
-                "roles": {"tester": ["read", "write", "delete", "admin"], "fixture_tester": ["read", "write", "delete", "admin"]},
-                "sanitize_inputs": True
-            },
-            chunking=ChunkingConfig(
-                semantic=True,
-                adaptive=True,
-                min_chunk_size=1,  # allow small test docs
-                max_chunk_size=2048,
-                overlap_percent=0.0,
-                deduplicate=False,
-                quality_metrics=False
-            )
-        )
+            collection_name="test_collection",
+            knowledge_base_path="tests/test_data/context-store/"
+        )        # Update chunking config for testing
+        test_config.chunking.min_chunk_size = 1  # allow small test docs
+        test_config.chunking.chunk_size = 2048
+        test_config.chunking.chunk_overlap = 0
         self.memory = MemoryEngine(config=test_config)
-        self.test_file = "context-store/test_doc.md"
-        # Create a test document
+        self.test_file = "tests/test_outputs/test_doc.md"        # Create a test document
         os.makedirs(os.path.dirname(self.test_file), exist_ok=True)
         with open(self.test_file, "w", encoding="utf-8") as f:
             f.write(
@@ -71,7 +62,7 @@ class TestMemoryEngine(unittest.TestCase):
             pass
 
         # Remove test file with retry for Windows file locking
-        if os.path.exists(self.test_file):
+        if hasattr(self, 'test_file') and os.path.exists(self.test_file):
             try:
                 os.remove(self.test_file)
             except PermissionError:
@@ -80,8 +71,8 @@ class TestMemoryEngine(unittest.TestCase):
                 time.sleep(0.1)
                 try:
                     os.remove(self.test_file)
-                except PermissionError:
-                    # Still locked, skip for now - cleanup will handle it
+                except (PermissionError, FileNotFoundError):
+                    # Still locked or already deleted, skip for now - cleanup will handle it
                     pass
 
         # Clean up all test files and directories
@@ -89,10 +80,10 @@ class TestMemoryEngine(unittest.TestCase):
 
     def test_add_and_retrieve_document(self):
         self.memory.add_document(self.test_file, user="tester")
-        # Monkeypatch vector_store.as_retriever().get_relevant_documents to
-        # return the chunked content
-        original_as_retriever = getattr(
-            self.memory.vector_store, "as_retriever", None)
+        # Monkeypatch vector_store.as_retriever().get_relevant_documents to        # return the chunked content
+        original_as_retriever = None
+        if self.memory.vector_store is not None:
+            original_as_retriever = getattr(self.memory.vector_store, "as_retriever", None)
 
         class MockRetriever:
             def get_relevant_documents(inner_self, query):
@@ -104,12 +95,18 @@ class TestMemoryEngine(unittest.TestCase):
 
         def patched_as_retriever():
             return MockRetriever()
-        self.memory.vector_store.as_retriever = patched_as_retriever
+        
+        if self.memory.vector_store is not None:
+            self.memory.vector_store.as_retriever = patched_as_retriever
+            
         context = self.memory.get_context("test document", k=1, user="tester")
-        if original_as_retriever:
-            self.memory.vector_store.as_retriever = original_as_retriever
-        else:
-            del self.memory.vector_store.as_retriever
+        
+        if self.memory.vector_store is not None:
+            if original_as_retriever:
+                self.memory.vector_store.as_retriever = original_as_retriever
+            else:
+                del self.memory.vector_store.as_retriever
+                
         self.assertIn("test document", context)
 
     def test_secure_delete(self):

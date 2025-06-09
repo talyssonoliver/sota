@@ -1,0 +1,29 @@
+{
+  "checkpoint_id": "hitl_TEST-d5f15232-DOC_documentation_9e7d4bdf",
+  "task_id": "TEST-d5f15232-DOC",
+  "checkpoint_type": "documentation",
+  "task_type": "documentation",
+  "content": {
+    "documentation_type": "API reference",
+    "pages_updated": 3,
+    "automated_checks": "passed",
+    "review_type": "standard"
+  },
+  "risk_level": "medium",
+  "status": "pending",
+  "created_at": "2025-06-08T17:42:36.053721",
+  "timeout_at": "2025-06-09T17:42:36.053721",
+  "resolved_at": null,
+  "risk_factors": [],
+  "required_approvals": 1,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-09T17:42:36.053721",
+  "reviewers": []
+}

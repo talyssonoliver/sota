@@ -1,0 +1,28 @@
+{
+  "checkpoint_id": "hitl_TEST-8bffb448-DOC_documentation_9153f1cd",
+  "task_id": "TEST-8bffb448-DOC",
+  "checkpoint_type": "documentation",
+  "task_type": "documentation",
+  "content": {
+    "documentation_type": "API reference",
+    "pages_updated": 3,
+    "automated_checks": "passed",
+    "review_type": "standard"
+  },
+  "risk_level": "medium",
+  "status": "escalated",
+  "created_at": "2025-06-08T16:34:07.563970",
+  "timeout_at": "2025-06-09T16:34:07.563970",
+  "risk_factors": [],
+  "required_approvals": 1,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 2,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-09T16:34:07.563970",
+  "reviewers": []
+}

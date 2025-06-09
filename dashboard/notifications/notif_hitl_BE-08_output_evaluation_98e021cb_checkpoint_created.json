@@ -1,0 +1,18 @@
+{
+  "id": "notif_hitl_BE-08_output_evaluation_98e021cb_checkpoint_created",
+  "type": "checkpoint_created",
+  "checkpoint_id": "hitl_BE-08_output_evaluation_98e021cb",
+  "task_id": "BE-08",
+  "title": "🔍 Review Required: BE-08",
+  "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+  "severity": "warning",
+  "timestamp": "2025-06-09T19:42:23.336245",
+  "read": false,
+  "action_url": "/hitl/checkpoint/hitl_BE-08_output_evaluation_98e021cb",
+  "metadata": {
+    "checkpoint_type": "output_evaluation",
+    "risk_level": "high",
+    "assigned_reviewers": [],
+    "deadline": "2025-06-10T07:42:23.333205"
+  }
+}

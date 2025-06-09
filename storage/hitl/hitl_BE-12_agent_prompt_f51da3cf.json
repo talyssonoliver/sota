@@ -1,0 +1,28 @@
+{
+  "checkpoint_id": "hitl_BE-12_agent_prompt_f51da3cf",
+  "task_id": "BE-12",
+  "checkpoint_type": "agent_prompt",
+  "task_type": "backend",
+  "content": {
+    "prompt": "Simple CRUD operation 2"
+  },
+  "risk_level": "medium",
+  "status": "pending",
+  "created_at": "2025-06-09T19:10:23.414723",
+  "timeout_at": "2025-06-10T19:10:23.414723",
+  "resolved_at": null,
+  "risk_factors": [
+    "simple_crud"
+  ],
+  "required_approvals": 1,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-10T19:10:23.414723",
+  "reviewers": []
+}

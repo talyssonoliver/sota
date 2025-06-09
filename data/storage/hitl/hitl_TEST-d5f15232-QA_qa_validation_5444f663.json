@@ -1,0 +1,32 @@
+{
+  "checkpoint_id": "hitl_TEST-d5f15232-QA_qa_validation_5444f663",
+  "task_id": "TEST-d5f15232-QA",
+  "checkpoint_type": "qa_validation",
+  "task_type": "qa",
+  "content": {
+    "test_coverage": 82.5,
+    "failed_tests": 2,
+    "performance_regression": 3.2,
+    "security_issues": 0
+  },
+  "risk_level": "medium",
+  "status": "pending",
+  "created_at": "2025-06-08T17:42:36.051427",
+  "timeout_at": "2025-06-09T17:42:36.051427",
+  "resolved_at": null,
+  "risk_factors": [
+    "coverage_below_threshold",
+    "performance_regression"
+  ],
+  "required_approvals": 1,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-09T17:42:36.051427",
+  "reviewers": []
+}

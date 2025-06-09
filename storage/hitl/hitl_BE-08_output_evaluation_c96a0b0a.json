@@ -1,0 +1,29 @@
+{
+  "checkpoint_id": "hitl_BE-08_output_evaluation_c96a0b0a",
+  "task_id": "BE-08",
+  "checkpoint_type": "output_evaluation",
+  "task_type": "backend",
+  "content": {
+    "code": "class AuthenticationService:\n    def login(self, username, password):\n        # Security implementation"
+  },
+  "risk_level": "high",
+  "status": "pending",
+  "created_at": "2025-06-09T20:33:06.767245",
+  "timeout_at": "2025-06-10T08:33:06.767245",
+  "resolved_at": null,
+  "risk_factors": [
+    "auth_implementation",
+    "security_config"
+  ],
+  "required_approvals": 2,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-10T08:33:06.767245",
+  "reviewers": []
+}

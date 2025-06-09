@@ -1,0 +1,18 @@
+{
+  "id": "notif_hitl_BE-11_output_evaluation_78844a95_checkpoint_rejectd",
+  "type": "checkpoint_rejectd",
+  "checkpoint_id": "hitl_BE-11_output_evaluation_78844a95",
+  "task_id": "BE-11",
+  "title": "HITL Update: BE-11",
+  "message": "HITL checkpoint update",
+  "severity": "info",
+  "timestamp": "2025-06-09T19:08:54.157119",
+  "read": false,
+  "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_78844a95",
+  "metadata": {
+    "checkpoint_type": "output_evaluation",
+    "risk_level": "medium",
+    "assigned_reviewers": [],
+    "deadline": "2025-06-10T07:08:54.147997"
+  }
+}

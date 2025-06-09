@@ -1,0 +1,29 @@
+{
+  "checkpoint_id": "hitl_BE-13_output_evaluation_eb520485",
+  "task_id": "BE-13",
+  "checkpoint_type": "output_evaluation",
+  "task_type": "backend",
+  "content": {
+    "code": "API implementation"
+  },
+  "risk_level": "medium",
+  "status": "pending",
+  "created_at": "2025-06-08T18:09:59.776035",
+  "timeout_at": "2025-06-09T06:09:59.776035",
+  "resolved_at": null,
+  "risk_factors": [
+    "api_endpoint",
+    "integration"
+  ],
+  "required_approvals": 2,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-09T06:09:59.776035",
+  "reviewers": []
+}

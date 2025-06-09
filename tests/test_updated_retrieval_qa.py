@@ -10,10 +10,12 @@ class TestUpdatedRetrievalQA(unittest.TestCase):
     def test_get_answer_helper(self):
         """Test that the get_answer helper function works correctly"""
         # Import here to avoid dependency issues
-        from tools.memory_engine import get_answer
+        from tools.memory import get_answer
 
         # Mock the memory singleton's retrieval_qa method
-        with patch('tools.memory_engine.memory') as mock_memory:
+        with patch('tools.memory.get_memory_instance') as mock_memory_getter:
+            mock_memory = MagicMock()
+            mock_memory_getter.return_value = mock_memory
             mock_memory.retrieval_qa.return_value = "The orders table has RLS rules that restrict users to only see their own orders."
 
             # Test the get_answer helper function
@@ -35,10 +37,12 @@ class TestUpdatedRetrievalQA(unittest.TestCase):
     def test_conversation_mode(self):
         """Test the conversation mode of the retrieval_qa method"""
         # Import here to avoid dependency issues
-        from tools.memory_engine import get_answer
+        from tools.memory import get_answer
 
         # Mock the memory singleton's retrieval_qa method
-        with patch('tools.memory_engine.memory') as mock_memory:
+        with patch('tools.memory.get_memory_instance') as mock_memory_getter:
+            mock_memory = MagicMock()
+            mock_memory_getter.return_value = mock_memory
             mock_memory.retrieval_qa.return_value = "The orders table uses row-level security policies."
 
             # Test the get_answer helper function with conversation mode
@@ -62,10 +66,12 @@ class TestUpdatedRetrievalQA(unittest.TestCase):
     def test_metadata_filtering(self):
         """Test the metadata filtering capability of the retrieval_qa method"""
         # Import here to avoid dependency issues
-        from tools.memory_engine import get_answer
+        from tools.memory import get_answer
 
         # Mock the memory singleton's retrieval_qa method
-        with patch('tools.memory_engine.memory') as mock_memory:
+        with patch('tools.memory.get_memory_instance') as mock_memory_getter:
+            mock_memory = MagicMock()
+            mock_memory_getter.return_value = mock_memory
             mock_memory.retrieval_qa.return_value = "Authentication is handled via JWT tokens."
 
             # Test the get_answer helper function with metadata filtering

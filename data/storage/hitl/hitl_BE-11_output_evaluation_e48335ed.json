@@ -1,0 +1,27 @@
+{
+  "checkpoint_id": "hitl_BE-11_output_evaluation_e48335ed",
+  "task_id": "BE-11",
+  "checkpoint_type": "output_evaluation",
+  "task_type": "backend",
+  "content": {
+    "code": "Improved business logic"
+  },
+  "risk_level": "medium",
+  "status": "pending",
+  "created_at": "2025-06-08T16:39:42.885116",
+  "timeout_at": "2025-06-09T04:39:42.885116",
+  "risk_factors": [
+    "business_logic"
+  ],
+  "required_approvals": 2,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": "hitl_BE-11_output_evaluation_e26f65b9",
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-09T04:39:42.885116",
+  "reviewers": []
+}

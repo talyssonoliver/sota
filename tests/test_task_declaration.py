@@ -16,7 +16,7 @@ import pytest
 from orchestration.task_declaration import (TaskDeclaration,
                                             TaskDeclarationManager,
                                             TaskPreparationStatus)
-from tools.memory_engine import MemoryEngine
+from tools.memory.engine import MemoryEngine
 from utils.task_loader import load_task_metadata
 
 # Add parent directory to path to allow imports
@@ -263,7 +263,7 @@ class TestTaskDeclarationIntegration:
         """Test declaring a real task from the tasks directory"""
         try:
             # Create manager with real memory engine (mocked for faster tests)
-            with patch('tools.memory_engine.MemoryEngine') as mock_engine_class:
+            with patch('tools.memory.engine.MemoryEngine') as mock_engine_class:
                 mock_engine = Mock()
                 mock_engine.build_focused_context.return_value = "Real context content"
                 mock_engine.get_documents.return_value = []
@@ -319,7 +319,7 @@ def test_module_imports():
     from orchestration.task_declaration import (TaskDeclaration,
                                                 TaskDeclarationManager,
                                                 TaskPreparationStatus)
-    from tools.memory_engine import MemoryEngine
+    from tools.memory.engine import MemoryEngine
     from utils.task_loader import load_task_metadata
 
     # Basic import test

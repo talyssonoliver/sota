@@ -1,0 +1,18 @@
+{
+  "id": "notif_hitl_BE-12_qa_validation_a34fc38a_checkpoint_created",
+  "type": "checkpoint_created",
+  "checkpoint_id": "hitl_BE-12_qa_validation_a34fc38a",
+  "task_id": "BE-12",
+  "title": "🔍 Review Required: BE-12",
+  "message": "A qa_validation checkpoint requires your review. Risk level: medium",
+  "severity": "warning",
+  "timestamp": "2025-06-09T20:01:49.518480",
+  "read": false,
+  "action_url": "/hitl/checkpoint/hitl_BE-12_qa_validation_a34fc38a",
+  "metadata": {
+    "checkpoint_type": "qa_validation",
+    "risk_level": "medium",
+    "assigned_reviewers": [],
+    "deadline": "2025-06-10T04:01:49.514811"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "context-store/test_doc.md_0": {
+    "tier": "hot",
+    "size_bytes": 184,
+    "created_at": "2025-06-08T19:56:37.795609",
+    "last_accessed": "2025-06-08T19:56:37.795609",
+    "access_count": 1,
+    "file_path": "storage\\hot\\context-store\\test_doc.md_0.dat",
+    "metadata": {
+      "total_chunks": 1,
+      "chunk_method": "semantic"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "checkpoint_id": "hitl_BE-07_agent_prompt_1c87e7a4",
+  "task_id": "BE-07",
+  "checkpoint_type": "agent_prompt",
+  "task_type": "backend",
+  "content": {
+    "prompt": "Test prompt"
+  },
+  "risk_level": "medium",
+  "status": "approved",
+  "created_at": "2025-06-08T21:13:52.889437",
+  "timeout_at": "2025-06-09T21:13:52.889437",
+  "resolved_at": null,
+  "risk_factors": [],
+  "required_approvals": 1,
+  "assigned_reviewers": [],
+  "approvals": [
+    {
+      "checkpoint_id": "hitl_BE-07_agent_prompt_1c87e7a4",
+      "decision": "approve",
+      "reviewer_id": "test_reviewer",
+      "comments": "Approved",
+      "reviewed_at": "2025-06-08T21:13:52.894057",
+      "metadata": {}
+    }
+  ],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-09T21:13:52.889437",
+  "reviewers": []
+}

@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from prompts.utils import extract_context_sources
-from tools.memory_engine import initialize_memory
+from tools.memory import get_memory_instance
 from utils.task_loader import load_task_metadata, update_task_state
 
 from .delegation import delegate_task

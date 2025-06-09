@@ -44,6 +44,7 @@ Thumbs.db
 
 # Legacy paths (to be cleaned up gradually)
 cache/
+archives/
 logs/
 outputs/
 chroma_db/
@@ -74,5 +75,6 @@ debug_*.py
 check_*.py
 
 # Claude Code (external tool)
+.claude/settings.local.json
 claude-code/
 CLAUDE.md

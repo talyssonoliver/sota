@@ -1,0 +1,18 @@
+{
+  "id": "notif_hitl_INFRA-03_task_transitions_f05799fd_checkpoint_created",
+  "type": "checkpoint_created",
+  "checkpoint_id": "hitl_INFRA-03_task_transitions_f05799fd",
+  "task_id": "INFRA-03",
+  "title": "🔍 Review Required: INFRA-03",
+  "message": "A task_transitions checkpoint requires your review. Risk level: high",
+  "severity": "warning",
+  "timestamp": "2025-06-08T21:39:56.808653",
+  "read": false,
+  "action_url": "/hitl/checkpoint/hitl_INFRA-03_task_transitions_f05799fd",
+  "metadata": {
+    "checkpoint_type": "task_transitions",
+    "risk_level": "high",
+    "assigned_reviewers": [],
+    "deadline": "2025-06-09T03:39:56.806648"
+  }
+}

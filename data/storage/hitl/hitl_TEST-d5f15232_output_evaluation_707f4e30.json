@@ -1,0 +1,40 @@
+{
+  "checkpoint_id": "hitl_TEST-d5f15232_output_evaluation_707f4e30",
+  "task_id": "TEST-d5f15232",
+  "checkpoint_type": "output_evaluation",
+  "task_type": "backend",
+  "content": {
+    "files_modified": [
+      "core/payment_service.py",
+      "models/transaction.py"
+    ],
+    "changes_summary": "Added new payment processing logic with external API integration",
+    "risk_factors": [
+      "external_api",
+      "financial_data",
+      "security_critical"
+    ],
+    "complexity_score": 8.5
+  },
+  "risk_level": "medium",
+  "status": "pending",
+  "created_at": "2025-06-08T17:42:36.044678",
+  "timeout_at": "2025-06-09T17:42:36.044678",
+  "resolved_at": null,
+  "risk_factors": [
+    "external_api",
+    "financial_data",
+    "security_critical"
+  ],
+  "required_approvals": 1,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-09T17:42:36.044678",
+  "reviewers": []
+}

@@ -1,0 +1,24 @@
+{
+  "checkpoint_id": "hitl_TEST-dbfc8b27-DOC_documentation_b3978da3",
+  "task_id": "TEST-dbfc8b27-DOC",
+  "checkpoint_type": "documentation",
+  "task_type": "documentation",
+  "content": {
+    "documentation_type": "API reference",
+    "pages_updated": 3,
+    "automated_checks": "passed",
+    "review_type": "standard"
+  },
+  "risk_level": "medium",
+  "status": "pending",
+  "created_at": "2025-06-08T16:08:38.335024",
+  "timeout_at": "2025-06-09T16:08:38.335024",
+  "risk_factors": [],
+  "required_approvals": 1,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null
+}

@@ -43,7 +43,7 @@ from graph.notifications import (NotificationLevel, SlackNotifier,
 from graph.resilient_workflow import create_resilient_workflow
 from orchestration.generate_prompt import generate_prompt
 from orchestration.states import TaskStatus
-from tools.memory_engine import get_context_by_keys, get_relevant_context
+from tools.memory import get_context_by_keys
 from utils.execution_monitor import (create_langgraph_hook,
                                      get_execution_monitor)
 from utils.task_loader import load_task_metadata, update_task_state
@@ -88,8 +88,8 @@ def build_task_state(task_id):
         task_context = ""
         if 'context_topics' in task_metadata and task_metadata['context_topics']:
             # Use the new Step 3.5 focused context builder
-            from tools.memory_engine import MemoryEngine
-            memory_instance = MemoryEngine()
+            from tools.memory import get_memory_instance
+            memory_instance = get_memory_instance()
             task_context = memory_instance.build_focused_context(
                 context_topics=task_metadata['context_topics'],
                 max_tokens=2000,  # Token budget management
@@ -98,7 +98,7 @@ def build_task_state(task_id):
         else:
             # Fall back to vector search
             context_query = f"Task {task_id}: {task_title} - {task_description}"
-            task_context = get_relevant_context(context_query)
+            task_context = get_context_by_keys([context_query])
 
         # Get context for dependencies
         dep_context = ""
@@ -117,7 +117,7 @@ def build_task_state(task_id):
             except FileNotFoundError:
                 # Fall back to vector search for this dependency
                 dep_query = f"Details and output of completed task {dep_id}"
-                dep_context += get_relevant_context(dep_query) + "\n\n"
+                dep_context += get_context_by_keys([dep_query]) + "\n\n"
 
         # Build the complete task state
         return {
@@ -165,7 +165,7 @@ def build_task_state(task_id):
 
         # Get relevant context for the task
         context_query = f"Task {task_id}: {task_title} - {task_description}"
-        task_context = get_relevant_context(context_query)
+        task_context = get_context_by_keys([context_query])
 
         # Get dependencies
         dependencies = []
@@ -176,7 +176,7 @@ def build_task_state(task_id):
             dep_context = ""
             for dep_id in dependencies:
                 dep_query = f"Details and output of completed task {dep_id}"
-                dep_context += get_relevant_context(dep_query) + "\n\n"
+                dep_context += get_context_by_keys([dep_query]) + "\n\n"
 
         # Build the complete task state
         return {
@@ -564,6 +564,26 @@ def run_task_graph(
     })
 
     return result
+
+
+def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
+    """
+    Get relevant context for a query using the memory system.
+    
+    Args:
+        query: The query string
+        k: Number of results to return
+        **kwargs: Additional arguments
+        
+    Returns:
+        Relevant context as a string
+    """
+    try:
+        from tools.memory import get_relevant_context as memory_get_context
+        return memory_get_context(query, k=k, **kwargs)
+    except ImportError:
+        # Fallback if memory system is not available
+        return ""
 
 
 def main():

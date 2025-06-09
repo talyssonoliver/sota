@@ -1,0 +1,29 @@
+{
+  "checkpoint_id": "hitl_INFRA-03_task_transitions_18230d19",
+  "task_id": "INFRA-03",
+  "checkpoint_type": "task_transitions",
+  "task_type": "infrastructure",
+  "content": {
+    "deployment": "Production database migration"
+  },
+  "risk_level": "high",
+  "status": "pending",
+  "created_at": "2025-06-08T17:43:41.014917",
+  "timeout_at": "2025-06-08T23:43:41.014917",
+  "resolved_at": null,
+  "risk_factors": [
+    "production_deployment",
+    "database_config"
+  ],
+  "required_approvals": 2,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-08T23:43:41.014917",
+  "reviewers": []
+}

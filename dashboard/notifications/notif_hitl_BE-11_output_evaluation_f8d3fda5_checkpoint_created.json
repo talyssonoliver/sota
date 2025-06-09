@@ -1,0 +1,18 @@
+{
+  "id": "notif_hitl_BE-11_output_evaluation_f8d3fda5_checkpoint_created",
+  "type": "checkpoint_created",
+  "checkpoint_id": "hitl_BE-11_output_evaluation_f8d3fda5",
+  "task_id": "BE-11",
+  "title": "🔍 Review Required: BE-11",
+  "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+  "severity": "warning",
+  "timestamp": "2025-06-09T19:40:17.174323",
+  "read": false,
+  "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_f8d3fda5",
+  "metadata": {
+    "checkpoint_type": "output_evaluation",
+    "risk_level": "medium",
+    "assigned_reviewers": [],
+    "deadline": "2025-06-10T07:40:17.172328"
+  }
+}

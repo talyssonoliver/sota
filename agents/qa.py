@@ -20,7 +20,7 @@ from prompts.utils import load_and_format_prompt
 from tools.coverage_tool import CoverageTool
 from tools.cypress_tool import CypressTool
 from tools.jest_tool import JestTool
-from tools.memory_engine import get_context_by_keys
+from tools.memory import get_context_by_keys
 from utils.coverage_analyzer import CoverageAnalyzer
 from utils.integration_analyzer import IntegrationAnalyzer
 from utils.test_generator import QATestFramework, QATestGenerator

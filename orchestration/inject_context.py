@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
 
-from tools.memory_engine import get_relevant_context
+from tools.memory import get_context_by_keys
 from utils.task_loader import load_task_metadata
 
 # Add parent directory to path to allow imports
@@ -88,7 +88,7 @@ def inject_context(prompt, query, position="top", marker="{{CONTEXT}}"):
         Prompt with context injected
     """
     # Get context from memory engine
-    context = get_relevant_context(query)
+    context = get_context_by_keys([query])
 
     formatted_context = f"\n\n--- RELEVANT CONTEXT ---\n\n{context}\n\n--- END CONTEXT ---\n\n"
 

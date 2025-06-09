@@ -1,0 +1,36 @@
+{
+  "checkpoint_id": "hitl_BE-13_agent_prompt_25c7e285",
+  "task_id": "BE-13",
+  "checkpoint_type": "agent_prompt",
+  "task_type": "backend",
+  "content": {
+    "prompt": "Design API"
+  },
+  "risk_level": "medium",
+  "status": "approved",
+  "created_at": "2025-06-08T16:39:17.398296",
+  "timeout_at": "2025-06-09T16:39:17.398296",
+  "risk_factors": [
+    "api_endpoint"
+  ],
+  "required_approvals": 1,
+  "assigned_reviewers": [],
+  "approvals": [
+    {
+      "checkpoint_id": "hitl_BE-13_agent_prompt_25c7e285",
+      "decision": "approve",
+      "reviewer_id": "test_reviewer",
+      "comments": "Good design",
+      "reviewed_at": "2025-06-08T16:39:17.401315",
+      "metadata": {}
+    }
+  ],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-09T16:39:17.398296",
+  "reviewers": []
+}

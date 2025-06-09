@@ -19,9 +19,10 @@ import os
 import sys
 from datetime import datetime
 from pathlib import Path
+from typing import Dict, List, Optional, Any
 
 from prompts.utils import format_prompt_with_context, load_prompt_template
-from tools.memory_engine import MemoryEngine
+from tools.memory import get_memory_instance, MemoryEngine
 from utils.task_loader import load_task_metadata
 
 # Add parent directory to path to allow imports
@@ -34,7 +35,7 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 
-def get_task_context(task_id):
+def get_task_context(task_id: str) -> str:
     """
     Step 4.2: Get MCP context for a specific task using context_topics.
 
@@ -61,7 +62,7 @@ def get_task_context(task_id):
                     task_metadata['context_topics']}")
 
             # Initialize memory engine for context retrieval
-            memory_engine = MemoryEngine()
+            memory_engine = get_memory_instance()
 
             # Build focused context using context_topics
             topic_context = memory_engine.build_focused_context(

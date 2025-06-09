@@ -1,0 +1,26 @@
+{
+  "checkpoint_id": "hitl_DOC-01_documentation_af19cb71",
+  "task_id": "DOC-01",
+  "checkpoint_type": "documentation",
+  "task_type": "design",
+  "content": {
+    "documentation": "User guide update"
+  },
+  "risk_level": "low",
+  "status": "approved",
+  "created_at": "2025-06-08T20:51:33.341777",
+  "timeout_at": "2025-06-10T20:51:33.341777",
+  "resolved_at": null,
+  "risk_factors": [],
+  "required_approvals": 1,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-10T20:51:33.341777",
+  "reviewers": []
+}

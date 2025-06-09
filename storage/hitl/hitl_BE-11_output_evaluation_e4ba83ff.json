@@ -1,0 +1,38 @@
+{
+  "checkpoint_id": "hitl_BE-11_output_evaluation_e4ba83ff",
+  "task_id": "BE-11",
+  "checkpoint_type": "output_evaluation",
+  "task_type": "backend",
+  "content": {
+    "code": "Complex business logic"
+  },
+  "risk_level": "medium",
+  "status": "rejected",
+  "created_at": "2025-06-09T19:40:17.162029",
+  "timeout_at": "2025-06-10T07:40:17.162029",
+  "resolved_at": null,
+  "risk_factors": [
+    "business_logic",
+    "complex_logic"
+  ],
+  "required_approvals": 2,
+  "assigned_reviewers": [],
+  "approvals": [],
+  "rejections": [
+    {
+      "checkpoint_id": "hitl_BE-11_output_evaluation_e4ba83ff",
+      "decision": "reject",
+      "reviewer_id": "test_reviewer",
+      "comments": "Needs improvement",
+      "reviewed_at": "2025-06-09T19:40:17.166774",
+      "metadata": {}
+    }
+  ],
+  "escalation_level": 0,
+  "metadata": {},
+  "parent_checkpoint_id": null,
+  "description": "",
+  "mitigation_suggestions": [],
+  "deadline": "2025-06-10T07:40:17.162029",
+  "reviewers": []
+}

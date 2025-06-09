@@ -1,0 +1,18 @@
+{
+  "id": "notif_hitl_BE-11_agent_prompt_eefceec5_checkpoint_created",
+  "type": "checkpoint_created",
+  "checkpoint_id": "hitl_BE-11_agent_prompt_eefceec5",
+  "task_id": "BE-11",
+  "title": "🔍 Review Required: BE-11",
+  "message": "A agent_prompt checkpoint requires your review. Risk level: medium",
+  "severity": "warning",
+  "timestamp": "2025-06-09T19:40:16.647957",
+  "read": false,
+  "action_url": "/hitl/checkpoint/hitl_BE-11_agent_prompt_eefceec5",
+  "metadata": {
+    "checkpoint_type": "agent_prompt",
+    "risk_level": "medium",
+    "assigned_reviewers": [],
+    "deadline": "2025-06-10T19:40:16.646070"
+  }
+}
