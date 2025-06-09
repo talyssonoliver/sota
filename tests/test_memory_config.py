@@ -58,8 +58,7 @@ class TestMemoryConfig(unittest.TestCase):
             self.assertEqual(
                 agent.memory,
                 memory_config,
-                f"Memory config was not correctly passed to Agent constructor. Got: {
-                    agent.memory}")
+                f"Memory config was not correctly passed to Agent constructor. Got: {agent.memory}")
 
 
 if __name__ == "__main__":

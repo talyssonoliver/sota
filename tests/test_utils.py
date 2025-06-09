@@ -20,13 +20,8 @@ class TestFeedback:
     def print_header(test_name: str, test_type: str = "Test") -> None:
         """Print a standardized test header."""
         print(
-            f"\n{
-                '=' *
-                20} {
-                test_name.upper()} {
-                test_type.upper()} {
-                    '=' *
-                20}")
+            f"\n{'=' * 20} {test_name.upper()} {test_type.upper()} {'=' * 20}"
+        )
         print(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"{'=' * 60}")
 
@@ -114,8 +109,8 @@ class TestFeedback:
 
         exit_code = 0 if failed_count == 0 else 1
         print(
-            f"\nOverall status: {
-                '✅ PASSED' if exit_code == 0 else '❌ FAILED'}")
+            f"\nOverall status: {'✅ PASSED' if exit_code == 0 else '❌ FAILED'}"
+        )
         print("=" * 60)
 
         return exit_code

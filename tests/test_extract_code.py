@@ -635,12 +635,13 @@ def run_step_4_5_tests():
         print(f"\n❌ Failures:")
         for test, traceback in result.failures:
             print(
-                f"   - {test}: {traceback.split('AssertionError: ')[-1].split('\n')[0]}")
+                f"   - {test}: {traceback.split('AssertionError: ')[-1].splitlines()[0]}"
+            )
 
     if result.errors:
         print(f"\n💥 Errors:")
         for test, traceback in result.errors:
-            print(f"   - {test}: {traceback.split('\n')[-2]}")
+            print(f"   - {test}: {traceback.splitlines()[-2]}")
 
     success = len(result.failures) == 0 and len(result.errors) == 0
 

@@ -270,8 +270,7 @@ def run_task_graph(
             'agent': 'prompt_generator'
         })
         # Continue with basic prompt fallback
-        initial_state['enhanced_prompt'] = f"Complete task {task_id}: {
-            initial_state['title']}"
+        initial_state['enhanced_prompt'] = f"Complete task {task_id}: {initial_state['title']}"
 
     if dry_run:
         print("=== STEP 4.3 DRY RUN ===")

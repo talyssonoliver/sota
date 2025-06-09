@@ -372,6 +372,6 @@ def run_step_5_4_tests():
 if __name__ == "__main__":
     success = run_step_5_4_tests()
     print(
-        f"\n{
-            '✅ PASSED' if success else '❌ FAILED'}: Step 5.4 QA Results Registration & Traceability")
+        f"\n{'✅ PASSED' if success else '❌ FAILED'}: Step 5.4 QA Results Registration & Traceability"
+    )
     sys.exit(0 if success else 1)

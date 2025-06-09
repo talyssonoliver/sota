@@ -295,8 +295,7 @@ class DocumentationAgent:
                 # Extract key implementation points
                 if "implemented" in content.lower():
                     notes.append(
-                        f"Implementation details documented in {
-                            output_file.name}")
+                        f"Implementation details documented in {output_file.name}")
 
                 if "service" in content.lower():
                     notes.append("Service layer implementation completed")

@@ -500,9 +500,9 @@ def run_step_4_4_tests():
 
     # Report summary
     print(f"\n📊 Test Results Summary:")
-    print(f"✅ Tests passed: {result.testsRun -
-                             len(result.failures) -
-                             len(result.errors)}")
+    print(
+        f"✅ Tests passed: {result.testsRun - len(result.failures) - len(result.errors)}"
+    )
     print(f"❌ Tests failed: {len(result.failures)}")
     print(f"⚠️  Tests errored: {len(result.errors)}")
 
@@ -510,13 +510,15 @@ def run_step_4_4_tests():
         print(f"\n🔍 Failures:")
         for test, traceback in result.failures:
             print(
-                f"   ❌ {test}: {traceback.split('AssertionError:')[-1].strip()}")
+                f"   ❌ {test}: {traceback.split('AssertionError:')[-1].strip()}"
+            )
 
     if result.errors:
         print(f"\n🔍 Errors:")
         for test, traceback in result.errors:
             print(
-                f"   ⚠️  {test}: {traceback.split('Exception:')[-1].strip()}")
+                f"   ⚠️  {test}: {traceback.split('Exception:')[-1].strip()}"
+            )
 
     success_rate = ((result.testsRun -
                      len(result.failures) -

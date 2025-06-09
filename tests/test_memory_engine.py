@@ -158,10 +158,7 @@ def benchmark_memory_engine_add_retrieve(iterations: int = 10):
         _ = memory.get_context("Benchmarking document", k=1, user="bench")
     elapsed = time.time() - start
     print(
-        f"Benchmark: {iterations} add+retrieve cycles in {
-            elapsed:.2f}s ({
-            elapsed /
-            iterations:.3f}s per op)")
+        f"Benchmark: {iterations} add+retrieve cycles in {elapsed:.2f}s ({elapsed / iterations:.3f}s per op)")
     os.remove(test_file)
 
 
