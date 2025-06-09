@@ -1,4 +1,60 @@
-# Node.js
+# AI Agent System - .gitignore
+
+# Runtime artifacts (new organized structure)
+runtime/
+!runtime/.gitkeep
+
+# Build artifacts
+build/
+!build/.gitkeep
+
+# Python environment
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment variables
+.env
+.env.*
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.tgz
+
+# Legacy paths (to be cleaned up gradually)
+cache/
+logs/
+outputs/
+chroma_db/
+mock-api-key/
+progress_reports/
+test_logs/
+test_outputs/
+*.pkl
+*.log
+
+# Node.js (if any)
 node_modules/
 npm-debug.log*
 yarn-debug.log*
@@ -6,122 +62,17 @@ yarn-error.log*
 package-lock.json
 yarn.lock
 
-# Logs
-logs/
-*.log
-
-# filepath: .gitignore
-cache/
-mock-api-key/
-*.pkl
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Environment variables
-.env
-.env.*
-
-# Python virtual environment
-.venv/
-venv/
-env/
-
-# Build output
-dist/
-build/
-out/
-
-# IDEs and editors
-.vscode/
-.idea/
-*.sublime-workspace
-*.sublime-project
-
-# Coverage
+# Coverage reports
 coverage/
 .nyc_output/
 
-# Misc
-*.tgz
-*.swp
-*.bak
-*.tmp
-
-# Python cache files
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Vector store database
-chroma_db/
-.chroma/
-
-# IDE files
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# Logs
-logs/
-*.log
-
-# Output files
-outputs/
-
-# Test outputs and artifacts
-outputs/
-tests/test_outputs/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Dashboard generated files
-dashboard/completion_metrics.json
-dashboard/dashboard_summary.json
-dashboard/charts_data.json
-dashboard/completion_summary.json
-dashboard/agent_status.json
-dashboard/live_execution.json
-.copilot-instructions.md
-
-# Progress reports (generated files)
-progress_reports/
-
-# Execution reports (generated files)
-reports/execution-summary.csv
-
-# Daily reports and briefings (generated files)
-docs/sprint/daily_reports/
-docs/sprint/briefings/
-
-# Generated task index files
+# Generated files that should not be committed
 tasks/tasks.json
-
-# Backup files
 *_backup.py
 *_clean.py
-
-# Debug and check files
 debug_*.py
 check_*.py
+
+# Claude Code (external tool)
+claude-code/
+CLAUDE.md
