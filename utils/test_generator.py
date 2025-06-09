@@ -621,10 +621,8 @@ class QATestGenerator:
                     "handle"]):
                 tests.append(
                     QATestCase(
-                        name=f"test_{
-                            func_info['name']}_security",
-                        description=f"Test security aspects of {
-                            func_info['name']}",
+                        name=f"test_{func_info['name']}_security",
+                        description=f"Test security aspects of {func_info['name']}",
                         test_type="security",
                         code=self._generate_security_test_code(
                             func_info["name"],

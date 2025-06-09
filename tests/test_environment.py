@@ -161,6 +161,5 @@ class MockCrewAIAgent:
     def execute(self, *args, **kwargs):
         """Mock execute method"""
         return {
-            "output": f"Mock output from {
-                self.role}",
+            "output": f"Mock output from {self.role}",
             "task_id": "TEST-01"}

@@ -1486,13 +1486,11 @@ class MemoryEngine:
                 persist_directory=self.config.chroma_persist_directory
             )
             self.logger.info(
-                f"Loaded existing Chroma vector store from {
-                    self.config.chroma_persist_directory}")
+                f"Loaded existing Chroma vector store from {self.config.chroma_persist_directory}")
         except Exception as e:
             # Create a new vector store if one doesn't exist
             self.logger.info(
-                f"Creating new Chroma vector store at {
-                    self.config.chroma_persist_directory}")
+                f"Creating new Chroma vector store at {self.config.chroma_persist_directory}")
             self.vector_store = Chroma(
                 collection_name=self.config.collection_name,
                 embedding_function=self.embedding_function,
@@ -1691,12 +1689,10 @@ class MemoryEngine:
                     self._add_secure_embeddings(chunk_texts, secure_metadatas)
 
                     self.logger.info(
-                        f"Added {
-                            len(chunk_texts)} secure chunks to vector store for {file_path}")
+                        f"Added {len(chunk_texts)} secure chunks to vector store for {file_path}")
                 except Exception as e:
                     self.logger.error(
-                        f"Error adding to vector store for {file_path}: {
-                            str(e)}", exc_info=True)
+                        f"Error adding to vector store for {file_path}: {str(e)}", exc_info=True)
             self.audit_logger.log(
                 who=user,
                 what="add_document",
@@ -1824,13 +1820,11 @@ class MemoryEngine:
                     self._add_secure_embeddings(chunk_texts, secure_metadatas)
 
                     self.logger.info(
-                        f"Added {
-                            len(chunk_texts)} secure chunks to vector store for {file_path}")
+                        f"Added {len(chunk_texts)} secure chunks to vector store for {file_path}")
                     files_processed_count += 1
                 except Exception as e:
                     self.logger.error(
-                        f"Error adding to vector store for {file_path}: {
-                            str(e)}", exc_info=True)
+                        f"Error adding to vector store for {file_path}: {str(e)}", exc_info=True)
 
             self.audit_logger.log(
                 who=user,
@@ -1852,8 +1846,7 @@ class MemoryEngine:
                 extra={
                     "error": str(e)})
             self.logger.error(
-                f"Error adding directory {directory_path}: {
-                    str(e)}", exc_info=True)
+                f"Error adding directory {directory_path}: {str(e)}", exc_info=True)
 
     def get_context(
             self,
@@ -1942,8 +1935,7 @@ class MemoryEngine:
                         "No similarity search method found on vector_store.")
 
                 self.logger.info(
-                    f"Found {
-                        len(candidates) if candidates else 0} relevant documents")
+                    f"Found {len(candidates) if candidates else 0} relevant documents")
             except Exception as e:
                 self.logger.error(
                     f"Error during vector search: {str(e)}", exc_info=True)
@@ -2596,9 +2588,7 @@ class MemoryEngine:
                     )
 
                 if docs:
-                    domain_context = f"# {
-                        domain.upper().replace(
-                            '-', ' ')} Context\n"
+                    domain_context = f"# {domain.upper().replace('-', ' ')} Context\n"
                     for doc in docs:
                         title = doc.metadata.get(
                             'title', doc.metadata.get('source', 'Section'))
@@ -2610,8 +2600,7 @@ class MemoryEngine:
                     f"Error retrieving context for domain {domain}: {e}")
                 continue
 
-        return "\n\n".join(all_context) if all_context else f"# No Context Available\nNo context found for domains: {
-            ', '.join(domains)}"
+        return "\n\n".join(all_context) if all_context else f"# No Context Available\nNo context found for domains: {', '.join(domains)}"
 
     def get_documents(self,
                       context_topics: List[str],
@@ -2708,19 +2697,13 @@ class MemoryEngine:
                     # If no documents found, try fallback search
                     if not topic_documents:
                         try:
-                            fallback_query = f"information about {
-                                topic.replace(
-                                    '-', ' ')}"
+                            fallback_query = f"information about {topic.replace('-', ' ')}"
                             docs = self.vector_store.similarity_search(
                                 fallback_query, k=1)
 
                             if docs:
                                 doc_dict = {
-                                    "page_content": f"# {
-                                        topic.replace(
-                                            '-',
-                                            ' ').title()}\n\n{
-                                        docs[0].page_content}",
+                                    "page_content": f"# {topic.replace('-', ' ').title()}\n\n{docs[0].page_content}",
                                     "metadata": {
                                         **docs[0].metadata,
                                         "topic": topic,
@@ -2735,18 +2718,14 @@ class MemoryEngine:
 
                     all_documents.extend(topic_documents)
                     self.logger.info(
-                        f"Retrieved {
-                            len(topic_documents)} documents for topic '{topic}'")
+                        f"Retrieved {len(topic_documents)} documents for topic '{topic}'")
 
                 except Exception as e:
                     self.logger.error(f"Error processing topic '{topic}': {e}")
                     # Add a placeholder for missing context
                     all_documents.append(
                         {
-                            "page_content": f"# {
-                                topic.replace(
-                                    '-',
-                                    ' ').title()}\n\nContext not available for this topic.",
+                            "page_content": f"# {topic.replace('-', ' ').title()}\n\nContext not available for this topic.",
                             "metadata": {
                                 "topic": topic,
                                 "error": str(e),
@@ -2758,8 +2737,7 @@ class MemoryEngine:
                 who=user,
                 what="get_documents",
                 how="context_topics",
-                resource=f"topics:{
-                    ','.join(context_topics)}",
+                resource=f"topics:{','.join(context_topics)}",
                 success=True,
                 extra={
                     "topics_requested": context_topics,
@@ -2880,8 +2858,7 @@ class MemoryEngine:
             # Split into chunks
             chunks = splitter.split_documents([doc])
             self.logger.info(
-                f"Document split into {
-                    len(chunks)} chunks using LangChain TextSplitter")
+                f"Document split into {len(chunks)} chunks using LangChain TextSplitter")
 
             # Process each chunk
             chunk_texts = []
@@ -3031,9 +3008,7 @@ class MemoryEngine:
         except Exception as e:
             self.logger.error(
                 f"Error building focused context: {e}", exc_info=True)
-            return f"# Context Error\n\nUnable to build context for topics: {
-                ', '.join(context_topics)}\nError: {
-                str(e)}"
+            return f"# Context Error\n\nUnable to build context for topics: {', '.join(context_topics)}\nError: {str(e)}"
 
 
 # Provide a singleton memory engine for compatibility with legacy imports

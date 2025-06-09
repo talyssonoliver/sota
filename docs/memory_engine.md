@@ -71,6 +71,21 @@ The Memory Engine is implemented in `tools/memory_engine.py` and provides severa
 4. Context summarization and condensation
 5. Direct key-based access to specific memory documents
 
+
+### Class Overview
+
+`MemoryEngine` is the main class located in `tools/memory_engine.py`. Important methods include:
+- `__init__(config)` – initialize caches, storage, security managers and the vector store
+- `add_document(filepath, user, metadata)` – index a single document with metadata
+- `add_directory(directory_path, user)` – bulk index an entire directory
+- `get_context(query, k=5, metadata_filter=None, hybrid=False, importance="normal", user="system")` – retrieve context using adaptive retrieval and caching
+- `get_context_by_keys(keys, user="system")` – fetch documents directly by key without vector search
+- `secure_delete(key, user)` – remove a document and its embeddings
+- `scan_for_pii(user)` – scan stored documents for personally identifiable information
+- `get_health_stats()` and `get_profiler_stats()` – report usage metrics and profiler data
+
+These methods combine to provide secure storage, fast retrieval and auditing features for all agents.
+
 ## Key Features
 
 ### 🔍 **Vector-Based Retrieval**

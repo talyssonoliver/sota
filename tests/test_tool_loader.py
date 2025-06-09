@@ -74,8 +74,9 @@ def test_agent_tool_mapping():
     for agent_id, config in agents.items():
         tools = config.get('tools', [])
         mapped_tools.update(tools)
-        print(f"- {agent_id} ({config.get('name',
-                                          'Unknown')}): {', '.join(tools) if tools else 'No tools'}")
+        print(
+            f"- {agent_id} ({config.get('name', 'Unknown')}): {', '.join(tools) if tools else 'No tools'}"
+        )
 
     timer.stop()
 
@@ -166,8 +167,8 @@ def test_get_tools_for_agent():
                     tool.name for tool in tools_for_agent if hasattr(
                         tool, 'name')]
                 print(
-                    f"Tools for {agent_id}: {
-                        ', '.join(tool_names) if tool_names else 'None'}")
+                    f"Tools for {agent_id}: {', '.join(tool_names) if tool_names else 'None'}"
+                )
                 success_count += 1
             except Exception as e:
                 logging.exception(f"Error loading tools for {agent_id}")

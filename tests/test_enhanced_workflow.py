@@ -229,8 +229,7 @@ class TestEnhancedWorkflow(unittest.TestCase):
         self.test_results["execution_times"]["test_notification_integration"] = test_timer.elapsed()
 
         print(
-            f"✅ Notification integration test passed in {
-                test_timer.elapsed():.2f}s")
+            f"✅ Notification integration test passed in {test_timer.elapsed():.2f}s")
 
     def test_all_components_together(self):
         """Test all components working together."""
@@ -252,8 +251,8 @@ class TestEnhancedWorkflow(unittest.TestCase):
         # Start a monitoring process in a separate thread
         def run_monitor():
             os.system(
-                f"python scripts/monitor_workflow.py --task BE-07 --output {
-                    self.test_output_dir} --simple")
+                f"python scripts/monitor_workflow.py --task BE-07 --output {self.test_output_dir} --simple"
+            )
 
         monitor_thread = threading.Thread(target=run_monitor)
         monitor_thread.daemon = True

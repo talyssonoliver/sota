@@ -70,9 +70,8 @@ class TestPureMockOptimizations:
         duration = time.time() - start_time
         improvement = 23.86 / max(duration, 0.0001)  # Avoid division by zero
         print(
-            f"✅ Notification integration PURE MOCK: {
-                duration:.4f}s (was 23.86s, {
-                improvement:.0f}x faster)")
+            f"✅ Notification integration PURE MOCK: {duration:.4f}s (was 23.86s, {improvement:.0f}x faster)"
+        )
         assert duration < 0.1
 
     def test_resilient_workflow_pure_mock(self):
@@ -114,9 +113,8 @@ class TestPureMockOptimizations:
         duration = time.time() - start_time
         improvement = 10.39 / max(duration, 0.0001)  # Avoid division by zero
         print(
-            f"✅ Resilient workflow PURE MOCK: {
-                duration:.4f}s (was 10.39s, {
-                improvement:.0f}x faster)")
+            f"✅ Resilient workflow PURE MOCK: {duration:.4f}s (was 10.39s, {improvement:.0f}x faster)"
+        )
         assert duration < 0.1
 
     def test_memory_integration_pure_mock(self):
@@ -161,9 +159,8 @@ class TestPureMockOptimizations:
         duration = time.time() - start_time
         improvement = 5.80 / max(duration, 0.0001)  # Avoid division by zero
         print(
-            f"✅ Memory integration PURE MOCK: {
-                duration:.4f}s (was 5.80s, {
-                improvement:.0f}x faster)")
+            f"✅ Memory integration PURE MOCK: {duration:.4f}s (was 5.80s, {improvement:.0f}x faster)"
+        )
         assert duration < 0.1
 
     def test_graph_execution_pure_mock(self):
@@ -216,9 +213,8 @@ class TestPureMockOptimizations:
         duration = time.time() - start_time
         improvement = 9.70 / max(duration, 0.0001)  # Avoid division by zero
         print(
-            f"✅ Graph execution PURE MOCK: {
-                duration:.4f}s (was 9.70s, {
-                improvement:.0f}x faster)")
+            f"✅ Graph execution PURE MOCK: {duration:.4f}s (was 9.70s, {improvement:.0f}x faster)"
+        )
         assert duration < 0.1
 
     def test_comprehensive_workflow_simulation(self):
@@ -268,8 +264,8 @@ class TestPureMockOptimizations:
 
         duration = time.time() - start_time
         print(
-            f"✅ Comprehensive workflow simulation: {
-                duration:.4f}s (new pure mock test)")
+            f"✅ Comprehensive workflow simulation: {duration:.4f}s (new pure mock test)"
+        )
         assert duration < 0.1
 
 
@@ -314,10 +310,8 @@ class TestOptimizationResults:
         for test_name, data in optimizations.items():
             print(f"✅ {test_name}:")
             print(
-                f"   {
-                    data['before']:.2f}s → {
-                    data['after']:.2f}s ({
-                    data['improvement']})")
+                f"   {data['before']:.2f}s → {data['after']:.2f}s ({data['improvement']})"
+            )
 
         print(f"\n🎯 4 SLOWEST TESTS COMBINED:")
         print(f"   Before: {total_before:.2f}s")
@@ -363,10 +357,12 @@ class TestOptimizationResults:
         print("=" * 80)
 
         # Verify we achieved ultimate improvement
-        assert overall_improvement > 1000, f"Overall improvement {
-            overall_improvement:.1f}x not meeting ultimate target"
-        assert suite_improvement > 2.0, f"Suite improvement {
-            suite_improvement:.1f}x not meeting 2x target"
+        assert overall_improvement > 1000, (
+            f"Overall improvement {overall_improvement:.1f}x not meeting ultimate target"
+        )
+        assert suite_improvement > 2.0, (
+            f"Suite improvement {suite_improvement:.1f}x not meeting 2x target"
+        )
         print("✅ Phase 2 ultimate optimization targets ACHIEVED!")
 
     def test_mock_performance_validation(self):
@@ -384,8 +380,8 @@ class TestOptimizationResults:
 
         duration = time.time() - start_time
         print(
-            f"✅ Mock performance validated: {
-                duration:.4f}s for 100 mock operations")
+            f"✅ Mock performance validated: {duration:.4f}s for 100 mock operations"
+        )
         assert duration < 0.1, f"Mock overhead too high: {duration:.4f}s"
 
         # Test nested mock operations
@@ -404,10 +400,11 @@ class TestOptimizationResults:
 
         duration = time.time() - start_time
         print(
-            f"✅ Nested mock performance: {
-                duration:.4f}s for 50 nested operations")
-        assert duration < 0.05, f"Nested mock overhead too high: {
-            duration:.4f}s"
+            f"✅ Nested mock performance: {duration:.4f}s for 50 nested operations"
+        )
+        assert duration < 0.05, (
+            f"Nested mock overhead too high: {duration:.4f}s"
+        )
 
 
 if __name__ == '__main__':

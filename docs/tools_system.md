@@ -42,9 +42,43 @@ class BaseTool:
         return methods
 ```
 
+Tool Architecture Highlights:
+- `ArtesanatoBaseTool` extends LangChain's `BaseTool` and defines `call()` for standardized execution
+- `tool_loader.py` registers and instantiates tools based on `config/tools.yaml`
+- Agents obtain tools via `get_tools_for_agent()` which selects role-specific tools
+- Tools load environment variables during `initialize()`
+- Methods return structured dictionaries with `data`, `error`, and `metadata` for consistent error handling
+
+
 ## Available Tools
 
 The system includes several specialized tools:
+
+### Tools Inventory
+
+| Tool Name | File | Purpose | Used By Agents |
+|-----------|------|---------|----------------|
+| BaseTool | `base_tool.py` | Base class for all tools | All tools
+| ToolLoader | `tool_loader.py` | Dynamically load and configure tools | Orchestrator
+| MemoryEngine | `memory_engine.py` | Persistent context store and retrieval | All agents
+| ContextTracker | `context_tracker.py` | Log context usage per task | All agents
+| ContextVisualizer | `context_visualizer.py` | Visualize context retrieval results | Documentation
+| CoverageTool | `coverage_tool.py` | Generate code coverage reports | QA
+| CypressTool | `cypress_tool.py` | Run end-to-end tests via Cypress | QA
+| DesignSystemTool | `design_system_tool.py` | Access design system specs | Frontend
+| EchoTool | `echo_tool.py` | Debugging and test output | All agents
+| FixedRetrievalQA | `fixed_retrieval_qa.py` | Patched retrieval QA function | Memory Engine
+| GitHubTool | `github_tool.py` | Manage GitHub issues and repos | Technical Lead, Backend
+| JestTool | `jest_tool.py` | Execute Jest unit tests | Frontend
+| MarkdownTool | `markdown_tool.py` | Generate and parse markdown | Documentation
+| QA CLI | `qa_cli.py` | Command line helper for QA tasks | QA
+| RateLimiter | `rate_limiter.py` | Enforce operation rate limits | Memory Engine
+| RetrievalQA | `retrieval_qa.py` | Wrapper for retrieval QA chains | Memory Engine
+| SupabaseTool | `supabase_tool.py` | Interact with Supabase database | Backend
+| TailwindTool | `tailwind_tool.py` | Generate Tailwind CSS classes | Frontend
+| VercelTool | `vercel_tool.py` | Deploy applications to Vercel | Frontend
+| MemoryEngineExamples | `memory_engine_examples.py` | Example usage scripts | Developers
+
 
 ### Database Tools
 - **Supabase Tool** (`supabase_tool.py`): Interact with Supabase for database operations and authentication.
@@ -175,6 +209,25 @@ class MyTool(BaseTool):
         """
         return self.client.do_something(param1, param2)
 ```
+
+
+## Tool Integration Patterns
+
+1. **Agent-Tool Binding**
+   - Agents declare required tools in their configuration.
+   - `get_tools_for_agent()` instantiates these tools before task execution.
+
+2. **Tool Chaining**
+   - Tools can be combined in pipelines, passing intermediate results between them.
+   - Example: `GitHubTool` creates an issue, followed by `SupabaseTool` updating database records.
+
+3. **Tool Middleware**
+   - Common wrappers handle authentication, logging and error capture.
+   - The `call()` method in `ArtesanatoBaseTool` standardizes result handling.
+
+4. **Custom Tool Creation**
+   - Subclass `ArtesanatoBaseTool` and implement `_run()` for the core logic.
+   - Register the tool in `tools.yaml` so the loader can discover it.
 
 ## Best Practices
 
