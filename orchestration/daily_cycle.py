@@ -17,6 +17,7 @@ import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Any
+from config.build_paths import LOGS_DIR
 
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
@@ -82,7 +83,7 @@ class DailyCycleOrchestrator:
         """Get default configuration."""
         return {
             "paths": {
-                "logs_dir": "logs/daily_cycle",
+                "logs_dir": str(LOGS_DIR / "daily_cycle"),
                 "briefings_dir": "docs/sprint/briefings",
                 "reports_dir": "docs/sprint/reports",
                 "templates_dir": "templates"

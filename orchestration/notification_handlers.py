@@ -32,7 +32,8 @@ class NotificationHandler(ABC):
 class DashboardNotificationHandler(NotificationHandler):
     """Handler for dashboard notifications"""
     def __init__(self, config=None):
-        self.storage_dir = Path("dashboard/notifications")
+        from config.build_paths import DASHBOARD_NOTIFICATIONS_DIR
+        self.storage_dir = DASHBOARD_NOTIFICATIONS_DIR
         self.storage_dir.mkdir(parents=True, exist_ok=True)
     
     def send_notification(self, checkpoint, notification_type: str, recipients=None, metadata=None):

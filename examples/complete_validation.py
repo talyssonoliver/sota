@@ -168,7 +168,7 @@ This document continues with detailed implementation examples and best practices
         memory_engine = MemoryEngine()
 
         # Test the chunking functionality directly
-        from langchain.text_splitter import CharacterTextSplitter
+        from langchain_text_splitters import CharacterTextSplitter
 
         # Configure splitter as per Step 3.6 specifications
         text_splitter = CharacterTextSplitter(

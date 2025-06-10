@@ -29,7 +29,8 @@ class TestBriefingGeneratorStep62(unittest.TestCase):
     def setUp(self):
         """Set up test environment."""
         self.briefing_generator = BriefingGenerator()
-        self.test_briefings_dir = Path("test_outputs/briefings")
+        from config.build_paths import TEST_OUTPUTS_DIR
+        self.test_briefings_dir = TEST_OUTPUTS_DIR / "briefings"
         self.test_briefings_dir.mkdir(parents=True, exist_ok=True)
         
         # Mock data for consistent testing

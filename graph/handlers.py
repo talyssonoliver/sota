@@ -2,10 +2,12 @@
 Agent Execution Handlers for LangGraph Workflow
 Implements execution wrappers for agents with status management.
 Step 4.8 Enhancement: Added real-time monitoring hooks.
+Enhanced Error Handling: Added detailed error reporting and structured error information.
 """
 
 import json
 import logging
+import traceback
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
@@ -76,11 +78,26 @@ def coordinator_handler(state: Dict[str, Any]) -> Dict[str, Any]:
         return result
 
     except Exception as e:
+        error_details = {
+            "message": str(e),
+            "type": type(e).__name__,
+            "traceback": traceback.format_exc(),
+            "agent_role": "coordinator"
+        }
+        logger.error(f"Error in {error_details['agent_role']} handler for task {task_id}", 
+                    exc_info=True, extra={
+            "agent": error_details['agent_role'],
+            "task_id": task_id,
+            "event": "handler_error",
+            "error_message": error_details["message"]
+        })
         error_result = {
             "task_id": task_id,
             "agent": "coordinator",
             "status": TaskStatus.BLOCKED,
-            "error": str(e),
+            "error_info": error_details,
+            "output": f"{error_details['agent_role'].capitalize()} implementation failed: {error_details['message']}",
+            "attempt_count": state.get("attempt_count", 1),
             "timestamp": datetime.now().isoformat()
         }
         # Step 4.8: Log execution failure
@@ -130,11 +147,26 @@ def technical_handler(state: Dict[str, Any]) -> Dict[str, Any]:
         return result
 
     except Exception as e:
+        error_details = {
+            "message": str(e),
+            "type": type(e).__name__,
+            "traceback": traceback.format_exc(),
+            "agent_role": "technical"
+        }
+        logger.error(f"Error in {error_details['agent_role']} handler for task {task_id}", 
+                    exc_info=True, extra={
+            "agent": error_details['agent_role'],
+            "task_id": task_id,
+            "event": "handler_error",
+            "error_message": error_details["message"]
+        })
         error_result = {
             "task_id": task_id,
             "agent": "technical",
             "status": TaskStatus.BLOCKED,
-            "error": str(e),
+            "error_info": error_details,
+            "output": f"{error_details['agent_role'].capitalize()} implementation failed: {error_details['message']}",
+            "attempt_count": state.get("attempt_count", 1),
             "timestamp": datetime.now().isoformat()
         }
         # Step 4.8: Log execution failure
@@ -184,11 +216,26 @@ def backend_handler(state: Dict[str, Any]) -> Dict[str, Any]:
         return result
 
     except Exception as e:
+        error_details = {
+            "message": str(e),
+            "type": type(e).__name__,
+            "traceback": traceback.format_exc(),
+            "agent_role": "backend"
+        }
+        logger.error(f"Error in {error_details['agent_role']} handler for task {task_id}", 
+                    exc_info=True, extra={
+            "agent": error_details['agent_role'],
+            "task_id": task_id,
+            "event": "handler_error",
+            "error_message": error_details["message"]
+        })
         error_result = {
             "task_id": task_id,
             "agent": "backend",
             "status": TaskStatus.BLOCKED,
-            "error": str(e),
+            "error_info": error_details,
+            "output": f"{error_details['agent_role'].capitalize()} implementation failed: {error_details['message']}",
+            "attempt_count": state.get("attempt_count", 1),
             "timestamp": datetime.now().isoformat()
         }
         # Step 4.8: Log execution failure
@@ -240,16 +287,30 @@ def frontend_handler(state: Dict[str, Any]) -> Dict[str, Any]:
 
         return result
     except Exception as e:
+        error_details = {
+            "message": str(e),
+            "type": type(e).__name__,
+            "traceback": traceback.format_exc(),
+            "agent_role": "frontend"
+        }
+        logger.error(f"Error in {error_details['agent_role']} handler for task {task_id}", 
+                    exc_info=True, extra={
+            "agent": error_details['agent_role'],
+            "task_id": task_id,
+            "event": "handler_error",
+            "error_message": error_details["message"]
+        })
         # Step 4.8: Log execution failure
         monitor.complete_agent_execution(
             execution_data, "FAILED", error=str(e))
 
         return {
+            "task_id": task_id,
             "status": TaskStatus.BLOCKED,
             "agent": "frontend",
-            "task_id": task_id,
-            "error": str(e),
-            "output": f"Frontend implementation failed: {str(e)}"
+            "error_info": error_details,
+            "output": f"{error_details['agent_role'].capitalize()} implementation failed: {error_details['message']}",
+            "attempt_count": state.get("attempt_count", 1)
         }
 
 
@@ -282,12 +343,26 @@ def qa_handler(state: Dict[str, Any]) -> Dict[str, Any]:
         return qa_agent(state)
 
     except Exception as e:
+        error_details = {
+            "message": str(e),
+            "type": type(e).__name__,
+            "traceback": traceback.format_exc(),
+            "agent_role": "qa"
+        }
+        logger.error(f"Error in {error_details['agent_role']} handler for task {task_id}", 
+                    exc_info=True, extra={
+            "agent": error_details['agent_role'],
+            "task_id": task_id,
+            "event": "handler_error",
+            "error_message": error_details["message"]
+        })
         return {
+            "task_id": task_id,
             "status": TaskStatus.BLOCKED,
             "agent": "qa",
-            "task_id": task_id,
-            "error": str(e),
-            "output": f"QA testing failed: {str(e)}"
+            "error_info": error_details,
+            "output": f"{error_details['agent_role'].capitalize()} implementation failed: {error_details['message']}",
+            "attempt_count": state.get("attempt_count", 1)
         }
 
 
@@ -333,11 +408,26 @@ def documentation_handler(state: Dict[str, Any]) -> Dict[str, Any]:
         return result
 
     except Exception as e:
+        error_details = {
+            "message": str(e),
+            "type": type(e).__name__,
+            "traceback": traceback.format_exc(),
+            "agent_role": "documentation"
+        }
+        logger.error(f"Error in {error_details['agent_role']} handler for task {task_id}", 
+                    exc_info=True, extra={
+            "agent": error_details['agent_role'],
+            "task_id": task_id,
+            "event": "handler_error",
+            "error_message": error_details["message"]
+        })
         error_result = {
             "task_id": task_id,
             "agent": "documentation",
             "status": TaskStatus.BLOCKED,
-            "error": str(e),
+            "error_info": error_details,
+            "output": f"{error_details['agent_role'].capitalize()} implementation failed: {error_details['message']}",
+            "attempt_count": state.get("attempt_count", 1),
             "timestamp": datetime.now().isoformat()
         }
         # Step 4.8: Log execution failure

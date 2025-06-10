@@ -424,8 +424,9 @@ class ExecutionMonitor:
                 print(f"   Success: {'✅' if success else '❌'}")
                 if error:
                     print(f"   Error: {error}")
-                print(f"   Log: logs/execution-{task_id}.log")
-                print(f"   Summary: reports/execution-summary.csv\n")
+                from config.build_paths import LOGS_DIR, REPORTS_DIR
+                print(f"   Log: {LOGS_DIR}/execution-{task_id}.log")
+                print(f"   Summary: {REPORTS_DIR}/execution-summary.csv\n")
             except Exception:
                 pass
 

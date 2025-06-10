@@ -38,9 +38,10 @@ class TieredStorageManager:
         self.migration_interval_hours = config.migration_interval_hours
         
         # Storage paths
-        self.hot_path = Path("storage/hot")
-        self.warm_path = Path("storage/warm")
-        self.cold_path = Path("storage/cold")
+        from config.build_paths import HOT_STORAGE_DIR, WARM_STORAGE_DIR, COLD_STORAGE_DIR
+        self.hot_path = HOT_STORAGE_DIR
+        self.warm_path = WARM_STORAGE_DIR
+        self.cold_path = COLD_STORAGE_DIR
         
         # Create storage directories
         for path in [self.hot_path, self.warm_path, self.cold_path]:

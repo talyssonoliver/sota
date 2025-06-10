@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 
 from crewai import Agent
 from dotenv import load_dotenv
-from langchain.tools import BaseTool
+from langchain_core.tools import BaseTool
 from langchain_core.tools import Tool  # Updated import for Tool class
 from langchain_openai import ChatOpenAI
 

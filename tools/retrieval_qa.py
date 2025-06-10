@@ -1,9 +1,7 @@
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 
-from langchain.chains.conversational_retrieval.base import \
-    ConversationalRetrievalChain
-from langchain.chains.retrieval_qa.base import RetrievalQA
+from langchain.chains import ConversationalRetrievalChain, RetrievalQA
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_openai import ChatOpenAI
 

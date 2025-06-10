@@ -74,6 +74,26 @@ tasks/tasks.json
 debug_*.py
 check_*.py
 
+# Dashboard and notification files (runtime generated)
+dashboard/agent_status.json
+dashboard/hitl_data.json
+dashboard/live_execution.json
+dashboard/gantt_data.json
+dashboard/notifications/
+
+# HITL storage (human-in-the-loop runtime data)
+storage/hitl/
+data/storage/hitl/
+
+# Timestamped execution outputs
+*_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9].txt
+*_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9].json
+*_[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9].md
+
+# Audit and memory logs
+memory_engine_audit.log
+*_audit.log
+
 # Claude Code (external tool)
 .claude/settings.local.json
 claude-code/

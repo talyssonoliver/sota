@@ -10,7 +10,7 @@ try:
     from langchain_core.runnables import Runnable
 except ImportError:
     try:
-        from langchain.schema.runnable import Runnable
+        from langchain_core.runnables import Runnable
     except ImportError:
         # Fallback if neither import works
         class Runnable:

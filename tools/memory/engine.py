@@ -27,9 +27,9 @@ except ImportError:
     logger.warning("ChromaDB not available")
 
 try:
-    from langchain.text_splitter import RecursiveCharacterTextSplitter
-    from langchain.vectorstores import Chroma
-    from langchain.embeddings import OpenAIEmbeddings
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+    from langchain_community.vectorstores import Chroma
+    from langchain_openai import OpenAIEmbeddings
     LANGCHAIN_AVAILABLE = True
 except ImportError:
     LANGCHAIN_AVAILABLE = False
@@ -121,19 +121,17 @@ class MemoryEngine:
                 model=self.config.embedding_model
             )
             
-            # Create ChromaDB client
-            chroma_settings = Settings(
-                chroma_db_impl="duckdb+parquet",
-                persist_directory="chroma_db"
-            )
+            # Create ChromaDB client with new architecture
+            persist_directory = "runtime/chroma_db"
+            os.makedirs(persist_directory, exist_ok=True)
             
-            client = chromadb.Client(chroma_settings)
+            client = chromadb.PersistentClient(path=persist_directory)
             
             self.vector_store = Chroma(
                 collection_name=self.config.collection_name,
                 embedding_function=self.embeddings,
                 client=client,
-                persist_directory="chroma_db"
+                persist_directory=persist_directory
             )
             
             logger.info("Vector store initialized")

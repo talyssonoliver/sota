@@ -44,7 +44,8 @@ class TestMemoryEngine(unittest.TestCase):
         test_config.chunking.chunk_size = 2048
         test_config.chunking.chunk_overlap = 0
         self.memory = MemoryEngine(config=test_config)
-        self.test_file = "tests/test_outputs/test_doc.md"        # Create a test document
+        from config.build_paths import TEST_OUTPUTS_DIR
+        self.test_file = str(TEST_OUTPUTS_DIR / "test_doc.md")        # Create a test document
         os.makedirs(os.path.dirname(self.test_file), exist_ok=True)
         with open(self.test_file, "w", encoding="utf-8") as f:
             f.write(
@@ -164,8 +165,8 @@ def benchmark_memory_engine_add_retrieve(iterations: int = 10):
 
 def teardown_module(module):
     """Cleanup test_outputs directory after tests finish."""
-    test_output_dir = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), "test_outputs")
+    from config.build_paths import TEST_OUTPUTS_DIR
+    test_output_dir = str(TEST_OUTPUTS_DIR)
     if os.path.exists(test_output_dir):
         for child in os.listdir(test_output_dir):
             child_path = os.path.join(test_output_dir, child)

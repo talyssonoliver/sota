@@ -12,7 +12,7 @@ from typing import Any, Dict
 from unittest.mock import DEFAULT, MagicMock, patch
 
 # Keep this import for compatibility with test mocks
-from langchain.tools import BaseTool
+from langchain_core.tools import BaseTool
 # Add import from langchain_core
 from langchain_core.tools import BaseTool as CoreBaseTool
 

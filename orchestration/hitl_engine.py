@@ -246,7 +246,8 @@ class HITLPolicyEngine:
         self.audit_log: List[Dict[str, Any]] = []
         
         # Initialize storage directories
-        self.storage_dir = Path("storage/hitl")
+        from config.build_paths import HITL_STORAGE_DIR
+        self.storage_dir = HITL_STORAGE_DIR
         self.storage_dir.mkdir(parents=True, exist_ok=True)
         
         # Initialize notification system

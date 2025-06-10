@@ -32,7 +32,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('logs/main.log', mode='a'),
+        logging.FileHandler('build/runtime/logs/main.log', mode='a'),
         logging.StreamHandler(sys.stdout)
     ]
 )
@@ -47,7 +47,7 @@ except ImportError:
     logger.warning("Could not load patches. Some features may not work correctly.")
 
 from langchain.agents import AgentType, initialize_agent
-from langchain.tools import Tool
+from langchain_core.tools import Tool
 from langchain_community.chat_models import ChatOpenAI
 
 from graph.flow import build_workflow_graph

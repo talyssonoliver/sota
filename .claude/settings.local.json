@@ -36,7 +36,13 @@
       "Bash(TESTING=1 PYTHONPATH=/mnt/c/taly/ai-system python3 tests/test_memory_config.py)",
       "Bash(TESTING=1 PYTHONPATH=/mnt/c/taly/ai-system python3 -c \"\n# Test HITL blueprint creation  \ntry:\n    from api.hitl_routes import create_hitl_blueprint\n    \n    blueprint = create_hitl_blueprint()\n    print('✓ HITL blueprint created successfully')\n    print(f'Blueprint name: {blueprint.name}')\n    print(f'Blueprint URL prefix: {blueprint.url_prefix}')\n    \nexcept Exception as e:\n    print(f'✗ HITL blueprint creation failed: {e}')\n    import traceback\n    traceback.print_exc()\n\")",
       "Bash(mv:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(true)",
+      "Bash(chmod:*)",
+      "Bash(rg:*)",
+      "Bash(PYTHONPATH=. python3 tests/run_tests.py --quick)",
+      "Bash(PYTHONPATH=.:*)",
+      "WebFetch(domain:python.langchain.com)"
     ],
     "deny": []
   }
