@@ -7,7 +7,7 @@ import os
 from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
-from langchain.tools import BaseTool
+from langchain_core.tools import BaseTool
 from pydantic import BaseModel, ValidationError
 
 from tools.base_tool import ArtesanatoBaseTool

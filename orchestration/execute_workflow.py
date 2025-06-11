@@ -19,6 +19,7 @@ from graph.graph_builder import (build_advanced_workflow_graph,
                                  build_dynamic_workflow_graph,
                                  build_state_workflow_graph,
                                  build_workflow_graph)
+from orchestration.plan_execution_manager import PlanExecutionManager
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -38,7 +39,8 @@ def execute_task(
         task_id,
         input_message=None,
         workflow_type="standard",
-        output_dir=None):
+        output_dir=None,
+        use_coordinator_planning=True):
     """
     Execute a task through the agent workflow.
 
@@ -47,6 +49,7 @@ def execute_task(
         input_message: Optional input message to include in the initial state
         workflow_type: Type of workflow to use (standard, dynamic, state, advanced)
         output_dir: Directory to save outputs to
+        use_coordinator_planning: Whether to use JSON-based planning from coordinator
 
     Returns:
         The result of the workflow execution
@@ -79,7 +82,65 @@ def execute_task(
     # Execute the workflow
     logger.info("Executing workflow", extra={
                 "task_id": task_id, "event": "execute"})
-    result = workflow.invoke(initial_state)
+    
+    if use_coordinator_planning:
+        # Try to use JSON-based planning with PlanExecutionManager
+        try:
+            # Initial call to get coordinator's plan
+            coordinator_output_state = workflow.invoke(initial_state)
+            raw_plan_output = coordinator_output_state.get("output", "")
+            
+            # Attempt to parse as JSON plan
+            try:
+                if isinstance(raw_plan_output, str):
+                    parsed_plan = json.loads(raw_plan_output)
+                elif isinstance(raw_plan_output, dict) and "plan" in raw_plan_output:
+                    parsed_plan = raw_plan_output["plan"]
+                else:
+                    parsed_plan = raw_plan_output
+
+                if isinstance(parsed_plan, list) and all("id" in task for task in parsed_plan):
+                    # We have a structured plan from the coordinator!
+                    logger.info("Coordinator returned a structured plan. Starting PlanExecutionManager.")
+                    manager = PlanExecutionManager(task_id, initial_state.get("message"), workflow)
+                    manager.plan = parsed_plan
+                    
+                    # Initialize statuses
+                    for task in manager.plan:
+                        if task["id"] not in manager.part_status:
+                            manager.part_status[task["id"]] = "pending"
+                    
+                    result = manager.run_plan()
+                    
+                    # Save the result if output directory is specified
+                    if output_dir:
+                        output_path = Path(output_dir) / task_id
+                        output_path.mkdir(parents=True, exist_ok=True)
+
+                        # Save the plan execution result
+                        with open(output_path / "plan_execution_result.json", "w") as f:
+                            json.dump(result, f, indent=2, default=str)
+
+                        logger.info("Plan execution results saved", extra={
+                                    "task_id": task_id, "event": "save_plan_result"})
+                    
+                    return result
+                else:
+                    # Not a structured plan, proceed with standard execution
+                    logger.info("Coordinator did not return a structured plan. Proceeding with standard execution.")
+                    result = coordinator_output_state
+                    
+            except (json.JSONDecodeError, TypeError) as e:
+                # Coordinator output not valid JSON, proceed with standard execution
+                logger.info(f"Coordinator output not a structured plan (Error: {e}). Proceeding with standard execution.")
+                result = coordinator_output_state
+                
+        except Exception as e:
+            logger.error(f"Error in coordinator planning mode: {e}. Falling back to standard execution.")
+            result = workflow.invoke(initial_state)
+    else:
+        # Standard execution without coordinator planning
+        result = workflow.invoke(initial_state)
 
     # Save the result if output directory is specified
     if output_dir:

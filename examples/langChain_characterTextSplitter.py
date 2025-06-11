@@ -11,7 +11,7 @@ import os
 import sys
 from pathlib import Path
 
-from langchain.text_splitter import CharacterTextSplitter
+from langchain_text_splitters import CharacterTextSplitter
 
 # Add project root to path
 project_root = Path(__file__).parent.parent

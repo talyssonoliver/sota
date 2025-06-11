@@ -1050,28 +1050,45 @@ class GanttAnalyzer:
         """Generate timeline optimization recommendations."""
         recommendations = []
         
-        # Critical path recommendations
-        if critical_path:
+        # Generate different types of recommendations
+        recommendations.extend(self._generate_critical_path_recommendations(tasks, critical_path))
+        recommendations.extend(resource_analysis.get('recommendations', []))
+        recommendations.extend(self._generate_parallelization_recommendations(tasks))
+        recommendations.extend(self._generate_milestone_alerts(tasks))
+        
+        return recommendations
+    
+    def _generate_critical_path_recommendations(self, tasks: List[GanttTask], 
+                                              critical_path: List[str]) -> List[str]:
+        """Generate recommendations specific to critical path optimization."""
+        recommendations = []
+        
+        if not critical_path:
+            return recommendations
+            
+        # Primary critical path focus
+        task_names = ', '.join(critical_path[:3])
+        suffix = '...' if len(critical_path) > 3 else ''
+        recommendations.append(f"🎯 Focus on critical path tasks: {task_names}{suffix}")
+        
+        # Slack time utilization
+        high_slack_tasks = [
+            task for task in tasks 
+            if task.slack_time > 2 and task.id not in critical_path
+        ]
+        
+        if high_slack_tasks:
+            slack_task_names = ', '.join(task.name for task in high_slack_tasks[:3])
             recommendations.append(
-                f"🎯 Focus on critical path tasks: {', '.join(critical_path[:3])}{'...' if len(critical_path) > 3 else ''}"
+                f"💡 Tasks with available slack time that could assist critical path: {slack_task_names}"
             )
             
-            # Find tasks with high slack that could help critical path
-            high_slack_tasks = [
-                task for task in tasks 
-                if task.slack_time > 2 and task.id not in critical_path
-            ]
-            
-            if high_slack_tasks:
-                recommendations.append(
-                    f"💡 Tasks with available slack time that could assist critical path: "
-                    f"{', '.join(task.name for task in high_slack_tasks[:3])}"
-                )
+        return recommendations
+    
+    def _generate_parallelization_recommendations(self, tasks: List[GanttTask]) -> List[str]:
+        """Generate recommendations for task parallelization opportunities."""
+        recommendations = []
         
-        # Resource recommendations from analyzer
-        recommendations.extend(resource_analysis.get('recommendations', []))
-        
-        # Timeline compression opportunities
         parallelizable_tasks = [
             task for task in tasks 
             if len(task.dependencies) == 0 and task.status == 'pending'
@@ -1081,8 +1098,13 @@ class GanttAnalyzer:
             recommendations.append(
                 f"⚡ {len(parallelizable_tasks)} tasks can start immediately and run in parallel"
             )
+            
+        return recommendations
+    
+    def _generate_milestone_alerts(self, tasks: List[GanttTask]) -> List[str]:
+        """Generate alerts for upcoming milestones."""
+        recommendations = []
         
-        # Milestone alerts
         milestones = [task for task in tasks if task.milestone]
         for milestone in milestones:
             if milestone.status != 'completed':
@@ -1091,7 +1113,7 @@ class GanttAnalyzer:
                     recommendations.append(
                         f"🚨 Milestone '{milestone.name}' due in {days_to_milestone} days"
                     )
-        
+                    
         return recommendations
 
 # CLI interface

@@ -1,0 +1,853 @@
+{
+  "notifications": [
+    {
+      "id": "notif_hitl_BE-07_agent_prompt_96a6e58b_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-07_agent_prompt_96a6e58b",
+      "task_id": "BE-07",
+      "title": "🔍 Review Required: BE-07",
+      "message": "A agent_prompt checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T23:33:20.943359",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-07_agent_prompt_96a6e58b",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T23:33:20.939682"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-08_output_evaluation_fd0ea375_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-08_output_evaluation_fd0ea375",
+      "task_id": "BE-08",
+      "title": "🔍 Review Required: BE-08",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T23:33:20.787189",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-08_output_evaluation_fd0ea375",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T11:33:20.784188"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-12_qa_validation_609090e6_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-12_qa_validation_609090e6",
+      "task_id": "BE-12",
+      "title": "🔍 Review Required: BE-12",
+      "message": "A qa_validation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T23:33:20.631803",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-12_qa_validation_609090e6",
+      "metadata": {
+        "checkpoint_type": "qa_validation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T07:33:20.628948"
+      }
+    },
+    {
+      "id": "notif_hitl_INFRA-03_task_transitions_5e25f1a3_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_INFRA-03_task_transitions_5e25f1a3",
+      "task_id": "INFRA-03",
+      "title": "🔍 Review Required: INFRA-03",
+      "message": "A task_transitions checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T23:33:20.451913",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_INFRA-03_task_transitions_5e25f1a3",
+      "metadata": {
+        "checkpoint_type": "task_transitions",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T05:33:20.447907"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-09_output_evaluation_cc562fa5_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-09_output_evaluation_cc562fa5",
+      "task_id": "BE-09",
+      "title": "🔍 Review Required: BE-09",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T23:33:20.301396",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-09_output_evaluation_cc562fa5",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T11:33:20.299394"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_agent_prompt_9a6dbc80_checkpoint_approved",
+      "type": "checkpoint_approved",
+      "checkpoint_id": "hitl_BE-13_agent_prompt_9a6dbc80",
+      "task_id": "BE-13",
+      "title": "HITL Update: BE-13",
+      "message": "HITL checkpoint update",
+      "severity": "info",
+      "timestamp": "2025-06-10T23:33:20.151502",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_agent_prompt_9a6dbc80",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T23:33:20.115247"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_output_evaluation_70dfe944_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-13_output_evaluation_70dfe944",
+      "task_id": "BE-13",
+      "title": "🔍 Review Required: BE-13",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T23:33:20.134248",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_output_evaluation_70dfe944",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T11:33:20.132244"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_agent_prompt_9a6dbc80_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-13_agent_prompt_9a6dbc80",
+      "task_id": "BE-13",
+      "title": "🔍 Review Required: BE-13",
+      "message": "A agent_prompt checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T23:33:20.117245",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_agent_prompt_9a6dbc80",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T23:33:20.115247"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_677050b6_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_677050b6",
+      "task_id": "BE-11",
+      "title": "🔍 Review Required: BE-11",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T23:33:20.032627",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_677050b6",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T11:33:20.030614"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_16131508_checkpoint_rejectd",
+      "type": "checkpoint_rejectd",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_16131508",
+      "task_id": "BE-11",
+      "title": "HITL Update: BE-11",
+      "message": "HITL checkpoint update",
+      "severity": "info",
+      "timestamp": "2025-06-10T23:33:20.012628",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_16131508",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T11:33:20.003624"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_16131508_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_16131508",
+      "task_id": "BE-11",
+      "title": "🔍 Review Required: BE-11",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T23:33:20.005625",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_16131508",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T11:33:20.003624"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-09_output_evaluation_1d0560ee_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-09_output_evaluation_1d0560ee",
+      "task_id": "BE-09",
+      "title": "🔍 Review Required: BE-09",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T22:03:08.762394",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-09_output_evaluation_1d0560ee",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T10:03:08.759373"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-09_output_evaluation_fd84c078_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-09_output_evaluation_fd84c078",
+      "task_id": "BE-09",
+      "title": "🔍 Review Required: BE-09",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T21:57:34.809285",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-09_output_evaluation_fd84c078",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T09:57:34.806283"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-09_output_evaluation_6de0ae89_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-09_output_evaluation_6de0ae89",
+      "task_id": "BE-09",
+      "title": "🔍 Review Required: BE-09",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T21:50:34.174676",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-09_output_evaluation_6de0ae89",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T09:50:34.173670"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-07_agent_prompt_cf17b5e0_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-07_agent_prompt_cf17b5e0",
+      "task_id": "BE-07",
+      "title": "🔍 Review Required: BE-07",
+      "message": "A agent_prompt checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T21:45:29.242687",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-07_agent_prompt_cf17b5e0",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T21:45:29.230681"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-08_output_evaluation_b1ade1d0_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-08_output_evaluation_b1ade1d0",
+      "task_id": "BE-08",
+      "title": "🔍 Review Required: BE-08",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T21:45:28.956989",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-08_output_evaluation_b1ade1d0",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T09:45:28.953392"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-12_qa_validation_fe3fd516_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-12_qa_validation_fe3fd516",
+      "task_id": "BE-12",
+      "title": "🔍 Review Required: BE-12",
+      "message": "A qa_validation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T21:45:28.778703",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-12_qa_validation_fe3fd516",
+      "metadata": {
+        "checkpoint_type": "qa_validation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T05:45:28.776706"
+      }
+    },
+    {
+      "id": "notif_hitl_INFRA-03_task_transitions_cb77b520_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_INFRA-03_task_transitions_cb77b520",
+      "task_id": "INFRA-03",
+      "title": "🔍 Review Required: INFRA-03",
+      "message": "A task_transitions checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T21:45:28.628275",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_INFRA-03_task_transitions_cb77b520",
+      "metadata": {
+        "checkpoint_type": "task_transitions",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T03:45:28.623271"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-09_output_evaluation_6585e9d1_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-09_output_evaluation_6585e9d1",
+      "task_id": "BE-09",
+      "title": "🔍 Review Required: BE-09",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T21:45:28.461194",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-09_output_evaluation_6585e9d1",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T09:45:28.455410"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_agent_prompt_6cb83f3d_checkpoint_approved",
+      "type": "checkpoint_approved",
+      "checkpoint_id": "hitl_BE-13_agent_prompt_6cb83f3d",
+      "task_id": "BE-13",
+      "title": "HITL Update: BE-13",
+      "message": "HITL checkpoint update",
+      "severity": "info",
+      "timestamp": "2025-06-10T21:45:28.182936",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_agent_prompt_6cb83f3d",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T21:45:28.088345"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_output_evaluation_366119c2_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-13_output_evaluation_366119c2",
+      "task_id": "BE-13",
+      "title": "🔍 Review Required: BE-13",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T21:45:28.143657",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_output_evaluation_366119c2",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T09:45:28.138655"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_agent_prompt_6cb83f3d_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-13_agent_prompt_6cb83f3d",
+      "task_id": "BE-13",
+      "title": "🔍 Review Required: BE-13",
+      "message": "A agent_prompt checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T21:45:28.092869",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_agent_prompt_6cb83f3d",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T21:45:28.088345"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_ce63bacc_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_ce63bacc",
+      "task_id": "BE-11",
+      "title": "🔍 Review Required: BE-11",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T21:45:27.916765",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_ce63bacc",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T09:45:27.913758"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_fe078126_checkpoint_rejectd",
+      "type": "checkpoint_rejectd",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_fe078126",
+      "task_id": "BE-11",
+      "title": "HITL Update: BE-11",
+      "message": "HITL checkpoint update",
+      "severity": "info",
+      "timestamp": "2025-06-10T21:45:27.860524",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_fe078126",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T09:45:27.840367"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_fe078126_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_fe078126",
+      "task_id": "BE-11",
+      "title": "🔍 Review Required: BE-11",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T21:45:27.844363",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_fe078126",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T09:45:27.840367"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-07_agent_prompt_37d91c38_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-07_agent_prompt_37d91c38",
+      "task_id": "BE-07",
+      "title": "🔍 Review Required: BE-07",
+      "message": "A agent_prompt checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:59:18.826383",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-07_agent_prompt_37d91c38",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T20:59:18.823381"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-08_output_evaluation_a8352a23_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-08_output_evaluation_a8352a23",
+      "task_id": "BE-08",
+      "title": "🔍 Review Required: BE-08",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:59:18.656156",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-08_output_evaluation_a8352a23",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:59:18.653154"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-12_qa_validation_8b408182_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-12_qa_validation_8b408182",
+      "task_id": "BE-12",
+      "title": "🔍 Review Required: BE-12",
+      "message": "A qa_validation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:59:18.514799",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-12_qa_validation_8b408182",
+      "metadata": {
+        "checkpoint_type": "qa_validation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T04:59:18.510171"
+      }
+    },
+    {
+      "id": "notif_hitl_INFRA-03_task_transitions_0c7085fb_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_INFRA-03_task_transitions_0c7085fb",
+      "task_id": "INFRA-03",
+      "title": "🔍 Review Required: INFRA-03",
+      "message": "A task_transitions checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:59:18.366799",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_INFRA-03_task_transitions_0c7085fb",
+      "metadata": {
+        "checkpoint_type": "task_transitions",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T02:59:18.364365"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-09_output_evaluation_2e95b95b_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-09_output_evaluation_2e95b95b",
+      "task_id": "BE-09",
+      "title": "🔍 Review Required: BE-09",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:59:18.207619",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-09_output_evaluation_2e95b95b",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:59:18.204149"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_agent_prompt_79df1676_checkpoint_approved",
+      "type": "checkpoint_approved",
+      "checkpoint_id": "hitl_BE-13_agent_prompt_79df1676",
+      "task_id": "BE-13",
+      "title": "HITL Update: BE-13",
+      "message": "HITL checkpoint update",
+      "severity": "info",
+      "timestamp": "2025-06-10T20:59:17.909727",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_agent_prompt_79df1676",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T20:59:17.852346"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_output_evaluation_08e0d349_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-13_output_evaluation_08e0d349",
+      "task_id": "BE-13",
+      "title": "🔍 Review Required: BE-13",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:59:17.881120",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_output_evaluation_08e0d349",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:59:17.876285"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_agent_prompt_79df1676_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-13_agent_prompt_79df1676",
+      "task_id": "BE-13",
+      "title": "🔍 Review Required: BE-13",
+      "message": "A agent_prompt checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:59:17.854797",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_agent_prompt_79df1676",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T20:59:17.852346"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_28544817_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_28544817",
+      "task_id": "BE-11",
+      "title": "🔍 Review Required: BE-11",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:59:17.721267",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_28544817",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:59:17.718191"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_84525768_checkpoint_rejectd",
+      "type": "checkpoint_rejectd",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_84525768",
+      "task_id": "BE-11",
+      "title": "HITL Update: BE-11",
+      "message": "HITL checkpoint update",
+      "severity": "info",
+      "timestamp": "2025-06-10T20:59:17.689126",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_84525768",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:59:17.678146"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_84525768_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_84525768",
+      "task_id": "BE-11",
+      "title": "🔍 Review Required: BE-11",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:59:17.682124",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_84525768",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:59:17.678146"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-07_agent_prompt_fdde35f3_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-07_agent_prompt_fdde35f3",
+      "task_id": "BE-07",
+      "title": "🔍 Review Required: BE-07",
+      "message": "A agent_prompt checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:49:05.448482",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-07_agent_prompt_fdde35f3",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T20:49:05.444478"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-08_output_evaluation_8bf1dc9b_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-08_output_evaluation_8bf1dc9b",
+      "task_id": "BE-08",
+      "title": "🔍 Review Required: BE-08",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:49:05.237957",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-08_output_evaluation_8bf1dc9b",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:49:05.235265"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-12_qa_validation_6f9a1bb1_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-12_qa_validation_6f9a1bb1",
+      "task_id": "BE-12",
+      "title": "🔍 Review Required: BE-12",
+      "message": "A qa_validation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:49:05.020302",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-12_qa_validation_6f9a1bb1",
+      "metadata": {
+        "checkpoint_type": "qa_validation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T04:49:05.015299"
+      }
+    },
+    {
+      "id": "notif_hitl_INFRA-03_task_transitions_02cc5721_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_INFRA-03_task_transitions_02cc5721",
+      "task_id": "INFRA-03",
+      "title": "🔍 Review Required: INFRA-03",
+      "message": "A task_transitions checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:49:04.804523",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_INFRA-03_task_transitions_02cc5721",
+      "metadata": {
+        "checkpoint_type": "task_transitions",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T02:49:04.801523"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-09_output_evaluation_f49ef899_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-09_output_evaluation_f49ef899",
+      "task_id": "BE-09",
+      "title": "🔍 Review Required: BE-09",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: high",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:49:04.631047",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-09_output_evaluation_f49ef899",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "high",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:49:04.626261"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_agent_prompt_f802fb15_checkpoint_approved",
+      "type": "checkpoint_approved",
+      "checkpoint_id": "hitl_BE-13_agent_prompt_f802fb15",
+      "task_id": "BE-13",
+      "title": "HITL Update: BE-13",
+      "message": "HITL checkpoint update",
+      "severity": "info",
+      "timestamp": "2025-06-10T20:49:04.317544",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_agent_prompt_f802fb15",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T20:49:04.231317"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_output_evaluation_50aeb06c_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-13_output_evaluation_50aeb06c",
+      "task_id": "BE-13",
+      "title": "🔍 Review Required: BE-13",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:49:04.277118",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_output_evaluation_50aeb06c",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:49:04.275113"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-13_agent_prompt_f802fb15_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-13_agent_prompt_f802fb15",
+      "task_id": "BE-13",
+      "title": "🔍 Review Required: BE-13",
+      "message": "A agent_prompt checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:49:04.239375",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-13_agent_prompt_f802fb15",
+      "metadata": {
+        "checkpoint_type": "agent_prompt",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T20:49:04.231317"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_fce4ae04_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_fce4ae04",
+      "task_id": "BE-11",
+      "title": "🔍 Review Required: BE-11",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:49:04.105376",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_fce4ae04",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:49:04.103351"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_8d5ba03c_checkpoint_rejectd",
+      "type": "checkpoint_rejectd",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_8d5ba03c",
+      "task_id": "BE-11",
+      "title": "HITL Update: BE-11",
+      "message": "HITL checkpoint update",
+      "severity": "info",
+      "timestamp": "2025-06-10T20:49:04.083764",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_8d5ba03c",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:49:04.074194"
+      }
+    },
+    {
+      "id": "notif_hitl_BE-11_output_evaluation_8d5ba03c_checkpoint_created",
+      "type": "checkpoint_created",
+      "checkpoint_id": "hitl_BE-11_output_evaluation_8d5ba03c",
+      "task_id": "BE-11",
+      "title": "🔍 Review Required: BE-11",
+      "message": "A output_evaluation checkpoint requires your review. Risk level: medium",
+      "severity": "warning",
+      "timestamp": "2025-06-10T20:49:04.076449",
+      "read": false,
+      "action_url": "/hitl/checkpoint/hitl_BE-11_output_evaluation_8d5ba03c",
+      "metadata": {
+        "checkpoint_type": "output_evaluation",
+        "risk_level": "medium",
+        "assigned_reviewers": [],
+        "deadline": "2025-06-11T08:49:04.074194"
+      }
+    }
+  ],
+  "pending_count": 39,
+  "overdue_count": 0,
+  "last_updated": "2025-06-10T23:33:20.954453"
+}

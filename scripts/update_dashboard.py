@@ -24,7 +24,10 @@ from utils.execution_monitor import DashboardLogger
 class DashboardUpdater:
     """Updates dashboard with latest completion data"""
 
-    def __init__(self, dashboard_dir: str = "dashboard"):
+    def __init__(self, dashboard_dir: str = None):
+        from config.build_paths import DASHBOARD_DIR
+        if dashboard_dir is None:
+            dashboard_dir = str(DASHBOARD_DIR)
         self.dashboard_dir = Path(dashboard_dir)
         self.dashboard_dir.mkdir(exist_ok=True)
         self.metrics_calculator = CompletionMetricsCalculator(dashboard_dir=str(self.dashboard_dir))

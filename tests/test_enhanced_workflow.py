@@ -32,8 +32,8 @@ class TestEnhancedWorkflow(unittest.TestCase):
     def setUp(self):
         """Set up test environment."""
         # Create a test output directory
-        self.test_output_dir = Path(os.path.dirname(
-            os.path.abspath(__file__))) / "test_outputs"
+        from config.build_paths import TEST_OUTPUTS_DIR
+        self.test_output_dir = TEST_OUTPUTS_DIR
         os.makedirs(self.test_output_dir, exist_ok=True)
 
         # Set up a timer for performance tracking
@@ -339,8 +339,8 @@ class FeedbackTestRunner:
 
 def teardown_module(module):
     """Cleanup test_outputs directory after tests finish."""
-    test_output_dir = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), "test_outputs")
+    from config.build_paths import TEST_OUTPUTS_DIR
+    test_output_dir = str(TEST_OUTPUTS_DIR)
     if os.path.exists(test_output_dir):
         for child in os.listdir(test_output_dir):
             child_path = os.path.join(test_output_dir, child)

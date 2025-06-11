@@ -7,7 +7,7 @@ import os
 from typing import Any, Callable, Dict, List, Optional, Type, Union
 
 import yaml
-from langchain.tools import BaseTool as LangChainBaseTool
+from langchain_core.tools import BaseTool as LangChainBaseTool
 
 # Use absolute import instead of relative import
 from tools.base_tool import ArtesanatoBaseTool

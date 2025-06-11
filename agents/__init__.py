@@ -11,7 +11,8 @@ import yaml
 from crewai import Agent
 
 from prompts.utils import load_prompt_template
-from tools.memory_engine import memory
+from tools.memory import get_memory_instance
+memory = get_memory_instance()
 from tools.tool_loader import get_tools_for_agent
 
 
@@ -256,13 +257,29 @@ Provide clear,
     implementable solutions with code examples where appropriate. Include explanations of your approach and any assumptions made.
 """
 
-# Import agent creation functions for registry
-from .backend import create_backend_engineer_agent
-from .coordinator import create_coordinator_agent  
-from .doc import create_documentation_agent
-from .frontend import create_frontend_engineer_agent
-from .qa import create_qa_agent, create_enhanced_qa_workflow
-from .technical import create_technical_lead_agent
+# Import agent creation functions for registry (both old and new)
+from .factory import (
+    agent_factory,
+    create_backend_engineer_agent,
+    create_coordinator_agent,
+    create_documentation_agent,
+    create_frontend_engineer_agent,
+    create_qa_agent,
+    create_technical_lead_agent,
+    create_enhanced_qa_workflow
+)
+
+# Legacy imports for backward compatibility
+try:
+    from .backend import create_backend_engineer_agent as _legacy_backend
+    from .coordinator import create_coordinator_agent as _legacy_coordinator
+    from .doc import create_documentation_agent as _legacy_doc
+    from .frontend import create_frontend_engineer_agent as _legacy_frontend
+    from .qa import create_qa_agent as _legacy_qa, create_enhanced_qa_workflow as _legacy_qa_workflow
+    from .technical import create_technical_lead_agent as _legacy_technical
+except ImportError:
+    # If legacy imports fail, use factory versions
+    pass
 
 # Expose the class for import
 MemoryEnabledAgentBuilder = MemoryEnabledAgentBuilder
@@ -277,6 +294,7 @@ MemoryEnabledAgentBuilder.MemoryEnabledAgentBuilder = MemoryEnabledAgentBuilder
 __all__ = [
     'MemoryEnabledAgentBuilder',
     'agent_builder',
+    'agent_factory',
     'create_backend_engineer_agent',
     'create_coordinator_agent',
     'create_documentation_agent', 

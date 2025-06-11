@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HITL Kanban Board - Human-in-the-Loop Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .header p {
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        .controls {
+            background: white;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #e1e8ed;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .controls select, .controls input, .controls button {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .controls button {
+            background: #4299e1;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .controls button:hover {
+            background: #3182ce;
+        }
+
+        .refresh-btn {
+            background: #48bb78 !important;
+        }
+
+        .refresh-btn:hover {
+            background: #38a169 !important;
+        }
+
+        .stats {
+            display: flex;
+            gap: 1rem;
+            margin-left: auto;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 0.5rem;
+            background: #f7fafc;
+            border-radius: 4px;
+            min-width: 80px;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #718096;
+        }
+
+        .main-content {
+            padding: 2rem;
+        }
+
+        .kanban-table {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f7fafc;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+            color: #4a5568;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .task-id {
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .status.awaiting-qa {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .status.awaiting-human {
+            background: #bee3f8;
+            color: #2b6cb0;
+        }
+
+        .status.in-review {
+            background: #d6f5d6;
+            color: #2f855a;
+        }
+
+        .status.escalated {
+            background: #fbb6ce;
+            color: #b83280;
+        }
+
+        .status.approved {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .status.rejected {
+            background: #feb2b2;
+            color: #c53030;
+        }
+
+        .deadline {
+            font-size: 0.9rem;
+        }
+
+        .deadline.overdue {
+            color: #e53e3e;
+            font-weight: bold;
+        }
+
+        .deadline.urgent {
+            color: #dd6b20;
+            font-weight: 500;
+        }
+
+        .deadline.normal {
+            color: #4a5568;
+        }
+
+        .priority {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .priority-high {
+            color: #e53e3e;
+        }
+
+        .priority-medium {
+            color: #dd6b20;
+        }
+
+        .priority-low {
+            color: #38a169;
+        }
+
+        .action-btn {
+            padding: 0.25rem 0.75rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn.approve {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .action-btn.reject {
+            background: #feb2b2;
+            color: #c53030;
+        }
+
+        .action-btn.review {
+            background: #bee3f8;
+            color: #2b6cb0;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #718096;
+        }
+
+        .error {
+            background: #fed7d7;
+            color: #c53030;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #718096;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .stats {
+                margin-left: 0;
+                justify-content: space-around;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #718096;
+            font-size: 0.9rem;
+        }
+
+        .auto-refresh.active {
+            color: #38a169;
+        }
+
+        .last-updated {
+            font-size: 0.8rem;
+            color: #718096;
+            text-align: right;
+            padding: 1rem 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔄 HITL Kanban Board</h1>
+        <p>Human-in-the-Loop Review Dashboard - Live Updates from pending_reviews/ and feedback_logs/</p>
+    </div>
+
+    <div class="controls">
+        <select id="taskFilter">
+            <option value="">All Tasks</option>
+        </select>
+
+        <select id="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="Awaiting QA">Awaiting QA</option>
+            <option value="Awaiting Human">Awaiting Human</option>
+            <option value="In Review">In Review</option>
+            <option value="Escalated">Escalated</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+        </select>
+
+        <select id="reviewerFilter">
+            <option value="">All Reviewers</option>
+        </select>
+
+        <label>
+            <input type="checkbox" id="overdueOnly"> Overdue Only
+        </label>
+
+        <label>
+            <input type="checkbox" id="highPriorityOnly"> High Priority Only
+        </label>
+
+        <button class="refresh-btn" onclick="refreshData()">🔄 Refresh</button>
+
+        <div class="auto-refresh">
+            <input type="checkbox" id="autoRefresh" checked>
+            <span>Auto-refresh (30s)</span>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="overdueCount">0</div>
+                <div class="stat-label">Overdue</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="highPriorityCount">0</div>
+                <div class="stat-label">High Priority</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="errorMessage" class="error" style="display: none;"></div>
+        
+        <div id="loadingMessage" class="loading">
+            Loading HITL board data...
+        </div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <h3>🎉 No pending reviews!</h3>
+            <p>All tasks are up to date. Great job team!</p>
+        </div>
+
+        <div id="kanbanContainer" style="display: none;">
+            <div class="kanban-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Task ID</th>
+                            <th>Status</th>
+                            <th>Pending Reviewer</th>
+                            <th>Deadline</th>
+                            <th>Action</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kanbanBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="last-updated">
+        Last updated: <span id="lastUpdated">Never</span>
+    </div>
+
+    <script>
+        let boardData = [];
+        let filteredData = [];
+        let autoRefreshInterval;
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshData();
+            setupAutoRefresh();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('taskFilter').addEventListener('change', applyFilters);
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+            document.getElementById('reviewerFilter').addEventListener('change', applyFilters);
+            document.getElementById('overdueOnly').addEventListener('change', applyFilters);
+            document.getElementById('highPriorityOnly').addEventListener('change', applyFilters);
+            document.getElementById('autoRefresh').addEventListener('change', setupAutoRefresh);
+        }
+
+        function setupAutoRefresh() {
+            const autoRefreshEnabled = document.getElementById('autoRefresh').checked;
+            const autoRefreshIndicator = document.querySelector('.auto-refresh');
+
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+
+            if (autoRefreshEnabled) {
+                autoRefreshIndicator.classList.add('active');
+                autoRefreshInterval = setInterval(refreshData, 30000); // 30 seconds
+            } else {
+                autoRefreshIndicator.classList.remove('active');
+            }
+        }
+
+        async function refreshData() {
+            try {
+                document.getElementById('loadingMessage').style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+                document.getElementById('kanbanContainer').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+
+                // Fetch data from the HITL dashboard API
+                // Note: This would connect to your actual backend API
+                const response = await fetch('/api/hitl/kanban-data');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                boardData = data.pending_reviews || [];
+                
+                updateFilterOptions();
+                applyFilters();
+                updateStats();
+                
+                document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+
+            } catch (error) {
+                console.error('Error fetching board data:', error);
+                
+                // Show mock data for demonstration
+                showMockData();
+                
+                const errorDiv = document.getElementById('errorMessage');
+                errorDiv.textContent = `Failed to fetch real-time data. Showing mock data. Error: ${error.message}`;
+                errorDiv.style.display = 'block';
+            } finally {
+                document.getElementById('loadingMessage').style.display = 'none';
+            }
+        }
+
+        function showMockData() {
+            // Mock data for demonstration
+            boardData = [
+                {
+                    task_id: 'BE-07',
+                    status: 'Awaiting QA',
+                    pending_reviewer: 'QA Agent',
+                    time_remaining: '4h',
+                    action: 'Review',
+                    priority: 8,
+                    checkpoint_type: 'agent_prompt',
+                    risk_level: 'high',
+                    overdue: false
+                },
+                {
+                    task_id: 'UX-02',
+                    status: 'Awaiting Human',
+                    pending_reviewer: 'UX Lead',
+                    time_remaining: '2h',
+                    action: 'Approve',
+                    priority: 6,
+                    checkpoint_type: 'task_transitions',
+                    risk_level: 'medium',
+                    overdue: false
+                },
+                {
+                    task_id: 'PM-05',
+                    status: 'Approved',
+                    pending_reviewer: '—',
+                    time_remaining: '—',
+                    action: 'Completed',
+                    priority: 0,
+                    checkpoint_type: 'documentation',
+                    risk_level: 'low',
+                    overdue: false
+                },
+                {
+                    task_id: 'FE-12',
+                    status: 'Escalated',
+                    pending_reviewer: 'Team Lead',
+                    time_remaining: 'Overdue by 2h',
+                    action: 'Resolve',
+                    priority: 12,
+                    checkpoint_type: 'output_evaluation',
+                    risk_level: 'critical',
+                    overdue: true
+                }
+            ];
+        }
+
+        function updateFilterOptions() {
+            // Update task filter
+            const taskFilter = document.getElementById('taskFilter');
+            const taskIds = [...new Set(boardData.map(item => item.task_id))];
+            updateSelectOptions(taskFilter, taskIds);
+
+            // Update reviewer filter
+            const reviewerFilter = document.getElementById('reviewerFilter');
+            const reviewers = [...new Set(boardData.map(item => item.pending_reviewer).filter(r => r !== '—'))];
+            updateSelectOptions(reviewerFilter, reviewers);
+        }
+
+        function updateSelectOptions(selectElement, options) {
+            const currentValue = selectElement.value;
+            const firstOption = selectElement.children[0];
+            
+            selectElement.innerHTML = '';
+            selectElement.appendChild(firstOption);
+            
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                selectElement.appendChild(optionElement);
+            });
+            
+            selectElement.value = currentValue;
+        }
+
+        function applyFilters() {
+            const taskFilter = document.getElementById('taskFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const reviewerFilter = document.getElementById('reviewerFilter').value;
+            const overdueOnly = document.getElementById('overdueOnly').checked;
+            const highPriorityOnly = document.getElementById('highPriorityOnly').checked;
+
+            filteredData = boardData.filter(item => {
+                if (taskFilter && item.task_id !== taskFilter) return false;
+                if (statusFilter && item.status !== statusFilter) return false;
+                if (reviewerFilter && item.pending_reviewer !== reviewerFilter) return false;
+                if (overdueOnly && !item.overdue) return false;
+                if (highPriorityOnly && item.priority < 6) return false;
+                return true;
+            });
+
+            renderBoard();
+            updateStats();
+        }
+
+        function renderBoard() {
+            const tbody = document.getElementById('kanbanBody');
+            tbody.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                document.getElementById('kanbanContainer').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('kanbanContainer').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+
+            filteredData.forEach(item => {
+                const row = document.createElement('tr');
+                
+                const statusClass = item.status.toLowerCase().replace(/\s+/g, '-');
+                const deadlineClass = item.overdue ? 'overdue' : (item.time_remaining.includes('h') && parseInt(item.time_remaining) <= 6 ? 'urgent' : 'normal');
+                const priorityClass = item.priority >= 10 ? 'priority-high' : (item.priority >= 6 ? 'priority-medium' : 'priority-low');
+                const priorityIcon = item.priority >= 10 ? '🔥' : (item.priority >= 6 ? '⚠️' : '•');
+
+                row.innerHTML = `
+                    <td class="task-id">${item.task_id}</td>
+                    <td><span class="status ${statusClass}">${item.status}</span></td>
+                    <td>${item.pending_reviewer}</td>
+                    <td class="deadline ${deadlineClass}">${item.time_remaining}</td>
+                    <td><button class="action-btn ${item.action.toLowerCase()}" onclick="handleAction('${item.task_id}', '${item.action}')">${item.action}</button></td>
+                    <td class="priority ${priorityClass}">${priorityIcon} ${item.priority}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+
+        function updateStats() {
+            const total = filteredData.length;
+            const overdue = filteredData.filter(item => item.overdue).length;
+            const highPriority = filteredData.filter(item => item.priority >= 6).length;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('overdueCount').textContent = overdue;
+            document.getElementById('highPriorityCount').textContent = highPriority;
+
+            // Update stat colors
+            document.getElementById('overdueCount').style.color = overdue > 0 ? '#e53e3e' : '#38a169';
+            document.getElementById('highPriorityCount').style.color = highPriority > 0 ? '#dd6b20' : '#38a169';
+        }
+
+        function handleAction(taskId, action) {
+            const reviewer = prompt(`Enter your name for this ${action.toLowerCase()} action:`);
+            if (!reviewer) return;
+
+            const comments = prompt('Enter any comments (optional):') || '';
+
+            // Here you would make an API call to process the action
+            alert(`${action} action for ${taskId} would be processed.\nReviewer: ${reviewer}\nComments: ${comments}`);
+            
+            // In real implementation:
+            // processAction(taskId, action.toLowerCase(), reviewer, comments);
+        }
+
+        async function processAction(taskId, action, reviewer, comments) {
+            try {
+                const response = await fetch('/api/hitl/action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        task_id: taskId,
+                        action: action,
+                        reviewer: reviewer,
+                        comments: comments
+                    })
+                });
+
+                if (response.ok) {
+                    refreshData(); // Refresh the board after action
+                } else {
+                    throw new Error('Failed to process action');
+                }
+            } catch (error) {
+                alert('Error processing action: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

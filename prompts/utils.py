@@ -43,10 +43,15 @@ def format_prompt_template(template: str, variables: Dict[str, Any]) -> str:
     Returns:
         The formatted prompt with variables replaced
     """
-    # Create a Template object for string substitution
-    template_obj = Template(template)
-
-    # Replace all variables in the template
+    # Handle both {variable} and $variable formats
+    formatted = template
+    
+    # First handle {variable} format
+    for key, value in variables.items():
+        formatted = formatted.replace(f"{{{key}}}", str(value))
+    
+    # Then handle $variable format using Template
+    template_obj = Template(formatted)
     return template_obj.safe_substitute(variables)
 
 

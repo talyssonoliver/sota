@@ -1,9 +1,11 @@
 """
 LangGraph Workflow Builder
 Constructs various LangGraph workflow configurations for agent orchestration.
+Enhanced Error Handling: Added retry logic and self-correction routing.
 """
 
 import json
+import logging
 import os
 from typing import Any, Callable, Dict, List, Optional
 
@@ -20,6 +22,9 @@ from graph.handlers import (backend_handler, coordinator_handler,
 from orchestration.registry import create_agent_instance, get_agent
 from orchestration.states import (TaskStatus, get_next_status,
                                   get_valid_transitions)
+
+# Configure logger for routing decisions
+logger = logging.getLogger("graph_builder")
 
 
 def load_graph_config() -> Dict[str, Any]:
@@ -66,6 +71,8 @@ def build_workflow_graph() -> StateGraph:
         output: str
         status: TaskStatus
         error: Opt[str]
+        error_info: Opt[Dict[str, Any]]
+        attempt_count: Opt[int]
 
     workflow = StateGraph(state_schema=WorkflowState)
 
@@ -178,6 +185,8 @@ def build_state_workflow_graph() -> StateGraph:
         output: str
         status: TaskStatus
         error: Opt[str]
+        error_info: Opt[Dict[str, Any]]
+        attempt_count: Opt[int]
 
     workflow = StateGraph(state_schema=WorkflowState)
 
@@ -310,6 +319,8 @@ def build_advanced_workflow_graph() -> StateGraph:
         output: str
         status: TaskStatus
         error: Opt[str]
+        error_info: Opt[Dict[str, Any]]
+        attempt_count: Opt[int]
         qa_result: Opt[str]
 
     workflow = StateGraph(state_schema=WorkflowState)
@@ -486,6 +497,8 @@ def build_dynamic_workflow_graph(task_id: str = None) -> StateGraph:
         output: str
         status: TaskStatus
         error: Opt[str]
+        error_info: Opt[Dict[str, Any]]
+        attempt_count: Opt[int]
         qa_result: Opt[str]
         next: Opt[str]
 
@@ -556,9 +569,40 @@ def build_dynamic_workflow_graph(task_id: str = None) -> StateGraph:
 
     # Create a dynamic router based on task type and current agent
     def dynamic_router(state):
-        current_agent = state.get("agent", "")
-        status = state.get("status", TaskStatus.CREATED)
-        task = state.get("task_id", "")
+        MAX_ATTEMPTS = 3  # Define a maximum number of retries
+        
+        current_agent_role = state.get("agent", "")  # Agent that just ran or was supposed to run
+        status = state.get("status")
+        task_id = state.get("task_id", "UNKNOWN")
+        error_info = state.get("error_info")
+        attempt_count = state.get("attempt_count", 1)
+
+        logger.info(f"Routing task {task_id} from agent {current_agent_role} with status {status}, attempt {attempt_count}", extra={
+            "task_id": task_id, "current_agent_role": current_agent_role, "status": str(status), "attempt": attempt_count, "event": "routing_start"
+        })
+
+        if error_info:  # An error occurred in the last executed agent handler
+            logger.warning(f"Task {task_id} failed on attempt {attempt_count} by agent {current_agent_role}. Error: {error_info.get('message')}", extra={
+                "task_id": task_id, "failed_agent": current_agent_role, "status": str(status), "attempt": attempt_count, "error": error_info, "event": "task_failed_in_handler"
+            })
+            if attempt_count < MAX_ATTEMPTS:
+                # Route back to the same agent for a retry
+                state["attempt_count"] = attempt_count + 1
+                state["status"] = TaskStatus.IN_PROGRESS  # Reset status for retry
+                state["error_info"] = None  # Clear error for next attempt
+
+                logger.info(f"Routing task {task_id} back to {current_agent_role} for retry (attempt {state['attempt_count']}).", extra={
+                     "task_id": task_id, "next_agent": current_agent_role, "attempt": state['attempt_count'], "event": "routing_for_retry"
+                })
+                return current_agent_role  # Route to the same agent that failed
+
+            else:
+                # Max attempts reached, route to human review or a specific error handling agent
+                logger.error(f"Task {task_id} failed after {MAX_ATTEMPTS} attempts by agent {current_agent_role}. Routing to human_review.", extra={
+                    "task_id": task_id, "failed_agent": current_agent_role, "status": str(status), "attempt": attempt_count, "event": "max_retries_reached"
+                })
+                state["status"] = TaskStatus.HUMAN_REVIEW  # Ensure status reflects this
+                return "human_review"  # Or "coordinator" for re-planning
 
         # First check if a specific next step was set
         if "next" in state:
@@ -566,44 +610,60 @@ def build_dynamic_workflow_graph(task_id: str = None) -> StateGraph:
             # If next is "done", return END to terminate the workflow
             if next_step == "done" or next_step is None:
                 return END
+            logger.info(f"Routing task {task_id} to explicitly set next step: {next_step}", extra={"task_id": task_id, "next_agent": next_step, "event": "routing_explicit_next"})
             return next_step
 
         # Route based on task status
-        if status == TaskStatus.BLOCKED:
+        if status == TaskStatus.BLOCKED:  # Should have been caught by error_info, but as a fallback
+            logger.warning(f"Task {task_id} is BLOCKED. Routing to coordinator.", extra={"task_id": task_id, "status": str(status), "event": "routing_blocked"})
             return "coordinator"
         elif status == TaskStatus.HUMAN_REVIEW:
+            logger.info(f"Routing task {task_id} to human_review.", extra={"task_id": task_id, "status": str(status), "event": "routing_to_human_review"})
             return "human_review"
         elif status == TaskStatus.DONE:
+            logger.info(f"Routing task {task_id} to END.", extra={"task_id": task_id, "status": str(status), "event": "routing_to_end"})
             return END
 
         # Route based on agent and task type
-        if current_agent == "coordinator":
-            if task.startswith("BE-"):
-                return "backend"
-            elif task.startswith("FE-"):
+        if current_agent_role == "coordinator":
+            # If Coordinator just ran and produced a plan (now handled by PlanExecutionManager ideally)
+            # This logic here would be for a non-decomposed task.
+            if task_id.startswith("BE-"): 
+                return "backend"  # Ensure agent names match actual node names
+            elif task_id.startswith("FE-"): 
                 return "frontend"
             else:
                 return "technical"
-        elif current_agent == "technical":
-            if task.startswith("BE-"):
-                return "backend"
-            elif task.startswith("FE-"):
-                return "frontend"
-            else:
-                return "qa"
-        elif current_agent in ["backend", "frontend"]:
+        elif current_agent_role in ["backend", "frontend", "technical"]:
+            state["status"] = TaskStatus.QA_PENDING  # Update status before routing to QA
             return "qa"
-        elif current_agent == "qa":
-            return "doc"
-        elif current_agent == "doc" or current_agent == "documentation":
+        elif current_agent_role == "qa":
+            # Based on qa_handler's output which should set state["qa_result"] or similar
+            qa_result = state.get("qa_result", "").lower()
+            if qa_result in ["passed", "approve", "correct"]:
+                state["status"] = TaskStatus.DOCUMENTATION
+                return "doc"  # or "documentation" as per your node names
+            else:  # QA Failed
+                # This is where self-correction by routing back to the original dev agent would happen
+                # We need to know WHOSE work failed. This info should be in the state.
+                # For simplicity, let's assume it's part of task_id or a field like 'original_assignee'
+                # This part requires careful state management.
+                logger.warning(f"QA failed for task {task_id}. Routing for correction.", extra={"task_id": task_id, "event": "qa_failed_routing"})
+                # Simplified: route to coordinator to decide who fixes it.
+                # A more advanced router would look at state.get("developed_by_agent_role")
+                # and route back to "backend" or "frontend".
+                state["status"] = TaskStatus.BLOCKED  # Mark as blocked, needs rework
+                state["attempt_count"] = (state.get("attempt_count", 0) + 1)  # Consider if QA failure counts as a general attempt
+                return "coordinator"  # Coordinator can then re-assign with error context
+        elif current_agent_role == "doc" or current_agent_role == "documentation":
             return END  # End of workflow
-        elif current_agent == "product_manager":
-            # End of workflow        elif current_agent == "ux_designer":
+        elif current_agent_role == "product_manager":
             return END
-            return END  # End of workflow
+        elif current_agent_role == "ux_designer":
+            return END
 
-        # Default fallback - end workflow to prevent infinite loops
-        return END
+        logger.info(f"Default routing for task {task_id}: routing to coordinator.", extra={"task_id": task_id, "event": "routing_default"})
+        return "coordinator"  # Fallback
 
     # Add conditional edges for all nodes
     # Define all potential destinations with valid target values

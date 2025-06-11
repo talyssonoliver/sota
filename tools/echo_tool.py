@@ -4,7 +4,7 @@ Echo Tool - A simple tool for testing agent setup and configuration
 
 from typing import Optional
 
-from langchain.tools import BaseTool
+from langchain_core.tools import BaseTool
 from pydantic import BaseModel, ValidationError
 
 from tools.base_tool import ArtesanatoBaseTool

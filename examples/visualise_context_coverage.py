@@ -6,8 +6,6 @@ This script demonstrates and validates the Step 3.9 implementation
 for context coverage visualization. It tests the generation of both
 CSV and HTML reports showing context usage patterns.
 
-Usage:
-    python examples/step_3_9_demo.py
 """
 
 import json
@@ -29,7 +27,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 def test_context_coverage_analysis():
     """Test context coverage analysis functionality"""
     print("\n" + "=" * 60)
-    print("STEP 3.9 TEST: Context Coverage Analysis")
+    print("Context Coverage Analysis")
     print("=" * 60)
 
     # Analyze context coverage
@@ -37,7 +35,7 @@ def test_context_coverage_analysis():
 
     if "error" in coverage_data:
         print(f"⚠️  Warning: {coverage_data['error']}")
-        print("   This is expected if no context logs exist yet.")
+        print(" This is expected if no context logs exist yet.")
         return False
 
     print("📊 Context Coverage Analysis Results:")

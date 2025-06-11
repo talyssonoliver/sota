@@ -7,7 +7,7 @@ import os
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from tools.memory_engine import get_relevant_context
+from tools.memory import get_context_by_keys
 
 from .registry import (create_agent_instance, get_agent_config,
                        get_agent_for_task)
@@ -45,7 +45,7 @@ def delegate_task(
 
     # Get context if not provided
     if context is None:
-        context = get_relevant_context(task_description)
+        context = get_context_by_keys([task_description])
 
     # Prepare file references string if available
     file_references = ""
@@ -104,3 +104,23 @@ def save_task_output(task_id: str, output: Any) -> str:
         f.write(str(output))
 
     return file_path
+
+
+def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
+    """
+    Get relevant context for a query using the memory system.
+
+    Args:
+        query: The query string
+        k: Number of results to return
+        **kwargs: Additional arguments
+
+    Returns:
+        Relevant context as a string
+    """
+    try:
+        from tools.memory import get_relevant_context as memory_get_context
+        return memory_get_context(query, k=k, **kwargs)
+    except ImportError:
+        # Fallback if memory system is not available
+        return get_context_by_keys([query])

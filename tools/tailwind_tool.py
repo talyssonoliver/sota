@@ -8,7 +8,7 @@ import re
 from typing import Any, Dict
 
 from dotenv import load_dotenv
-from langchain.tools import BaseTool
+from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field, ValidationError
 
 from tools.base_tool import ArtesanatoBaseTool

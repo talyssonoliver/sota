@@ -140,9 +140,10 @@ class TestPhase4FinalValidation(unittest.TestCase):
             print(f"  - ✓ {monitor_script}")
 
         # Check for dashboard files
+        from config.build_paths import DASHBOARD_DIR
         dashboard_files = [
-            Path("dashboard/live_execution.json"),
-            Path("dashboard/agent_status.json")
+            DASHBOARD_DIR / "live_execution.json",
+            DASHBOARD_DIR / "agent_status.json"
         ]
 
         for file in dashboard_files:

@@ -12,7 +12,7 @@ import crewai.utilities.i18n as crewai_i18n
 import crewai.utilities.prompts as crewai_prompts
 from crewai import Agent
 from dotenv import load_dotenv
-from langchain.tools import BaseTool
+from langchain_core.tools import BaseTool
 from langchain_core.tools import Tool  # Updated import for Tool class
 from langchain_openai import ChatOpenAI
 
@@ -20,10 +20,10 @@ from prompts.utils import load_and_format_prompt
 from tools.coverage_tool import CoverageTool
 from tools.cypress_tool import CypressTool
 from tools.jest_tool import JestTool
-from tools.memory_engine import get_context_by_keys
+from tools.memory import get_context_by_keys
 from utils.coverage_analyzer import CoverageAnalyzer
 from utils.integration_analyzer import IntegrationAnalyzer
-from utils.test_generator import QATestFramework, QATestGenerator
+from tests.test_generator import QATestFramework, QATestGenerator
 
 # Patch CrewAI I18N/Prompts for all tests (class-level)
 if os.environ.get("TESTING", "0") == "1":

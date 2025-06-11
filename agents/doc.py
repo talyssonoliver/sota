@@ -7,14 +7,14 @@ from typing import Any, Dict, List, Optional
 
 from crewai import Agent
 from dotenv import load_dotenv
-from langchain.tools import BaseTool
+from langchain_core.tools import BaseTool
 from langchain_core.tools import Tool  # Updated import for Tool class
 from langchain_openai import ChatOpenAI
 
 from prompts.utils import load_and_format_prompt
 from tools.github_tool import GitHubTool
 from tools.markdown_tool import MarkdownTool
-from tools.memory_engine import get_context_by_keys
+from tools.memory import get_context_by_keys
 
 # Load environment variables
 load_dotenv()

@@ -12,7 +12,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from prompts.utils import extract_context_sources
-from tools.memory_engine import initialize_memory
+from tools.memory import get_memory_instance
 from utils.task_loader import load_task_metadata, update_task_state
 
 from .delegation import delegate_task
@@ -91,8 +91,10 @@ def log_context_usage(task_id: str, agent_role: str, context: str):
     }
 
     # Save to context usage log
-    os.makedirs("logs/context_usage", exist_ok=True)
-    with open(f"logs/context_usage/{task_id_str}_context.json", "w") as f:
+    from config.build_paths import LOGS_DIR
+    context_logs_dir = LOGS_DIR / "context_usage"
+    context_logs_dir.mkdir(parents=True, exist_ok=True)
+    with open(context_logs_dir / f"{task_id_str}_context.json", "w") as f:
         json.dump(usage_log, f, indent=2)
 
 

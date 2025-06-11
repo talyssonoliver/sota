@@ -23,7 +23,7 @@ import yaml
 
 from orchestration.states import TaskStatus
 from tools.context_tracker import track_context_usage
-from tools.memory_engine import MemoryEngine
+from tools.memory import get_memory_instance, MemoryEngine
 from utils.task_loader import (get_all_tasks, load_task_metadata,
                                save_task_metadata)
 
@@ -143,7 +143,7 @@ class TaskDeclarationManager:
         Args:
             memory_engine: Optional memory engine instance for context loading
         """
-        self.memory_engine = memory_engine or MemoryEngine()
+        self.memory_engine = memory_engine or get_memory_instance()
         self.declared_tasks: Dict[str, TaskDeclaration] = {}
 
         # Create outputs directory for task preparation

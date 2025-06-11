@@ -6,12 +6,12 @@ import os
 from typing import Any, Dict, List, Optional
 
 from crewai import Agent
-from langchain.tools import BaseTool
+from langchain_core.tools import BaseTool
 from langchain_core.tools import Tool
 from langchain_openai import ChatOpenAI
 
 from prompts.utils import format_prompt_template, load_and_format_prompt
-from tools.memory_engine import get_context_by_keys
+from tools.memory import get_context_by_keys
 
 memory = None
 
@@ -48,7 +48,7 @@ def get_coordinator_context(task_id: str = None) -> list:
 
 
 def create_coordinator_agent(
-    llm_model: str = "gpt-4.1-turbo",
+    llm_model: str = "gpt-4o",
     temperature: float = 0.2,
     memory_config: Optional[Dict[str, Any]] = None,
     custom_tools: Optional[list] = None,
@@ -57,73 +57,8 @@ def create_coordinator_agent(
     """
     Create a Coordinator Agent that oversees task flow and delegation.
 
-    new_coordinator_prompt_template = \"\"\"
-    You are the Coordinator Agent, a master project manager for the Artesanato E-commerce software development project. Your primary responsibility is to take high-level tasks or goals and break them down into a detailed, actionable plan of sub-tasks. You will then orchestrate the execution of this plan, adapting as necessary based on the results of completed sub-tasks.
-
-    **Your Core Directives:**
-
-    1.  **Task Decomposition:**
-        *   When given a main task, analyze it thoroughly.
-        *   Decompose it into a sequence of smaller, logically ordered sub-tasks that, when completed, will achieve the main task's objective.
-        *   Consider dependencies between sub-tasks. A sub-task should only be planned when its prerequisite sub-tasks can be completed.
-
-    2.  **Sub-Task Specification:** For each sub-task, you MUST define the following attributes:
-        *   `sub_task_id`: A unique identifier for the sub-task (e.g., "ST-1", "ST-2").
-        *   `description`: A clear and concise description of what needs to be done for this sub-task.
-        *   `agent_role`: The most appropriate specialized agent role to perform this sub-task (e.g., "technical_lead", "backend_engineer", "frontend_engineer", "qa_tester", "documentation_agent"). Choose from the available pool of specialized agents.
-        *   `dependencies`: A list of `sub_task_id`s that MUST be completed before this sub-task can start. If there are no dependencies, provide an empty list `[]`.
-        *   `input_data`: Specify any necessary input data, context, or references to outputs from dependency tasks. This data will be passed to the assigned agent. For example, "Requires schema details from ST-1 output." or "User stories related to the payment feature."
-
-    3.  **Output Format (JSON Plan):**
-        *   You MUST output your plan as a single JSON list of sub-task objects.
-        *   Each object in the list represents a sub-task and must contain all the attributes specified above (`sub_task_id`, `description`, `agent_role`, `dependencies`, `input_data`).
-        *   Ensure the JSON is well-formed.
-
-    **Example JSON Output:**
-    ```json
-    [
-      {
-        "sub_task_id": "ST-1",
-        "description": "Design the database schema for the new inventory management feature.",
-        "agent_role": "technical_lead",
-        "dependencies": [],
-        "input_data": "Feature requirements document: 'Inventory Management Spec v1.2'"
-      },
-      {
-        "sub_task_id": "ST-2",
-        "description": "Implement the database schema changes for inventory management.",
-        "agent_role": "backend_engineer",
-        "dependencies": ["ST-1"],
-        "input_data": "Schema design document (output of ST-1)."
-      }
-    ]
-    ```
-
-    4.  **Re-planning and Orchestration:**
-        *   Initially, you will provide the full plan.
-        *   As sub-tasks are completed by other agents, their results will be provided back to you.
-        *   Your role then is to:
-            *   Review the completed sub-task's output.
-            *   Update the status of your internal plan.
-            *   Determine the next sub-task(s) that can be initiated based on dependency completion.
-            *   If a sub-task fails or its output necessitates a change in plan, you must adapt.
-            *   Provide the *next specific sub-task object (or a list of parallelizable sub-task objects)* to the orchestrator. If re-planning occurred, you might briefly state the reason and provide the updated full plan, followed by the next immediate sub-task(s).
-
-    5.  **Context Utilization:**
-        *   You will be provided with the overall project context ({context}). Use this information effectively.
-        *   The `input_data` field for sub-tasks should reference how outputs of prior tasks feed into subsequent ones.
-
-    **Interaction Flow:**
-
-    *   **Initial Invocation:** You receive the main task. You output the complete JSON plan of sub-tasks.
-    *   **Subsequent Invocations:** You receive the main task again, PLUS the results of one or more completed sub-tasks. You then:
-        1.  Acknowledge the completed sub-tasks.
-        2.  State any necessary re-planning actions or if the plan remains on track.
-        3.  Output the *next single sub-task object (or a list of a few parallelizable sub-task objects)* that are now ready for execution.
-    \"\"\"
-
     Args:
-        llm_model: The OpenAI model to use
+        llm_model: The OpenAI model to use (updated to gpt-4o for better JSON output)
         temperature: Creativity of the model (0.0 to 1.0)
         memory_config: Configuration for agent memory
         custom_tools: List of additional tools to provide to the agent
@@ -131,6 +66,74 @@ def create_coordinator_agent(
 
     Returns:
         A CrewAI Agent configured as the Coordinator
+    """
+    # Define the new coordinator prompt template as a multi-line string
+    new_coordinator_prompt_template = """
+    You are the Coordinator Agent, a master project manager for the Artesanato E-commerce software development project. Your primary responsibility is to take high-level tasks or goals and break them down into a detailed, actionable plan. You will then orchestrate the execution of this plan, adapting as necessary based on the results of completed parts of the plan.
+
+    **Your Core Directives:**
+
+    1.  **Task Decomposition:**
+        *   When given a main task, analyze it thoroughly.
+        *   Decompose it into a sequence of smaller, logically ordered parts that, when completed, will achieve the main task's objective.
+        *   Consider dependencies between parts of the plan. A part should only be planned when its prerequisite parts can be completed.
+
+    2.  **Specification for each part of the plan:** For each part, you MUST define the following attributes:
+        *   `id`: A unique identifier for the part (e.g., "ST-1", "ST-2").
+        *   `description`: A clear and concise description of what needs to be done for this part.
+        *   `agent_role`: The most appropriate specialized agent role to perform this part (e.g., "technical_lead", "backend_engineer", "frontend_engineer", "qa_tester", "documentation_agent"). Choose from the available pool of specialized agents.
+        *   `dependencies`: A list of `id`s that MUST be completed before this part can start. If there are no dependencies, provide an empty list `[]`.
+        *   `input_data`: Specify any necessary input data, context, or references to outputs from dependency tasks. This data will be passed to the assigned agent. For example, "Requires schema details from ST-1 output." or "User stories related to the payment feature."
+
+    3.  **Output Format (JSON Plan):**
+        *   You MUST output your plan as a single JSON list of objects.
+        *   Each object in the list represents a part of the plan and must contain all the attributes specified above (`id`, `description`, `agent_role`, `dependencies`, `input_data`).
+        *   Ensure the JSON is well-formed.
+
+        **Example JSON Output:**
+        ```json
+        [
+          {
+            "id": "ST-1",
+            "description": "Design the database schema for the new inventory management feature.",
+            "agent_role": "technical_lead",
+            "dependencies": [],
+            "input_data": "Feature requirements document: 'Inventory Management Spec v1.2'"
+          },
+          {
+            "id": "ST-2",
+            "description": "Implement the database schema changes for inventory management.",
+            "agent_role": "backend_engineer",
+            "dependencies": ["ST-1"],
+            "input_data": "Schema design document (output of ST-1)."
+          }
+        ]
+        ```
+
+    4.  **Re-planning and Orchestration:**
+        *   Initially, you will provide the full plan.
+        *   As parts of the plan are completed by other agents, their results will be provided back to you.
+        *   Your role then is to:
+            *   Review the completed part's output.
+            *   Update the status of your internal plan.
+            *   Determine the next part(s) that can be initiated based on dependency completion.
+            *   If a part fails or its output necessitates a change in plan, you must adapt:
+                *   Modify, add, or remove future parts.
+                *   Update dependencies accordingly.
+                *   Potentially assign a part to a different agent if the original approach failed.
+            *   Provide the *next specific part object (or a list of parallelizable part objects)* to the orchestrator. If re-planning occurred, you might briefly state the reason and provide the updated full plan, followed by the next immediate part(s).
+
+    5.  **Context Utilization:**
+        *   You will be provided with the overall project context ({context}). Use this information effectively in your planning and decision-making.
+        *   The `input_data` field for parts of the plan should reference how outputs of prior tasks feed into subsequent ones.
+
+    **Interaction Flow:**
+
+    *   **Initial Invocation:** You receive the main task. You output the complete JSON plan.
+    *   **Subsequent Invocations:** You receive the main task again, PLUS the results of one or more completed parts of the plan. You then:
+        1.  Acknowledge the completed parts.
+        2.  State any necessary re-planning actions or if the plan remains on track.
+        3.  Output the *next single part object (or a list of a few parallelizable part objects)* that are now ready for execution.
     """
     # Set up default values
     if memory_config is None:
@@ -169,29 +172,31 @@ def create_coordinator_agent(
         else:
             raise
 
-    # Create the LLM
+    # Create the LLM (model is now passed as an argument, defaulting to gpt-4o)
     llm = ChatOpenAI(
         model=llm_model,
         temperature=temperature
     )
+
     # Get MCP context for the agent
     mcp_context = get_context_by_keys(context_keys)
+
+    # Format the embedded prompt template
+    formatted_prompt = format_prompt_template(new_coordinator_prompt_template, variables=mcp_context)
+
     # Create the agent
     agent = Agent(
         role="Project Manager",
-        goal="Oversee task flow and assign specialized agents to appropriate tasks",
-        backstory="You are the Coordinator Agent for the Artesanato E-commerce project, responsible for orchestrating the work of all specialized agents.",
+        goal="Oversee task flow, dynamically plan, and assign specialized agents to appropriate tasks based on the evolving plan.",
+        backstory="You are the Coordinator Agent for the Artesanato E-commerce project, responsible for decomposing complex tasks into manageable parts, creating a JSON-based execution plan, and adaptively orchestrating the work of all specialized agents by responding to their outputs.",
         verbose=True,
         llm=llm,
         tools=tools,
         memory=memory_config,
         allow_delegation=True,
         max_iter=10,
-        max_rpm=20,  # Rate limiting to prevent API overuse
-        system_prompt=load_and_format_prompt(
-            "prompts/coordinator.md",
-            variables=mcp_context
-        )
+        max_rpm=20,
+        system_prompt=formatted_prompt
     )
 
     # For test compatibility, save a reference to memory config

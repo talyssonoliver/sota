@@ -117,8 +117,8 @@ class LangChainMockFixture:
         def apply(self):
             """Apply all patches and return self as context manager"""
         patch_targets = {
-            'ChatOpenAI': 'tools.memory_engine.ChatOpenAI',
-            'Chroma': 'tools.memory_engine.Chroma',
+            'ChatOpenAI': 'tools.memory.engine.ChatOpenAI',
+            'Chroma': 'tools.memory.engine.Chroma',
             'RetrievalQA': 'langchain.chains.RetrievalQA',
             'ConversationalRetrievalChain': 'langchain.chains.ConversationalRetrievalChain',
             'from_chain_type': 'langchain.chains.RetrievalQA.from_chain_type',

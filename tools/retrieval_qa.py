@@ -1,15 +1,16 @@
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 
-from langchain.chains.conversational_retrieval.base import \
-    ConversationalRetrievalChain
-from langchain.chains.retrieval_qa.base import RetrievalQA
+from langchain.chains import ConversationalRetrievalChain, RetrievalQA
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_openai import ChatOpenAI
 
-from .memory_engine import memory
+from .memory import get_memory_instance
 
 logger = logging.getLogger(__name__)
+
+# Get memory instance
+memory = get_memory_instance()
 
 
 def get_answer(question: str,

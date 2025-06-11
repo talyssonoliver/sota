@@ -10,8 +10,8 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from tests.mock_openai_embeddings import create_mock_openai_embeddings
-from tools.memory_engine import (ChunkingConfig, MemoryEngine,
-                                 MemoryEngineConfig)
+from tools.memory.engine import MemoryEngine
+from tools.memory.config import MemoryEngineConfig, ChunkingConfig
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -26,7 +26,7 @@ class TestMemoryEngineCore(unittest.TestCase):
 
         # Patch OpenAIEmbeddings to use our mock
         self.patcher = patch(
-            'tools.memory_engine.OpenAIEmbeddings', self.mock_embeddings)
+            'tools.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
         self.patcher.start()
 
         # Create test config with small chunks for testing
@@ -192,7 +192,7 @@ class TestMemoryEngineIntegration(unittest.TestCase):
         # Mock embeddings
         self.mock_embeddings, self.mock_embeddings_instance = create_mock_openai_embeddings()
         self.patcher = patch(
-            'tools.memory_engine.OpenAIEmbeddings', self.mock_embeddings)
+            'tools.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
         self.patcher.start()
 
     def tearDown(self):
@@ -201,7 +201,8 @@ class TestMemoryEngineIntegration(unittest.TestCase):
 
     def test_helper_functions_integration(self):
         """Test that helper functions work with memory engine"""
-        from tools.memory_engine import get_relevant_context, initialize_memory
+        from tools.memory import get_relevant_context
+        from tools.memory.factory import initialize_memory
 
         # Test initialize_memory function
         memory_instance = initialize_memory()
@@ -243,7 +244,7 @@ class TestMemoryEngineSecurity(unittest.TestCase):
         """Set up test environment"""
         self.mock_embeddings, self.mock_embeddings_instance = create_mock_openai_embeddings()
         self.patcher = patch(
-            'tools.memory_engine.OpenAIEmbeddings', self.mock_embeddings)
+            'tools.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
         self.patcher.start()
         # Test config with security enabled
         test_config = MemoryEngineConfig(
