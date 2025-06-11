@@ -15,6 +15,10 @@ This directory contains comprehensive documentation for the AI Agent System, org
 - **[Retrieval QA Usage](retrieval_qa_usage.md)** - Question-answering and retrieval patterns
 - **[Knowledge Curation Workflow](knowledge_curation_workflow.md)** - Knowledge management processes
 - **[Graph Visualization](graph_visualization.md)** - Workflow visualization and analysis
+- **[Test Structure](test_structure.md)** - Layout and fixtures for the test suite
+- **[Utility Functions Catalog](utilities_catalog.md)** - Overview of common helpers
+- **[Configuration Deep Dive](configuration_deep_dive.md)** - Environment variable precedence and examples
+- **[Automated Symbol Extraction](automated_symbol_extraction.md)** - Generate minimal docs for remaining modules
 
 ## 🚀 Implementation Phase Documentation
 
