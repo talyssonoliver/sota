@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -e
+
+# Colors
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+YELLOW="\033[0;33m"
+BLUE="\033[0;34m"
+NC="\033[0m"
+
+if [[ "$SKIP_PRECOMMIT" == "1" ]]; then
+  echo -e "${YELLOW}Skipping pre-commit checks due to SKIP_PRECOMMIT=1${NC}"
+  exit 0
+fi
+
+# Skip on merge commits
+if git rev-parse -q --verify MERGE_HEAD >/dev/null; then
+  echo -e "${YELLOW}Merge commit detected - skipping full checks${NC}"
+  exit 0
+fi
+
+changed_py_files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.py$' || true)
+if [[ -z "$changed_py_files" ]]; then
+  echo -e "${GREEN}No Python files changed. Skipping checks.${NC}"
+  exit 0
+fi
+
+command_exists() { command -v "$1" >/dev/null 2>&1; }
+
+status=0
+
+if command_exists ruff; then
+  echo -e "${BLUE}Running ruff...${NC}"
+  ruff --fix $changed_py_files || status=1
+else
+  echo -e "${YELLOW}ruff not installed, skipping${NC}"
+fi
+
+if command_exists isort; then
+  echo -e "${BLUE}Checking import sorting...${NC}"
+  isort --check $changed_py_files || status=1
+else
+  echo -e "${YELLOW}isort not installed, skipping${NC}"
+fi
+
+crit_files=$(echo "$changed_py_files" | grep -E 'agents|orchestration' || true)
+if [[ -n "$crit_files" ]] && command_exists mypy; then
+  echo -e "${BLUE}Running mypy on critical modules...${NC}"
+  mypy $crit_files || status=1
+fi
+
+changed_tests=$(echo "$changed_py_files" | grep '^tests/' || true)
+if [[ -n "$changed_tests" ]] && command_exists pytest; then
+  echo -e "${BLUE}Running affected tests...${NC}"
+  pytest -q $changed_tests || status=1
+else
+  echo -e "${YELLOW}No tests changed or pytest missing - skipping tests${NC}"
+fi
+
+if [[ $status -ne 0 ]]; then
+  echo -e "${RED}Pre-commit checks failed.${NC}"
+else
+  echo -e "${GREEN}Pre-commit checks passed.${NC}"
+fi
+exit $status

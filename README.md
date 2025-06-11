@@ -407,3 +407,15 @@ Create your feature branch (git checkout -b feature/amazing-feature)
 Commit your changes using the conventional format (git commit -m 'feat: add amazing feature')
 Push to the branch (git push origin feature/amazing-feature)
 Open a Pull Request
+## Development Shortcuts
+Use the Makefile for common tasks. Example:
+```bash
+make setup
+make dev
+```
+Scripts under scripts/ directory help manage the Docker environment.
+
+Copy git hooks after cloning:
+```bash
+cp githooks/* .git/hooks/
+```

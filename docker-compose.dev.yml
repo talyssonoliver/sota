@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  sota-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: bash -c "pip install -e . && watchmedo auto-restart --patterns='*.py' -- python main.py"
+    ports:
+      - "8000:8000"
+    depends_on:
+      chroma:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  chroma:
+    image: chromadb/chroma:latest
+    ports:
+      - "8001:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  docs:
+    image: python:3.9
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bash -c "pip install pdoc && pdoc agents -o docs/api && python -m http.server 9000 -d docs/api"
+    ports:
+      - "9000:9000"
+    depends_on:
+      - sota-app
+
+networks:
+  default:
+    name: sota-net
