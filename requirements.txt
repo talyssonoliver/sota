@@ -27,6 +27,7 @@ python-frontmatter==1.1.0
 # Testing & validation
 pytest==8.3.5 
 pytest-cov==6.1.1
+pytest-watch==4.2.0
 
 # Development utilities
 black==25.1.0 

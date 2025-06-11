@@ -1,0 +1,16 @@
+{
+  "tasks": [
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "python -m tests.run_tests --quick",
+      "group": "test"
+    },
+    {
+      "label": "Lint and Format",
+      "type": "shell",
+      "command": "python tools/run_code_quality.py",
+      "group": "build"
+    }
+  ]
+}
