@@ -1,0 +1,24 @@
+"""{{ description }}"""
+
+from crewai import Agent
+from langchain_openai import ChatOpenAI
+from prompts.utils import load_and_format_prompt
+
+
+def create_{{ name_snake }}_agent(
+    llm_model: str = "gpt-4-turbo",
+    temperature: float = 0.2,
+) -> Agent:
+    """Create {{ agent_name }} agent."""
+    llm = ChatOpenAI(model=llm_model, temperature=temperature)
+    system_prompt = load_and_format_prompt("prompts/{{ name_snake }}.md")
+    return Agent(
+        role="{{ agent_name }}",
+        goal="{{ description }}",
+        backstory="{{ description }}",
+        llm=llm,
+        verbose=True,
+        allow_delegation=False,
+        max_iter=5,
+        system_prompt=system_prompt,
+    )
