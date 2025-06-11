@@ -42,7 +42,11 @@
       "Bash(rg:*)",
       "Bash(PYTHONPATH=. python3 tests/run_tests.py --quick)",
       "Bash(PYTHONPATH=.:*)",
-      "WebFetch(domain:python.langchain.com)"
+      "WebFetch(domain:python.langchain.com)",
+      "WebFetch(domain:docs.litellm.ai)",
+      "WebFetch(domain:docs.crewai.com)",
+      "WebFetch(domain:pypi.org)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": []
   }

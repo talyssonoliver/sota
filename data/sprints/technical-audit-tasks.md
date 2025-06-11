@@ -81,7 +81,7 @@
 ### 9. Memory Subsystem Architecture Review
 - **Task**: Analyze the architecture of the memory and prompt management systems
 - **Actions**:
-  - Review ChromaDB integration in `tools/memory_engine.py`
+  - Review ChromaDB integration in `tools/memory/engine.py`
   - Assess how agents access and store memory
   - Examine prompt template loading and management
   - Verify abstraction of memory operations from agent logic

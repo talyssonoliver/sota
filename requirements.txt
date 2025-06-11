@@ -7,6 +7,7 @@ langchain_text_splitters
 langgraph==0.4.1 
 
 crewai==0.118.0 
+litellm==1.67.1
 chromadb
 openai==1.77.0 
 tiktoken==0.8.0 

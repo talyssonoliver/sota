@@ -739,6 +739,19 @@ class FeedbackSystem:
                 "status": "error",
                 "error": str(e)
             }
+    
+    # Delegation methods for direct access to storage methods
+    def get_feedback_by_task(self, task_id: str) -> List[FeedbackEntry]:
+        """Get all feedback for a specific task"""
+        return self.storage.get_feedback_by_task(task_id)
+    
+    def get_feedback_by_period(self, period: str) -> List[FeedbackEntry]:
+        """Get feedback from a specific time period"""
+        return self.storage.get_feedback_by_period(period)
+    
+    def get_feedback_by_reviewer(self, reviewer: str) -> List[FeedbackEntry]:
+        """Get all feedback from a specific reviewer"""
+        return self.storage.get_feedback_by_reviewer(reviewer)
 
 
 # Global feedback system instance

@@ -98,3 +98,6 @@ memory_engine_audit.log
 .claude/settings.local.json
 claude-code/
 CLAUDE.md
+
+# Memory engine files
+.memory_engine_key
