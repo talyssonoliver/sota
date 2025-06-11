@@ -247,6 +247,12 @@ python -m tests.run_tests --full
 python -m tests.run_tests --help
 ```
 
+### Test Watch Mode
+Run tests automatically when files change:
+```bash
+./scripts/test-watch.sh
+```
+
 ### Test Components
 
 - **run_tests.py**: Unified test runner with multiple test modes
