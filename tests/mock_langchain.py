@@ -27,6 +27,8 @@ def setup_langchain_mocks():
     sys.modules["langchain_core"] = types.ModuleType("langchain_core")
     sys.modules["langchain_core.runnables"] = types.ModuleType(
         "langchain_core.runnables")
+    sys.modules["langchain_core.tools"] = types.ModuleType(
+        "langchain_core.tools")
 
     # Create mock classes
     class MockChroma:
@@ -68,6 +70,17 @@ def setup_langchain_mocks():
     class MockChatOpenAI:
         def __init__(self, temperature=0):
             self.temperature = temperature
+
+    class MockBaseTool:
+        """Minimal BaseTool mock used for agent tests."""
+        name: str = "mock_tool"
+        description: str = "Mock tool for testing"
+
+        def _run(self, query: str) -> str:
+            return f"Mock run for: {query}"
+
+        def _arun(self, query: str) -> str:
+            return self._run(query)
 
     class MockTextLoader:
         def __init__(self, file_path):
@@ -139,6 +152,7 @@ def setup_langchain_mocks():
     sys.modules["langchain.chains"].ConversationalRetrievalChain = MockConversationalRetrievalChain
     sys.modules["langchain_core.runnables"].RunnableParallel = MockRunnable
     sys.modules["langchain_core.runnables"].RunnablePassthrough = MockRunnable
+    sys.modules["langchain_core.tools"].BaseTool = MockBaseTool
 
 
 if __name__ == "__main__":
