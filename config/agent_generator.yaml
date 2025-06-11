@@ -1,0 +1,4 @@
+template_dir: templates/agent
+output_dir: agents
+test_dir: tests/agents
+doc_dir: docs
