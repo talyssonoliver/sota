@@ -418,4 +418,5 @@ Scripts under scripts/ directory help manage the Docker environment.
 Copy git hooks after cloning:
 ```bash
 cp githooks/* .git/hooks/
+chmod +x githooks/* scripts/*.sh
 ```
