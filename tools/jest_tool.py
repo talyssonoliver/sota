@@ -392,9 +392,13 @@ describe('{util_name}', () => {{
                     data={
                         "component": component_name,
                         "test_files": test_files,
-                        "message": f"Found {
-                            len(test_files)} potential test locations for {
-                            component_name or 'the project'}."}))
+                        "message": (
+                            f"Found {len(test_files)} potential test locations for "
+                            f"{component_name or 'the project'}."
+                        ),
+                    }
+                )
+            )
         except Exception as e:
             return json.dumps(self.handle_error(e, "JestTool._list_tests"))
 
@@ -459,8 +463,12 @@ describe('{util_name}', () => {{
             return json.dumps(
                 self.format_response(
                     data={
-                        "message": f"Coverage data retrieved for {
-                            path or 'the entire project'}",
-                        "coverage": coverage_data}))
+                        "message": (
+                            f"Coverage data retrieved for {path or 'the entire project'}"
+                        ),
+                        "coverage": coverage_data,
+                    }
+                )
+            )
         except Exception as e:
             return json.dumps(self.handle_error(e, "JestTool._get_coverage"))

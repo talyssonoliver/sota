@@ -195,17 +195,27 @@ class SupabaseTool(ArtesanatoBaseTool):
                     nullable = "NULL" if column.get(
                         'is_nullable') == "YES" else "NOT NULL"
 
+
                     # Add default value if present
-                    default = f" DEFAULT {
-                        column.get('column_default')}" if column.get('column_default') else ""
+                    default = (
+                        f" DEFAULT {column.get('column_default')}"
+                        if column.get('column_default')
+                        else ""
+                    )
+
 
                     # Add identity/serial info
-                    identity = f" {column.get('identity_generation')}" if column.get(
-                        'identity_generation') else ""
+                    identity = (
+                        f" {column.get('identity_generation')}"
+                        if column.get('identity_generation')
+                        else ""
+                    )
 
                     # Format the complete column definition
-                    column_def = f"{
-                        column.get('column_name')}: {data_type} {nullable}{default}{identity}"
+                    column_def = (
+                        f"{column.get('column_name')}: {data_type} "
+                        f"{nullable}{default}{identity}"
+                    )
                     tables[table_name].append(column_def)
 
                 # Extract foreign key constraints
@@ -273,15 +283,16 @@ class SupabaseTool(ArtesanatoBaseTool):
                 """
 
                 pk_response = self.client.rpc(
-                    "exec_sql", {"sql": pk_query}).execute()
+                    "exec_sql", {"sql": pk_query}
+                ).execute()
 
                 # Add primary key annotations
                 if hasattr(pk_response, 'data') and pk_response.data:
                     schema_text += "## Primary Keys\n\n"
                     for pk in pk_response.data:
-                        schema_text += f"- {
-                            pk.get('table_name')}: {
-                            pk.get('column_name')}\n"
+                        schema_text += (
+                            f"- {pk.get('table_name')}: {pk.get('column_name')}\n"
+                        )
 
                 return schema_text
             else:

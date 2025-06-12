@@ -1,0 +1,251 @@
+version: '3.8'
+
+networks:
+  sota-network:
+    driver: bridge
+    name: sota-dev-network
+
+volumes:
+  chroma-data:
+    name: sota-chroma-data
+  redis-data:
+    name: sota-redis-data
+  docs-build:
+    name: sota-docs-build
+  postgres-data:
+    name: sota-postgres-data
+  jupyter-data:
+    name: sota-jupyter-data
+  prometheus-data:
+    name: sota-prometheus-data
+  grafana-data:
+    name: sota-grafana-data
+
+services:
+  sota-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        - PYTHON_VERSION=3.9
+    container_name: sota-app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+      - "5678:5678"
+      - "8888:8888"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=1
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+      - CHROMA_HOST=chroma
+      - CHROMA_PORT=8001
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-false}
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY:-}
+    volumes:
+      - .:/app
+      - /app/__pycache__
+      - /app/.venv
+      - /app/.git
+      - /app/node_modules
+      - ./config:/app/config
+      - ./scripts:/app/scripts:ro
+    depends_on:
+      chroma:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - sota-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    command: >
+      sh -c "
+        echo '🚀 Starting SOTA development server...' &&
+        python -m debugpy --listen 0.0.0.0:5678 --wait-for-client app.py --dev
+      "
+
+  chroma:
+    image: chromadb/chroma:0.4.22
+    container_name: sota-chroma
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    environment:
+      - CHROMA_SERVER_HOST=0.0.0.0
+      - CHROMA_SERVER_PORT=8000
+      - CHROMA_SERVER_CORS_ALLOW_ORIGINS=["*"]
+      - PERSIST_DIRECTORY=/chroma/chroma-data
+    volumes:
+      - chroma-data:/chroma/chroma-data
+    networks:
+      - sota-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    container_name: sota-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-}
+    volumes:
+      - redis-data:/data
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - sota-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+    command: >
+      sh -c "
+        echo '🔴 Starting Redis server...' &&
+        redis-server /usr/local/etc/redis/redis.conf --appendonly yes
+      "
+
+  docs:
+    build:
+      context: .
+      dockerfile: Dockerfile.docs
+    container_name: sota-docs
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - DOCS_PORT=8080
+      - LIVE_RELOAD=1
+    volumes:
+      - .:/app:ro
+      - docs-build:/app/docs/_build
+    networks:
+      - sota-network
+    profiles:
+      - docs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: >
+      sh -c "
+        echo '📚 Starting documentation server...' &&
+        cd /app/docs &&
+        sphinx-autobuild . _build/html --host 0.0.0.0 --port 8080 --ignore _build
+      "
+
+  adminer:
+    image: adminer:4
+    container_name: sota-adminer
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=postgres
+    networks:
+      - sota-network
+    profiles:
+      - admin
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: sota-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=sota_dev
+      - POSTGRES_USER=sota_user
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-sota_dev_pass}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./scripts/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - sota-network
+    profiles:
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sota_user -d sota_dev"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile.jupyter
+    container_name: sota-jupyter
+    restart: unless-stopped
+    ports:
+      - "8889:8888"
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN:-sota-dev-token}
+    volumes:
+      - .:/home/jovyan/work
+      - jupyter-data:/home/jovyan/.jupyter
+    networks:
+      - sota-network
+    profiles:
+      - jupyter
+    command: >
+      start-notebook.sh
+      --NotebookApp.token='${JUPYTER_TOKEN:-sota-dev-token}'
+      --NotebookApp.password=''
+      --NotebookApp.allow_root=True
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: sota-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    networks:
+      - sota-network
+    profiles:
+      - monitoring
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: sota-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+    networks:
+      - sota-network
+    profiles:
+      - monitoring
+    depends_on:
+      - prometheus
+

@@ -31,3 +31,8 @@ addopts = "-ra -q"
 testpaths = [
     "tests",
 ]
+
+[tool.ruff]
+line-length = 88
+
+[tool.mypy]\npython_version = "3.9"\nignore_missing_imports = true\n
