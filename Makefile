@@ -39,8 +39,8 @@ $(call check_command,git)
 @$(VENV_DIR)/bin/pip install --upgrade pip setuptools wheel
 @$(VENV_DIR)/bin/pip install -r requirements.txt
 @$(VENV_DIR)/bin/pip install -r requirements-dev.txt 2>/dev/null || echo "$(YELLOW)No dev requirements$(NC)"
-@cp scripts/hooks/pre-commit .git/hooks/pre-commit 2>/dev/null || true
-@cp scripts/hooks/post-commit .git/hooks/post-commit 2>/dev/null || true
+@cp githooks/pre-commit .git/hooks/pre-commit 2>/dev/null || true
+@cp githooks/post-commit .git/hooks/post-commit 2>/dev/null || true
 @chmod +x .git/hooks/pre-commit .git/hooks/post-commit 2>/dev/null || true
 @$(DOCKER_COMPOSE) build --parallel 2>/dev/null || echo "$(YELLOW)Docker build skipped$(NC)"
 @echo "$(GREEN)Setup completed! Run 'make dev'$(NC)"

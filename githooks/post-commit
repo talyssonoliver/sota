@@ -1,32 +1,128 @@
-#!/usr/bin/env bash
+#!/bin/bash
+# SOTA Project Post-commit Hook
+# Location: .git/hooks/post-commit
+# Make executable: chmod +x .git/hooks/post-commit
+
 set -e
 
-LOG_FILE=".git/hooks/post-commit.log"
-BACKUP_DIR="backups"
+# Colors for output
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+# Configuration
+BACKUP_DIR=".sota_backups"
+MAX_BACKUPS=7
+LOG_FILE=".sota_automation.log"
+
+# Function to log with timestamp
+log_action() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> $LOG_FILE
+}
+
+# Function to run in background to avoid blocking git
+run_async() {
+    local cmd="$1"
+    local description="$2"
+
+    {
+        echo -e "${BLUE}🔄 $description...${NC}"
+        eval "$cmd" && \
+        echo -e "${GREEN}✅ $description completed${NC}" || \
+        echo -e "${YELLOW}⚠️  $description failed${NC}"
+    } &
+}
+
+echo -e "${BLUE}🚀 SOTA Post-commit Automation Starting...${NC}"
+log_action "Post-commit automation started"
+
+# Get list of changed files in this commit
+CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git ls-files)
+PYTHON_FILES=$(echo "$CHANGED_FILES" | grep '\.py$' || true)
+DOC_FILES=$(echo "$CHANGED_FILES" | grep -E '\.(md|rst|txt)$' || true)
+
+echo -e "${BLUE}📊 Changed files: $(echo $CHANGED_FILES | wc -w)${NC}"
+
+# 1. Smart Documentation Update
+if [ ! -z "$PYTHON_FILES" ] || [ ! -z "$DOC_FILES" ]; then
+    echo -e "\n${YELLOW}📚 Smart Documentation Update${NC}"
+
+    run_async "update_docs_smart" "Documentation update"
+    run_async "update_readme_stats" "README statistics update"
+fi
+
+# 2. Intelligent Backup System
+echo -e "\n${YELLOW}💾 Intelligent Backup System${NC}"
 mkdir -p "$BACKUP_DIR"
+BACKUP_NAME="backup_$(date '+%Y%m%d_%H%M%S')_$(git rev-parse --short HEAD).tar.gz"
+BACKUP_PATH="$BACKUP_DIR/$BACKUP_NAME"
+run_async "create_incremental_backup" "Incremental backup creation"
 
-exec > >(tee -a "$LOG_FILE") 2>&1
+# 3. Cleanup old backups (keep only last 7)
+run_async "cleanup_old_backups" "Backup cleanup"
 
-echo "[post-commit] $(date) - starting automation"
+# 4. Generate commit summary
+COMMIT_HASH=$(git rev-parse HEAD)
+COMMIT_MSG=$(git log --format=%B -n 1 HEAD)
+COMMIT_AUTHOR=$(git log --format=%an -n 1 HEAD)
 
-# Run asynchronously to avoid delaying commit
-(
-    changed_py=$(git diff-tree -r --name-only --no-commit-id HEAD~1 HEAD | grep -E '\.py$' || true)
-    if [[ -n "$changed_py" ]]; then
-        if command -v pdoc >/dev/null 2>&1; then
-            echo "Generating API docs for changed modules..."
-            pdoc $changed_py --output-dir docs/api >/dev/null || echo "pdoc failed"
-        fi
-        if [ -f README.md ]; then
-            sed -i '/^Last Updated:/d' README.md
-            echo "Last Updated: $(date -u)" >> README.md
+{
+    echo "🔄 Post-commit Summary"
+    echo "Hash: $COMMIT_HASH"
+    echo "Author: $COMMIT_AUTHOR"
+    echo "Files: $(echo $CHANGED_FILES | wc -w)"
+    echo "Python: $(echo $PYTHON_FILES | wc -w)"
+    echo "Docs: $(echo $DOC_FILES | wc -w)"
+    echo "Message: $COMMIT_MSG"
+} >> $LOG_FILE
+
+echo -e "${GREEN}🎉 Post-commit automation initiated${NC}"
+echo -e "${BLUE}📝 Check $LOG_FILE for detailed logs${NC}"
+
+# Background functions
+update_docs_smart() {
+    CRITICAL_CHANGED=$(echo "$PYTHON_FILES" | grep -E "^(agents|orchestration|utils)/" || true)
+
+    if [ ! -z "$CRITICAL_CHANGED" ] && [ -d "docs/" ]; then
+        if command -v sphinx-build &> /dev/null; then
+            cd docs/ && make html 2>/dev/null && cd ..
+            log_action "Documentation rebuilt for critical modules: $CRITICAL_CHANGED"
         fi
     fi
+}
 
-    # Backup repo
-    ts=$(date +%Y%m%d_%H%M%S)
-    tar -czf "$BACKUP_DIR/sota_$ts.tar.gz" . >/dev/null 2>&1
-    (ls -1t $BACKUP_DIR/sota_*.tar.gz | tail -n +8 | xargs -r rm --) || true
+update_readme_stats() {
+    if [ -f "README.md" ]; then
+        TOTAL_LINES=$(find . -name "*.py" -not -path "./.venv/*" -not -path "./.*" | xargs wc -l | tail -1 | awk '{print $1}')
+        TOTAL_FILES=$(find . -name "*.py" -not -path "./.venv/*" -not -path "./.*" | wc -l)
+        log_action "README stats updated: $TOTAL_FILES files, $TOTAL_LINES lines"
+    fi
+}
 
-    echo "[post-commit] automation finished"
-) &
+create_incremental_backup() {
+    tar -czf "$BACKUP_PATH" \
+        --exclude='.git' \
+        --exclude='.venv' \
+        --exclude='__pycache__' \
+        --exclude='*.pyc' \
+        --exclude='.sota_backups' \
+        --exclude='node_modules' \
+        . 2>/dev/null
+    log_action "Backup created: $BACKUP_NAME"
+}
+
+cleanup_old_backups() {
+    ls -1t "$BACKUP_DIR"/backup_*.tar.gz 2>/dev/null | tail -n +$((MAX_BACKUPS + 1)) | xargs rm -f 2>/dev/null || true
+    log_action "Old backups cleaned up (keeping last $MAX_BACKUPS)"
+}
+
+export -f update_docs_smart
+export -f update_readme_stats
+export -f create_incremental_backup
+export -f cleanup_old_backups
+export -f log_action
+
+sleep 1
+
+exit 0
