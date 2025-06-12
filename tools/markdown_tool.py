@@ -75,8 +75,10 @@ class MarkdownTool(ArtesanatoBaseTool):
         except ValidationError as ve:
             return json.dumps(
                 self.handle_error(
-                    ve, f"{
-                        self.name}._run.input_validation"))
+                    ve,
+                    f"{self.name}._run.input_validation",
+                )
+            )
         except Exception as e:
             return json.dumps(self.handle_error(e, f"{self.name}._run"))
 

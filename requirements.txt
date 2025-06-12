@@ -32,7 +32,7 @@ pytest-xdist==3.7.0
 # Tools for code quality
 ruff==0.4.4
 mypy==1.10.0
-langsmith==0.1.0
+langsmith
 cryptography==42.0.5
 
 # Development utilities
