@@ -29,3 +29,4 @@ except ImportError as e:
     print(f"Warning: Could not import from new agents location: {e}")
     # Fallback to empty module
     pass
+from .testagent import create_testagent_agent

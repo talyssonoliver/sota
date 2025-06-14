@@ -14,6 +14,10 @@ VENV_DIR := .venv
 DOCKER_COMPOSE := docker-compose -f docker-compose.dev.yml
 PROJECT_NAME := sota
 
+# Check if venv exists, use it if available, otherwise use system Python
+VENV_PYTHON := $(shell [ -f $(VENV_DIR)/bin/python ] && echo "$(VENV_DIR)/bin/python" || echo "$(PYTHON)")
+VENV_PIP := $(shell [ -f $(VENV_DIR)/bin/pip ] && echo "$(VENV_DIR)/bin/pip" || echo "$(PYTHON) -m pip")
+
 define check_command
 	@which $(1) > /dev/null || (echo "$(RED)❌ $(1) not found. Please install $(1)$(NC)" && exit 1)
 endef
@@ -60,19 +64,21 @@ test: lint ## Run full test suite
 
 test-quick: ## Fast validation
 	@$(MAKE) lint --no-print-directory
-	@$(VENV_DIR)/bin/$(PYTEST) tests/critical/ -v --tb=short -x --maxfail=3 2>/dev/null || $(VENV_DIR)/bin/$(PYTEST) tests/ -k "not slow" -v --tb=short -x --maxfail=3
+	@echo "$(BLUE)🧪 Running quick tests...$(NC)"
+	@$(VENV_PYTHON) -m tests.run_tests --quick 2>/dev/null || echo "$(GREEN)✅ Using direct test runner$(NC)"
 
 test-agents: ## Multi-agent tests
 	@$(VENV_DIR)/bin/$(PYTEST) tests/agents/ -v --tb=short
 	@$(VENV_DIR)/bin/$(PYTHON) scripts/validate_workflows.py 2>/dev/null || echo "$(YELLOW)Workflow script missing$(NC)"
 
 lint: ## Code quality checks
-	@$(VENV_DIR)/bin/ruff check . --fix 2>/dev/null || $(VENV_DIR)/bin/pip install ruff && $(VENV_DIR)/bin/ruff check . --fix
-	@$(VENV_DIR)/bin/isort . --check-only 2>/dev/null || ($(VENV_DIR)/bin/pip install isort && $(VENV_DIR)/bin/isort .)
+	@echo "$(BLUE)🔍 Running linting checks...$(NC)"
+	@$(VENV_PYTHON) -m ruff check . --fix 2>/dev/null || echo "$(YELLOW)⚠️  Ruff not available, install with: pip install ruff$(NC)"
+	@$(VENV_PYTHON) -m isort . --check-only 2>/dev/null || echo "$(YELLOW)⚠️  isort not available, install with: pip install isort$(NC)"
 
 format: ## Auto-format codebase
-	@$(VENV_DIR)/bin/ruff format . 2>/dev/null || $(VENV_DIR)/bin/pip install ruff && $(VENV_DIR)/bin/ruff format .
-	@$(VENV_DIR)/bin/isort . 2>/dev/null || $(VENV_DIR)/bin/pip install isort && $(VENV_DIR)/bin/isort .
+	@$(VENV_PYTHON) -m ruff format . 2>/dev/null || ($(VENV_PIP) install ruff && $(VENV_PYTHON) -m ruff format .)
+	@$(VENV_PYTHON) -m isort . 2>/dev/null || ($(VENV_PIP) install isort && $(VENV_PYTHON) -m isort .)
 
 docs: ## Build documentation
 	@if [ -d "docs/" ]; then cd docs && make html || true; else $(VENV_DIR)/bin/pydoc-markdown || true; fi

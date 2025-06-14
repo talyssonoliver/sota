@@ -70,7 +70,7 @@ if command -v ruff &> /dev/null; then
     echo -e "\n${GREEN}✅ Ruff validation passed${NC}"
 else
     echo -e "\n${YELLOW}⚠️  Ruff not found, installing...${NC}"
-    pip install ruff --quiet || {
+    python3 -m pip install ruff --quiet || {
         echo -e "${RED}❌ Failed to install Ruff${NC}"
         exit 1
     }
@@ -89,7 +89,7 @@ if command -v isort &> /dev/null; then
     echo -e "\n${GREEN}✅ Import sorting validated${NC}"
 else
     echo -e "\n${YELLOW}⚠️  Installing isort...${NC}"
-    pip install isort --quiet
+    python3 -m pip install isort --quiet
 fi
 
 # 3. Type Checking for Critical Modules
