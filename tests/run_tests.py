@@ -17,7 +17,11 @@ from argparse import ArgumentParser
 from datetime import datetime
 from unittest.mock import MagicMock
 
-# Add the parent directory to the path so we can import our modules  
+from tests.mock_environment import setup_mock_environment
+from tests.mock_langchain import setup_langchain_mocks
+from tests.test_utils import TestFeedback, Timer
+
+# Add the parent directory to the path so we can import our modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Apply platform fix first
@@ -26,6 +30,10 @@ try:
     preserve_builtin_platform()
 except ImportError:
     pass
+
+# Apply mock environment setup
+setup_mock_environment()
+setup_langchain_mocks()
 
 # Setup paths for new structure
 from pathlib import Path
@@ -44,12 +52,7 @@ try:
 except ImportError:
     pass
 
-# Import test utilities from new location
-try:
-    from mock_environment import setup_mock_environment
-    setup_mock_environment()
-except ImportError:
-    print("Warning: mock_environment not available")
+# Import test utilities from new location (already set up above)
 
 try:
     from tests.utils.test_utils import FeedbackCollector, Timer
@@ -68,9 +71,7 @@ except ImportError:
         def stop(self): return self
         def elapsed(self): return 0
     
-    def ensure_clean_test_environment():
-        pass
-
+    def ensure_clean_test_environment():        pass
 
 
 def check_dependencies():

@@ -1,0 +1,17 @@
+{
+  "Create SOTA Agent": {
+    "prefix": "sota-agent",
+    "body": [
+      "class ${1:AgentName}Agent(BaseAgent):",
+      "    def __init__(self):",
+      "        super().__init__(",
+      "            name=\"${2:Agent Name}\",",
+      "            description=\"${3:Agent Description}\"",
+      "        )",
+      "",
+      "    def execute_task(self, task: Dict[str, Any]) -> Dict[str, Any]:",
+      "        \"\"\"${4:Task execution logic}\"\"\"",
+      "        ${0:pass}"
+    ]
+  }
+}

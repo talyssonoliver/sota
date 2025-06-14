@@ -1,0 +1,11 @@
+{
+  "configurations": [
+    {
+      "name": "Debug SOTA Main",
+      "type": "python",
+      "request": "launch",
+      "program": "main.py",
+      "env": {"ENVIRONMENT": "development"}
+    }
+  ]
+}

@@ -283,6 +283,12 @@ python -m tests.run_tests --full
 python -m tests.run_tests --help
 ```
 
+### Test Watch Mode
+Run tests automatically when files change:
+```bash
+./scripts/test-watch.sh
+```
+
 ### Test Components
 
 - **run_tests.py**: Unified test runner with multiple test modes
@@ -446,12 +452,20 @@ Open a Pull Request
 ## Development Shortcuts
 Use the Makefile for common tasks. Example:
 ```bash
-make setup
-make dev
+make setup    # Complete environment setup with git hooks
+make dev      # Start development environment with Docker
+make test-quick  # Fast validation (<60s)
 ```
-Scripts under scripts/ directory help manage the Docker environment.
 
-Copy git hooks after cloning:
+### VSCode Development Setup
+The project includes VSCode configuration for optimal development:
+- **Extensions**: Recommended Python, testing, and linting extensions
+- **Settings**: Auto-formatting with black, ruff linting, pytest integration
+- **Debug Config**: Launch configurations for debugging tests and agents
+- **Snippets**: Python code snippets for agent development
+
+### Git Hooks Setup
+Copy git hooks after cloning for automated validation:
 ```bash
 cp githooks/* .git/hooks/
 chmod +x githooks/* scripts/*.sh
