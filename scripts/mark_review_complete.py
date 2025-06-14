@@ -8,9 +8,9 @@ import os
 import sys
 from typing import Optional
 
-from orchestration.states import TaskStatus
-from utils.review import approve_review, reject_review
-from utils.task_loader import update_task_state
+from src.core.workflows.states import TaskStatus
+from src.platform.utils.review import approve_review, reject_review
+from src.platform.utils.task_loader import update_task_state
 
 # Add the parent directory to the path to import project modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

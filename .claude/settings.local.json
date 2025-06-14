@@ -46,7 +46,27 @@
       "WebFetch(domain:docs.litellm.ai)",
       "WebFetch(domain:docs.crewai.com)",
       "WebFetch(domain:pypi.org)",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(diff:*)",
+      "Bash(pip3 list:*)",
+      "Bash(timeout:*)",
+      "Bash(PYTHONPATH=/mnt/c/taly/ai-system python3 -m unittest tests.test_hitl_dashboard_widgets.TestHITLPendingReviewsWidget.test_filtering_capabilities -v)",
+      "Bash(PYTHONPATH=/mnt/c/taly/ai-system timeout 300s python3 -m unittest tests.test_hitl_dashboard_widgets_FIXED -v)",
+      "Bash(PYTHONPATH=/mnt/c/taly/ai-system timeout 300s python3 -m unittest tests.test_hitl_cli_comprehensive_FIXED -v)",
+      "Bash(PYTHONPATH=/mnt/c/taly/ai-system timeout 300s python3 -m unittest tests.test_analytics_FIXED -v)",
+      "Bash(PYTHONPATH=/mnt/c/taly/ai-system timeout 180s python3 -m unittest discover tests/ -p \"test_*.py\" -v 2 > /dev/null)",
+      "Bash(# Move QA and test generation tests to agents\nmv tests/test_enhanced_qa*.py tests/test_qa_*.py tests/test_enhanced_test_generator.py tests/agents/\n\n# Move reporting tests to workflows  \nmv tests/test_*reporting*.py tests/test_generate_briefing*.py tests/workflows/\n\n# Move component patches to components\nmv tests/test_chromadb_patch*.py tests/components/\n\n# Move analytics and business tests to integration\nmv tests/test_analytics.py tests/test_business_endpoints.py tests/integration/\n\necho \"✅ Categorized remaining test files\")",
+      "Bash(# Move remaining workflow and task tests\nmv tests/test_*task*.py tests/test_*lifecycle*.py tests/test_extract_code.py tests/test_register_output.py tests/workflows/\n\n# Move phase-specific tests to integration\nmv tests/test_phase*.py tests/test_step*.py tests/integration/\n\n# Move progress and timeline tests to workflows\nmv tests/test_progress*.py tests/test_timeline*.py tests/test_summarise_task.py tests/workflows/\n\necho \"✅ Moved workflow and phase tests\")",
+      "Bash(# Move workflow execution tests\nmv tests/test_execute_graph_comprehensive.py tests/test_langgraph_workflow.py tests/workflows/\n\n# Move generation tests to components\nmv tests/test_generator.py tests/test_prompt_generation.py tests/components/\n\n# Move validation to components\nmv tests/test_input_validation.py tests/test_updated_retrieval_qa.py tests/components/\n\n# Keep test_environment.py and test_utils.py in root\necho \"✅ Final categorization complete\")",
+      "Bash(touch:*)",
+      "Bash(echo:*)",
+      "Bash(dos2unix:*)",
+      "Bash(sudo apt:*)",
+      "Bash(sudo apt install:*)",
+      "Bash(curl:*)",
+      "Bash(sed:*)",
+      "Bash(make:*)",
+      "Bash(git merge:*)"
     ],
     "deny": []
   }

@@ -14,10 +14,11 @@ from typing import Dict, Any, List
 
 from flask import Blueprint, request, jsonify, make_response
 from orchestration.hitl_engine import HITLPolicyEngine
-from utils.feedback_system import get_feedback_system  # Add feedback system import
+from src.platform.utils.feedback_system import get_feedback_system
+
 
 try:
-    from dashboard.hitl_widgets import HITLDashboardManager
+    from src.interfaces.dashboard.components.hitl_widgets import HITLDashboardManager
     
 except ImportError:    # Fallback if dashboard module is not available
     class HITLDashboardManager:
@@ -1143,8 +1144,7 @@ def batch_approve_checkpoints():
                 results.append({
                     "checkpoint_id": checkpoint_id,
                     "status": "failed",
-                    "error": str(e)
-                })
+                    "error": str(e)                })
         
         return jsonify({
             "success": True,
@@ -1152,6 +1152,7 @@ def batch_approve_checkpoints():
             "successful_count": successful_count,
             "failed_count": failed_count,
             "results": results,
+            "failed_checkpoints": [r["checkpoint_id"] for r in results if r["status"] == "failed"],
             "timestamp": datetime.now().isoformat()
         })
         
@@ -1220,8 +1221,7 @@ def batch_reject_checkpoints():
                 results.append({
                     "checkpoint_id": checkpoint_id,
                     "status": "failed",
-                    "error": str(e)
-                })
+                    "error": str(e)                })
         
         return jsonify({
             "success": True,
@@ -1229,6 +1229,7 @@ def batch_reject_checkpoints():
             "successful_count": successful_count,
             "failed_count": failed_count,
             "results": results,
+            "failed_checkpoints": [r["checkpoint_id"] for r in results if r["status"] == "failed"],
             "timestamp": datetime.now().isoformat()
         })
         

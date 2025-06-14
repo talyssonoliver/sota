@@ -5,7 +5,7 @@ import os
 import re
 import sys
 
-from orchestration.extract_code import CodeExtractor
+from src.core.workflows.extract_code import CodeExtractor
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))

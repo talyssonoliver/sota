@@ -1,3 +1,16 @@
+#!/usr/bin/env python3
+"""
+AI System - Main Entry Point
+
+Updated for new unified architecture with src/ structure.
+"""
+
+import sys
+from pathlib import Path
+
+# Add src to Python path
+sys.path.insert(0, str(Path(__file__).parent / "src"))
+
 """
 AI Agent System - Main Entry Point
 
@@ -26,6 +39,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 
 from dotenv import load_dotenv
+from src.platform.utils.input_validation import validate_command_args, ValidationError
 
 # Configure logging
 logging.basicConfig(
@@ -50,9 +64,9 @@ from langchain.agents import AgentType, initialize_agent
 from langchain_core.tools import Tool
 from langchain_community.chat_models import ChatOpenAI
 
-from graph.flow import build_workflow_graph
-from tools.echo_tool import EchoTool
-from tools.supabase_tool import SupabaseTool
+from src.platform.tools.graph.flow import build_workflow_graph
+from src.platform.tools.echo_tool import EchoTool
+from src.platform.tools.supabase_tool import SupabaseTool
 
 # Load environment variables
 load_dotenv()
@@ -172,7 +186,7 @@ def run_memory_test() -> bool:
         
         # Test memory engine functionality
         try:
-            from tools.memory_engine import MemoryEngine
+            from src.platform.tools.memory_engine import MemoryEngine
             memory = MemoryEngine()
             
             # Test basic context retrieval
@@ -194,7 +208,7 @@ def run_memory_test() -> bool:
         except ImportError:
             # Fallback to legacy memory function if available
             try:
-                from tools.memory import get_memory_instance, get_context_by_keys
+                from src.platform.tools.memory import get_memory_instance, get_context_by_keys
                 memory = get_memory_instance()
                 context = get_context_by_keys(["database", "schema"])
                 
@@ -413,6 +427,14 @@ For more information, see README.md
     )
     
     args = parser.parse_args()
+    
+    # Validate command line arguments
+    try:
+        args = validate_command_args(args)
+    except ValidationError as e:
+        logger.error(f"Invalid command line arguments: {e}")
+        print(f"❌ Error: {e}")
+        sys.exit(1)
     
     if args.quiet:
         logging.getLogger().setLevel(logging.WARNING)

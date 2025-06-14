@@ -19,7 +19,6 @@ def safe_print(text: str):
     try:
         print(text)
     except UnicodeEncodeError:
-        # Strip emoji and unicode characters for Windows console
         import re
         safe_text = re.sub(r'[^\x00-\x7F]+', '', text)
         print(safe_text)

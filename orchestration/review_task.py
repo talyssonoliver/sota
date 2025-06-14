@@ -30,11 +30,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from orchestration.hitl_engine import HITLPolicyEngine, CheckpointStatus, RiskLevel
 from orchestration.hitl_task_metadata import HITLTaskMetadataManager, HITLStatus
-from dashboard.hitl_widgets import HITLDashboardManager
+from src.interfaces.dashboard.components.hitl_widgets import HITLDashboardManager
 from orchestration.states import TaskStatus
 from utils.task_loader import load_task_metadata, update_task_state
 from utils.review import approve_review, reject_review, save_to_review
-from tools.memory import get_memory_instance
+from src.platform.memory import get_memory_instance
 from orchestration.qa_validation import QAValidationEngine
 
 

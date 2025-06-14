@@ -18,8 +18,8 @@ from pythonjsonlogger import jsonlogger
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from orchestration.states import TaskStatus
-from utils.execution_monitor import get_dashboard_logger, get_execution_monitor
+from src.core.workflows.states import TaskStatus
+from src.platform.utils.execution_monitor import get_dashboard_logger, get_execution_monitor
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

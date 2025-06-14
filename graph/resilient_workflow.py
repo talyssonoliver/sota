@@ -13,7 +13,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 from langgraph.graph import Graph, StateGraph
 
 from orchestration.states import TaskStatus
-from utils.task_loader import update_task_state
+from src.platform.utils.task_loader import update_task_state
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

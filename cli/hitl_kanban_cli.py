@@ -15,8 +15,8 @@ from typing import Dict, List, Any
 # Add project root to path
 sys.path.append(str(Path(__file__).parent.parent))
 
-from dashboard.hitl_kanban_board import HITLKanbanBoard
-from dashboard.hitl_widgets import HITLDashboardManager, get_hitl_kanban_data, process_hitl_action
+from src.interfaces.dashboard.components.hitl_kanban_board import HITLKanbanBoard
+from src.interfaces.dashboard.components.hitl_widgets import HITLDashboardManager, get_hitl_kanban_data, process_hitl_action
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel

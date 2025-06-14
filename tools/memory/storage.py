@@ -77,14 +77,16 @@ class TieredStorageManager:
             else:
                 tier = 'cold'
                 storage_path = self.cold_path
-            
-            # Store the data
-            file_path = storage_path / f"{key}.dat"
+              # Store the data
+            # Sanitize key to avoid path issues - replace path separators with underscores
+            safe_key = key.replace(os.sep, '_').replace('/', '_').replace('\\', '_')
+            file_path = storage_path / f"{safe_key}.dat"
             try:
+                # Ensure parent directory exists
+                file_path.parent.mkdir(parents=True, exist_ok=True)
                 with open(file_path, 'wb') as f:
                     f.write(data)
-                
-                # Update metadata
+                  # Update metadata
                 self.storage_metadata[key] = {
                     'tier': tier,
                     'size_bytes': len(data),
@@ -92,6 +94,7 @@ class TieredStorageManager:
                     'last_accessed': current_time.isoformat(),
                     'access_count': 1,
                     'file_path': str(file_path),
+                    'safe_key': safe_key,  # Store safe key for file operations
                     'metadata': metadata or {}
                 }
                 
@@ -186,8 +189,7 @@ class TieredStorageManager:
             target_path = self.hot_path
         else:
             return False  # Already in hot tier
-        
-        # Check storage limits
+          # Check storage limits
         size_mb = meta['size_bytes'] / (1024 * 1024)
         if target_tier == 'hot' and self._get_hot_storage_usage() + size_mb > self.hot_storage_limit_mb:
             return False
@@ -197,8 +199,11 @@ class TieredStorageManager:
         # Move the file
         try:
             old_path = Path(meta['file_path'])
-            new_path = target_path / f"{key}.dat"
+            # Use safe key for new path
+            safe_key = meta.get('safe_key', key.replace(os.sep, '_').replace('/', '_').replace('\\', '_'))
+            new_path = target_path / f"{safe_key}.dat"
             
+            new_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(old_path), str(new_path))
             
             # Update metadata
@@ -231,12 +236,14 @@ class TieredStorageManager:
             target_path = self.cold_path
         else:
             return False  # Already in cold tier
-        
-        # Move the file
+          # Move the file
         try:
             old_path = Path(meta['file_path'])
-            new_path = target_path / f"{key}.dat"
+            # Use safe key for new path
+            safe_key = meta.get('safe_key', key.replace(os.sep, '_').replace('/', '_').replace('\\', '_'))
+            new_path = target_path / f"{safe_key}.dat"
             
+            new_path.parent.mkdir(parents=True, exist_ok=True)
             shutil.move(str(old_path), str(new_path))
             
             # Update metadata

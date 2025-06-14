@@ -16,7 +16,7 @@ import numpy as np
 import yaml
 from matplotlib.colors import LinearSegmentedColormap
 
-from orchestration.states import TaskStatus
+from src.core.workflows.states import TaskStatus
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

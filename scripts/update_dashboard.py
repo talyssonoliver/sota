@@ -17,8 +17,8 @@ from typing import Any, Dict, List, Optional
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from utils.completion_metrics import CompletionMetricsCalculator
-from utils.execution_monitor import DashboardLogger
+from src.platform.utils.completion_metrics import CompletionMetricsCalculator
+from src.platform.utils.execution_monitor import DashboardLogger
 
 
 class DashboardUpdater:

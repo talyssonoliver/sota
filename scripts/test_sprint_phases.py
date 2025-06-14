@@ -74,7 +74,7 @@ def test_phase1_agents():
 
     # Try to import agent modules
     try:
-        from agents.coordinator import create_coordinator_agent
+        from src.core.agents.coordinator import create_coordinator_agent
         logger.info("✓ Successfully imported coordinator agent")
     except ImportError as e:
         logger.error(f"✗ Failed to import coordinator agent: {str(e)}")
@@ -152,14 +152,14 @@ def test_phase2_langgraph():
 
     # Try to import critical modules
     try:
-        from graph.graph_builder import build_workflow_graph
+        from src.platform.tools.graph.graph_builder import build_workflow_graph
         logger.info("✓ Successfully imported build_workflow_graph")
     except ImportError as e:
         logger.error(f"✗ Failed to import build_workflow_graph: {str(e)}")
         success = False
 
     try:
-        from orchestration.enhanced_workflow import EnhancedWorkflowExecutor
+        from src.core.workflows.enhanced_workflow import EnhancedWorkflowExecutor
         logger.info("✓ Successfully imported EnhancedWorkflowExecutor")
     except ImportError as e:
         logger.error(f"✗ Failed to import EnhancedWorkflowExecutor: {str(e)}")

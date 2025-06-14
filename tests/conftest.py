@@ -1,11 +1,92 @@
 import logging
 import os
+import sys
 import tempfile
 import time
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
+
+# ===========================
+# CRITICAL PATH CONFIGURATION
+# ===========================
+
+# CRITICAL: Preserve built-in platform module before any path manipulation
+import platform as builtin_platform
+original_platform_module = builtin_platform
+
+# Add both src/ and tests/ to Python path for proper imports
+root_dir = Path(__file__).parent.parent
+src_dir = root_dir / "src"
+tests_dir = root_dir / "tests"
+
+for path in [str(root_dir), str(src_dir), str(tests_dir)]:
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+# Restore built-in platform module after path setup
+sys.modules['platform'] = original_platform_module
+
+# Install mocks for missing external dependencies
+try:
+    from tests.fixtures.test_imports_helper import setup_test_imports
+    setup_test_imports()
+except ImportError:
+    pass
+
+# ===========================
+# IMPORT PATH MAPPINGS
+# ===========================
+
+# Define import path mappings for backward compatibility
+IMPORT_MAPPINGS = {
+    # Memory system mappings
+    'src.platform.memory.engine': 'src.platform.memory.engines.memory_engine',
+    'tools.memory_engine': 'src.platform.memory.engines.memory_engine',
+    'tools.memory': 'src.platform.memory',
+    
+    # Test utilities mappings
+    'test_utils': 'tests.utils.test_utils',
+    'tests.test_utils': 'tests.utils.test_utils',
+    'tests.test_workflow_helpers': 'tests.utils.workflow_helpers',
+    'tests.components.test_generator': 'tests.components.test_generator',
+    
+    # Platform tools mappings
+    'src.platform.tools.graph': 'src.platform.tools',
+    'src.platform.tools.graph.notifications': 'src.platform.tools.notifications',
+    'tools.github_tool': 'src.platform.tools.github_tool',
+    'tools.supabase_tool': 'src.platform.tools.supabase_tool',
+    
+    # Agent mappings
+    'agents.backend': 'src.core.agents.backend',
+    'agents.frontend': 'src.core.agents.frontend',
+    'agents.qa': 'src.core.agents.qa',
+    'agents.coordinator': 'src.core.agents.coordinator',
+    'agents.factory': 'src.core.agents.factory',
+    
+    # Workflow mappings
+    'orchestration.daily_cycle': 'src.core.workflows.daily_cycle',
+    'orchestration.execute_task': 'src.core.workflows.execute_task',
+    'orchestration.execute_workflow': 'src.core.workflows.execute_workflow',
+    
+    # API mappings
+    'api.hitl_routes': 'src.interfaces.api.hitl_routes',
+    'dashboard.unified_api_server': 'src.interfaces.dashboard.api.unified_api_server',
+    
+    # Legacy mock mappings
+    'mock_schedule': 'tests.fixtures.mocks.mock_schedule',
+    'mock_dotenv': 'tests.fixtures.mocks.mock_dotenv',
+}
+
+def apply_import_mappings():
+    """Apply import path mappings to sys.modules for backward compatibility."""
+    for old_path, new_path in IMPORT_MAPPINGS.items():
+        if new_path in sys.modules and old_path not in sys.modules:
+            sys.modules[old_path] = sys.modules[new_path]
+
+# Apply mappings
+apply_import_mappings()
 
 # ===========================
 # PERFORMANCE OPTIMIZATIONS
@@ -80,6 +161,9 @@ artefacts:
 
         yield
 
+        # CLEANUP PHASE - Ensure no artifacts remain
+        cleanup_test_artifacts(tmp_path)
+        
         # Performance tracking (Phase 3: Optimization)
         duration = time.time() - start_time
         if duration > 5.0:  # Log slow tests
@@ -582,3 +666,191 @@ def pytest_collection_modifyitems(config, items):
         # Auto-mark expensive tests
         if 'expensive' in item.name or should_run_expensive_test():
             item.add_marker(pytest.mark.expensive)
+
+
+# ===========================
+# TEST CLEANUP UTILITIES
+# ===========================
+
+def cleanup_test_artifacts(tmp_path):
+    """Comprehensive cleanup of test artifacts"""
+    import shutil
+    
+    # Clean up known artifact locations
+    cleanup_paths = [
+        "runtime/temp/mock-api-key",
+        "runtime/test_outputs", 
+        "runtime/logs/daily_cycle",
+        "runtime/logs/langgraph",
+        "test_outputs",
+        "outputs/TEST-*",
+        "logs/test_*"
+    ]
+    
+    base_path = Path(__file__).parent.parent  # Project root
+    
+    for cleanup_path in cleanup_paths:
+        full_path = base_path / cleanup_path
+        if full_path.exists():
+            try:
+                if full_path.is_dir():
+                    # Remove temp directories created during tests
+                    for item in full_path.iterdir():
+                        if item.name.startswith(('tmp', 'test_', 'mock_')):
+                            if item.is_dir():
+                                shutil.rmtree(item, ignore_errors=True)
+                            else:
+                                item.unlink(missing_ok=True)
+                else:
+                    # Remove temp files
+                    if any(pattern in full_path.name for pattern in ['tmp', 'test_', 'mock_']):
+                        full_path.unlink(missing_ok=True)
+            except (PermissionError, OSError):
+                # Ignore permission errors during cleanup
+                pass
+
+
+@pytest.fixture
+def safe_temp_dir():
+    """Create a temporary directory that's automatically cleaned up"""
+    import tempfile
+    import shutil
+    
+    temp_dir = tempfile.mkdtemp(prefix="test_safe_")
+    yield Path(temp_dir)
+    
+    # Cleanup
+    try:
+        shutil.rmtree(temp_dir, ignore_errors=True)
+    except (PermissionError, OSError):
+        pass
+
+
+@pytest.fixture
+def isolated_output_dir(tmp_path):
+    """Create an isolated output directory for tests"""
+    output_dir = tmp_path / "test_outputs"
+    output_dir.mkdir(exist_ok=True)
+    
+    # Set environment variable for tests to use
+    import os
+    old_output_dir = os.environ.get("OUTPUT_DIR")
+    os.environ["OUTPUT_DIR"] = str(output_dir)
+    
+    yield output_dir
+    
+    # Restore original environment
+    if old_output_dir:
+        os.environ["OUTPUT_DIR"] = old_output_dir
+    elif "OUTPUT_DIR" in os.environ:
+        del os.environ["OUTPUT_DIR"]
+
+
+@pytest.fixture
+def clean_runtime_dirs():
+    """Ensure runtime directories are clean before and after tests"""
+    base_path = Path(__file__).parent.parent
+    runtime_paths = [
+        base_path / "runtime" / "temp",
+        base_path / "runtime" / "logs" / "daily_cycle", 
+        base_path / "runtime" / "logs" / "langgraph",
+        base_path / "test_outputs"
+    ]
+    
+    # Pre-cleanup
+    for path in runtime_paths:
+        if path.exists():
+            for item in path.iterdir():
+                if item.name.startswith(('tmp', 'test_')):
+                    try:
+                        if item.is_dir():
+                            import shutil
+                            shutil.rmtree(item, ignore_errors=True)
+                        else:
+                            item.unlink(missing_ok=True)
+                    except (PermissionError, OSError):
+                        pass
+    
+    yield
+    
+    # Post-cleanup (same as pre-cleanup)
+    for path in runtime_paths:
+        if path.exists():
+            for item in path.iterdir():
+                if item.name.startswith(('tmp', 'test_')):
+                    try:
+                        if item.is_dir():
+                            import shutil
+                            shutil.rmtree(item, ignore_errors=True)
+                        else:
+                            item.unlink(missing_ok=True)
+                    except (PermissionError, OSError):
+                        pass
+
+
+# ===========================
+# TEST FILE MANAGEMENT
+# ===========================
+
+class SafeTestFileManager:
+    """Context manager for safe test file operations"""
+    
+    def __init__(self, base_dir=None):
+        self.base_dir = Path(base_dir) if base_dir else Path.cwd() / "test_temp"
+        self.created_files = []
+        self.created_dirs = []
+    
+    def __enter__(self):
+        self.base_dir.mkdir(exist_ok=True)
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.cleanup()
+    
+    def create_file(self, filename, content=""):
+        """Create a temporary file that will be cleaned up"""
+        file_path = self.base_dir / filename
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        file_path.write_text(content)
+        self.created_files.append(file_path)
+        return file_path
+    
+    def create_dir(self, dirname):
+        """Create a temporary directory that will be cleaned up"""
+        dir_path = self.base_dir / dirname
+        dir_path.mkdir(parents=True, exist_ok=True)
+        self.created_dirs.append(dir_path)
+        return dir_path
+    
+    def cleanup(self):
+        """Clean up all created files and directories"""
+        import shutil
+        
+        # Remove files first
+        for file_path in self.created_files:
+            try:
+                if file_path.exists():
+                    file_path.unlink()
+            except (PermissionError, OSError):
+                pass
+        
+        # Remove directories
+        for dir_path in self.created_dirs:
+            try:
+                if dir_path.exists():
+                    shutil.rmtree(dir_path, ignore_errors=True)
+            except (PermissionError, OSError):
+                pass
+        
+        # Remove base directory if empty
+        try:
+            if self.base_dir.exists() and not any(self.base_dir.iterdir()):
+                self.base_dir.rmdir()
+        except (PermissionError, OSError):
+            pass
+
+
+@pytest.fixture
+def safe_file_manager(tmp_path):
+    """Provide a safe file manager for tests"""
+    return SafeTestFileManager(tmp_path / "safe_files")

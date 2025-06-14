@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..")))
 try:
     # Try to import from the fixed_runnable_mock module first
-    from tests.fixtures.fixed_runnable_mock import (RunnableChainMock,
+    from fixtures.fixed_runnable_mock import (RunnableChainMock,
                                                     RunnableLLMMock)
 except ImportError:
     # Fall back to the test_environment if fixed mocks aren't available

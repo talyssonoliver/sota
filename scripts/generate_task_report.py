@@ -182,7 +182,7 @@ sys.path.insert(0, str(project_root))
 
 from scripts.update_dashboard import DashboardUpdater
 from scripts.generate_progress_report import ProgressReportGenerator
-from orchestration.end_of_day_report import EndOfDayReportGenerator
+from src.core.workflows.end_of_day_report import EndOfDayReportGenerator
 
 
 def update_dashboard(task_id: Optional[str] = None) -> bool:

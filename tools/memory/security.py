@@ -61,26 +61,39 @@ class SecurityManager:
             raise EncryptionError(f"Encryption initialization failed: {e}")
     
     def _load_or_generate_key(self) -> bytes:
-        """Load or generate encryption key"""
-        key_file = ".memory_engine_key"
+        """Load encryption key from environment variable or generate a new one"""
+        # First try to load from environment variable
+        env_key = os.environ.get('MEMORY_ENGINE_KEY')
+        if env_key:
+            try:
+                # Fernet keys are base64 encoded strings, use them directly as bytes
+                return env_key.encode('utf-8')
+            except Exception as e:
+                logger.error(f"Invalid MEMORY_ENGINE_KEY environment variable: {e}")
+                raise EncryptionError(f"Invalid encryption key in environment: {e}")
         
+        # Legacy support: check for old key file (will be removed)
+        key_file = ".memory_engine_key"
         if os.path.exists(key_file):
+            logger.warning("Found legacy key file. Please migrate to MEMORY_ENGINE_KEY environment variable")
             try:
                 with open(key_file, 'rb') as f:
-                    return f.read()
+                    key_data = f.read()
+                    # Convert to base64 for environment variable format
+                    b64_key = base64.b64encode(key_data).decode('utf-8')
+                    logger.info(f"Legacy key file detected. Set MEMORY_ENGINE_KEY={b64_key} in your environment")
+                    return key_data
             except Exception as e:
-                logger.warning(f"Could not load existing key: {e}")
+                logger.warning(f"Could not load legacy key file: {e}")
         
-        # Generate new key
-        logger.info("Generating new encryption key")
+        # Generate new key if none found
+        logger.info("No encryption key found. Generating new key")
         key = Fernet.generate_key()
         
-        try:
-            with open(key_file, 'wb') as f:
-                f.write(key)
-            os.chmod(key_file, 0o600)  # Restrict permissions
-        except Exception as e:
-            logger.warning(f"Could not save encryption key: {e}")
+        # Log the generated key for user to set in environment
+        b64_key = base64.b64encode(key).decode('utf-8')
+        logger.warning(f"Generated new encryption key. Please set MEMORY_ENGINE_KEY={b64_key} in your environment")
+        logger.warning("WARNING: This key is shown only once. Store it securely!")
         
         return key
     

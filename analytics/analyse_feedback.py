@@ -30,10 +30,10 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
 
+from src.platform.utils.feedback_system import FeedbackSystem
+
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from utils.feedback_system import FeedbackSystem
 
 # Configure logger
 logger = logging.getLogger("feedback_analysis")

@@ -301,6 +301,20 @@ def demo_page():
     """)
 
 
+# Export main classes for easy import
+class UnifiedDashboardAPI:
+    """Unified Dashboard API class for compatibility"""
+    
+    def __init__(self):
+        self.app = app
+        self.dashboard_manager = dashboard_manager
+        self.kanban_board = kanban_board
+    
+    def run(self, host='0.0.0.0', port=8080, debug=True):
+        """Run the Flask server."""
+        return run_server(host=host, port=port, debug=debug)
+
+
 def run_server(host='0.0.0.0', port=8080, debug=True):
     """Run the Flask server."""
     print(f"🚀 Starting HITL Dashboard API Server")

@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=./task-schema.json
+id: PM-05
+title: Set Up GitHub Projects Board
+owner: product
+depends_on:
+  - TL-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task PM-05: Set Up GitHub Projects Board"
+artefacts:
+  - docs/sprint/board-setup.md
+context_topics:
+  - project-overview

@@ -8,7 +8,7 @@ import os
 import sys
 from datetime import datetime
 
-from utils.review import REVIEW_DIR, get_pending_reviews
+from src.platform.utils.review import REVIEW_DIR, get_pending_reviews
 
 # Add the parent directory to the path to import project modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

@@ -400,8 +400,8 @@ class WebhookManager:
         task_id = data.get("task_id")
         escalation_level = data.get("level", 1)
         reason = data.get("reason", "External escalation request")
-        
-        from utils.escalation_system import EscalationEngine
+
+        from src.platform.utils.escalation_system import EscalationEngine
         
         try:
             escalation_engine = EscalationEngine()

@@ -14,8 +14,8 @@ from typing import Any, Dict
 
 from orchestration.registry import create_agent_instance
 from orchestration.states import TaskStatus
-from utils.execution_monitor import get_execution_monitor
-from utils.review import is_review_approved
+from src.platform.utils.execution_monitor import get_execution_monitor
+from src.platform.utils.review import is_review_approved
 
 try:
     from pythonjsonlogger import jsonlogger
@@ -352,8 +352,7 @@ def qa_handler(state: Dict[str, Any]) -> Dict[str, Any]:
         logger.error(f"Error in {error_details['agent_role']} handler for task {task_id}", 
                     exc_info=True, extra={
             "agent": error_details['agent_role'],
-            "task_id": task_id,
-            "event": "handler_error",
+            "task_id": task_id,            "event": "handler_error",
             "error_message": error_details["message"]
         })
         return {
@@ -361,6 +360,7 @@ def qa_handler(state: Dict[str, Any]) -> Dict[str, Any]:
             "status": TaskStatus.BLOCKED,
             "agent": "qa",
             "error_info": error_details,
+            "error": error_details["message"],  # For backward compatibility
             "output": f"{error_details['agent_role'].capitalize()} implementation failed: {error_details['message']}",
             "attempt_count": state.get("attempt_count", 1)
         }

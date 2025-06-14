@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-29
+title: Review Frontend Engineer Initial Setup
+owner: technical
+depends_on:
+  - FE-01
+  - FE-02
+  - FE-03
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-29: Review Frontend Engineer Initial Setup"
+artefacts:
+  - docs/reviews/frontend-setup-review.md
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

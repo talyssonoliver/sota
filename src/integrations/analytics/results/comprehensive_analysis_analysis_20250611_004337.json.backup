@@ -1,0 +1,19 @@
+{
+  "analysis_timestamp": "2025-06-11T00:43:37.343907",
+  "period_days": 30,
+  "total_feedback": 6,
+  "tasks_analyzed": 1,
+  "agents_analyzed": 0,
+  "global_patterns": {
+    "common_issues": {},
+    "quality_trends": [],
+    "agent_feedback_distribution": {}
+  },
+  "agent_performance": {},
+  "task_patterns": {
+    "by_task_type": {},
+    "common_issues_by_type": {}
+  },
+  "system_improvements": [],
+  "training_recommendations": []
+}

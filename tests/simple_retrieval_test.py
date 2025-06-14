@@ -10,7 +10,7 @@ class TestRetrievalQA(unittest.TestCase):
     def test_get_answer(self):
         """Test that the get_answer function works correctly"""
         # Import here to avoid dependency issues
-        from tools.memory import get_answer
+        from src.platform.tools.memory import get_answer
 
         # Mock the memory singleton's retrieval_qa method
         with patch('tools.memory.get_memory_instance') as mock_get_memory:
@@ -33,7 +33,7 @@ class TestRetrievalQA(unittest.TestCase):
             self, mock_chat_openai, mock_from_chain_type):
         """Test integration with LangChain's RetrievalQA"""
         # Import here after mocks are set up
-        from tools.memory.engine import MemoryEngine
+        from src.platform.memory.engine import MemoryEngine
 
         # Create mock objects
         mock_llm = MagicMock()

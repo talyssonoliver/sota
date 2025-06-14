@@ -18,9 +18,15 @@ import yaml
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from utils.input_validation import (
+    validate_command_args, validate_checkpoint_id, validate_task_id,
+    validate_reviewer_name, validate_file_path, validate_string_content,
+    validate_integer_range, ValidationError
+)
+
 from orchestration.hitl_engine import HITLPolicyEngine, CheckpointStatus, RiskLevel
 from orchestration.hitl_task_metadata import HITLTaskMetadataManager, HITLStatus
-from dashboard.hitl_widgets import HITLDashboardManager
+from src.interfaces.dashboard.components.hitl_widgets import HITLDashboardManager
 
 
 def setup_logging(verbose: bool = False):
@@ -50,10 +56,15 @@ class HITLCLIManager:
                                 reviewer: Optional[str] = None) -> List[Dict[str, Any]]:
         """List pending HITL checkpoints."""
         try:
+            # Validate inputs
             if task_id:
+                task_id = validate_task_id(task_id)
                 checkpoints = self.hitl_engine.get_pending_checkpoints(task_id)
             else:
                 checkpoints = self.hitl_engine.get_pending_checkpoints()
+            
+            if reviewer:
+                reviewer = validate_reviewer_name(reviewer)
             
             # Convert checkpoint objects to dictionaries
             checkpoint_list = []
@@ -80,6 +91,8 @@ class HITLCLIManager:
     def show_checkpoint_details(self, checkpoint_id: str) -> Optional[Dict[str, Any]]:
         """Show detailed information about a checkpoint."""
         try:
+            # Validate checkpoint ID
+            checkpoint_id = validate_checkpoint_id(checkpoint_id)
             checkpoint = self.hitl_engine.get_checkpoint(checkpoint_id)
             if not checkpoint:
                 self.logger.error(f"Checkpoint {checkpoint_id} not found")
@@ -108,6 +121,11 @@ class HITLCLIManager:
                           comments: str = "") -> bool:
         """Approve a checkpoint."""
         try:
+            # Validate inputs
+            checkpoint_id = validate_checkpoint_id(checkpoint_id)
+            reviewer = validate_reviewer_name(reviewer)
+            comments = validate_string_content(comments, max_length=5000)
+            
             decision = {
                 "decision": "approved",
                 "reviewer": reviewer,
@@ -131,6 +149,12 @@ class HITLCLIManager:
                          reason: str, comments: str = "") -> bool:
         """Reject a checkpoint."""
         try:
+            # Validate inputs
+            checkpoint_id = validate_checkpoint_id(checkpoint_id)
+            reviewer = validate_reviewer_name(reviewer)
+            reason = validate_string_content(reason, max_length=1000)
+            comments = validate_string_content(comments, max_length=5000)
+            
             decision = {
                 "decision": "rejected",
                 "reviewer": reviewer,
@@ -155,6 +179,12 @@ class HITLCLIManager:
                            reason: str, escalation_level: int = 1) -> bool:
         """Escalate a checkpoint."""
         try:
+            # Validate inputs
+            checkpoint_id = validate_checkpoint_id(checkpoint_id)
+            reviewer = validate_reviewer_name(reviewer)
+            reason = validate_string_content(reason, max_length=1000)
+            escalation_level = validate_integer_range(escalation_level, min_val=1, max_val=5)
+            
             escalation_data = {
                 "escalated_by": reviewer,
                 "reason": reason,
@@ -214,11 +244,13 @@ class HITLCLIManager:
     def export_checkpoint_data(self, checkpoint_id: str, output_file: str) -> bool:
         """Export checkpoint data to file."""
         try:
+            # Validate inputs
+            checkpoint_id = validate_checkpoint_id(checkpoint_id)
+            output_path = validate_file_path(output_file, must_exist=False)
+            
             checkpoint_data = self.show_checkpoint_details(checkpoint_id)
             if not checkpoint_data:
                 return False
-            
-            output_path = Path(output_file)
             with open(output_path, 'w') as f:
                 if output_path.suffix.lower() == '.json':
                     json.dump(checkpoint_data, f, indent=2)
@@ -602,6 +634,13 @@ Examples:
         parser.print_help()
         sys.exit(1)
     
+    # Validate command line arguments
+    try:
+        args = validate_command_args(args)
+    except ValidationError as e:
+        print(f"❌ Invalid arguments: {e}")
+        sys.exit(1)
+    
     # Setup logging
     setup_logging(args.verbose)
     
@@ -610,6 +649,9 @@ Examples:
         args.func(args)
     except KeyboardInterrupt:
         print("\n❌ Operation cancelled by user.")
+        sys.exit(1)
+    except ValidationError as e:
+        print(f"❌ Validation error: {e}")
         sys.exit(1)
     except Exception as e:
         print(f"❌ Error: {e}")

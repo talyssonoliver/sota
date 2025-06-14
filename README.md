@@ -61,43 +61,72 @@ The system uses specialized agents for different roles (Technical Lead, Backend 
 - **Progress Tracking**: Monitors task completion and generates reports for each sprint cycle
 
 
-## 📁 Project Structure
+## 🏗️ Consolidated Architecture (2024 Optimization)
 
-The project follows a clean, organized structure with logical separation of concerns:
+The project has been optimized from 25+ scattered directories to **8 logical modules** with eliminated code duplication:
+
+### 📁 New Consolidated Structure
 
 ```
-ai-system/                          # Root directory (37 items - optimized!)
-├── 📄 Core Files
-│   ├── main.py                     # Main entry point with validation suite
-│   ├── README.md                   # This file
-│   ├── requirements*.txt           # Python dependencies
-│   ├── pyproject.toml             # Project configuration
+ai-system/
+├── 📄 Core Configuration
+│   ├── main.py                     # Main entry point
+│   ├── README.md                   # Documentation
+│   ├── requirements.txt            # Dependencies
 │   └── CLAUDE.md                  # AI assistant instructions
 │
-├── 📁 Source Code
-│   ├── agents/                    # Specialized AI agents
-│   ├── api/                       # API routes and endpoints
-│   ├── cli/                       # Command-line interfaces
-│   ├── config/                    # Configuration files (agents.yaml, tools.yaml)
-│   ├── graph/                     # LangGraph workflow definitions
-│   ├── handlers/                  # Request/response handlers
-│   ├── orchestration/             # Task execution and coordination
-│   ├── patches/                   # System patches and fixes
-│   ├── prompts/                   # Agent prompt templates
-│   ├── scripts/                   # Utility and automation scripts
-│   ├── tasks/                     # YAML task definitions
-│   ├── tools/                     # Agent tools and utilities
-│   ├── utils/                     # Helper functions and utilities
-│   └── visualization/             # Data visualization components
-│
-├── 📁 Organized Data & Artifacts
-│   ├── build/                     # Build artifacts (gitignored)
-│   │   ├── archives/             # Task completion archives
-│   │   ├── dashboard/            # Dashboard web components
-│   │   ├── static/               # Static web assets
-│   │   └── claude-code/          # External tool artifacts
+├── 📁 src/                        # NEW: Consolidated source code
+│   ├── core/                      # Core business logic
+│   │   ├── agents/               # AI agent implementations
+│   │   ├── workflows/            # LangGraph workflow definitions
+│   │   └── tasks/                # Task management logic
 │   │
-│   ├── data/                      # All data and context (persistent)
+│   ├── interfaces/               # User interfaces
+│   │   ├── api/                  # REST API endpoints
+│   │   ├── cli/                  # Command-line interfaces
+│   │   └── dashboard/            # Unified dashboard (was scattered)
+│   │       ├── api/             # Dashboard API server
+│   │       ├── components/      # Dashboard widgets & components
+│   │       └── templates/       # Dashboard templates
+│   │
+│   └── platform/                # Platform services
+│       ├── memory/              # Unified memory system
+│       │   ├── engines/        # Memory engine implementations
+│       │   ├── knowledge/      # Knowledge repository (was memory-bank/)
+│       │   ├── config/         # Memory configuration
+│       │   └── security/       # Security & encryption
+│       │
+│       ├── orchestration/      # Task orchestration
+│       ├── tools/              # Agent tools
+│       └── utils/              # Shared utilities
+│
+├── 📁 tests/                     # Optimized test pyramid (75/20/5)
+│   ├── unit/                    # 77 unit tests (72%)
+│   │   ├── core/               # Core business logic tests
+│   │   ├── interfaces/         # Interface tests
+│   │   └── platform/           # Platform service tests
+│   │
+│   ├── integration/            # 20 integration tests (18%)
+│   │   ├── api/               # API integration tests
+│   │   ├── dashboard/         # Dashboard integration tests
+│   │   └── workflows/         # Workflow integration tests
+│   │
+│   └── e2e/                   # 9 end-to-end tests (8%)
+│       ├── system/            # Full system tests
+│       ├── workflows/         # Complete workflow tests
+│       └── performance/       # Performance benchmarks
+│
+├── 📁 Legacy (Deprecated - Use src/ instead)
+│   ├── agents/                # → src/core/agents/
+│   ├── dashboard/             # → src/interfaces/dashboard/
+│   ├── memory-bank/          # → src/platform/memory/knowledge/
+│   └── tools/memory/         # → src/platform/memory/
+│
+└── 📁 Data & Runtime
+    ├── config/               # Configuration files
+    ├── outputs/             # Generated outputs
+    ├── logs/                # System logs
+    └── storage/             # Persistent data
 │   │   ├── context/              # Unified context store (patterns, db schema, etc.)
 │   │   ├── storage/              # Tiered storage (hot/warm/cold)
 │   │   ├── sprints/              # Sprint planning and execution data
@@ -150,10 +179,19 @@ ai-system/                          # Root directory (37 items - optimized!)
    ```bash
    pip install -r requirements.txt
    ```
-4. Copy `.env.template` to `.env` and add your API keys:
+4. Copy `.env.example` to `.env` and add your API keys:
    ```bash
-   cp .env.template .env
-   # Edit .env to add your API keys
+   cp .env.example .env
+   # Edit .env to add your API keys including:
+   # - OPENAI_API_KEY (required)
+   # - MEMORY_ENGINE_KEY (required for secure encryption)
+   ```
+
+5. Generate and set the memory engine encryption key:
+   ```bash
+   # Generate a secure encryption key
+   python -c "from cryptography.fernet import Fernet; print('MEMORY_ENGINE_KEY=' + Fernet.generate_key().decode())"
+   # Copy the output and add it to your .env file
    ```
 
 ## 🚀 Quick Start
@@ -164,9 +202,7 @@ ai-system/                          # Root directory (37 items - optimized!)
 python main.py
 
 # Run unified test suite (optimized for speed)
-python -m tests.run_tests --all    # All tests (~31.8s)
-python -m tests.run_tests --quick  # Fast validation only
-python -m tests.run_tests --tools  # Tool loader tests
+python -m pytest -v
 ```
 
 ### Task Execution

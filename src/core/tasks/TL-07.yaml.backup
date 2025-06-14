@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-07
+title: Configure Vercel Project and Environments
+owner: technical
+depends_on:
+  - TL-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-07: Configure Vercel Project and Environments"
+artefacts:
+  - docs/setup/vercel-configuration.md
+  - vercel.json
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

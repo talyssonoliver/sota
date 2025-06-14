@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-21
+title: Coordinate with Backend Developer on Data Requirements
+owner: ux
+depends_on:
+  - BE-05
+  - UX-01
+  - UX-02
+  - UX-03
+  - UX-04
+  - UX-05
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-21: Coordinate with Backend Developer on Data Requirements"
+artefacts:
+  - docs/design/data-requirements.md
+context_topics:
+  - project-overview

@@ -15,8 +15,8 @@ from typing import List, Dict, Any
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
-from orchestration.qa_validation import QAValidationEngine
-from utils.completion_metrics import CompletionMetricsCalculator
+from src.core.workflows.qa_validation import QAValidationEngine
+from src.platform.utils.completion_metrics import CompletionMetricsCalculator
 
 
 def find_tasks_needing_qa() -> List[str]:

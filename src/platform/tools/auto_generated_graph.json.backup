@@ -1,0 +1,67 @@
+{
+  "nodes": [
+    {
+      "id": "backend",
+      "agent": "backend",
+      "depends_on": [
+        "technical",
+        "frontend",
+        "product"
+      ]
+    },
+    {
+      "id": "frontend",
+      "agent": "frontend",
+      "depends_on": [
+        "technical",
+        "ux",
+        "backend",
+        "product"
+      ]
+    },
+    {
+      "id": "product",
+      "agent": "product_manager",
+      "depends_on": [
+        "technical"
+      ]
+    },
+    {
+      "id": "qa",
+      "agent": "qa",
+      "depends_on": [
+        "technical",
+        "backend",
+        "product"
+      ]
+    },
+    {
+      "id": "technical",
+      "agent": "technical",
+      "depends_on": [
+        "backend",
+        "frontend",
+        "product"
+      ]
+    },
+    {
+      "id": "ux",
+      "agent": "ux",
+      "depends_on": [
+        "backend",
+        "frontend",
+        "product"
+      ]
+    },
+    {
+      "id": "human_review",
+      "agent": "human_review",
+      "depends_on": []
+    },
+    {
+      "id": "coordinator",
+      "agent": "coordinator",
+      "depends_on": []
+    }
+  ]
+}

@@ -6,7 +6,7 @@ Debug script to test memory engine context building
 import sys
 from pathlib import Path
 
-from tools.memory_engine import MemoryEngine
+from src.platform.tools.memory_engine import MemoryEngine
 
 # Add project root to path
 project_root = Path(__file__).parent.parent

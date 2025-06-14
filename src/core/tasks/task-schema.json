@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "task-schema",
+  "title": "Task Metadata",
+  "description": "Schema for AI Agent System task metadata files",
+  "type": "object",
+  "required": ["id", "title", "owner", "state"],
+  "additionalProperties": true,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique task identifier (e.g., BE-07)",
+      "pattern": "^[A-Z]+-[0-9]+$"
+    },
+    "title": {
+      "type": "string",
+      "description": "Short description of the task"
+    },
+    "owner": {
+      "type": "string",
+      "description": "Agent role assigned to this task",
+      "enum": ["backend", "frontend", "technical", "qa", "doc", "coordinator", "product", "ux"]
+    },
+    "depends_on": {
+      "type": "array",
+      "description": "Task-level dependencies",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]+-[0-9]+$"
+      },
+      "uniqueItems": true
+    },
+    "state": {
+      "type": "string",
+      "description": "Lifecycle state of the task",
+      "enum": ["CREATED", "PLANNED", "IN_PROGRESS", "QA_PENDING", "DOCUMENTATION", "HUMAN_REVIEW", "DONE", "BLOCKED"]
+    },
+    "priority": {
+      "type": "string",
+      "description": "Execution urgency",
+      "enum": ["HIGH", "MEDIUM", "LOW"]
+    },
+    "estimation_hours": {
+      "type": "number",
+      "description": "Effort estimate in hours",
+      "minimum": 0
+    },
+    "description": {
+      "type": "string",
+      "description": "Rich content for prompt/context enrichment"
+    },
+    "artefacts": {
+      "type": "array",
+      "description": "Files or directories to be modified",
+      "items": {
+        "type": "string"
+      }
+    },
+    "context_topics": {
+      "type": "array",
+      "description": "Specific memory documents to include",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

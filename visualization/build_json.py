@@ -22,7 +22,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 try:
     from utils.completion_metrics import CompletionMetricsCalculator
-    from dashboard.unified_api_server import UnifiedDashboardAPI
+    from src.interfaces.dashboard.api.unified_api_server import UnifiedDashboardAPI
     from orchestration.daily_cycle import DailyCycleOrchestrator
 except ImportError as e:
     logging.warning(f"Import warning: {e}. Using mock data for visualization.")

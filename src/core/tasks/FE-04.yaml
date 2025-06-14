@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=./task-schema.json
+id: FE-04
+title: Establish TypeScript Integration with Backend
+owner: frontend
+depends_on:
+  - BE-05
+  - TL-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task FE-04: Establish TypeScript Integration with Backend"
+artefacts:
+  - types/api.ts
+  - lib/utils/api.ts
+  - docs/integration/types-integration.md
+context_topics:
+  - design-system
+  - component-patterns
+  - ui-standards

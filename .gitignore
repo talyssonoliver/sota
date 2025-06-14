@@ -71,8 +71,21 @@ coverage/
 tasks/tasks.json
 *_backup.py
 *_clean.py
+*_corrupted.py
 debug_*.py
 check_*.py
+validate_*.py
+
+# HTML coverage reports
+htmlcov/
+
+# ChromaDB runtime files
+chroma_db/
+*.sqlite3
+
+# Temporary Windows files
+*_Users_*_AppData_Local_Temp_*
+*.dat
 
 # Dashboard and notification files (runtime generated)
 dashboard/agent_status.json

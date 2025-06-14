@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=./task-schema.json
+id: PM-10
+title: Create Sprint 0 Daily Check-in Schedule
+owner: product
+depends_on: []
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task PM-10: Create Sprint 0 Daily Check-in Schedule"
+artefacts:
+  - docs/sprint/daily-checkin-schedule.md
+context_topics:
+  - project-overview

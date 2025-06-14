@@ -22,7 +22,12 @@ class ChunkingConfig:
     chunk_size: int = 1000
     chunk_overlap: int = 200
     min_chunk_size: int = 100
+    max_chunk_size: int = 4000
     use_semantic_chunking: bool = True
+    semantic: bool = True  # For backward compatibility
+    adaptive: bool = False  # For backward compatibility
+    overlap_percent: float = 0.2  # For backward compatibility
+    deduplicate: bool = True  # For backward compatibility
 
 
 @dataclass
@@ -73,6 +78,7 @@ class MemoryEngineConfig:
     pii_detection_enabled: bool = True
     access_control_enabled: bool = True
     audit_logging_enabled: bool = True
+    security_options: Dict[str, Any] = field(default_factory=dict)  # For backward compatibility
     
     # Performance settings
     enable_caching: bool = True

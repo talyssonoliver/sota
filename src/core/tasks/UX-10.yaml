@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-10
+title: Design Toast Notification System
+owner: ux
+depends_on:
+  - UX-06
+  - UX-07
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-10: Design Toast Notification System"
+artefacts:
+  - docs/design/toast-notifications.md
+  - designs/toast-notifications.pdf
+context_topics:
+  - project-overview

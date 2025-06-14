@@ -17,18 +17,60 @@ from argparse import ArgumentParser
 from datetime import datetime
 from unittest.mock import MagicMock
 
-from tests.mock_environment import setup_mock_environment
-from tests.test_utils import TestFeedback, Timer
-
-# Add the parent directory to the path so we can import our modules
+# Add the parent directory to the path so we can import our modules  
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-# Import the enhanced mock environment setup
+# Apply platform fix first
+try:
+    from platform_fix import preserve_builtin_platform
+    preserve_builtin_platform()
+except ImportError:
+    pass
 
-# Apply mock environment setup
-setup_mock_environment()
+# Setup paths for new structure
+from pathlib import Path
+root_dir = Path(__file__).parent.parent
+src_dir = root_dir / "src"
+tests_dir = root_dir / "tests"
 
-# Import directly
+for path in [str(root_dir), str(src_dir), str(tests_dir)]:
+    if str(path) not in sys.path:
+        sys.path.insert(0, str(path))
+
+# Setup test imports with new structure
+try:
+    from tests.fixtures.test_imports_helper import setup_test_imports
+    setup_test_imports()
+except ImportError:
+    pass
+
+# Import test utilities from new location
+try:
+    from mock_environment import setup_mock_environment
+    setup_mock_environment()
+except ImportError:
+    print("Warning: mock_environment not available")
+
+try:
+    from tests.utils.test_utils import FeedbackCollector, Timer
+    # Mock the ensure_clean_test_environment function if not available
+    def ensure_clean_test_environment():
+        pass
+except ImportError:
+    # Fallback mocks
+    class FeedbackCollector:
+        def __init__(self): pass
+        def collect_feedback(self, data): return True
+    
+    class Timer:
+        def __init__(self): pass
+        def start(self): return self
+        def stop(self): return self
+        def elapsed(self): return 0
+    
+    def ensure_clean_test_environment():
+        pass
+
 
 
 def check_dependencies():
@@ -103,9 +145,9 @@ def run_validate_agents_test():
     print(f"\n===== Running {test_name} =====\n")
 
     try:
-        # Import test_agents.py module
+        # Import test_agents.py module from core directory
         test_file_path = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), "test_agents.py")
+            os.path.abspath(__file__)), "unit", "core", "test_agents.py")
         test_module = import_test_module_safely(test_file_path)
 
         if test_module is None:
@@ -133,7 +175,7 @@ def run_validate_agents_test():
             "Execution time": timer.elapsed(),
         }
 
-        return TestFeedback.print_result(
+        return FeedbackCollector.print_result(
             test_name=test_name,
             passed=passed,
             details=details,
@@ -150,7 +192,7 @@ def run_validate_agents_test():
         print(f"Error running agent validation: {e}")
         traceback.print_exc()
 
-        return TestFeedback.print_result(
+        return FeedbackCollector.print_result(
             test_name=test_name,
             passed=False,
             details=details,
@@ -166,9 +208,9 @@ def run_tool_loader_test():
     print(f"\n===== Running {test_name} Test =====\n")
 
     try:
-        # Import test_tool_loader.py module
+        # Import test_tool_loader.py module from components directory
         test_file_path = os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), "test_tool_loader.py")
+            os.path.abspath(__file__)), "components", "test_tool_loader.py")
         test_module = import_test_module_safely(test_file_path)
 
         if test_module is None:
@@ -204,7 +246,7 @@ def run_tool_loader_test():
             "Execution time": timer.elapsed(),
         }
 
-        return TestFeedback.print_result(
+        return FeedbackCollector.print_result(
             test_name=test_name,
             passed=passed,
             details=details,
@@ -221,7 +263,7 @@ def run_tool_loader_test():
         print(f"Error in tool loader test execution: {e}")
         traceback.print_exc()
 
-        return TestFeedback.print_result(
+        return FeedbackCollector.print_result(
             test_name=test_name,
             passed=False,
             details=details,
@@ -237,9 +279,9 @@ def run_workflow_tests():
     print(f"\n===== Running {test_name} =====\n")
 
     test_modules = [
-        "test_workflow_states.py",
-        "test_qa_agent_decisions.py",
-        "test_workflow_integration.py"
+        "workflows/test_workflow_states.py",
+        "agents/test_qa_agent_decisions.py", 
+        "workflows/test_workflow_integration.py"
     ]
 
     test_results = {}
@@ -251,7 +293,7 @@ def run_workflow_tests():
 
         # Run each workflow test module
         for module_filename in test_modules:
-            module_name = os.path.splitext(module_filename)[0]
+            module_name = os.path.splitext(os.path.basename(module_filename))[0]
             file_path = os.path.join(test_dir, module_filename)
 
             print(f"\n----- Running {module_name} -----\n")
@@ -348,7 +390,7 @@ def run_workflow_tests():
             "Execution time": timer.elapsed()
         }
 
-        return TestFeedback.print_result(
+        return FeedbackCollector.print_result(
             test_name=test_name,
             passed=all_passed,
             details=details,
@@ -365,7 +407,7 @@ def run_workflow_tests():
         print(f"Error running workflow tests: {e}")
         traceback.print_exc()
 
-        return TestFeedback.print_result(
+        return FeedbackCollector.print_result(
             test_name=test_name,
             passed=False,
             details=details,
@@ -423,12 +465,14 @@ def run_full_test_suite():
         # Skip certain test files that aren't designed for automatic discovery
         skip_files = ['test_utils.py']
 
-        # Find test files manually
+        # Find test files manually in all subdirectories
         test_files = []
-        for filename in os.listdir(test_dir):
-            if filename.startswith('test_') and filename.endswith(
-                    '.py') and filename not in skip_files:
-                test_files.append(filename)
+        for root, dirs, files in os.walk(test_dir):
+            for filename in files:
+                if filename.startswith('test_') and filename.endswith(
+                        '.py') and filename not in skip_files:
+                    relative_path = os.path.relpath(os.path.join(root, filename), test_dir)
+                    test_files.append(relative_path)
 
         all_passed = True
         tests_run = 0
@@ -436,7 +480,7 @@ def run_full_test_suite():
         # Run each test file individually
         for filename in test_files:
             file_path = os.path.join(test_dir, filename)
-            module_name = os.path.splitext(filename)[0]
+            module_name = os.path.splitext(os.path.basename(filename))[0]
 
             try:
                 # Load the module
@@ -507,7 +551,7 @@ def run_full_test_suite():
             "Execution time": timer.elapsed(),
             "Details": test_details}
 
-        return TestFeedback.print_result(
+        return FeedbackCollector.print_result(
             test_name=test_name,
             passed=all_passed,
             details=details,
@@ -524,7 +568,7 @@ def run_full_test_suite():
         print(f"Error setting up environment or running tests: {e}")
         traceback.print_exc()
 
-        return TestFeedback.print_result(
+        return FeedbackCollector.print_result(
             test_name=test_name,
             passed=False,
             details=details,
@@ -623,6 +667,9 @@ def main():
             args.quick or args.tools or args.workflow or args.full or args.all or args.coverage):
         args.all = True
 
+    print("🧹 Cleaning test environment...")
+    ensure_clean_test_environment()
+    
     print("Setting up test environment with mocked dependencies...")
 
     exit_code = 0
@@ -656,8 +703,12 @@ def main():
         test_results.append(("Coverage Report", coverage_result))
 
     # Print overall summary
-    exit_code = TestFeedback.print_summary(test_results, overall_start_time)
+    exit_code = FeedbackCollector.print_summary(test_results, overall_start_time)
 
+    # Final cleanup
+    print("🧹 Final cleanup...")
+    ensure_clean_test_environment()
+    
     return exit_code
 
 

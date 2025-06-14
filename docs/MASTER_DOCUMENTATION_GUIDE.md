@@ -40,6 +40,7 @@ This AI Agent System implements a multi-agent architecture for automated softwar
 - [Memory Engine Documentation](./memory_engine.md)
 - [Tool Inventory](./tools_system.md#inventory)
 - [Integration Patterns](./tools_system.md#patterns)
+- [Utility Functions Catalog](./utilities_catalog.md)
 
 #### 5. Workflows and Tasks
 - [Workflow & Task System](./workflow_task_system.md)
@@ -153,6 +154,7 @@ Atomic units of work defined in YAML with clear inputs, outputs, agent assignmen
 - Unit tests for components
 - Integration tests for workflows
 - Performance benchmarks
+- See [Test Structure](test_structure.md) for fixtures and guidelines
 
 ### 🚨 Troubleshooting
 1. Memory Engine connection issues → check ChromaDB config

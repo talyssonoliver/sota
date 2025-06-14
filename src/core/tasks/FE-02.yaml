@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=./task-schema.json
+id: FE-02
+title: Implement Core UI Components
+owner: frontend
+depends_on:
+  - FE-01
+  - TL-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task FE-02: Implement Core UI Components"
+artefacts:
+  - components/ui/Button.tsx
+  - components/ui/Card.tsx
+  - components/ui/ProductCard.tsx
+  - tests/unit/ui.test.tsx
+  - docs/components/ui.md
+context_topics:
+  - design-system
+  - component-patterns
+  - ui-standards

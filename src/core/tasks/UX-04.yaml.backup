@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-04
+title: Create High-Fidelity Prototype for Cart & Checkout
+owner: ux
+depends_on:
+  - BE-05
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-04: Create High-Fidelity Prototype for Cart & Checkout"
+artefacts:
+  - docs/design/cart-checkout-spec.md
+  - designs/cart-desktop.pdf
+  - designs/checkout-desktop.pdf
+context_topics:
+  - project-overview

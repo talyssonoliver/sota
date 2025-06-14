@@ -15,7 +15,7 @@ from typing import Any, Dict, List, Optional
 from agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
 from utils.coverage_analyzer import CoverageAnalyzer
 from utils.integration_analyzer import IntegrationAnalyzer
-from utils.test_generator import QATestFramework, QATestGenerator
+from tests.components.test_generator import QATestFramework, QATestGenerator
 
 # Add the project root to the path
 sys.path.insert(0, str(Path(__file__).parent.parent))

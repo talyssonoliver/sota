@@ -25,9 +25,9 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from orchestration.states import TaskStatus
-from utils.execution_monitor import get_execution_monitor
-from utils.task_loader import load_task_metadata, update_task_state
+from src.core.workflows.states import TaskStatus
+from src.platform.utils.execution_monitor import get_execution_monitor
+from src.platform.utils.task_loader import load_task_metadata, update_task_state
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

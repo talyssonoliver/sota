@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-09
+title: Verify Supabase Project and Schema
+owner: technical
+depends_on: []
+state: DONE
+priority: HIGH
+estimation_hours: 2
+description: >
+  Validate the Supabase project (ref: rsgrwnbvoxibrqzcwpaf) and ensure the schema in
+  `lib/supabase/schema.sql` is applied correctly. Share the project URL and anon key
+  via a secure Slack private message.
+artefacts:
+  - docs/setup/supabase-setup.md
+  - lib/supabase/schema.sql
+context_topics:
+  - infrastructure
+  - tech-standards
+  - db-schema
