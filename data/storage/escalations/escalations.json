@@ -5107,5 +5107,101 @@
       "slack_2025-06-15T08:44:42.395317",
       "dashboard_2025-06-15T08:44:42.395317"
     ]
+  },
+  {
+    "task_id": "FE-666",
+    "trigger": "manual",
+    "level": {
+      "name": "Management Review",
+      "value": 2,
+      "timeout_hours": 6
+    },
+    "triggered_at": "2025-06-15T08:59:20.333878",
+    "triggered_by": "cli_user",
+    "context": {
+      "reason": "urgent_deadline",
+      "manual_trigger": true,
+      "cli_initiated": true
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-06-15T08:59:20.333878",
+      "slack_2025-06-15T08:59:20.333878",
+      "dashboard_2025-06-15T08:59:20.333878"
+    ]
+  },
+  {
+    "task_id": "FE-888",
+    "trigger": "rejection",
+    "level": {
+      "name": "Director Review",
+      "value": 3,
+      "timeout_hours": 12
+    },
+    "triggered_at": "2025-06-15T08:59:20.417631",
+    "triggered_by": "reviewer",
+    "context": {
+      "rejection_count": 3,
+      "rejection_reason": "design_guidelines",
+      "reviewer": "alice.reviewer",
+      "task_type": "frontend",
+      "risk_level": "medium"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-06-15T08:59:20.417631",
+      "slack_2025-06-15T08:59:20.417631",
+      "dashboard_2025-06-15T08:59:20.417631",
+      "phone_2025-06-15T08:59:20.417631"
+    ]
+  },
+  {
+    "task_id": "QA-999",
+    "trigger": "timeout",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-06-15T08:59:20.471398",
+    "triggered_by": "system",
+    "context": {
+      "timeout_duration": "unknown",
+      "reviewer": "unknown",
+      "task_type": "qa",
+      "risk_level": "high"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-06-15T08:59:20.471398",
+      "slack_2025-06-15T08:59:20.471398"
+    ]
+  },
+  {
+    "task_id": "QA-999",
+    "trigger": "timeout",
+    "level": {
+      "name": "Management Review",
+      "value": 2,
+      "timeout_hours": 6
+    },
+    "triggered_at": "2025-06-15T08:59:20.501571",
+    "triggered_by": "system",
+    "context": {
+      "timeout_duration": "unknown",
+      "reviewer": "unknown",
+      "task_type": "qa",
+      "risk_level": "high"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-06-15T08:59:20.501571",
+      "slack_2025-06-15T08:59:20.501571",
+      "dashboard_2025-06-15T08:59:20.501571"
+    ]
   }
 ]

@@ -30,3 +30,4 @@ except ImportError as e:
     # Fallback to empty module
     pass
 from .testagent import create_testagent_agent
+from .testvalidation import create_testvalidation_agent

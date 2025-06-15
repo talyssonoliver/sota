@@ -553,13 +553,23 @@ class TestHITLAPIRoutes(unittest.TestCase):
         """Set up test Flask app with HITL routes."""
         self.app = Flask(__name__)
         self.mock_hitl_engine = MagicMock()
-        
-        # Register HITL blueprint with mocked engine
+          # Register HITL blueprint with mocked engine
         hitl_bp = create_hitl_blueprint(self.mock_hitl_engine)
         self.app.register_blueprint(hitl_bp, url_prefix='/api/hitl')
         
         self.client = self.app.test_client()
         self.app.config['TESTING'] = True
+    
+    def tearDown(self):
+        """Clean up Flask app and test client."""
+        # Clean up Flask app context
+        with self.app.app_context():
+            pass  # Ensure proper context cleanup
+        
+        # Clean up test client
+        self.client = None
+        self.app = None
+        self.mock_hitl_engine = None
     
     def test_get_checkpoints_endpoint(self):
         """Test getting checkpoints via API."""

@@ -158,3 +158,9 @@ testagent:
   goal: A test agent for validation
   prompt_template: prompts/testagent.md
   tools: []
+testvalidation:
+  name: Validation test agent Agent
+  role: Validation test agent
+  goal: Validation test agent
+  prompt_template: prompts/testvalidation.md
+  tools: []
