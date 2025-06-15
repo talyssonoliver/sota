@@ -19,8 +19,25 @@ from unittest.mock import MagicMock
 
 from tests.mock_environment import setup_mock_environment
 from tests.mock_langchain import setup_langchain_mocks
-from tests.test_utils import TestFeedback
 from tests.utils.test_utils import Timer
+
+# Define TestFeedback class directly to avoid import issues
+class TestFeedback:
+    """Simple feedback class for test results."""
+    
+    @staticmethod
+    def print_result(test_name, passed, details=None, execution_time=0):
+        """Print test result in a formatted way."""
+        status = "PASSED" if passed else "FAILED"
+        print(f"\n{'='*50}")
+        print(f"TEST RESULTS")
+        print(f"{'='*50}")
+        print(f"test_name: {test_name}")
+        print(f"passed: {passed}")
+        print(f"details: {details}")
+        print(f"execution_time: {execution_time}")
+        print(f"{'='*50}")
+        return passed
 
 # Add the parent directory to the path so we can import our modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
