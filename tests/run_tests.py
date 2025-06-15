@@ -19,7 +19,8 @@ from unittest.mock import MagicMock
 
 from tests.mock_environment import setup_mock_environment
 from tests.mock_langchain import setup_langchain_mocks
-from tests.test_utils import TestFeedback, Timer
+from tests.test_utils import TestFeedback
+from tests.utils.test_utils import Timer
 
 # Add the parent directory to the path so we can import our modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
