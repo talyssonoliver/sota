@@ -17,13 +17,16 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 
-from orchestration.summarise_task import (AgentOutput, QAResults, TaskArtifact,
-                                          TaskSummarizer)
-
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+try:
+    from src.core.workflows.summarise_task import (AgentOutput, QAResults, TaskArtifact,
+                                          TaskSummarizer)
+except ImportError as e:
+    print(f"CRITICAL: Cannot import required modules: {e}")
+    sys.exit(1)
 
 def create_demo_structure(temp_dir: Path, task_id: str):
     """Create a demo file structure for testing."""
@@ -269,6 +272,9 @@ export const Dashboard: React.FC = () => {
         f.write("""# API Tests
 import pytest
 from app import app
+import json
+import sys
+import tempfile
 
 @pytest.fixture
 def client():
@@ -337,7 +343,6 @@ Search users by name.
 
     print(f"✅ Demo structure created successfully!")
     return temp_dir
-
 
 def run_demo():
     """Run the Step 4.6 summarization demo."""
@@ -414,7 +419,6 @@ def run_demo():
         print("=" * 50)
         print(markdown_content[:1000] +
               "..." if len(markdown_content) > 1000 else markdown_content)
-
 
 if __name__ == "__main__":
     run_demo()

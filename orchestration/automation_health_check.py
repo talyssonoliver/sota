@@ -6,23 +6,21 @@ Comprehensive health monitoring for the daily automation system,
 providing diagnostics and system status validation.
 """
 
+import sys
+import asyncio
 import json
 import logging
-import os
-import sys
-import time
+import requests
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-import requests
 
-# Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
-from utils.completion_metrics import CompletionMetricsCalculator
-from utils.execution_monitor import ExecutionMonitor
-from orchestration.daily_cycle import DailyCycleOrchestrator
+from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
 
+from src.infrastructure.utils.execution_monitor import ExecutionMonitor
+from src.core.workflows.daily_cycle import DailyCycleOrchestrator
 
 class AutomationHealthChecker:
     """
@@ -377,7 +375,6 @@ class AutomationHealthChecker:
         
         return recommendations
 
-
 async def main():
     """Main entry point for health check."""
     import argparse
@@ -425,7 +422,5 @@ async def main():
         
         print("\n" + "=" * 60)
 
-
 if __name__ == "__main__":
-    import asyncio
     asyncio.run(main())

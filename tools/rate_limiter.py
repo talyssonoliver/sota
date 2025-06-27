@@ -1,9 +1,17 @@
+
+"""
+Rate Limiter
+
+Provides rate limiting functionality to restrict the number of operations
+within a specified time window, useful for API calls and resource management.
+"""
+
 import logging
 import time
 from datetime import datetime, timedelta
 from typing import Dict
 
-
+logger = logging.getLogger(__name__)
 class RateLimiter:
     """
     A rate limiter that restricts the number of operations within a time window.
@@ -64,7 +72,6 @@ class RateLimiter:
 
         return True
 
-
 class RetrievalQARateLimiter(RateLimiter):
     """
     A rate limiter specifically for the retrieval_qa method.
@@ -79,7 +86,6 @@ class RetrievalQARateLimiter(RateLimiter):
             time_window (int): Time window in seconds
         """
         super().__init__(max_calls, time_window)
-
 
 class UserRateLimiter:
     """

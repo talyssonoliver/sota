@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+import sys
 Unified Dashboard API Routes
 
 Consolidated from:
@@ -11,15 +12,27 @@ This module provides a unified Flask API for all dashboard functionality
 with zero code duplication and optimized performance.
 """
 
-import json
-import sys
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any
-from flask import Flask, Blueprint, jsonify, request, render_template_string, send_from_directory
-from flask_cors import CORS
 
-# Add project root to path
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Dict, List, Any
+except ImportError:
+    pass
+try:
+    from flask import Flask, Blueprint, jsonify, request, render_template_string, send_from_directory
+except ImportError:
+    pass
+try:
+    from flask_cors import CORS
+except ImportError:
+    pass
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
 try:
@@ -41,7 +54,6 @@ else:
     dashboard_manager = None
     kanban_board = None
 
-
 @dashboard_bp.route('/health', methods=['GET'])
 def health_check():
     """Dashboard API health check."""
@@ -51,7 +63,6 @@ def health_check():
         "dashboard_available": DASHBOARD_AVAILABLE,
         "version": "2.0.0-unified"
     })
-
 
 @dashboard_bp.route('/hitl/kanban-data', methods=['GET'])
 def get_kanban_data():
@@ -66,7 +77,6 @@ def get_kanban_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @dashboard_bp.route('/hitl/dashboard-data', methods=['GET'])
 def get_dashboard_data():
     """Get complete HITL dashboard data."""
@@ -79,7 +89,6 @@ def get_dashboard_data():
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 @dashboard_bp.route('/hitl/action', methods=['POST'])
 def process_action():
@@ -112,7 +121,6 @@ def process_action():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @dashboard_bp.route('/hitl/widget/<widget_name>', methods=['GET'])
 def get_widget_data(widget_name):
     """Get data for a specific widget."""
@@ -125,7 +133,6 @@ def get_widget_data(widget_name):
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 @dashboard_bp.route('/gantt/data', methods=['GET'])
 def get_gantt_data():
@@ -147,7 +154,6 @@ def get_gantt_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @dashboard_bp.route('/gantt/optimize', methods=['POST'])
 def optimize_gantt():
     """Optimize Gantt chart timeline."""
@@ -167,7 +173,6 @@ def optimize_gantt():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @dashboard_bp.route('/export', methods=['GET'])
 def export_dashboard_data():
     """Export dashboard data."""
@@ -186,7 +191,6 @@ def export_dashboard_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 def create_dashboard_app() -> Flask:
     """Create Flask app with dashboard routes."""
     app = Flask(__name__)
@@ -202,6 +206,8 @@ def create_dashboard_app() -> Flask:
         try:
             # Return simple dashboard for now
             return """
+        except ImportError:
+            pass
 <!DOCTYPE html>
 <html>
 <head>
@@ -240,7 +246,6 @@ def create_dashboard_app() -> Flask:
     
     return app
 
-
 def run_server(host='0.0.0.0', port=8080, debug=True):
     """Run the unified dashboard server."""
     app = create_dashboard_app()
@@ -253,9 +258,9 @@ def run_server(host='0.0.0.0', port=8080, debug=True):
     
     app.run(host=host, port=port, debug=debug)
 
-
 if __name__ == '__main__':
     import argparse
+    import sys
     
     parser = argparse.ArgumentParser(description='Unified Dashboard API Server')
     parser.add_argument('--host', default='0.0.0.0', help='Host to bind to')

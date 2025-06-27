@@ -3,16 +3,72 @@ Vercel Tool - Allows agents to interact with Vercel deployments
 """
 
 import json
+import logging
 import os
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-import requests
-from pydantic import BaseModel, ValidationError
+# External dependencies with error handling
+try:
+    import requests
+    REQUESTS_AVAILABLE = True
+except ImportError as e:
+    logging.error(f"Requests library not available: {e}")
+    REQUESTS_AVAILABLE = False
+    # Create mock requests module
+    class MockRequests:
+        def get(self, *args, **kwargs):
+            logging.error("Requests not available - using mock")
+            return MockResponse()
+        
+        def post(self, *args, **kwargs):
+            logging.error("Requests not available - using mock")
+            return MockResponse()
+        
+        def delete(self, *args, **kwargs):
+            logging.error("Requests not available - using mock")
+            return MockResponse()
+    
+    class MockResponse:
+        def __init__(self):
+            self.status_code = 503
+            self.text = "Service unavailable - requests library not available"
+        
+        def json(self):
+            return {"error": "requests library not available"}
+    
+    requests = MockRequests()
 
-from tools.base_tool import ArtesanatoBaseTool
+try:
+    from pydantic import BaseModel, ValidationError
+    PYDANTIC_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Pydantic not available: {e}")
+    PYDANTIC_AVAILABLE = False
+    # Create mock classes
+    class BaseModel:
+        def __init__(self, **kwargs):
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+    
+    class ValidationError(Exception):
+        pass
 
+# Local imports with error handling
+try:
+    from tools.base_tool import ArtesanatoBaseTool
+except ImportError as e:
+    logging.error(f"Base tool not available: {e}")
+    # Create mock base class
+    class ArtesanatoBaseTool:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def _make_request(self, *args, **kwargs):
+            logging.error("Base tool not available - using mock")
+            return {"error": "Base tool not available"}
 
+logger = logging.getLogger(__name__)
 class VercelTool(ArtesanatoBaseTool):
     """Tool for interacting with Vercel deployments and configurations."""
 

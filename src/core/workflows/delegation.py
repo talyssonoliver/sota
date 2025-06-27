@@ -3,15 +3,14 @@ Agent Delegation for the AI Agent System
 Provides utilities for dynamically delegating tasks to appropriate agents.
 """
 
+
 import os
 from datetime import datetime
+
 from typing import Any, Dict, List, Optional
-
-from tools.memory import get_context_by_keys
-
-from .registry import (create_agent_instance, get_agent_config,
+from src.infrastructure.memory import get_context_by_keys
+from src.core.workflows.registry import (create_agent_instance, get_agent_config,
                        get_agent_for_task)
-
 
 def delegate_task(
     task_id: str,
@@ -75,7 +74,6 @@ def delegate_task(
         # Propagate the exception for proper error handling
         raise
 
-
 def save_task_output(task_id: str, output: Any) -> str:
     """
     Save the output of a task to a file.
@@ -105,7 +103,6 @@ def save_task_output(task_id: str, output: Any) -> str:
 
     return file_path
 
-
 def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
     """
     Get relevant context for a query using the memory system.
@@ -119,7 +116,7 @@ def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
         Relevant context as a string
     """
     try:
-        from tools.memory import get_relevant_context as memory_get_context
+        from tools.memory.engine import get_relevant_context as memory_get_context
         return memory_get_context(query, k=k, **kwargs)
     except ImportError:
         # Fallback if memory system is not available

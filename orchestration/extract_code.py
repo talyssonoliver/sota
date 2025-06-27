@@ -7,16 +7,16 @@ Features include multi-language support, Git integration, batch processing,
 and comprehensive testing.
 """
 
+import sys
 import json
-import os
+import argparse
 import re
 import subprocess
-import sys
+import shutil
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-
 
 @dataclass
 class CodeExtractionResult:
@@ -29,7 +29,6 @@ class CodeExtractionResult:
     total_code_blocks: int
     languages_detected: List[str]
     git_commit_hash: Optional[str] = None
-
 
 class CodeExtractor:
     """Advanced code extraction system for AI agent outputs."""
@@ -432,11 +431,8 @@ class CodeExtractor:
 
         return all_results
 
-
 def main():
     """CLI interface for code extraction."""
-    import argparse
-
     parser = argparse.ArgumentParser(
         description='Extract code blocks from AI agent outputs')
     parser.add_argument('--task-id', required=True,
@@ -495,7 +491,6 @@ def main():
     except Exception as e:
         print(f"❌ Error: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

@@ -3,22 +3,27 @@ CLI interface for the Feedback System
 Provides command-line access to feedback operations.
 """
 
-import argparse
-import json
 import sys
-from pathlib import Path
-from typing import Dict, Any
 
-# Add project root to path
+
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Dict, Any
+except ImportError:
+    pass
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.platform.utils.feedback_system import get_feedback_system, FeedbackCategory
+from src.infrastructure.utils.feedback_system import get_feedback_system, FeedbackCategory
 import logging
+import argparse
+import sys
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 class FeedbackCLI:
     """Command-line interface for feedback system"""
@@ -202,7 +207,6 @@ class FeedbackCLI:
             for rec in report['insights']['recommendations']:
                 print(f"  • {rec}")
 
-
 def main():
     """Main CLI entry point"""
     parser = argparse.ArgumentParser(description="Feedback System CLI")
@@ -265,7 +269,6 @@ def main():
     except Exception as e:
         print(f"❌ Error: {str(e)}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

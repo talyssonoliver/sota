@@ -1,20 +1,24 @@
 """
+import sys
 Workflow Visualization Utility
 Generates visual representations of the LangGraph workflow.
 """
 
-import os
-import sys
-from pathlib import Path
 
-from graph.graph_builder import (build_advanced_workflow_graph,
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from src.infrastructure.tools.graph_builder import (build_advanced_workflow_graph,
                                  build_dynamic_workflow_graph,
                                  build_state_workflow_graph,
                                  build_workflow_graph)
+except ImportError:
+    pass
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 def visualize_workflow(
         output_path: str = "graph/critical_path_output.html",
@@ -58,10 +62,11 @@ def visualize_workflow(
         print(f"Error generating visualization: {str(e)}")
         raise
 
-
 def main():
     """Command-line interface for generating workflow visualizations."""
     import argparse
+import os
+import sys
 
     parser = argparse.ArgumentParser(
         description="Generate workflow visualizations")
@@ -82,7 +87,6 @@ def main():
     except Exception as e:
         print(f"Error: {str(e)}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

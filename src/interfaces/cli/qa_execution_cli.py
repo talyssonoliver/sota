@@ -1,23 +1,34 @@
 #!/usr/bin/env python3
 """
+import sys
 CLI interface for QA Agent Execution (Step 5.3)
 
 Provides command-line interface for manual QA validation and testing.
 """
 
+
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Optional
+except ImportError:
+    pass
+try:
+    from src.core.workflows.langgraph_qa_integration import LangGraphQAIntegration
+except ImportError:
+    pass
+try:
+    from src.core.workflows.qa_execution import QAExecutionEngine, execute_qa_validation
+except ImportError:
+    pass
+
 import argparse
 import json
 import logging
 import sys
-from pathlib import Path
-from typing import Optional
-
-from src.core.workflows.langgraph_qa_integration import LangGraphQAIntegration
-from src.core.workflows.qa_execution import QAExecutionEngine, execute_qa_validation
-
-# Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
 
 def setup_cli_logger(verbose: bool = False) -> logging.Logger:
     """Setup CLI logger with appropriate level"""
@@ -32,7 +43,6 @@ def setup_cli_logger(verbose: bool = False) -> logging.Logger:
         logger.addHandler(handler)
     logger.setLevel(level)
     return logger
-
 
 def display_qa_report(report: dict, verbose: bool = False) -> None:
     """Display QA report in a readable format"""
@@ -103,7 +113,6 @@ def display_qa_report(report: dict, verbose: bool = False) -> None:
 
     print("=" * 60)
 
-
 def validate_task(
         task_id: str,
         outputs_dir: str,
@@ -136,7 +145,6 @@ def validate_task(
             "timestamp": "error"
         }
 
-
 def test_langgraph_integration(
         task_id: str,
         outputs_dir: str,
@@ -165,7 +173,6 @@ def test_langgraph_integration(
             "next_state": "ERROR",
             "error": str(e)
         }
-
 
 def main():
     """Main CLI entry point"""
@@ -283,7 +290,6 @@ Examples:
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

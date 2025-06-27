@@ -6,10 +6,12 @@ import json
 import logging
 from typing import Any, Dict, List, Optional
 
-from orchestration.states import TaskStatus
+try:
+    from src.core.workflows.states import TaskStatus
+except ImportError:
+    pass
 
 logger = logging.getLogger(__name__)
-
 
 class PlanExecutionManager:
     """

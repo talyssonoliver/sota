@@ -5,26 +5,44 @@ Step 4.8 Enhancement: Added real-time monitoring hooks.
 Enhanced Error Handling: Added detailed error reporting and structured error information.
 """
 
-import json
-import logging
-import traceback
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict
-
-from orchestration.registry import create_agent_instance
-from orchestration.states import TaskStatus
-from src.platform.utils.execution_monitor import get_execution_monitor
-from src.platform.utils.review import is_review_approved
 
 try:
-    from pythonjsonlogger import jsonlogger
+    from datetime import datetime
 except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Any, Dict
+except ImportError:
+    pass
+try:
+    from src.core.workflows.registry import create_agent_instance
+except ImportError:
+    pass
+try:
+    from src.core.workflows.states import TaskStatus
+except ImportError:
+    pass
+try:
+    from src.infrastructure.utils.execution_monitor import get_execution_monitor
+except ImportError:
+    pass
+try:
+    from src.infrastructure.utils.review import is_review_approved
+except ImportError:
+    pass
+try:
+    from pythonjsonlogger import jsonlogger
     # Fallback if pythonjsonlogger is not available
     class JsonFormatter:
         def __init__(self, *args, **kwargs):
             pass
     jsonlogger = type('JsonLogger', (), {'JsonFormatter': JsonFormatter})
+except ImportError:
+    pass
 
 # Configure structured JSON logging for production
 logger = logging.getLogger("agent_handlers")
@@ -34,7 +52,6 @@ formatter = jsonlogger.JsonFormatter(
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.setLevel(logging.INFO)
-
 
 def coordinator_handler(state: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -105,7 +122,6 @@ def coordinator_handler(state: Dict[str, Any]) -> Dict[str, Any]:
             execution_data, "FAILED", error=str(e))
         return error_result
 
-
 def technical_handler(state: Dict[str, Any]) -> Dict[str, Any]:
     """
     Handler for the Technical Architect agent.
@@ -174,7 +190,6 @@ def technical_handler(state: Dict[str, Any]) -> Dict[str, Any]:
             execution_data, "FAILED", error=str(e))
         return error_result
 
-
 def backend_handler(state: Dict[str, Any]) -> Dict[str, Any]:
     """
     Handler for the Backend agent.
@@ -242,7 +257,6 @@ def backend_handler(state: Dict[str, Any]) -> Dict[str, Any]:
         monitor.complete_agent_execution(
             execution_data, "FAILED", error=str(e))
         return error_result
-
 
 def frontend_handler(state: Dict[str, Any]) -> Dict[str, Any]:
     """
@@ -313,7 +327,6 @@ def frontend_handler(state: Dict[str, Any]) -> Dict[str, Any]:
             "attempt_count": state.get("attempt_count", 1)
         }
 
-
 def qa_handler(state: Dict[str, Any]) -> Dict[str, Any]:
     """
     Handler for QA evaluation. This assesses task outputs and decides whether to continue
@@ -337,7 +350,7 @@ def qa_handler(state: Dict[str, Any]) -> Dict[str, Any]:
 
         # For demonstration purposes, always move to human review
         # In a real implementation, this might be conditional
-        from handlers.qa_handler import qa_agent
+        from src.infrastructure.tools.handlers.qa_handler import qa_agent
 
         # Pass through to our QA agent implementation
         return qa_agent(state)
@@ -364,8 +377,6 @@ def qa_handler(state: Dict[str, Any]) -> Dict[str, Any]:
             "output": f"{error_details['agent_role'].capitalize()} implementation failed: {error_details['message']}",
             "attempt_count": state.get("attempt_count", 1)
         }
-
-
 def documentation_handler(state: Dict[str, Any]) -> Dict[str, Any]:
     """
     Handler for the Documentation agent.
@@ -435,7 +446,6 @@ def documentation_handler(state: Dict[str, Any]) -> Dict[str, Any]:
             execution_data, "FAILED", error=str(e))
         return error_result
 
-
 def human_review_handler(state: Dict[str, Any]) -> Dict[str, Any]:
     """
     Handler for human review checkpoints. This checks if a human review has been completed
@@ -477,7 +487,6 @@ def human_review_handler(state: Dict[str, Any]) -> Dict[str, Any]:
         # this would pause execution until the review is completed
         return result
 
-
 def execute_with_timeout(agent, state, timeout_seconds=30):
     """
     Execute an agent with timeout protection.
@@ -491,8 +500,14 @@ def execute_with_timeout(agent, state, timeout_seconds=30):
     Returns:
         Agent execution result
     """
+try:
     import platform
+except ImportError:
+    pass
+try:
     import threading
+except ImportError:
+    pass
 
     # For Windows or when testing, use threading approach
     if platform.system() == "Windows" or hasattr(state, '_test_mode'):
@@ -530,7 +545,12 @@ def execute_with_timeout(agent, state, timeout_seconds=30):
 
     else:
         # Unix/Linux signal-based approach
-        import signal
+try:
+    import signal
+except ImportError:
+    pass
+import logging
+import traceback
 
         class TimeoutException(Exception):
             pass
@@ -564,3 +584,4 @@ def execute_with_timeout(agent, state, timeout_seconds=30):
             raise e
         finally:
             signal.signal(signal.SIGALRM, old_handler)
+

@@ -6,21 +6,22 @@ Enhanced reporting system for comprehensive end-of-day analysis,
 building upon existing Phase 5 infrastructure with automation-specific insights.
 """
 
+try:
+    import asyncio
+except ImportError:
+    pass
+import sys
 import json
 import logging
-import os
-import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
-# Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
-from src.platform.utils.completion_metrics import CompletionMetricsCalculator
-from src.platform.utils.execution_monitor import ExecutionMonitor
+from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
+from src.infrastructure.utils.execution_monitor import ExecutionMonitor
 from scripts.generate_progress_report import ProgressReportGenerator
-
 
 class EndOfDayReportGenerator:
     """
@@ -568,11 +569,8 @@ class EndOfDayReportGenerator:
 **System Uptime:** {stats.get('automation_uptime', 100.0):.1f}%
 **Error Count:** {stats.get('error_count', 0)}"""
 
-
 async def main():
     """Main entry point for end-of-day report generation."""
-    import asyncio
-    
     generator = EndOfDayReportGenerator()
     
     try:
@@ -589,7 +587,5 @@ async def main():
         print(f"❌ End-of-day report generation failed: {e}")
         return False
 
-
 if __name__ == "__main__":
-    import asyncio
     asyncio.run(main())

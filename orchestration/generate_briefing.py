@@ -6,21 +6,19 @@ Generates comprehensive morning briefings with sprint status, priorities,
 and actionable insights using existing Phase 5 infrastructure.
 """
 
+import sys
+import argparse
+import asyncio
 import json
 import logging
-import os
-import sys
 from collections import Counter
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
-# Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
-
-from utils.completion_metrics import CompletionMetricsCalculator
-from utils.execution_monitor import ExecutionMonitor
-
+from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
+from src.infrastructure.utils.execution_monitor import ExecutionMonitor
 
 class BriefingGenerator:
     """
@@ -576,6 +574,7 @@ class BriefingGenerator:
     def _generate_day_console_briefing(self, data: Dict[str, Any], day: int) -> str:
         """Generate day-specific console format briefing."""
         output = f"""
+
 {'='*60}
 DAY {day} MORNING BRIEFING
 {'='*60}
@@ -829,12 +828,8 @@ RECOMMENDATIONS:
         self.logger.info(f"Briefing saved to {file_path}")
         return file_path
 
-
 def main():
     """CLI interface for briefing generation."""
-    import argparse
-    import asyncio
-    
     parser = argparse.ArgumentParser(description="Generate morning briefings")
     parser.add_argument("--day", type=int, help="Generate day-specific briefing (e.g., --day 2)")
     parser.add_argument("--type", choices=["morning", "midday", "eod"], default="morning",
@@ -880,7 +875,6 @@ def main():
         else:
             print(f"❌ Error generating briefing: {result['message']}")
             sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

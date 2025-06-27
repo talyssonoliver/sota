@@ -21,47 +21,65 @@ Usage:
     python orchestration/execute_graph.py --task BE-07 --generate-prompt --monitor
 """
 
-import argparse
+import sys
 import json
 import logging
 import os
-import sys
-import threading
-import time
-from datetime import datetime
+import argparse
+from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Dict, List, Optional, Any
 
-from pythonjsonlogger import jsonlogger
 
-from src.platform.memory import get_context_by_keys, get_memory_system
-from src.platform.tools.graph_builder import (build_advanced_workflow_graph,
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Any, Dict, Optional
+except ImportError:
+    pass
+try:
+    from pythonjsonlogger import jsonlogger
+    import logging
+    jsonlogger = None
+except ImportError:
+    pass
+
+from src.infrastructure.memory import get_context_by_keys, get_memory_system
+from src.infrastructure.tools.graph_builder import (build_advanced_workflow_graph,
                                  build_dynamic_workflow_graph,
                                  build_state_workflow_graph,
                                  build_workflow_graph)
-from src.platform.tools.notifications import (NotificationLevel, SlackNotifier,
+from src.infrastructure.tools.notifications import (NotificationLevel, SlackNotifier,
                                  attach_notifications_to_workflow)
-from src.platform.tools.resilient_workflow import create_resilient_workflow
+from src.infrastructure.tools.resilient_workflow import create_resilient_workflow
 from src.core.workflows.generate_prompt import generate_prompt
 from src.core.workflows.states import TaskStatus
 
-from src.platform.utils.execution_monitor import (create_langgraph_hook,
+from src.infrastructure.utils.execution_monitor import (create_langgraph_hook,
                                      get_execution_monitor)
-from src.platform.utils.task_loader import load_task_metadata, update_task_state
+from src.infrastructure.utils.task_loader import load_task_metadata, update_task_state
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
 # Configure structured JSON logging for Step 4.3 execution tracking
 logger = logging.getLogger("step_4_3_executor")
 handler = logging.StreamHandler()
-formatter = jsonlogger.JsonFormatter(
-    '%(asctime)s %(levelname)s %(name)s %(message)s %(event)s %(task_id)s %(workflow_type)s %(agent)s')
+if jsonlogger:
+    formatter = jsonlogger.JsonFormatter(
+        '%(asctime)s %(levelname)s %(name)s %(message)s %(event)s %(task_id)s %(workflow_type)s %(agent)s')
+else:
+    formatter = logging.Formatter(
+        '%(asctime)s %(levelname)s %(name)s %(message)s')
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.setLevel(logging.INFO)
-
 
 def build_task_state(task_id):
     """
@@ -191,7 +209,6 @@ def build_task_state(task_id):
             "prior_knowledge": task_context,
             "timestamp": datetime.now().isoformat()
         }
-
 
 def run_task_graph(
         task_id,
@@ -565,7 +582,6 @@ def run_task_graph(
 
     return result
 
-
 def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
     """
     Get relevant context for a query using the memory system.
@@ -579,12 +595,11 @@ def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
         Relevant context as a string
     """
     try:
-        from memory import get_relevant_context as memory_get_context
+        from tools.memory import get_relevant_context as memory_get_context
         return memory_get_context(query, k=k, **kwargs)
     except ImportError:
         # Fallback if memory system is not available
         return ""
-
 
 def main():
     """
@@ -812,7 +827,6 @@ Workflow Types:
         })
 
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

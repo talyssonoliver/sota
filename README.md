@@ -169,6 +169,32 @@ ai-system/
 
 ### Installation
 
+#### Windows Installation (Recommended)
+
+1. Clone this repository
+2. Open PowerShell as Administrator and run:
+   ```powershell
+   # Allow script execution (if needed)
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   
+   # Run the setup script
+   .\setup_windows.ps1
+   ```
+   
+   Or use the batch file:
+   ```cmd
+   setup_windows.bat
+   ```
+
+3. The setup script will:
+   - Create a virtual environment
+   - Install all dependencies
+   - Set up git hooks
+   - Create .env file from template
+   - Generate MEMORY_ENGINE_KEY automatically
+
+#### Manual Installation (Linux/Mac/WSL)
+
 1. Clone this repository
 2. Create a virtual environment:
    ```bash
@@ -181,7 +207,7 @@ ai-system/
    ```
 4. Copy `.env.example` to `.env` and add your API keys:
    ```bash
-   cp .env.example .env
+   cp .env.template .env
    # Edit .env to add your API keys including:
    # - OPENAI_API_KEY (required)
    # - MEMORY_ENGINE_KEY (required for secure encryption)
@@ -189,9 +215,9 @@ ai-system/
 
 5. Generate and set the memory engine encryption key:
    ```bash
-   # Generate a secure encryption key
-   python -c "from cryptography.fernet import Fernet; print('MEMORY_ENGINE_KEY=' + Fernet.generate_key().decode())"
-   # Copy the output and add it to your .env file
+   # Use the secure key generation script
+   python scripts/generate_memory_key.py
+   # This will generate a key and optionally add it to your .env file
    ```
 
 ## 🚀 Quick Start
@@ -266,6 +292,19 @@ The system includes comprehensive testing for agents, tools, and orchestration u
 
 The test system uses a unified test runner that can execute different test suites:
 
+#### Windows
+```cmd
+# Use the Windows test runner
+test_windows.bat --quick   # Quick validation
+test_windows.bat --tools   # Tool loader tests
+test_windows.bat --all     # All tests
+
+# Or activate virtual environment first
+.venv\Scripts\activate
+python -m tests.run_tests --all
+```
+
+#### Linux/Mac/WSL
 ```bash
 # Run all tests (quick validation, tool tests, and full suite)
 python -m tests.run_tests --all

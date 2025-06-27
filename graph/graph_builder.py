@@ -4,28 +4,40 @@ Constructs various LangGraph workflow configurations for agent orchestration.
 Enhanced Error Handling: Added retry logic and self-correction routing.
 """
 
-import json
-import logging
-import os
-from typing import Any, Callable, Dict, List, Optional
 
-import yaml
-from langchain.agents import AgentType
-from langchain_openai import ChatOpenAI
-from langgraph.constants import END
-from langgraph.graph import Graph, StateGraph
-
-from graph.handlers import (backend_handler, coordinator_handler,
+try:
+    from typing import Any, Callable, Dict, List, Optional
+except ImportError:
+    pass
+try:
+    from langchain.agents import AgentType
+except ImportError:
+    pass
+try:
+    from langchain_openai import ChatOpenAI
+except ImportError:
+    pass
+try:
+    from langgraph.constants import END
+except ImportError:
+    pass
+try:
+    from langgraph.graph import Graph, StateGraph
+except ImportError:
+    pass
+try:
+    from .handlers import (backend_handler, coordinator_handler,
                             documentation_handler, frontend_handler,
                             human_review_handler, qa_handler,
                             technical_handler)
-from orchestration.registry import create_agent_instance, get_agent
-from orchestration.states import (TaskStatus, get_next_status,
+except ImportError:
+    pass
+from src.core.workflows.registry import create_agent_instance, get_agent
+from src.core.workflows.states import (TaskStatus, get_next_status,
                                   get_valid_transitions)
 
 # Configure logger for routing decisions
 logger = logging.getLogger("graph_builder")
-
 
 def load_graph_config() -> Dict[str, Any]:
     """
@@ -51,7 +63,6 @@ def load_graph_config() -> Dict[str, Any]:
             ]
         }
 
-
 def build_workflow_graph() -> StateGraph:
     """
     Build a simple workflow graph based on the configuration in critical_path.json.
@@ -64,6 +75,9 @@ def build_workflow_graph() -> StateGraph:
     # Define a state schema for the graph
     from typing import Optional as Opt
     from typing import TypedDict
+import json
+import logging
+import os
 
     class WorkflowState(TypedDict, total=False):
         task_id: str
@@ -165,7 +179,6 @@ def build_workflow_graph() -> StateGraph:
 
     return workflow.compile()
 
-
 def build_state_workflow_graph() -> StateGraph:
     """
     Build a stateful workflow graph with conditional edges based on task status.
@@ -176,8 +189,6 @@ def build_state_workflow_graph() -> StateGraph:
     config = load_graph_config()
 
     # Define a state schema for the graph
-    from typing import Optional as Opt
-    from typing import TypedDict
 
     class WorkflowState(TypedDict, total=False):
         task_id: str
@@ -299,7 +310,6 @@ def build_state_workflow_graph() -> StateGraph:
     workflow.set_entry_point("coordinator")
     return workflow.compile()
 
-
 def build_advanced_workflow_graph() -> StateGraph:
     """
     Build an advanced workflow graph with explicit A2A (Agent-to-Agent) edges.
@@ -310,8 +320,6 @@ def build_advanced_workflow_graph() -> StateGraph:
         A compiled StateGraph object with advanced conditional routing
     """
     # Define a state schema for the graph
-    from typing import Optional as Opt
-    from typing import TypedDict
 
     class WorkflowState(TypedDict, total=False):
         task_id: str
@@ -474,7 +482,6 @@ def build_advanced_workflow_graph() -> StateGraph:
 
     return workflow.compile()
 
-
 def build_dynamic_workflow_graph(task_id: str = None) -> StateGraph:
     """
     Build a dynamic workflow graph that can adapt based on task requirements and status.
@@ -488,8 +495,6 @@ def build_dynamic_workflow_graph(task_id: str = None) -> StateGraph:
     config = load_graph_config()
 
     # Define a state schema for the graph
-    from typing import Optional as Opt
-    from typing import TypedDict
 
     class WorkflowState(TypedDict, total=False):
         task_id: str

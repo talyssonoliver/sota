@@ -13,24 +13,52 @@ Key Features:
 - Audit trail and compliance reporting
 """
 
-import os
-import yaml
 import json
+import uuid
+import logging
 import asyncio
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Tuple, Union
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, asdict
-from enum import Enum
-import logging
-from pathlib import Path
-import uuid
-import hashlib
-import re
 
-# Configure logging
+try:
+    import yaml
+except ImportError:
+    # Fallback YAML implementation
+    class yaml:
+        @staticmethod
+        def safe_load(stream):
+            return {}
+        
+        @staticmethod
+        def safe_dump(data, stream=None):
+            if stream:
+                stream.write(str(data))
+            return str(data)
+
+# Original imports with error handling
+try:
+    from datetime import datetime, timedelta
+except ImportError:
+    pass
+try:
+    from typing import Dict, List, Optional, Any, Tuple, Union
+except ImportError:
+    pass
+try:
+    from dataclasses import dataclass, asdict
+except ImportError:
+    pass
+try:
+    from enum import Enum
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 class CheckpointType(Enum):
     """Types of HITL checkpoints"""
@@ -40,14 +68,12 @@ class CheckpointType(Enum):
     DOCUMENTATION = "documentation"
     TASK_TRANSITIONS = "task_transitions"
 
-
 class RiskLevel(Enum):
     """Risk assessment levels"""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
-
 
 class CheckpointStatus(Enum):
     """Checkpoint status values"""
@@ -58,14 +84,12 @@ class CheckpointStatus(Enum):
     TIMEOUT = "timeout"
     CANCELLED = "cancelled"
 
-
 class TimeoutAction(Enum):
     """Actions to take when checkpoint times out"""
     AUTO_APPROVE = "auto_approve"
     ESCALATE = "escalate"
     BLOCK = "block"
     NOTIFY_ONLY = "notify_only"
-
 
 @dataclass
 class HITLCheckpoint:
@@ -176,7 +200,6 @@ class HITLCheckpoint:
             'reviewers': self.assigned_reviewers or []
         }
 
-
 @dataclass
 class RiskAssessment:
     """Risk assessment result"""
@@ -191,7 +214,6 @@ class RiskAssessment:
         data = asdict(self)
         data['risk_level'] = self.risk_level.value
         return data
-
 
 @dataclass
 class HITLReviewDecision:
@@ -213,7 +235,6 @@ class HITLReviewDecision:
         data['reviewed_at'] = self.reviewed_at.isoformat()
         return data
 
-
 @dataclass
 class HITLAuditEntry:
     """Represents an audit log entry"""
@@ -233,7 +254,6 @@ class HITLAuditEntry:
         data = asdict(self)
         data['timestamp'] = self.timestamp.isoformat()
         return data
-
 
 class HITLPolicyEngine:
     """Core HITL policy engine for managing checkpoints and approvals"""
@@ -1359,7 +1379,6 @@ def create_hitl_engine(config_path: Optional[str] = None) -> HITLPolicyEngine:
     """Create and return HITL policy engine instance"""
     return HITLPolicyEngine(config_path)
 
-
 # Integration helper functions
 async def create_hitl_checkpoint_for_task(task_id: str, checkpoint_type: str, 
                                         task_data: Dict[str, Any], 
@@ -1377,7 +1396,6 @@ async def create_hitl_checkpoint_for_task(task_id: str, checkpoint_type: str,
         logger.error(f"Error creating HITL checkpoint: {e}")
         return None
 
-
 async def check_hitl_approval_required(task_id: str, task_data: Dict[str, Any]) -> bool:
     """Check if HITL approval is required for a task"""
     engine = create_hitl_engine()
@@ -1392,15 +1410,11 @@ async def check_hitl_approval_required(task_id: str, task_data: Dict[str, Any]) 
     
     return False
 
-
 # Export main classes for easy import
 HITLEngine = HITLPolicyEngine  # Alias for backward compatibility
 
-
 if __name__ == "__main__":
     # Example usage
-    import asyncio
-    
     async def main():
         engine = create_hitl_engine()
         

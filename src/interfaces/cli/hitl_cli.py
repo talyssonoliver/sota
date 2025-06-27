@@ -6,6 +6,7 @@ Command-line interface for managing HITL checkpoints, reviews, and approvals.
 Provides tools for reviewers to inspect, approve, reject, and escalate checkpoints.
 """
 
+
 import argparse
 import json
 import logging
@@ -13,12 +14,14 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Optional, Dict, Any
-import yaml
-
-# Add project root to path
+try:
+    import yaml
+    YAML_AVAILABLE = True
+except ImportError:
+    YAML_AVAILABLE = False
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.platform.utils.input_validation import (
+from src.infrastructure.utils.input_validation import (
     validate_command_args, validate_checkpoint_id, validate_task_id,
     validate_reviewer_name, validate_file_path, validate_string_content,
     validate_integer_range, ValidationError
@@ -27,7 +30,6 @@ from src.platform.utils.input_validation import (
 from src.core.workflows.hitl_engine import HITLPolicyEngine, CheckpointStatus, RiskLevel
 from src.core.workflows.hitl_task_metadata import HITLTaskMetadataManager, HITLStatus
 from src.interfaces.dashboard.components.hitl_widgets import HITLDashboardManager
-
 
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
@@ -40,7 +42,6 @@ def setup_logging(verbose: bool = False):
             logging.FileHandler('hitl_cli.log')
         ]
     )
-
 
 class HITLCLIManager:
     """Main CLI manager for HITL operations."""
@@ -254,7 +255,7 @@ class HITLCLIManager:
             with open(output_path, 'w') as f:
                 if output_path.suffix.lower() == '.json':
                     json.dump(checkpoint_data, f, indent=2)
-                elif output_path.suffix.lower() in ['.yaml', '.yml']:
+                elif output_path.suffix.lower() in ['.yaml', '.yml'] and YAML_AVAILABLE:
                     yaml.dump(checkpoint_data, f, default_flow_style=False)
                 else:
                     # Default to JSON
@@ -266,7 +267,6 @@ class HITLCLIManager:
         except Exception as e:
             self.logger.error(f"Failed to export checkpoint data: {e}")
             return False
-
 
 def cmd_list_checkpoints(args):
     """List pending checkpoints command."""
@@ -302,7 +302,6 @@ def cmd_list_checkpoints(args):
         print(f"   Reviewers: {', '.join(cp.get('reviewers', []))}")
         print("")  # Empty line separator
 
-
 def cmd_show_checkpoint(args):
     """Show checkpoint details command."""
     cli_manager = HITLCLIManager()
@@ -336,7 +335,6 @@ def cmd_show_checkpoint(args):
             print(json.dumps(details['content'], indent=2))
         else:
             print(details['content'])
-
 
 def cmd_approve_checkpoint(args):
     """Approve checkpoint command."""
@@ -372,7 +370,6 @@ def cmd_approve_checkpoint(args):
         print(f"✅ Checkpoint {args.checkpoint_id} approved by {args.reviewer}")
     else:
         print(f"❌ Failed to approve checkpoint {args.checkpoint_id}")
-
 
 def cmd_reject_checkpoint(args):
     """Reject checkpoint command."""
@@ -416,7 +413,6 @@ def cmd_reject_checkpoint(args):
         print(f"❌ Checkpoint {args.checkpoint_id} rejected by {args.reviewer}")
     else:
         print(f"❌ Failed to reject checkpoint {args.checkpoint_id}")
-
 
 def cmd_escalate_checkpoint(args):
     """Escalate checkpoint command."""
@@ -462,7 +458,6 @@ def cmd_escalate_checkpoint(args):
     else:
         print(f"❌ Failed to escalate checkpoint {args.checkpoint_id}")
 
-
 def cmd_audit_trail(args):
     """Show audit trail command."""
     cli_manager = HITLCLIManager()
@@ -495,7 +490,6 @@ def cmd_audit_trail(args):
         if entry.get('details'):
             print(f"   Details: {entry['details']}")
         print()
-
 
 def cmd_metrics(args):
     """Show HITL metrics command."""
@@ -538,7 +532,6 @@ def cmd_metrics(args):
             print(f"   {emoji} {risk_level.capitalize()}: {count}")
         print()
 
-
 def cmd_export_checkpoint(args):
     """Export checkpoint data command."""
     cli_manager = HITLCLIManager()
@@ -548,7 +541,6 @@ def cmd_export_checkpoint(args):
         print(f"✅ Checkpoint data exported to {args.output}")
     else:
         print(f"❌ Failed to export checkpoint data")
-
 
 def main():
     """Main CLI entry point."""
@@ -659,7 +651,6 @@ Examples:
             import traceback
             traceback.print_exc()
         sys.exit(1)
-
 
 if __name__ == '__main__':
     main()

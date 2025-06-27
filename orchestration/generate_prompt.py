@@ -13,27 +13,34 @@ Usage:
     python orchestration/generate_prompt.py BE-07 backend-agent --output outputs/BE-07/prompt_backend.md
 """
 
+import sys
 import argparse
 import logging
 import os
-import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any
-
-from prompts.utils import format_prompt_with_context, load_prompt_template
-from tools.memory import get_memory_instance, MemoryEngine
-from utils.task_loader import load_task_metadata
+try:
+    from typing import Dict, List, Optional, Any
+except ImportError:
+    pass
+try:
+    from prompts.utils import format_prompt_with_context, load_prompt_template
+except ImportError:
+    pass
+try:
+    from tools.memory import get_memory_instance, MemoryEngine
+    pass  # Use fallback/mock implementation
+except ImportError:
+    pass
+from src.infrastructure.utils.task_loader import load_task_metadata
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 # Set up logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
 
 def get_task_context(task_id: str) -> str:
     """
@@ -85,7 +92,6 @@ def get_task_context(task_id: str) -> str:
     except Exception as e:
         logger.error(f"Error retrieving context for task {task_id}: {e}")
         return f"Error retrieving context: {str(e)}"
-
 
 def generate_prompt(task_id, agent_id, output_path=None):
     """
@@ -176,7 +182,6 @@ def generate_prompt(task_id, agent_id, output_path=None):
     print(f"✅ Step 4.2 Complete: Prompt generated and saved to {output_path}")
 
     return filled_prompt
-
 
 def main():
     """
@@ -283,7 +288,6 @@ Examples:
             traceback.print_exc()
         print(f"❌ Step 4.2 Failed: {str(e)}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

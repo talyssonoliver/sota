@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
 """
+import sys
 Debug script to test memory engine context building
 """
 
-import sys
+
 from pathlib import Path
+from src.infrastructure.memory.memory_engine import MemoryEngine
+import sys
 
-from src.platform.tools.memory_engine import MemoryEngine
-
-# Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
 
 def test_memory_engine():
     """Test memory engine context building"""
@@ -68,7 +67,6 @@ def test_memory_engine():
                         doc.get(
                             'content',
                             ''))} chars)")
-
 
 if __name__ == "__main__":
     test_memory_engine()

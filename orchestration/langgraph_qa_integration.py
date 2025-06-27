@@ -7,18 +7,19 @@ When a task reaches QA_PENDING state, it automatically triggers the QA Agent
 for automated validation.
 """
 
+import sys
+import argparse
 import json
 import logging
-import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from orchestration.qa_execution import QAExecutionEngine
-
-# Add project root to path
+try:
+    from src.core.workflows.qa_execution import QAExecutionEngine
+except ImportError:
+    pass
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
 
 class LangGraphQAIntegration:
     """Integration layer between LangGraph and QA execution system"""
@@ -182,7 +183,6 @@ class LangGraphQAIntegration:
         print(
             f"  📝 QA result logged: {qa_result.get('status')} -> {next_state}")
 
-
 def create_qa_node_handler() -> callable:
     """
     Create a LangGraph node handler for QA validation.
@@ -215,7 +215,6 @@ def create_qa_node_handler() -> callable:
 
     return qa_node_handler
 
-
 def create_qa_conditional_edge() -> callable:
     """
     Create a conditional edge function for LangGraph that routes based on QA results.
@@ -239,11 +238,8 @@ def create_qa_conditional_edge() -> callable:
 
     return qa_conditional_router
 
-
 if __name__ == "__main__":
     # Example usage and testing
-    import argparse
-
     parser = argparse.ArgumentParser(
         description="Test LangGraph QA integration")
     parser.add_argument("task_id", help="Task ID to test (e.g., BE-07)")

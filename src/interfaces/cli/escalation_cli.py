@@ -1,24 +1,31 @@
 """
+import sys
 CLI Interface for Automated Escalation System
 Provides command-line access to escalation functionality and management.
 """
 
-import argparse
-import json
-import sys
-from datetime import datetime, timedelta
-from typing import Dict, Any, List
-
-# Add parent directory to path for imports
 import os
+import sys
+
+try:
+    from datetime import datetime, timedelta
+except ImportError:
+    pass
+try:
+    from typing import Dict, Any, List
+except ImportError:
+    pass
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.platform.utils.escalation_system import (
+import argparse
+import json
+
+from src.infrastructure.utils.escalation_system import (
     EscalationEngine, 
     EscalationLevel,
     EscalationEvent
 )
-
 
 class EscalationCLI:
     """Command-line interface for escalation system"""
@@ -233,7 +240,6 @@ class EscalationCLI:
             print(f"❌ Error resolving escalation: {e}")
             return {"success": False, "task_id": task_id, "error": str(e)}
 
-
 def main():
     """Main CLI entry point"""
     parser = argparse.ArgumentParser(description="Escalation System CLI")
@@ -292,25 +298,21 @@ def main():
         print(f"❌ Unexpected error: {e}")
         sys.exit(1)
 
-
 # Direct function exports for testing
 def list_active_escalations() -> Dict[str, Any]:
     """List active escalations (for testing)"""
     cli = EscalationCLI()
     return cli.list_active_escalations()
 
-
 def get_escalation_status(task_id: str) -> Dict[str, Any]:
     """Get escalation status (for testing)"""
     cli = EscalationCLI()
     return cli.get_escalation_status(task_id)
 
-
 def trigger_manual_escalation(task_id: str, reason: str, level: str) -> Dict[str, Any]:
     """Trigger manual escalation (for testing)"""
     cli = EscalationCLI()
     return cli.trigger_manual_escalation(task_id, reason, level)
-
 
 if __name__ == "__main__":
     main()

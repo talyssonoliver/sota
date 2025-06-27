@@ -1,27 +1,35 @@
 #!/usr/bin/env python3
 """
+import sys
 Gantt Chart API Endpoints - Phase 6 Step 6.7
 
 Flask API endpoints for Gantt chart data, critical path analysis,
 and timeline optimization functionality.
 """
 
-import json
-import logging
-import os
-import sys
-from datetime import datetime, timedelta
-from pathlib import Path
-from flask import Blueprint, jsonify, request
-from typing import Dict, List, Any
 
-# Add parent directory to path for imports
+try:
+    from datetime import datetime, timedelta
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from flask import Blueprint, jsonify, request
+except ImportError:
+    pass
+try:
+    from typing import Dict, List, Any
+except ImportError:
+    pass
 sys.path.append(str(Path(__file__).parent.parent))
 
 try:
-    from orchestration.gantt_analyzer import GanttAnalyzer
-    from orchestration.states import TaskStatus
-    from utils.completion_metrics import CompletionMetricsCalculator
+    from src.core.workflows.gantt_analyzer import GanttAnalyzer
+    from src.core.workflows.states import TaskStatus
+    from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
 except ImportError as e:
     print(f"Import error: {e}")
     # Create mock classes for development
@@ -34,6 +42,9 @@ except ImportError as e:
             return []
         def optimize_timeline(self, **kwargs):
             return {}
+
+import logging
+import sys
 
 # Create Blueprint
 gantt_bp = Blueprint('gantt', __name__, url_prefix='/api/gantt')
@@ -56,7 +67,6 @@ def get_gantt_analyzer():
             logger.error(f"Failed to initialize GanttAnalyzer: {e}")
             gantt_analyzer = GanttAnalyzer()  # Use mock
     return gantt_analyzer
-
 
 @gantt_bp.route('/data', methods=['GET'])
 def get_gantt_data():
@@ -119,7 +129,6 @@ def get_gantt_data():
             'data': generate_sample_gantt_data()
         }), 500
 
-
 @gantt_bp.route('/critical-path', methods=['GET'])
 def get_critical_path():
     """
@@ -171,7 +180,6 @@ def get_critical_path():
             'error': str(e)
         }), 500
 
-
 @gantt_bp.route('/resources', methods=['GET'])
 def get_resource_analysis():
     """
@@ -213,7 +221,6 @@ def get_resource_analysis():
             'success': False,
             'error': str(e)
         }), 500
-
 
 @gantt_bp.route('/recommendations', methods=['GET'])
 def get_optimization_recommendations():
@@ -284,7 +291,6 @@ def get_optimization_recommendations():
             }
         }), 500
 
-
 @gantt_bp.route('/optimize', methods=['POST'])
 def optimize_timeline():
     """
@@ -326,7 +332,6 @@ def optimize_timeline():
             'success': False,
             'error': str(e)
         }), 500
-
 
 @gantt_bp.route('/tasks/<task_id>', methods=['PUT'])
 def update_task(task_id):
@@ -382,7 +387,6 @@ def update_task(task_id):
             'success': False,
             'error': str(e)
         }), 400
-
 
 @gantt_bp.route('/export/<format_type>', methods=['GET'])
 def export_gantt_data(format_type):
@@ -445,7 +449,6 @@ def export_gantt_data(format_type):
             'success': False,
             'error': str(e)
         }), 500
-
 
 # Helper Functions
 
@@ -639,7 +642,6 @@ def generate_sample_gantt_data():
         ]
     }
 
-
 def filter_by_time_range(gantt_data, time_range):
     """Filter Gantt data by specified time range."""
     if time_range == 'all':
@@ -671,7 +673,6 @@ def filter_by_time_range(gantt_data, time_range):
     gantt_data['tasks'] = filtered_tasks
     return gantt_data
 
-
 def calculate_risk_level(critical_tasks):
     """Calculate overall risk level based on critical tasks."""
     if not critical_tasks:
@@ -687,7 +688,6 @@ def calculate_risk_level(critical_tasks):
     else:
         return 'Low'
 
-
 def identify_bottlenecks(critical_tasks):
     """Identify potential bottlenecks in critical tasks."""
     bottlenecks = []
@@ -702,7 +702,6 @@ def identify_bottlenecks(critical_tasks):
             })
     
     return bottlenecks
-
 
 def calculate_float_analysis(tasks):
     """Calculate float analysis for all tasks."""
@@ -723,7 +722,6 @@ def calculate_float_analysis(tasks):
     
     return float_analysis
 
-
 def extract_dependency_network(critical_tasks):
     """Extract dependency network for critical tasks."""
     dependencies = []
@@ -737,7 +735,6 @@ def extract_dependency_network(critical_tasks):
             })
     
     return dependencies
-
 
 def generate_critical_path_recommendations(critical_tasks):
     """Generate recommendations for critical path optimization."""
@@ -756,7 +753,6 @@ def generate_critical_path_recommendations(critical_tasks):
             })
     
     return recommendations
-
 
 def analyze_resource_utilization(tasks):
     """Analyze resource utilization across all tasks."""
@@ -785,7 +781,6 @@ def analyze_resource_utilization(tasks):
     
     return resources
 
-
 def analyze_workload_distribution(tasks):
     """Analyze workload distribution across team members."""
     workload = {}
@@ -811,7 +806,6 @@ def analyze_workload_distribution(tasks):
     
     return workload
 
-
 def analyze_capacity(tasks):
     """Analyze team capacity and availability."""
     # This would typically integrate with HR/capacity planning systems
@@ -834,7 +828,6 @@ def analyze_capacity(tasks):
         ]
     }
 
-
 def identify_resource_bottlenecks(tasks):
     """Identify resource bottlenecks."""
     bottlenecks = []
@@ -854,7 +847,6 @@ def identify_resource_bottlenecks(tasks):
     
     return bottlenecks
 
-
 def identify_optimization_opportunities(tasks):
     """Identify optimization opportunities."""
     opportunities = []
@@ -872,7 +864,6 @@ def identify_optimization_opportunities(tasks):
     
     return opportunities
 
-
 def calculate_team_metrics(tasks):
     """Calculate overall team performance metrics."""
     total_estimated = sum(task.get('estimated_effort', 0) for task in tasks)
@@ -887,7 +878,6 @@ def calculate_team_metrics(tasks):
         'quality_score': 92,     # Would be calculated from defect rates
         'team_efficiency': 88    # Overall efficiency metric
     }
-
 
 def generate_sample_recommendations():
     """Generate sample optimization recommendations."""
@@ -927,7 +917,6 @@ def generate_sample_recommendations():
         }
     ]
 
-
 def generate_sample_optimization_results(params):
     """Generate sample optimization results."""
     return {
@@ -953,7 +942,6 @@ def generate_sample_optimization_results(params):
             'Designer': {'before': 60, 'after': 65}
         }
     }
-
 
 def generate_mermaid_export(gantt_data):
     """Generate Mermaid Gantt chart code for export."""
@@ -985,7 +973,6 @@ def generate_mermaid_export(gantt_data):
     
     return mermaid_code
 
-
 def generate_csv_export(gantt_data):
     """Generate CSV export of Gantt chart data."""
     tasks = gantt_data.get('tasks', [])
@@ -1011,7 +998,6 @@ def generate_csv_export(gantt_data):
     
     return '\n'.join(csv_lines)
 
-
 # Error handlers
 @gantt_bp.errorhandler(404)
 def not_found(error):
@@ -1019,7 +1005,6 @@ def not_found(error):
         'success': False,
         'error': 'Endpoint not found'
     }), 404
-
 
 @gantt_bp.errorhandler(500)
 def internal_error(error):

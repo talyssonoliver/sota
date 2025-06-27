@@ -3,13 +3,18 @@ Coverage Tool - Helps agents analyze test coverage metrics
 """
 
 import json
-import os
-import subprocess
+import logging
+import sys
 from typing import Any, Dict, List, Optional
 
-from .base_tool import ArtesanatoBaseTool
-
-
+try:
+    from .base_tool import ArtesanatoBaseTool
+except ImportError:
+    try:
+        from tools.base_tool import ArtesanatoBaseTool
+    except ImportError as e:
+        logging.error(f"Failed to import ArtesanatoBaseTool: {e}")
+        sys.exit(1)
 class CoverageTool(ArtesanatoBaseTool):
     """Tool for analyzing and reporting on test coverage for the project."""
 

@@ -5,16 +5,67 @@ Tailwind Tool - Provides utilities for Tailwind CSS configuration and usage
 import json
 import os
 import re
+import logging
 from typing import Any, Dict
 
-from dotenv import load_dotenv
-from langchain_core.tools import BaseTool
-from pydantic import BaseModel, Field, ValidationError
+# External dependencies with error handling
+try:
+    from dotenv import load_dotenv
+    DOTENV_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Python-dotenv not available: {e}")
+    DOTENV_AVAILABLE = False
+    def load_dotenv():
+        logging.warning("dotenv not available - environment variables not loaded")
 
-from tools.base_tool import ArtesanatoBaseTool
+try:
+    from langchain_core.tools import BaseTool
+    LANGCHAIN_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"LangChain not available: {e}")
+    LANGCHAIN_AVAILABLE = False
+    # Create mock base class
+    class BaseTool:
+        def __init__(self, *args, **kwargs):
+            pass
 
-load_dotenv()
+try:
+    from pydantic import BaseModel, Field, ValidationError
+    PYDANTIC_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Pydantic not available: {e}")
+    PYDANTIC_AVAILABLE = False
+    # Create mock classes
+    class BaseModel:
+        def __init__(self, **kwargs):
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+    
+    def Field(**kwargs):
+        return kwargs.get('default_factory', lambda: {})()
+    
+    class ValidationError(Exception):
+        pass
 
+# Local imports with error handling
+try:
+    from tools.base_tool import ArtesanatoBaseTool
+except ImportError as e:
+    logging.error(f"Base tool not available: {e}")
+    # Create mock base class
+    class ArtesanatoBaseTool:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def _make_request(self, *args, **kwargs):
+            logging.error("Base tool not available - using mock")
+            return {"error": "Base tool not available"}
+
+logger = logging.getLogger(__name__)
+
+# Load environment variables
+if DOTENV_AVAILABLE:
+    load_dotenv()
 
 class TailwindTool(ArtesanatoBaseTool):
     """Tool for working with Tailwind CSS."""

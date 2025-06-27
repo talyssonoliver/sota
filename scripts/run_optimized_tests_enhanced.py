@@ -6,13 +6,9 @@ This script demonstrates the performance improvements implemented in the test su
 Includes parallel execution, mocking, categorization, and performance monitoring.
 """
 
-import os
-import subprocess
+import logging
 import sys
-import time
 from pathlib import Path
-
-
 def run_command(cmd, description, timeout=300):
     """Run a command and measure execution time."""
     print(f"\n{'=' * 60}")
@@ -55,7 +51,6 @@ def run_command(cmd, description, timeout=300):
         duration = time.time() - start_time
         print(f"💥 ERROR: {e}")
         return False, duration
-
 
 def main():
     """Run the optimized test suite demonstration."""
@@ -189,7 +184,6 @@ This demonstrates the implemented optimizations:
     # Return success if most tests passed
     success_rate = total_tests / len(results)
     return success_rate >= 0.8
-
 
 if __name__ == "__main__":
     try:

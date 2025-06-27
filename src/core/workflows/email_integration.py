@@ -6,23 +6,41 @@ Automated email distribution for briefings and reports with HTML templates,
 recipient management, and delivery scheduling.
 """
 
+try:
+    import asyncio
+except ImportError:
+    pass
+import sys
 import json
 import logging
-import smtplib
-import sys
-import asyncio
-from datetime import datetime
+try:
+    import smtplib
+except ImportError:
+    pass
+from datetime import datetime, timedelta
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-from jinja2 import Template
 
-# Add parent directory to path for imports
+try:
+    from jinja2 import Template
+except ImportError:
+    # Fallback template class
+    class Template:
+        def __init__(self, template_string):
+            self.template_string = template_string
+        
+        def render(self, **kwargs):
+            # Simple string substitution
+            result = self.template_string
+            for key, value in kwargs.items():
+                result = result.replace(f"{{{{{key}}}}}", str(value))
+            return result
+
 sys.path.append(str(Path(__file__).parent.parent))
-
 
 class EmailIntegration:
     """
@@ -406,42 +424,45 @@ class EmailIntegration:
                 else:
                     return {"status": "error", "message": str(e)}
     
-    def _add_attachment(self, msg: MIMEMultipart, attachment_path: str):
-        """Add attachment to email message."""
-        try:
-            with open(attachment_path, "rb") as attachment:
-                part = MIMEBase('application', 'octet-stream')
-                part.set_payload(attachment.read())
-            
-            encoders.encode_base64(part)
-            part.add_header(
-                'Content-Disposition',
-                f'attachment; filename= {Path(attachment_path).name}'
-            )
-            msg.attach(part)
-        except Exception as e:
-            self.logger.warning(f"Could not add attachment {attachment_path}: {e}")
-    
-    def _html_to_text(self, html_content: str) -> str:
-        """Convert HTML to plain text."""
-        # Simple HTML to text conversion
+def _add_attachment(self, msg: MIMEMultipart, attachment_path: str):
+    """Add attachment to email message."""
+    try:
+        with open(attachment_path, "rb") as attachment:
+            part = MIMEBase('application', 'octet-stream')
+            part.set_payload(attachment.read())
+        
+        encoders.encode_base64(part)
+        part.add_header(
+            'Content-Disposition',
+            f'attachment; filename= {Path(attachment_path).name}'
+        )
+        msg.attach(part)
+    except Exception as e:
+        self.logger.warning(f"Could not add attachment {attachment_path}: {e}")
+
+def _html_to_text(self, html_content: str) -> str:
+    """Convert HTML to plain text."""
+    # Simple HTML to text conversion
+    try:
         import re
-        
-        # Remove HTML tags
-        text = re.sub('<[^<]+?>', '', html_content)
-        
-        # Replace HTML entities
-        text = text.replace('&nbsp;', ' ')
-        text = text.replace('&amp;', '&')
-        text = text.replace('&lt;', '<')
-        text = text.replace('&gt;', '>')
-        text = text.replace('&quot;', '"')
-        
-        # Clean up whitespace
-        text = re.sub(r'\n\s*\n', '\n\n', text)
-        text = text.strip()
-        
-        return text
+    except ImportError:
+        pass
+    
+    # Remove HTML tags
+    text = re.sub('<[^<]+?>', '', html_content)
+    
+    # Replace HTML entities
+    text = text.replace('&nbsp;', ' ')
+    text = text.replace('&amp;', '&')
+    text = text.replace('&lt;', '<')
+    text = text.replace('&gt;', '>')
+    text = text.replace('&quot;', '"')
+    
+    # Clean up whitespace
+    text = re.sub(r'\n\s*\n', '\n\n', text)
+    text = text.strip()
+    
+    return text
     
     def configure_email(self, smtp_server: str, smtp_port: int, username: str, 
                        password: str, from_address: str) -> bool:
@@ -503,11 +524,9 @@ class EmailIntegration:
             self.logger.error(f"Error getting recipients for {role}: {e}")
             return []
 
-
 async def main():
     """Main entry point for email integration testing."""
     import argparse
-    import asyncio
     
     parser = argparse.ArgumentParser(description="Email Integration System")
     parser.add_argument("--test", action="store_true", help="Test email configuration")
@@ -555,7 +574,5 @@ async def main():
         result = await email_system.send_morning_briefing(test_data)
         print(f"Test email result: {result}")
 
-
 if __name__ == "__main__":
-    import asyncio
     asyncio.run(main())

@@ -1,1 +1,3 @@
-"""Module initialization"""
+"""Module initialization."""
+
+__all__ = []

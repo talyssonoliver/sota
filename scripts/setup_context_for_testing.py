@@ -7,14 +7,14 @@ the context topics used in tasks, enabling proper testing of the
 Step 3.5 and 3.6 implementations.
 """
 
-import os
-import sys
-from pathlib import Path
+# Mock external dependencies
 
-# Add project root to path
+import sys
+
+# Original imports with error handling
+from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
 
 def create_context_documents():
     """Create context documents for testing Step 3.5 & 3.6"""
@@ -156,7 +156,10 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 ### Client Initialization
 ```typescript
-import { createClient } from '@supabase/supabase-js';
+try:
+    import { createClient } from '@supabase/supabase-js';
+except ImportError:
+    pass
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -265,7 +268,10 @@ export interface APIResponse<T> {
 
 ## Request Validation
 ```typescript
-import { z } from 'zod';
+try:
+    import { z } from 'zod';
+except ImportError:
+    pass
 
 const CustomerSchema = z.object({
   email: z.string().email(),
@@ -289,10 +295,9 @@ export const validateCustomerInput = (data: unknown) => {
     print("   - infra/supabase-setup.md")
     print("   - backend/api-patterns.md")
 
-
 def populate_memory_engine():
     """Populate the memory engine with context documents"""
-    from src.platform.tools.memory_engine import (add_document_with_enhanced_chunking,
+    from src.infrastructure.memory.memory_engine import (add_document_with_enhanced_chunking,
                                      get_memory_engine)
 
     try:
@@ -333,7 +338,6 @@ def populate_memory_engine():
         print(f"❌ Error populating memory engine: {e}")
         import traceback
         traceback.print_exc()
-
 
 if __name__ == "__main__":
     print("🚀 Setting up context store for Step 3.5 & 3.6 testing")

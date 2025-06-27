@@ -6,10 +6,8 @@ to prevent Unicode decoding errors from breaking test execution.
 """
 
 import os
-import sys
 from functools import wraps
 from pathlib import Path
-
 
 def patch_dotenv():
     """
@@ -17,13 +15,11 @@ def patch_dotenv():
     """
     os.environ["PYTHON_DOTENV_SKIP_ERRORS"] = "1"
 
-    # Simpler approach: Mock import of litellm
-    sys.modules['litellm'] = type('MockLiteLLM', (), {})()
-
     # Patch pydantic environment settings
+    import logging
     try:
         import pydantic.v1.env_settings
-
+        
         # Create empty method that returns no env vars
         def patched_read_env_files(self, case_sensitive):
             print("Bypassing pydantic .env file loading")
@@ -47,12 +43,8 @@ def patch_dotenv():
             print("Bypassing dotenv.dotenv_values()")
             return {}
 
-    sys.modules['dotenv'] = MockDotEnv()
-    sys.modules['python_dotenv'] = MockDotEnv()
-
     print("Successfully replaced dotenv modules with mock implementations")
     return True
-
 
 if __name__ == "__main__":
     patch_dotenv()

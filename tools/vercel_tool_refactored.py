@@ -4,17 +4,73 @@ Breaks the monolithic _run method into focused command handlers.
 """
 
 import json
+import logging
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-import requests
-from pydantic import BaseModel, ValidationError
+# External dependencies with error handling
+try:
+    import requests
+    REQUESTS_AVAILABLE = True
+except ImportError as e:
+    logging.error(f"Requests library not available: {e}")
+    REQUESTS_AVAILABLE = False
+    # Create mock requests module
+    class MockRequests:
+        def get(self, *args, **kwargs):
+            logging.error("Requests not available - using mock")
+            return MockResponse()
+        
+        def post(self, *args, **kwargs):
+            logging.error("Requests not available - using mock")
+            return MockResponse()
+        
+        def delete(self, *args, **kwargs):
+            logging.error("Requests not available - using mock")
+            return MockResponse()
+    
+    class MockResponse:
+        def __init__(self):
+            self.status_code = 503
+            self.text = "Service unavailable - requests library not available"
+        
+        def json(self):
+            return {"error": "requests library not available"}
+    
+    requests = MockRequests()
 
-from tools.base_tool import ArtesanatoBaseTool
+try:
+    from pydantic import BaseModel, ValidationError
+    PYDANTIC_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Pydantic not available: {e}")
+    PYDANTIC_AVAILABLE = False
+    # Create mock classes
+    class BaseModel:
+        def __init__(self, **kwargs):
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+    
+    class ValidationError(Exception):
+        pass
 
+# Local imports with error handling
+try:
+    from tools.base_tool import ArtesanatoBaseTool
+except ImportError as e:
+    logging.error(f"Base tool not available: {e}")
+    # Create mock base class
+    class ArtesanatoBaseTool:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def _make_request(self, *args, **kwargs):
+            logging.error("Base tool not available - using mock")
+            return {"error": "Base tool not available"}
 
+logger = logging.getLogger(__name__)
 class VercelCommand(ABC):
     """Base class for Vercel API commands."""
     
@@ -30,7 +86,6 @@ class VercelCommand(ABC):
     def execute(self, query: str) -> str:
         """Execute the command and return the result."""
         pass
-
 
 class ProjectCommand(VercelCommand):
     """Handles project-related operations."""
@@ -55,7 +110,6 @@ class ProjectCommand(VercelCommand):
             project_id = self.tool._extract_param(query, "id") or self.tool.project_id
             return self.tool._get_project(project_id)
 
-
 class DeploymentCommand(VercelCommand):
     """Handles deployment-related operations."""
     
@@ -75,7 +129,6 @@ class DeploymentCommand(VercelCommand):
         else:
             deployment_id = self.tool._extract_param(query, "id")
             return self.tool._get_deployment(deployment_id)
-
 
 class DomainCommand(VercelCommand):
     """Handles domain-related operations."""
@@ -98,7 +151,6 @@ class DomainCommand(VercelCommand):
         else:
             domain = self.tool._extract_param(query, "name")
             return self.tool._get_domain(project_id, domain)
-
 
 class EnvironmentCommand(VercelCommand):
     """Handles environment variable operations."""
@@ -128,7 +180,6 @@ class EnvironmentCommand(VercelCommand):
                    self.tool._extract_param(query, "key"))
             return self.tool._get_env_variable(project_id, name)
 
-
 class LogsCommand(VercelCommand):
     """Handles logs operations."""
     
@@ -138,7 +189,6 @@ class LogsCommand(VercelCommand):
     def execute(self, query: str) -> str:
         deployment_id = self.tool._extract_param(query, "id")
         return self.tool._get_logs(deployment_id)
-
 
 class DefaultCommand(VercelCommand):
     """Handles default/fallback operations based on specific keywords."""
@@ -180,7 +230,6 @@ class DefaultCommand(VercelCommand):
                       "add/list/get/remove domain, add/list/get/remove env variable, get logs"
             )
         )
-
 
 class VercelToolRefactored(ArtesanatoBaseTool):
     """Refactored Vercel Tool with reduced complexity using Command Pattern."""
@@ -459,7 +508,6 @@ class VercelToolRefactored(ArtesanatoBaseTool):
         """Get deployment logs."""
         # Implementation remains the same as original
         pass
-
 
 # For backward compatibility, we can alias the refactored class
 VercelTool = VercelToolRefactored

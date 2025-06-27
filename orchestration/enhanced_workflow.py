@@ -1,37 +1,43 @@
 """
+import sys
 Enhanced Workflow Executor
 Integrates all PHASE 2 enhancements: auto-generated graphs, resilience features,
 notifications, and support for monitoring.
 """
 
+# Mock external dependencies
+
+# Add common mock attributes
+
+# Original imports with error handling
 import argparse
+from datetime import datetime
 import json
 import logging
-import os
-import sys
-from datetime import datetime
 from pathlib import Path
+import sys
 from typing import Any, Dict, Optional, Union
-
 from dotenv import load_dotenv
+from flask import json
 from pythonjsonlogger import jsonlogger
 
-from graph.auto_generate_graph import build_auto_generated_workflow_graph
-from graph.graph_builder import (build_advanced_workflow_graph,
-                                 build_dynamic_workflow_graph,
+
+
+from src.core.workflows.enhanced_workflow import build_auto_generated_workflow_graph
+from src.infrastructure.tools.graph_builder import (build_advanced_workflow_graph,
+build_dynamic_workflow_graph,
                                  build_workflow_graph)
-from graph.notifications import (NotificationLevel, SlackNotifier,
+from src.infrastructure.tools.notifications import (NotificationLevel, SlackNotifier,
                                  attach_notifications_to_workflow)
-from graph.resilient_workflow import create_resilient_workflow
-from orchestration.states import TaskStatus
-from utils.task_loader import load_task_metadata, update_task_state
+from src.infrastructure.tools.resilient_workflow import create_resilient_workflow
+from src.core.workflows.states import TaskStatus
+from src.infrastructure.utils.task_loader import load_task_metadata, update_task_state
 
 # Load environment variables
 load_dotenv()
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 # Configure structured JSON logging for production
 logger = logging.getLogger("enhanced_workflow")
@@ -45,13 +51,12 @@ logger.setLevel(logging.INFO)
 # LangSmith tracing integration
 try:
     import os
-
     from langsmith import traceable
     os.environ["LANGCHAIN_TRACING_V2"] = "true"
     tracing_enabled = True
 except ImportError:
+    # LangSmith tracing not available
     tracing_enabled = False
-
 
 class EnhancedWorkflowExecutor:
     """
@@ -325,7 +330,8 @@ class EnhancedWorkflowExecutor:
                 # is specified in state)
                 agent_name = state.get("agent") or None
                 if agent_name:
-                    from orchestration.registry import get_agent_constructor
+                    from src.core.workflows.registry import get_agent_constructor
+
                     if get_agent_constructor(agent_name) is None:
                         logger.error(f"Unknown agent identifier: {agent_name}")
                         error_state = {
@@ -411,7 +417,6 @@ class EnhancedWorkflowExecutor:
                 f"Task {result.get('task_id')} failed: {result.get('error')}")
         return result
 
-
 def main():
     """Command-line interface for the enhanced workflow executor."""
     parser = argparse.ArgumentParser(
@@ -462,7 +467,6 @@ def main():
     print(f"Output saved to: {executor.output_dir / args.task}")
     print("\nFor real-time monitoring, run:")
     print(f"python scripts/monitor_workflow.py --task {args.task}")
-
 
 if __name__ == "__main__":
     main()

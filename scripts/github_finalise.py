@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+import sys
 Step 5.9: GitHub Finalisation (Optional)
 
 Automated GitHub integration for closing issues and attaching completion artifacts.
@@ -17,23 +18,30 @@ Usage:
     python scripts/github_finalise.py BE-07 --attach-artifacts
 """
 
+
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Dict, List, Optional
+except ImportError:
+    pass
 import argparse
 import json
 import logging
-import subprocess
 import sys
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Optional
-
-# Add project root to path for imports
+import subprocess
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 class GitHubFinaliser:
     """Handles GitHub integration for task completion finalisation."""
@@ -246,7 +254,6 @@ All quality assurance checks have been completed successfully.
         
         return True
 
-
 def main():
     """Main CLI interface for GitHub finalisation."""
     parser = argparse.ArgumentParser(
@@ -324,7 +331,6 @@ Examples:
     
     # Exit with appropriate code
     sys.exit(0 if success else 1)
-
 
 if __name__ == "__main__":
     main()

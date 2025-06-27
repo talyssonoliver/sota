@@ -1,26 +1,33 @@
 """
+import sys
 Task Graph Visualization
 Generates visual representation of tasks and their dependencies.
 """
 
-import argparse
-import json
-import os
-import sys
+try:
+    pass
+except ImportError:
+    pass
 from collections import defaultdict
+try:
+    pass
+except ImportError:
+    pass
+import sys
+import os
+
 from pathlib import Path
-
-import matplotlib.pyplot as plt
-import networkx as nx
-import numpy as np
-import yaml
-from matplotlib.colors import LinearSegmentedColormap
-
+try:
+    pass
+except ImportError:
+    pass
 from src.core.workflows.states import TaskStatus
-
-# Add parent directory to path to allow imports
+try:
+    pass
+except ImportError:
+    pass
+    pass
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 def load_all_tasks(tasks_dir):
     """
@@ -39,6 +46,7 @@ def load_all_tasks(tasks_dir):
 
     # Find all YAML files in the tasks directory
     for yaml_file in tasks_dir.glob("*.yaml"):
+        import argparse
         try:
             with open(yaml_file, 'r') as f:
                 task_data = yaml.safe_load(f)
@@ -50,7 +58,6 @@ def load_all_tasks(tasks_dir):
             print(f"Error loading task file {yaml_file}: {str(e)}")
 
     return tasks
-
 
 def build_dependency_graph(tasks):
     """
@@ -79,7 +86,6 @@ def build_dependency_graph(tasks):
 
     return G
 
-
 def get_task_status_color(status):
     """
     Get color for a task status.
@@ -103,7 +109,6 @@ def get_task_status_color(status):
 
     return status_colors.get(status, "gray")
 
-
 def get_owner_color(owner):
     """
     Get color for a task owner.
@@ -126,7 +131,6 @@ def get_owner_color(owner):
     }
 
     return owner_colors.get(owner, "lightgray")
-
 
 def visualize_task_graph(
         graph,
@@ -281,7 +285,6 @@ def visualize_task_graph(
 
     print(f"Task graph saved to {output_file}")
 
-
 def analyze_graph_metrics(graph):
     """
     Analyze graph metrics.
@@ -348,7 +351,6 @@ def analyze_graph_metrics(graph):
 
     return metrics
 
-
 def print_metrics(metrics):
     """
     Print graph metrics in a readable format.
@@ -384,7 +386,6 @@ def print_metrics(metrics):
         print(f"Length: {metrics['critical_path_length']}")
     else:
         print("No critical path found (graph may contain cycles)")
-
 
 def main():
     """
@@ -458,7 +459,6 @@ def main():
             args.color_by}, layout: {
             args.layout})...")
     visualize_task_graph(graph, output_file, args.color_by, args.layout)
-
 
 if __name__ == "__main__":
     main()

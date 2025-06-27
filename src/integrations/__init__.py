@@ -8,6 +8,9 @@ This module handles connections to external services including:
 - Data export/import systems
 """
 
-from . import analytics
+try:
+    from . import analytics
+except ImportError:
+    pass
 
 __all__ = ["analytics"]

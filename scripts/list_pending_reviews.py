@@ -1,18 +1,22 @@
 """
+import sys
 List Pending Reviews Script
 This script lists all pending reviews that require human attention.
 """
 
+
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from src.infrastructure.utils.review import REVIEW_DIR, get_pending_reviews
+except ImportError:
+    pass
 import json
 import os
 import sys
-from datetime import datetime
-
-from src.platform.utils.review import REVIEW_DIR, get_pending_reviews
-
-# Add the parent directory to the path to import project modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 def format_timestamp(timestamp_str):
     """Format a timestamp string into a readable date/time."""
@@ -21,7 +25,6 @@ def format_timestamp(timestamp_str):
         return dt.strftime("%Y-%m-%d %H:%M:%S")
     except BaseException:
         return "Unknown"
-
 
 def list_pending_reviews():
     """List all pending reviews that require human attention."""
@@ -61,7 +64,6 @@ def list_pending_reviews():
     print("  python scripts/mark_review_complete.py BE-07 --approve")
     print("To reject a review:")
     print("  python scripts/mark_review_complete.py BE-07 --reject --comments \"Needs more tests\"")
-
 
 if __name__ == "__main__":
     list_pending_reviews()

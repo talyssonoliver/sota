@@ -9,9 +9,7 @@ Handles task archival, cleanup, and optimization for high-volume environments:
 - Performance optimization
 """
 
-import gzip
 import json
-import os
 import shutil
 import tarfile
 import threading
@@ -19,8 +17,6 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-
-
 @dataclass
 class TaskLifecyclePolicy:
     """Define lifecycle policies for task management"""
@@ -30,7 +26,6 @@ class TaskLifecyclePolicy:
     auto_cleanup_enabled: bool = True
     compression_level: int = 6     # gzip compression level
     max_hot_tasks: int = 1000      # Maximum tasks in hot storage
-
 
 @dataclass
 class TaskArchiveMetadata:
@@ -43,7 +38,6 @@ class TaskArchiveMetadata:
     retention_until: str
     qa_status: str
     completion_status: str
-
 
 class TaskLifecycleManager:
     """
@@ -495,7 +489,6 @@ class TaskLifecycleManager:
 
         return False
 
-
 def main():
     """Demo lifecycle management"""
     manager = TaskLifecycleManager()
@@ -519,7 +512,6 @@ def main():
     print(f"   Cold storage: {storage_stats['cold_storage']['count']} tasks, "
           f"{storage_stats['cold_storage']['size_bytes']:,} bytes")
     print(f"   Compression ratio: {storage_stats['compression_ratio']:.1%}")
-
 
 if __name__ == "__main__":
     main()

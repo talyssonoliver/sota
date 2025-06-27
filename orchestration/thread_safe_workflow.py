@@ -3,22 +3,33 @@ Thread-Safe Workflow Orchestration
 Provides thread-safe mechanisms for parallel agent execution and workflow management.
 """
 
-import logging
-import threading
-import time
-from concurrent.futures import ThreadPoolExecutor, as_completed, Future
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set, Union
-import queue
-import uuid
 
+try:
+    from concurrent.futures import ThreadPoolExecutor, as_completed, Future
+except ImportError:
+    pass
+try:
+    from dataclasses import dataclass, field
+except ImportError:
+    pass
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from enum import Enum
+except ImportError:
+    pass
+try:
+    from typing import Any, Callable, Dict, List, Optional, Set, Union
+except ImportError:
+    pass
 from .error_handling import ErrorPropagationManager, handle_task_error
+
 from .states import TaskStatus
+import logging
 
 logger = logging.getLogger(__name__)
-
 
 class WorkflowPriority(str, Enum):
     """Workflow execution priority levels"""
@@ -26,7 +37,6 @@ class WorkflowPriority(str, Enum):
     NORMAL = "normal"
     HIGH = "high"
     CRITICAL = "critical"
-
 
 @dataclass
 class TaskExecution:
@@ -50,7 +60,6 @@ class TaskExecution:
     # Thread synchronization
     completion_event: threading.Event = field(default_factory=threading.Event)
     lock: threading.RLock = field(default_factory=threading.RLock)
-
 
 class ThreadSafeWorkflowOrchestrator:
     """
@@ -529,7 +538,6 @@ class ThreadSafeWorkflowOrchestrator:
             
             logger.info("Workflow orchestrator reset")
 
-
 def create_thread_safe_workflow(max_workers: int = None, 
                                enable_error_propagation: bool = True) -> ThreadSafeWorkflowOrchestrator:
     """
@@ -543,7 +551,6 @@ def create_thread_safe_workflow(max_workers: int = None,
         Configured thread-safe workflow orchestrator
     """
     return ThreadSafeWorkflowOrchestrator(max_workers, enable_error_propagation)
-
 
 def execute_tasks_parallel(tasks: List[Dict[str, Any]], 
                           max_workers: int = None,

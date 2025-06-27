@@ -1,20 +1,52 @@
 """
 Thread-Safe Memory Engine Access Patterns
+
 Provides thread-safe wrappers and access patterns for memory engine operations.
 """
 
+import logging
 import threading
 import time
-from typing import Any, Dict, List, Optional, Union
 from datetime import datetime
-import logging
+from typing import Any, Dict, List, Optional, Union
 
-from .engine import MemoryEngine
-from .config import MemoryEngineConfig
-from .exceptions import MemoryEngineError
+# Local imports with error handling
+try:
+    from .engine import MemoryEngine
+    MEMORY_ENGINE_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Memory engine not available: {e}")
+    MEMORY_ENGINE_AVAILABLE = False
+    class MemoryEngine:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def store(self, *args, **kwargs):
+            return {"error": "Memory engine not available"}
+        
+        def retrieve(self, *args, **kwargs):
+            return {"error": "Memory engine not available"}
+
+try:
+    from .config import MemoryEngineConfig
+    MEMORY_CONFIG_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Memory config not available: {e}")
+    MEMORY_CONFIG_AVAILABLE = False
+    class MemoryEngineConfig:
+        def __init__(self, *args, **kwargs):
+            pass
+
+try:
+    from .exceptions import MemoryEngineError
+    MEMORY_EXCEPTIONS_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Memory exceptions not available: {e}")
+    MEMORY_EXCEPTIONS_AVAILABLE = False
+    class MemoryEngineError(Exception):
+        pass
 
 logger = logging.getLogger(__name__)
-
 
 class ThreadSafeMemoryEngine:
     """
@@ -234,11 +266,9 @@ class ThreadSafeMemoryEngine:
                         logger.error(f"Thread-safe shutdown failed: {e}")
                         raise
 
-
 # Global thread-safe memory engine singleton
 _memory_instance: Optional[ThreadSafeMemoryEngine] = None
 _memory_lock = threading.RLock()
-
 
 def get_thread_safe_memory_instance(config: Optional[MemoryEngineConfig] = None) -> ThreadSafeMemoryEngine:
     """
@@ -261,7 +291,6 @@ def get_thread_safe_memory_instance(config: Optional[MemoryEngineConfig] = None)
     
     return _memory_instance
 
-
 def reset_memory_instance():
     """Reset the global memory instance (primarily for testing)"""
     global _memory_instance
@@ -273,7 +302,6 @@ def reset_memory_instance():
                 logger.warning(f"Error shutting down memory instance during reset: {e}")
         _memory_instance = None
         logger.info("Global memory instance reset")
-
 
 class ThreadSafeContextManager:
     """
@@ -303,7 +331,6 @@ class ThreadSafeContextManager:
         
         return False  # Don't suppress exceptions
 
-
 def with_thread_safe_memory(operation_type: str = "read"):
     """
     Decorator for functions that need thread-safe memory access.
@@ -319,13 +346,11 @@ def with_thread_safe_memory(operation_type: str = "read"):
         return wrapper
     return decorator
 
-
 # Convenience functions for backward compatibility
 def get_context_by_keys(keys: List[str], user: str = "system") -> List[str]:
     """Thread-safe convenience function for context retrieval by keys"""
     memory_engine = get_thread_safe_memory_instance()
     return memory_engine.get_context_by_keys(keys, user)
-
 
 def get_relevant_context(query: str, k: int = 5, user: str = "system", **kwargs) -> str:
     """Thread-safe convenience function for context retrieval"""

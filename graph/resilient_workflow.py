@@ -1,28 +1,34 @@
 """
+import sys
 Resilient Workflow Builder
 Adds timeout and retry capabilities to LangGraph workflows.
 """
 
-import functools
+
+try:
+    from typing import Any, Callable, Dict, List, Optional, Union
+except ImportError:
+    pass
+try:
+    from langgraph.graph import Graph, StateGraph
+except ImportError:
+    pass
+try:
+    from src.core.workflows.states import TaskStatus
+except ImportError:
+    pass
+try:
+    from src.infrastructure.utils.task_loader import update_task_state
+import logging
 import os
 import sys
-import threading
-import time
-from typing import Any, Callable, Dict, List, Optional, Union
-
-from langgraph.graph import Graph, StateGraph
-
-from orchestration.states import TaskStatus
-from src.platform.utils.task_loader import update_task_state
-
-# Add parent directory to path to allow imports
+except ImportError:
+    pass
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 # In-memory database for tracking retry attempts and timeouts
 attempt_tracker = {}
 timeout_status = {}
-
 
 def with_retry(max_retries: int = 3, retry_delay: int = 5):
     """
@@ -98,7 +104,6 @@ def with_retry(max_retries: int = 3, retry_delay: int = 5):
         return wrapper
     return decorator
 
-
 def with_timeout(timeout_seconds: int = 300):
     """
     Decorator that adds timeout capability to handler functions.
@@ -170,7 +175,6 @@ def with_timeout(timeout_seconds: int = 300):
         return wrapper
     return decorator
 
-
 def add_resilience_to_graph(graph: Union[Graph,
                                          StateGraph],
                             config: Dict[str,
@@ -208,7 +212,6 @@ def add_resilience_to_graph(graph: Union[Graph,
     # In a full implementation, we would return the enhanced graph
     return graph
 
-
 def create_resilient_workflow(base_graph_builder: Callable[[], Union[Graph, StateGraph]],
                               config: Dict[str, Any] = None) -> Union[Graph, StateGraph]:
     """
@@ -230,5 +233,5 @@ def create_resilient_workflow(base_graph_builder: Callable[[], Union[Graph, Stat
     return resilient_graph
 
 # Example usage:
-# from graph.graph_builder import build_workflow_graph
+# from src.infrastructure.tools.graph_builder import build_workflow_graph
 # resilient_workflow = create_resilient_workflow(build_workflow_graph)

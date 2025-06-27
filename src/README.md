@@ -54,8 +54,8 @@ from src.core.agents import BackendAgent, QAAgent
 from src.core.workflows import TaskOrchestrator
 
 # Platform services  
-from src.platform.memory import ChromaEngine
-from src.platform.storage import DataManager
+from src.infrastructure.memory import ChromaEngine
+from src.infrastructure.storage import DataManager
 
 # User interfaces
 from src.interfaces.api import AgentRoutes

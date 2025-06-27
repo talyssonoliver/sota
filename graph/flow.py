@@ -3,16 +3,23 @@ LangGraph Flow Definition
 This module defines the LangGraph workflow with conditional edges for human checkpoints.
 """
 
-from typing import Any, Dict
 
-from langgraph.graph import StateGraph
-
-from graph.handlers import (backend_handler, coordinator_handler,
+try:
+    from typing import Any, Dict
+except ImportError:
+    pass
+try:
+    from langgraph.graph import StateGraph
+except ImportError:
+    pass
+try:
+    from src.infrastructure.tools.handlers import (backend_handler, coordinator_handler,
                             documentation_handler, frontend_handler,
                             human_review_handler, qa_handler,
                             technical_handler)
-from orchestration.states import TaskStatus
-
+except ImportError:
+    pass
+from src.core.workflows.states import TaskStatus
 
 def status_router(state: Dict[str, Any]) -> str:
     """
@@ -24,7 +31,7 @@ def status_router(state: Dict[str, Any]) -> str:
     Returns:
         The next node to route to
     """
-    from orchestration.states import TaskStatus
+    from src.core.workflows.states import TaskStatus
 
     status = state.get("status", TaskStatus.CREATED)
 
@@ -53,7 +60,6 @@ def status_router(state: Dict[str, Any]) -> str:
 
     return next_node
 
-
 def get_implementation_agent(state: Dict[str, Any]) -> str:
     """
     Determine which implementation agent to use based on task metadata.
@@ -72,7 +78,6 @@ def get_implementation_agent(state: Dict[str, Any]) -> str:
         return "frontend"
     else:
         return "backend"
-
 
 def build_workflow_graph() -> StateGraph:
     """
@@ -115,7 +120,6 @@ def build_workflow_graph() -> StateGraph:
     workflow.set_entry_point("coordinator")
 
     return workflow
-
 
 def execute_workflow(state: Dict[str, Any]) -> Dict[str, Any]:
     """

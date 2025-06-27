@@ -3,16 +3,28 @@ Enhanced Error Handling for Multi-Agent Workflows
 Implements comprehensive error propagation, recovery, and escalation strategies.
 """
 
-import logging
-import time
-from datetime import datetime, timedelta
-from enum import Enum
-from typing import Any, Dict, List, Optional, Callable
-from dataclasses import dataclass, field
-import json
 
+try:
+    from datetime import datetime, timedelta
+except ImportError:
+    pass
+try:
+    from enum import Enum
+except ImportError:
+    pass
+try:
+    from typing import Any, Dict, List, Optional, Callable
+except ImportError:
+    pass
+try:
+    from dataclasses import dataclass, field
+except ImportError:
+    pass
+try:
+    import logging
+except ImportError:
+    pass
 logger = logging.getLogger(__name__)
-
 
 class ErrorType(str, Enum):
     """Classification of error types for appropriate handling strategies"""
@@ -34,14 +46,12 @@ class ErrorType(str, Enum):
     OUTPUT_QUALITY = "output_quality"
     INTEGRATION = "integration"
 
-
 class ErrorSeverity(str, Enum):
     """Error severity levels for escalation and response prioritization"""
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
     LOW = "low"
-
 
 class RecoveryStrategy(str, Enum):
     """Available recovery strategies for different error types"""
@@ -53,7 +63,6 @@ class RecoveryStrategy(str, Enum):
     TASK_SKIP = "task_skip"
     WORKFLOW_ABORT = "workflow_abort"
 
-
 @dataclass
 class RecoveryAttempt:
     """Record of a recovery attempt"""
@@ -63,7 +72,6 @@ class RecoveryAttempt:
     details: str
     duration_seconds: float = 0.0
 
-
 @dataclass
 class ImpactAssessment:
     """Assessment of error impact on workflow"""
@@ -72,7 +80,6 @@ class ImpactAssessment:
     estimated_delay_minutes: int = 0
     severity_justification: str = ""
     recovery_feasible: bool = True
-
 
 @dataclass
 class ErrorContext:
@@ -128,7 +135,6 @@ class ErrorContext:
             "resolution_details": self.resolution_details
         }
 
-
 class RetryPolicy:
     """Configurable retry policy with exponential backoff"""
     
@@ -147,7 +153,6 @@ class RetryPolicy:
         """Calculate delay before next retry"""
         delay = self.base_delay * (self.backoff_multiplier ** retry_count)
         return min(delay, self.max_delay)
-
 
 class CircuitBreaker:
     """Circuit breaker pattern implementation for external service failures"""
@@ -196,7 +201,6 @@ class CircuitBreaker:
             self.state = "open"
         elif self.failure_count >= self.failure_threshold:
             self.state = "open"
-
 
 class ErrorPropagationManager:
     """Manages error propagation and recovery across multi-agent workflows"""
@@ -280,6 +284,7 @@ class ErrorPropagationManager:
         """Create comprehensive error context from exception"""
         import uuid
         import traceback
+        import logging
         
         error_id = f"ERR_{task_id}_{uuid.uuid4().hex[:8]}"
         error_type = self.classify_error(exception, task_id, agent_role)
@@ -473,10 +478,8 @@ class ErrorPropagationManager:
             }
         }
 
-
 # Global error propagation manager instance
 error_manager = ErrorPropagationManager()
-
 
 def handle_task_error(exception: Exception, task_id: str, agent_role: str,
                      context_data: Optional[Dict[str, Any]] = None,

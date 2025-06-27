@@ -17,29 +17,27 @@ Example Usage:
     python orchestration/register_output.py --task BE-07 --agent backend --extract-code
 """
 
+
 import argparse
 import json
 import os
 import re
-import shutil
 import sys
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
-
-from tools.memory import get_memory_instance, MemoryEngine
+import shutil
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from orchestration.scalable_storage import ScalableTaskStorage
-    from orchestration.task_lifecycle import TaskLifecycleManager
+    from src.core.workflows.scalable_storage import ScalableTaskStorage
+    from src.core.workflows.task_lifecycle import TaskLifecycleManager
     SCALABLE_STORAGE_AVAILABLE = True
 except ImportError:
     SCALABLE_STORAGE_AVAILABLE = False
-
 
 @dataclass
 class AgentOutputRegistration:
@@ -53,7 +51,6 @@ class AgentOutputRegistration:
     extracted_artifacts: List[str]
     status: str  # 'registered', 'processed', 'error'
     metadata: Dict[str, Any]
-
 
 class AgentOutputRegistry:
     """Central registry for managing agent outputs and their metadata."""
@@ -429,7 +426,6 @@ class AgentOutputRegistry:
 
         return migration_report
 
-
 def main():
     """CLI interface for agent output registration."""
     parser = argparse.ArgumentParser(
@@ -583,7 +579,6 @@ Examples:
     except Exception as e:
         print(f"❌ Error registering output: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

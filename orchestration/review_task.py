@@ -14,29 +14,24 @@ Usage:
 """
 
 import argparse
+import difflib
 import json
 import logging
-import os
-import subprocess
 import sys
+import yaml
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
-import difflib
-import yaml
 
-# Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from orchestration.hitl_engine import HITLPolicyEngine, CheckpointStatus, RiskLevel
-from orchestration.hitl_task_metadata import HITLTaskMetadataManager, HITLStatus
+from src.core.workflows.hitl_engine import HITLPolicyEngine, CheckpointStatus, RiskLevel
+from src.core.workflows.hitl_task_metadata import HITLTaskMetadataManager, HITLStatus
 from src.interfaces.dashboard.components.hitl_widgets import HITLDashboardManager
-from orchestration.states import TaskStatus
-from utils.task_loader import load_task_metadata, update_task_state
-from utils.review import approve_review, reject_review, save_to_review
-from src.platform.memory import get_memory_instance
-from orchestration.qa_validation import QAValidationEngine
-
+from src.core.workflows.states import TaskStatus
+from src.infrastructure.utils.task_loader import load_task_metadata, update_task_state
+from src.infrastructure.utils.review import approve_review, reject_review, save_to_review
+from src.infrastructure.memory import get_memory_instance
+from src.core.workflows.qa_validation import QAValidationEngine
 
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
@@ -49,7 +44,6 @@ def setup_logging(verbose: bool = False):
             logging.FileHandler('review_task.log')
         ]
     )
-
 
 class AdvancedReviewPortal:
     """Advanced Human Review Portal for comprehensive task review."""
@@ -887,7 +881,6 @@ class AdvancedReviewPortal:
             "decisions": decisions
         }
 
-
 def cmd_review_task(args):
     """Review a specific task."""
     portal = AdvancedReviewPortal()
@@ -903,7 +896,6 @@ def cmd_review_task(args):
         return 1
     
     return 0
-
 
 def cmd_batch_review(args):
     """Perform batch review of multiple items."""
@@ -929,7 +921,6 @@ def cmd_batch_review(args):
     
     return 0
 
-
 def cmd_review_checkpoint(args):
     """Review a specific HITL checkpoint."""
     portal = AdvancedReviewPortal()
@@ -945,13 +936,11 @@ def cmd_review_checkpoint(args):
     
     return 0
 
-
 def cmd_dashboard(args):
     """Display review dashboard."""
     portal = AdvancedReviewPortal()
     portal.dashboard_view(show_metrics=args.metrics)
     return 0
-
 
 def main():
     """Main CLI entry point."""
@@ -1069,7 +1058,6 @@ Examples:
     else:
         parser.print_help()
         return 1
-
 
 if __name__ == "__main__":
     exit(main())

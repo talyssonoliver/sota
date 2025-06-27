@@ -1,20 +1,11 @@
-"""
-Tools package initialization.
-This makes the tools directory a proper Python package.
-"""
+"""Tools package for the AI system."""
 
-import os
+import sys
+from pathlib import Path
 
-# Conditional imports to handle missing dependencies during testing
-if os.environ.get("TESTING", "0") != "1":
-    try:
-        # Import key tools to expose at package level
-        from tools.base_tool import ArtesanatoBaseTool
-        from tools.tool_loader import (get_tools_for_agent, load_all_tools,
-                                       load_tool_config)
-    except ImportError:
-        # Gracefully handle missing dependencies in test environments
-        pass
-else:
-    # In testing mode, skip problematic imports
-    pass
+# Add compatibility modules to Python path for external library support
+compatibility_path = Path(__file__).parent / "compatibility"
+if str(compatibility_path) not in sys.path:
+    sys.path.insert(0, str(compatibility_path))
+
+__all__ = []

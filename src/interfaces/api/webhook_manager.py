@@ -6,22 +6,33 @@ Comprehensive webhook system for external system integration and review workflow
 Supports outgoing webhooks for review events and incoming webhooks for external approvals.
 """
 
-import json
+
+try:
+    from datetime import datetime, timedelta
+except ImportError:
+    pass
+try:
+    from typing import Dict, Any, List, Optional, Callable
+except ImportError:
+    pass
+try:
+    from dataclasses import dataclass, asdict
+except ImportError:
+    pass
+try:
+    from enum import Enum
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
 import logging
-import hashlib
-import hmac
-import time
-import asyncio
-from datetime import datetime, timedelta
-from typing import Dict, Any, List, Optional, Callable
-from dataclasses import dataclass, asdict
-from enum import Enum
-from pathlib import Path
-
-import requests
-from flask import Blueprint, request, jsonify
-
-
+import json
+try:
+    from flask import Blueprint, request, jsonify
+except ImportError:
+    pass
 class WebhookEventType(Enum):
     """Types of webhook events."""
     REVIEW_CREATED = "review.created"
@@ -35,7 +46,6 @@ class WebhookEventType(Enum):
     ESCALATION_TRIGGERED = "escalation.triggered"
     FEEDBACK_RECEIVED = "feedback.received"
 
-
 class WebhookStatus(Enum):
     """Webhook delivery status."""
     PENDING = "pending"
@@ -43,7 +53,6 @@ class WebhookStatus(Enum):
     FAILED = "failed"
     RETRYING = "retrying"
     EXPIRED = "expired"
-
 
 @dataclass
 class WebhookEndpoint:
@@ -65,7 +74,6 @@ class WebhookEndpoint:
         if self.created_at is None:
             self.created_at = datetime.now()
 
-
 @dataclass
 class WebhookDelivery:
     """Webhook delivery record."""
@@ -81,7 +89,6 @@ class WebhookDelivery:
     retry_count: int = 0
     error_message: Optional[str] = None
     next_retry_at: Optional[datetime] = None
-
 
 class WebhookEventData:
     """Base class for webhook event data."""
@@ -154,7 +161,6 @@ class WebhookEventData:
                 "metadata": escalation_data.get("metadata", {})
             }
         }
-
 
 class WebhookManager:
     """Manages webhook endpoints and deliveries."""
@@ -376,9 +382,7 @@ class WebhookManager:
         checkpoint_id = data.get("checkpoint_id")
         reviewer = data.get("reviewer", "external_system")
         reason = data.get("reason", "External system rejection")
-        
-        from src.core.workflows.hitl_engine import HITLPolicyEngine
-        
+
         try:
             hitl_engine = HITLPolicyEngine()
             result = hitl_engine.reject_checkpoint(
@@ -401,7 +405,7 @@ class WebhookManager:
         escalation_level = data.get("level", 1)
         reason = data.get("reason", "External escalation request")
         
-        from src.platform.utils.escalation_system import EscalationEngine
+        from src.infrastructure.utils.escalation_system import EscalationEngine
         
         try:
             escalation_engine = EscalationEngine()
@@ -451,8 +455,14 @@ class WebhookManager:
                 delivery_id = self._create_delivery(endpoint, event_type, event_data)
                 delivery_ids.append(delivery_id)
                 
-                # Send webhook asynchronously
-                asyncio.create_task(self._deliver_webhook(delivery_id))
+                # Send webhook asynchronously (only if event loop is running)
+                try:
+                    loop = asyncio.get_running_loop()
+                    if loop and not loop.is_closed():
+                        asyncio.create_task(self._deliver_webhook(delivery_id))
+                except RuntimeError:
+                    # No event loop running, skip async delivery
+                    pass
         
         return delivery_ids
     
@@ -568,7 +578,6 @@ class WebhookManager:
             "success_rate": (delivered / total * 100) if total > 0 else 0
         }
 
-
 # Global webhook manager instance
 _webhook_manager = None
 
@@ -579,31 +588,26 @@ def get_webhook_manager() -> WebhookManager:
         _webhook_manager = WebhookManager()
     return _webhook_manager
 
-
 # Convenience functions for sending webhooks
 def send_review_created_webhook(task_id: str, checkpoint_id: str, review_data: Dict[str, Any]):
     """Send review.created webhook."""
     event_data = WebhookEventData.review_created(task_id, checkpoint_id, review_data)
     return get_webhook_manager().send_webhook(WebhookEventType.REVIEW_CREATED, event_data, task_id)
 
-
 def send_review_approved_webhook(task_id: str, checkpoint_id: str, approval_data: Dict[str, Any]):
     """Send review.approved webhook."""
     event_data = WebhookEventData.review_approved(task_id, checkpoint_id, approval_data)
     return get_webhook_manager().send_webhook(WebhookEventType.REVIEW_APPROVED, event_data, task_id)
-
 
 def send_review_rejected_webhook(task_id: str, checkpoint_id: str, rejection_data: Dict[str, Any]):
     """Send review.rejected webhook."""
     event_data = WebhookEventData.review_rejected(task_id, checkpoint_id, rejection_data)
     return get_webhook_manager().send_webhook(WebhookEventType.REVIEW_REJECTED, event_data, task_id)
 
-
 def send_escalation_webhook(task_id: str, escalation_data: Dict[str, Any]):
     """Send escalation.triggered webhook."""
     event_data = WebhookEventData.escalation_triggered(task_id, escalation_data)
     return get_webhook_manager().send_webhook(WebhookEventType.ESCALATION_TRIGGERED, event_data, task_id)
-
 
 # Module-level exports for integration
 webhook_manager = get_webhook_manager()

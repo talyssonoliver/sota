@@ -1359,3 +1359,5 @@ timestamp,task_id,agent,status,duration_seconds,duration_minutes,output_size,suc
 2025-06-14T14:05:36.280663,BE-07,backend,COMPLETED,0.01,0.0,21,True,
 2025-06-14T14:05:58.742745,BE-07,backend,FAILED,0.02,0.0,0,False,Test error
 2025-06-14T14:05:58.781953,BE-07,backend,COMPLETED,0.01,0.0,21,True,
+2025-06-16T22:55:42.571835,TEST-INTEGRATION,test_agent,COMPLETED,0.21,0.0,41,True,
+2025-06-16T22:55:44.630337,DECORATOR-001,decorated_agent,COMPLETED,0.0,0.0,33,True,

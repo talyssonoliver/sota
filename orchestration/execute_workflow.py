@@ -1,4 +1,5 @@
 """
+import sys
 Task Execution with LangGraph Workflow
 Runs a task through the agent workflow using the dynamically constructed LangGraph.
 """
@@ -8,22 +9,22 @@ import json
 import logging
 import os
 import sys
-import time
+try:
+    import time
+except ImportError:
+    pass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
-
 from pythonjsonlogger import jsonlogger
-
-from graph.graph_builder import (build_advanced_workflow_graph,
-                                 build_dynamic_workflow_graph,
+from src.infrastructure.tools.graph_builder import (build_advanced_workflow_graph,
+build_dynamic_workflow_graph,
                                  build_state_workflow_graph,
                                  build_workflow_graph)
-from orchestration.plan_execution_manager import PlanExecutionManager
+from src.core.workflows.plan_execution_manager import PlanExecutionManager
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 # Configure structured JSON logging for production
 logger = logging.getLogger("execute_workflow")
@@ -33,7 +34,6 @@ formatter = jsonlogger.JsonFormatter(
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.setLevel(logging.INFO)
-
 
 def execute_task(
         task_id,
@@ -156,7 +156,6 @@ def execute_task(
 
     return result
 
-
 def load_all_tasks():
     """
     Load all tasks from the agent_task_assignments.json file.
@@ -174,7 +173,6 @@ def load_all_tasks():
         all_tasks = json.load(f)
 
     return all_tasks
-
 
 def get_all_tasks_flattened():
     """
@@ -194,7 +192,6 @@ def get_all_tasks_flattened():
             flattened_tasks.append(task_with_role)
 
     return flattened_tasks
-
 
 def get_dependency_ordered_tasks():
     """
@@ -239,7 +236,6 @@ def get_dependency_ordered_tasks():
             visit(task_id)
 
     return ordered_tasks
-
 
 def execute_all_tasks(
         workflow_type="standard",
@@ -347,7 +343,6 @@ def execute_all_tasks(
                     extra={"event": "summary_saved"})
 
     return results
-
 
 def main():
     """Command-line interface for executing tasks through the agent workflow."""
@@ -476,7 +471,6 @@ def main():
         logger.error(f"Error: {e}", extra={"event": "fatal_error"})
         print(f"Error: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

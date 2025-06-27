@@ -1,20 +1,30 @@
 """
+import sys
 Review Completion Script
 This script marks a review as complete and resumes workflow.
 """
 
+
+try:
+    from typing import Optional
+except ImportError:
+    pass
+try:
+    from src.core.workflows.states import TaskStatus
+except ImportError:
+    pass
+try:
+    from src.infrastructure.utils.review import approve_review, reject_review
+except ImportError:
+    pass
+try:
+    from src.infrastructure.utils.task_loader import update_task_state
+except ImportError:
+    pass
 import argparse
 import os
 import sys
-from typing import Optional
-
-from src.core.workflows.states import TaskStatus
-from src.platform.utils.review import approve_review, reject_review
-from src.platform.utils.task_loader import update_task_state
-
-# Add the parent directory to the path to import project modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 def approve(task_id: str, reviewer: str = "human", comments: str = "") -> None:
     """
@@ -39,7 +49,6 @@ def approve(task_id: str, reviewer: str = "human", comments: str = "") -> None:
     else:
         print("Error approving review. Workflow not resumed.")
 
-
 def reject(task_id: str, reviewer: str = "human", reason: str = "") -> None:
     """
     Reject a task review and mark it as blocked.
@@ -62,7 +71,6 @@ def reject(task_id: str, reviewer: str = "human", reason: str = "") -> None:
         print(f"Reason: {reason}")
     else:
         print("Error rejecting review.")
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

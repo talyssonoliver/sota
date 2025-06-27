@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+import sys
 Step 3.7 Implementation Test and Validation
 
 This script tests the context tracking functionality implemented in Step 3.7.
@@ -8,25 +9,24 @@ It validates that context usage is properly tracked and stored per task executio
 Usage:
     python examples/step_3_7_demo.py
 """
-
-import json
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
 
+from flask import json
 from tools.context_tracker import (analyze_context_usage,
-                                   export_context_usage_report,
+export_context_usage_report,
                                    get_context_log,
                                    track_context_from_memory_engine,
                                    track_context_usage)
-from tools.memory_engine import MemoryEngine
-from utils.task_loader import load_task_metadata
+from tools.memory.engine import MemoryEngine
+from src.infrastructure.utils.task_loader import load_task_metadata
+import json
+import logging
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
 
 def test_basic_context_tracking():
     """Test basic context tracking functionality"""
@@ -96,7 +96,6 @@ def test_basic_context_tracking():
         print(f"❌ Context log not found: {log_file}")
         return False
 
-
 def test_memory_engine_integration():
     """Test integration with memory engine for automatic tracking"""
     print("\n" + "=" * 60)
@@ -156,7 +155,6 @@ def test_memory_engine_integration():
         print(f"❌ Memory engine integration test failed: {e}")
         return False
 
-
 def test_context_analysis():
     """Test context usage analysis functionality"""
     print("\n" + "=" * 60)
@@ -204,7 +202,6 @@ def test_context_analysis():
 
     return analysis['total_tasks_analyzed'] > 0
 
-
 def test_report_generation():
     """Test context usage report generation"""
     print("\n" + "=" * 60)
@@ -235,7 +232,6 @@ def test_report_generation():
     else:
         print(f"❌ Failed to generate report at {report_path}")
         return False
-
 
 def validate_step_3_7_complete():
     """Validate that Step 3.7 implementation meets all requirements"""
@@ -276,7 +272,6 @@ def validate_step_3_7_complete():
         print("⚠️  Step 3.7 implementation needs attention.")
         return False
 
-
 def main():
     """Run all Step 3.7 tests and validation"""
     print("🚀 Starting Step 3.7 Implementation Test Suite")
@@ -295,7 +290,6 @@ def main():
         print("\n❌ Step 3.7 implementation requires fixes")
 
     return success
-
 
 if __name__ == "__main__":
     main()

@@ -1,8 +1,10 @@
 """
 Memory Engine Caching System
+
 Multi-tiered caching implementation with LRU in-memory and disk persistence
 """
 
+import hashlib
 import json
 import logging
 import os
@@ -13,11 +15,29 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
 
-from .config import CacheConfig
-from .exceptions import CacheError
+# Local imports with error handling
+try:
+    from .config import CacheConfig
+    CACHE_CONFIG_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Cache config not available: {e}")
+    CACHE_CONFIG_AVAILABLE = False
+    class CacheConfig:
+        def __init__(self, *args, **kwargs):
+            self.lru_maxsize = 1000
+            self.disk_maxsize = 5000
+            self.disk_cache_dir = "runtime/cache/memory_disk_cache"
+
+try:
+    from .exceptions import CacheError
+    CACHE_EXCEPTIONS_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Cache exceptions not available: {e}")
+    CACHE_EXCEPTIONS_AVAILABLE = False
+    class CacheError(Exception):
+        pass
 
 logger = logging.getLogger(__name__)
-
 
 class LRUCache:
     """Thread-safe LRU Cache with TTL support"""
@@ -79,7 +99,6 @@ class LRUCache:
     def size(self) -> int:
         """Get current cache size"""
         return len(self.cache)
-
 
 class DiskCache:
     """Persistent disk cache with automatic cleanup"""
@@ -162,7 +181,6 @@ class DiskCache:
     def _get_cache_file(self, key: str) -> Path:
         """Get cache file path for key"""
         # Use hash to avoid filesystem issues with special characters
-        import hashlib
         key_hash = hashlib.md5(key.encode()).hexdigest()
         return self.cache_dir / f"{key_hash}.json"
     
@@ -275,7 +293,6 @@ class DiskCache:
     def size(self) -> int:
         """Get current cache size"""
         return len(self.metadata)
-
 
 class CacheManager:
     """Manages both LRU and disk caches"""

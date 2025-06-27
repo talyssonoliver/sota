@@ -12,6 +12,7 @@ PM-05      Approved         —                  —           Completed
 Live-updated from pending_reviews/ and feedback_logs/
 """
 
+
 import json
 import os
 import sys
@@ -28,14 +29,10 @@ from rich.layout import Layout
 from rich.text import Text
 from rich.progress import Progress, BarColumn, TextColumn
 from rich import box
-
-# Add project root to path
 sys.path.append(str(Path(__file__).parent.parent))
-
-from orchestration.hitl_engine import HITLEngine, CheckpointStatus, RiskLevel
-from orchestration.hitl_task_metadata import HITLTaskMetadataManager, HITLStatus
-from utils.feedback_system import FeedbackSystem
-
+from src.core.workflows.hitl_engine import HITLEngine, CheckpointStatus, RiskLevel
+from src.core.workflows.hitl_task_metadata import HITLTaskMetadataManager, HITLStatus
+from src.infrastructure.utils.feedback_system import FeedbackSystem
 
 class ReviewStatus(str, Enum):
     """Status categories for Kanban board."""
@@ -46,7 +43,6 @@ class ReviewStatus(str, Enum):
     REJECTED = "Rejected"
     ESCALATED = "Escalated"
     COMPLETED = "Completed"
-
 
 @dataclass
 class KanbanItem:
@@ -63,7 +59,6 @@ class KanbanItem:
     time_remaining: Optional[str] = None
     overdue: bool = False
     priority: int = 0  # Higher numbers = higher priority
-
 
 class HITLKanbanBoard:
     """
@@ -399,7 +394,11 @@ class HITLKanbanBoard:
     def _extract_task_id_from_filename(self, filename: str) -> Optional[str]:
         """Extract task ID from review filename."""
         # Common patterns: qa_BE-07.md, review_UX-02.md, BE-07_approval.md
-        import re
+        try:
+            import re
+        except ImportError:
+            return None
+            
         patterns = [
             r'(?:qa_|review_)?([A-Z]{2}-\d{2})',  # qa_BE-07.md or BE-07
             r'([A-Z]{2,3}-\d{2})',  # Direct task ID
@@ -555,7 +554,12 @@ class HITLKanbanBoard:
         Args:
             refresh_interval: Refresh interval in seconds
         """
-        import time
+        try:
+            import time
+            import os
+        except ImportError:
+            print("Required modules not available for watch mode")
+            return
         
         try:
             while True:
@@ -573,7 +577,6 @@ class HITLKanbanBoard:
                 
         except KeyboardInterrupt:
             self.console.print("\n[yellow]Watch mode stopped.[/yellow]")
-
 
 def main():
     """Main CLI entry point."""
@@ -640,7 +643,6 @@ Examples:
         return 1
     
     return 0
-
 
 if __name__ == "__main__":
     exit(main())

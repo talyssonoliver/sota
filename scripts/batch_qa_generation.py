@@ -1,23 +1,20 @@
 #!/usr/bin/env python3
 """
+import sys
 Batch QA Report Generation Script
 
 Generates QA reports for all completed tasks that don't have QA reports yet.
 This addresses the critical issue where only 1/105 tasks have QA reports.
 """
 
-import json
 import sys
 from pathlib import Path
 from typing import List, Dict, Any
-
-# Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
 from src.core.workflows.qa_validation import QAValidationEngine
-from src.platform.utils.completion_metrics import CompletionMetricsCalculator
-
+from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
 
 def find_tasks_needing_qa() -> List[str]:
     """Find all tasks that are completed but lack QA reports."""
@@ -49,7 +46,6 @@ def find_tasks_needing_qa() -> List[str]:
     print(f"Found {len(tasks_needing_qa)} tasks needing QA reports")
     return tasks_needing_qa
 
-
 def generate_qa_report_for_task(task_id: str, qa_engine: QAValidationEngine) -> bool:
     """Generate QA report for a single task."""
     try:
@@ -67,7 +63,6 @@ def generate_qa_report_for_task(task_id: str, qa_engine: QAValidationEngine) -> 
     except Exception as e:
         print(f"    ❌ Failed to generate QA report for {task_id}: {e}")
         return False
-
 
 def batch_generate_qa_reports(max_tasks: int = None) -> Dict[str, Any]:
     """Generate QA reports for all tasks needing them."""
@@ -106,7 +101,6 @@ def batch_generate_qa_reports(max_tasks: int = None) -> Dict[str, Any]:
     
     return results
 
-
 def update_dashboard_after_qa_generation():
     """Update dashboard metrics after QA generation."""
     print("\n📊 Updating dashboard metrics...")
@@ -128,10 +122,10 @@ def update_dashboard_after_qa_generation():
     except Exception as e:
         print(f"  ❌ Failed to update dashboard: {e}")
 
-
 def main():
     """Main execution function."""
     import argparse
+    import sys
     
     parser = argparse.ArgumentParser(description="Batch generate QA reports")
     parser.add_argument("--max-tasks", type=int, help="Maximum tasks to process (for testing)")
@@ -164,7 +158,6 @@ def main():
     update_dashboard_after_qa_generation()
     
     print(f"\n✨ QA automation complete! Check dashboard for updated metrics.")
-
 
 if __name__ == "__main__":
     main()

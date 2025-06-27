@@ -12,25 +12,39 @@ Key Features:
 - Dashboard integration
 - Audit trail and compliance reporting
 """
-
-import os
-import yaml
 import json
-import asyncio
-from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any, Tuple, Union
-from dataclasses import dataclass, asdict
-from enum import Enum
-import logging
-from pathlib import Path
 import uuid
-import hashlib
-import re
-
-# Configure logging
+try:
+    from datetime import datetime, timedelta
+except ImportError:
+    pass
+try:
+    from typing import Dict, List, Optional, Any, Tuple, Union
+except ImportError:
+    pass
+try:
+    from dataclasses import dataclass, asdict
+except ImportError:
+    pass
+try:
+    from enum import Enum
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    import logging
+except ImportError:
+    pass
+try:
+    import yaml
+    YAML_AVAILABLE = True
+except ImportError:
+    YAML_AVAILABLE = False
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 class CheckpointType(Enum):
     """Types of HITL checkpoints"""
@@ -40,14 +54,12 @@ class CheckpointType(Enum):
     DOCUMENTATION = "documentation"
     TASK_TRANSITIONS = "task_transitions"
 
-
 class RiskLevel(Enum):
     """Risk assessment levels"""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
-
 
 class CheckpointStatus(Enum):
     """Checkpoint status values"""
@@ -58,14 +70,12 @@ class CheckpointStatus(Enum):
     TIMEOUT = "timeout"
     CANCELLED = "cancelled"
 
-
 class TimeoutAction(Enum):
     """Actions to take when checkpoint times out"""
     AUTO_APPROVE = "auto_approve"
     ESCALATE = "escalate"
     BLOCK = "block"
     NOTIFY_ONLY = "notify_only"
-
 
 @dataclass
 class HITLCheckpoint:
@@ -176,7 +186,6 @@ class HITLCheckpoint:
             'reviewers': self.assigned_reviewers or []
         }
 
-
 @dataclass
 class RiskAssessment:
     """Risk assessment result"""
@@ -191,7 +200,6 @@ class RiskAssessment:
         data = asdict(self)
         data['risk_level'] = self.risk_level.value
         return data
-
 
 @dataclass
 class HITLReviewDecision:
@@ -213,7 +221,6 @@ class HITLReviewDecision:
         data['reviewed_at'] = self.reviewed_at.isoformat()
         return data
 
-
 @dataclass
 class HITLAuditEntry:
     """Represents an audit log entry"""
@@ -233,7 +240,6 @@ class HITLAuditEntry:
         data = asdict(self)
         data['timestamp'] = self.timestamp.isoformat()
         return data
-
 
 class HITLPolicyEngine:
     """Core HITL policy engine for managing checkpoints and approvals"""
@@ -258,6 +264,10 @@ class HITLPolicyEngine:
     
     def _load_policies(self) -> Dict[str, Any]:
         """Load HITL policies from configuration file"""
+        if not YAML_AVAILABLE:
+            logger.warning("YAML not available, using default policies")
+            return self._get_default_policies()
+            
         try:
             with open(self.config_path, 'r', encoding='utf-8') as f:
                 return yaml.safe_load(f)
@@ -266,6 +276,9 @@ class HITLPolicyEngine:
             return self._get_default_policies()
         except yaml.YAMLError as e:
             logger.error(f"Error parsing HITL policies: {e}")
+            return self._get_default_policies()
+        except Exception as e:
+            logger.error(f"Unexpected error loading policies: {e}")
             return self._get_default_policies()
     
     def _get_default_policies(self) -> Dict[str, Any]:
@@ -292,17 +305,17 @@ class HITLPolicyEngine:
     def _init_notification_handlers(self):
         """Initialize notification handlers"""
         # Dashboard notification handler
-        from .notification_handlers import DashboardNotificationHandler
+        from src.core.workflows.notification_handlers import DashboardNotificationHandler
         self.notification_handlers.append(DashboardNotificationHandler())
         
         # Email notification handler (if configured)
         if self.policies.get('hitl_policies', {}).get('integrations', {}).get('notifications', {}).get('email', {}).get('enabled'):
-            from .notification_handlers import EmailNotificationHandler
+            from src.core.workflows.notification_handlers import EmailNotificationHandler
             self.notification_handlers.append(EmailNotificationHandler())
         
         # Slack notification handler (if configured)
         if self.policies.get('hitl_policies', {}).get('integrations', {}).get('notifications', {}).get('slack', {}).get('enabled'):
-            from .notification_handlers import SlackNotificationHandler
+            from src.core.workflows.notification_handlers import SlackNotificationHandler
             self.notification_handlers.append(SlackNotificationHandler())
     
     async def assess_risk(self, task_id: str, task_data: Dict[str, Any], 
@@ -475,7 +488,9 @@ class HITLPolicyEngine:
         if risk_factors is None:
             risk_factors = []
         
-        risk_level = self._assess_risk(task_type, risk_factors)        # Check if checkpoint type is enabled
+        risk_level = self._assess_risk(task_type, risk_factors)
+        
+        # Check if checkpoint type is enabled
         checkpoint_config = self._normalize_policy_access('checkpoint_triggers', checkpoint_type)
         if not checkpoint_config.get('enabled', True):
             # Auto-approve disabled checkpoint types
@@ -484,10 +499,10 @@ class HITLPolicyEngine:
             # Check for auto-approval conditions
             task_policy = self._normalize_policy_access('task_type_policies', task_type)
             
-            # If no policy found with full task type, try simplified version
+            # If no policy found with full task type, try with _tasks suffix
             if not task_policy:
-                simplified_task_type = task_type.replace('_tasks', '')
-                task_policy = self._normalize_policy_access('task_type_policies', simplified_task_type)
+                task_type_with_suffix = f"{task_type}_tasks"
+                task_policy = self._normalize_policy_access('task_type_policies', task_type_with_suffix)
             
             if (risk_level == RiskLevel.LOW and 
                 task_policy.get('auto_approve_low_risk', False)):
@@ -850,10 +865,10 @@ class HITLPolicyEngine:
         # Get task type policies - try both formats
         task_policy = self._normalize_policy_access('task_type_policies', task_type)
         
-        # If no policy found with full task type, try simplified version
+        # If no policy found with task type, try with _tasks suffix
         if not task_policy:
-            simplified_task_type = task_type.replace('_tasks', '')
-            task_policy = self._normalize_policy_access('task_type_policies', simplified_task_type)
+            task_type_with_suffix = f"{task_type}_tasks"
+            task_policy = self._normalize_policy_access('task_type_policies', task_type_with_suffix)
         
         # Check both risk assessment formats
         risk_assessment = task_policy.get('risk_assessment', {})
@@ -1021,6 +1036,7 @@ class HITLPolicyEngine:
                 current_time > checkpoint.timeout_at):
                 checkpoint.status = CheckpointStatus.ESCALATED
                 checkpoint.escalation_level += 1
+                timed_out.append(checkpoint)
 
                 # Create audit entry (non-async version for process_timeouts)
                 audit_entry = {
@@ -1040,6 +1056,7 @@ class HITLPolicyEngine:
                 filepath = self.storage_dir / f"{checkpoint.checkpoint_id}.json"
                 with open(filepath, 'w', encoding='utf-8') as f:
                     json.dump(checkpoint.to_dict(), f, indent=2, ensure_ascii=False)
+        
         return timed_out
     
     def get_audit_trail(self, checkpoint_id: str = None, task_id: str = None) -> List[HITLAuditEntry]:
@@ -1359,7 +1376,6 @@ def create_hitl_engine(config_path: Optional[str] = None) -> HITLPolicyEngine:
     """Create and return HITL policy engine instance"""
     return HITLPolicyEngine(config_path)
 
-
 # Integration helper functions
 async def create_hitl_checkpoint_for_task(task_id: str, checkpoint_type: str, 
                                         task_data: Dict[str, Any], 
@@ -1377,7 +1393,6 @@ async def create_hitl_checkpoint_for_task(task_id: str, checkpoint_type: str,
         logger.error(f"Error creating HITL checkpoint: {e}")
         return None
 
-
 async def check_hitl_approval_required(task_id: str, task_data: Dict[str, Any]) -> bool:
     """Check if HITL approval is required for a task"""
     engine = create_hitl_engine()
@@ -1392,14 +1407,17 @@ async def check_hitl_approval_required(task_id: str, task_data: Dict[str, Any]) 
     
     return False
 
-
 # Export main classes for easy import
 HITLEngine = HITLPolicyEngine  # Alias for backward compatibility
 
-
 if __name__ == "__main__":
     # Example usage
-    import asyncio
+    try:
+        import asyncio
+    except ImportError:
+        pass
+    import json
+    import logging
     
     async def main():
         engine = create_hitl_engine()

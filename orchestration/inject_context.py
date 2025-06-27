@@ -4,6 +4,7 @@ Injects relevant context from MCP memory into existing prompts or templates.
 Enhanced version with agent integration support.
 """
 
+
 import argparse
 import logging
 import os
@@ -11,23 +12,21 @@ import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
+from src.infrastructure.memory import get_context_by_keys
 
-from tools.memory import get_context_by_keys
-from utils.task_loader import load_task_metadata
+from src.infrastructure.utils.task_loader import load_task_metadata
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
 memory = None
-
 
 class ContextInjector:
     """Handles context injection for task execution"""
 
     def __init__(self):
         # Import here to avoid circular imports
-        from agents import agent_builder
+        from src.core.agents.factory import agent_builder
         self.agent_builder = agent_builder
         self.logger = logging.getLogger(__name__)
 
@@ -69,10 +68,8 @@ class ContextInjector:
             # Fallback: just return the agent
             return agent_or_task
 
-
 # Global context injector
 context_injector = ContextInjector()
-
 
 def inject_context(prompt, query, position="top", marker="{{CONTEXT}}"):
     """
@@ -104,7 +101,6 @@ def inject_context(prompt, query, position="top", marker="{{CONTEXT}}"):
 
     return result
 
-
 def inject_file_context(
         input_file,
         output_file,
@@ -130,7 +126,6 @@ def inject_file_context(
         f.write(result)
 
     print(f"Context injected and saved to {output_file}")
-
 
 def main():
     """Command-line interface for injecting context into prompts."""
@@ -194,7 +189,6 @@ def main():
     except Exception as e:
         print(f"Error injecting context: {str(e)}", file=sys.stderr)
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

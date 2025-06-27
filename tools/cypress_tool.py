@@ -3,13 +3,17 @@ Cypress Tool - Helps agents generate and manage E2E tests using Cypress
 """
 
 import json
+import logging
 import os
-import subprocess
+import re
+import sys
 from typing import Any, Dict, List, Optional
 
-from tools.base_tool import ArtesanatoBaseTool
-
-
+try:
+    from tools.base_tool import ArtesanatoBaseTool
+except ImportError as e:
+    logging.error(f"Failed to import ArtesanatoBaseTool: {e}")
+    sys.exit(1)
 class CypressTool(ArtesanatoBaseTool):
     """Tool for generating and managing Cypress E2E tests."""
 
@@ -76,7 +80,6 @@ class CypressTool(ArtesanatoBaseTool):
 
     def _extract_param(self, query: str, param_name: str) -> str:
         """Extract a parameter value from the query string."""
-        import re
         pattern = rf"{param_name}[=:][\s]*[\"']([^\"']+)[\"']|{param_name}[=:][\s]*(\S+)"
         matches = re.search(pattern, query, re.IGNORECASE)
         if matches:

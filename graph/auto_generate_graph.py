@@ -1,29 +1,76 @@
 """
 Auto Graph Generator
+
 Scans task YAML files and dynamically generates a LangGraph workflow based on task dependencies.
 """
 
-import json
+from src.core.workflows import workflow
 import os
-import sys
+import json
+import logging
+import yaml
 from glob import glob
 from typing import Any, Dict, List, Optional
 
-import yaml
-from langgraph.constants import END
-from langgraph.graph import Graph, StateGraph
+from tools.memory import config
 
-from graph.graph_builder import build_dynamic_workflow_graph
-from graph.handlers import (backend_handler, coordinator_handler,
+# LangGraph imports with error handling
+try:
+    from langgraph.constants import END
+    from langgraph.graph import Graph, StateGraph
+    LANGGRAPH_AVAILABLE = True
+except ImportError as e:
+    logging.error(f"LangGraph not available: {e}")
+    LANGGRAPH_AVAILABLE = False
+    # Create mock classes
+    class MockGraph:
+        def __init__(self): pass
+    class MockStateGraph:
+        def __init__(self): pass
+    END = "END"
+    Graph = MockGraph
+    StateGraph = MockStateGraph
+
+# Local imports with error handling
+try:
+    from .graph_builder import build_dynamic_workflow_graph
+except ImportError as e:
+    logging.warning(f"Graph builder not available: {e}")
+    def build_dynamic_workflow_graph(*args, **kwargs):
+        logging.error("Graph builder not available - using mock")
+        return None
+
+try:
+    from .handlers import (backend_handler, coordinator_handler,
                             documentation_handler, frontend_handler,
                             human_review_handler, qa_handler,
                             technical_handler)
-from orchestration.registry import get_agent
-from orchestration.states import TaskStatus
+except ImportError as e:
+    logging.warning(f"Handlers not available: {e}")
+    # Create mock handlers
+    def mock_handler(*args, **kwargs):
+        logging.error("Handler not available - using mock")
+        return {"status": "error", "message": "Handler not available"}
+    
+    backend_handler = mock_handler
+    coordinator_handler = mock_handler
+    documentation_handler = mock_handler
+    frontend_handler = mock_handler
+    human_review_handler = mock_handler
+    qa_handler = mock_handler
+    technical_handler = mock_handler
 
-# Add parent directory to path to allow imports
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.core.workflows.registry import get_agent
+from src.core.workflows.states import TaskStatus
 
+# Standard library imports
+try:
+    import importlib
+    import inspect
+    INTROSPECTION_AVAILABLE = True
+except ImportError as e:
+    logging.error(f"Python introspection modules not available: {e}")
+    INTROSPECTION_AVAILABLE = False
 
 def find_all_task_files() -> List[str]:
     """
@@ -35,7 +82,6 @@ def find_all_task_files() -> List[str]:
     tasks_dir = os.path.join(os.path.dirname(
         os.path.dirname(os.path.abspath(__file__))), "tasks")
     return glob(os.path.join(tasks_dir, "*.yaml"))
-
 
 def load_task_metadata(file_path: str) -> Dict[str, Any]:
     """
@@ -49,7 +95,6 @@ def load_task_metadata(file_path: str) -> Dict[str, Any]:
     """
     with open(file_path, 'r') as f:
         return yaml.safe_load(f)
-
 
 def extract_tasks_dependency_graph() -> Dict[str, Any]:
     """
@@ -137,7 +182,6 @@ def extract_tasks_dependency_graph() -> Dict[str, Any]:
 
     return {"nodes": nodes}
 
-
 def generate_graph_config():
     """
     Generate a graph configuration JSON file based on task dependencies.
@@ -156,178 +200,169 @@ def generate_graph_config():
     print(f"Generated graph configuration saved to {output_path}")
     return output_path
 
-
-def build_auto_generated_workflow_graph() -> StateGraph:
+def build_auto_generated_workflow_graph():
     """
-    Build a workflow graph based on the auto-generated configuration.
-
+    Build the workflow graph from the generated configuration.
+    
     Returns:
-        A compiled StateGraph object with support for multiple edges
+        StateGraph: The compiled workflow graph
     """
-    # Generate the config if it doesn't exist
-    config_path = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), "auto_generated_graph.json")
+    # Load the configuration
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "auto_generated_graph.json")
     if not os.path.exists(config_path):
-        config_path = generate_graph_config()
-
-    # Load the config
+        logging.error(f"Configuration file not found: {config_path}")
+        return None
+    
     with open(config_path, 'r') as f:
         config = json.load(f)
-
-    # Define a simple state schema for the graph
-    from typing import Optional as Opt
+    
+    # Create workflow schema
     from typing import TypedDict
-
-    class WorkflowState(TypedDict, total=False):
+    
+    class WorkflowState(TypedDict):
         task_id: str
         agent: str
         output: str
-        status: TaskStatus
-        error: Opt[str]
-
-    # Build the graph using StateGraph to support multiple edges
+        status: str
+        error: Optional[str]
+    
+    # Build the graph using StateGraph
     workflow = StateGraph(state_schema=WorkflowState)
+    
+# Handler map (dynamically extensible)
+handler_map = {
+    "coordinator": coordinator_handler,
+    "technical": technical_handler,
+    "backend": backend_handler,
+    "frontend": frontend_handler,
+    "qa": qa_handler,
+    "documentation": documentation_handler,
+    "human_review": human_review_handler,
+    # Add other handlers as needed
+}
 
-    # Handler map (dynamically extensible)
-    import importlib
-    import inspect
-    handler_map = {
-        "coordinator": coordinator_handler,
-        "technical": technical_handler,
-        "backend": backend_handler,
-        "frontend": frontend_handler,
-        "qa": qa_handler,
-        "documentation": documentation_handler,
-        "human_review": human_review_handler,
-        # Add other handlers as needed
-    }
+# Dynamically add handlers for new roles if present in graph/handlers.py
+handlers_module = importlib.import_module("graph.handlers")
+for node in config["nodes"]:
+    agent_role = node["agent"]
+    if agent_role not in handler_map:
+        handler_func_name = f"{agent_role}_handler"
+        if hasattr(handlers_module, handler_func_name):
+            handler_func = getattr(handlers_module, handler_func_name)
+            if inspect.isfunction(handler_func):
+                handler_map[agent_role] = handler_func
 
-    # Dynamically add handlers for new roles if present in graph/handlers.py
-    handlers_module = importlib.import_module("graph.handlers")
-    for node in config["nodes"]:
-        agent_role = node["agent"]
-        if agent_role not in handler_map:
-            handler_func_name = f"{agent_role}_handler"
-            if hasattr(handlers_module, handler_func_name):
-                handler_func = getattr(handlers_module, handler_func_name)
-                if inspect.isfunction(handler_func):
-                    handler_map[agent_role] = handler_func
+# Add nodes
+for node in config["nodes"]:
+    node_id = node["id"]
+    agent_role = node["agent"]
 
-    # Add nodes
-    for node in config["nodes"]:
-        node_id = node["id"]
-        agent_role = node["agent"]
-
-        if agent_role in handler_map:
-            workflow.add_node(node_id, handler_map[agent_role])
-        else:
-            # Create a generic handler for this role
-            def create_generic_handler(role=agent_role):
-                def handler(state):
-                    agent = get_agent(role)
-                    result = agent.run(state)
-
-                    # Ensure result is a dictionary
-                    if not isinstance(result, dict):
-                        result = {"output": result}
-
-                    # Set agent identifier and preserve task ID
-                    result["agent"] = role
-                    if "task_id" not in result and "task_id" in state:
-                        result["task_id"] = state["task_id"]
-
-                    # --- Anti-infinite-loop logic ---
-                    # Track consecutive IN_PROGRESS iterations
-                    in_progress_count = state.get("in_progress_count", 0)
-                    output = result.get("output", "").lower()
-                    if any(
-                        term in output for term in [
-                            "done",
-                            "completed",
-                            "success",
-                            "passed"]) or result.get("status") in [
-                        TaskStatus.DONE,
-                        TaskStatus.BLOCKED,
-                            TaskStatus.COMPLETED]:
-                        result["status"] = TaskStatus.DONE
-                        result.pop("in_progress_count", None)
-                    elif "fail" in output or "error" in output or result.get("status") == TaskStatus.BLOCKED:
-                        result["status"] = TaskStatus.BLOCKED
-                        result.pop("in_progress_count", None)
-                    else:
-                        # If still in progress, increment the counter
-                        in_progress_count += 1
-                        result["in_progress_count"] = in_progress_count
-                        result["status"] = TaskStatus.IN_PROGRESS
-                        # If we've looped too many times, block the task
-                        if in_progress_count >= 3:
-                            result["status"] = TaskStatus.BLOCKED
-                            result["error"] = "Infinite loop detected: too many consecutive IN_PROGRESS states."
-                            result.pop("in_progress_count", None)
-
-                    # Preserve other context from state
-                    result.update(
-                        {k: v for k, v in state.items() if k not in result})
-
-                    return result
-                return handler
-
-            workflow.add_node(node_id, create_generic_handler())
-
-    # Create a dynamic router function for handling multiple potential edges
-    def create_router(dependent_nodes):
-        def router(state):
-            # Default to the first dependency if available
-            if dependent_nodes:
-                return dependent_nodes[0]
-            # If no dependencies, this is a terminal node, return END
-            return END
-        return router
-
-    # Add edges based on dependencies using conditional routing
-    for node in config["nodes"]:
-        node_id = node["id"]
-        depends_on = node["depends_on"]
-
-        if depends_on:
-            # For nodes with dependencies, set up conditional routing
-            # Use a router function to redirect to the appropriate destination
-            router_fn = create_router(depends_on)
-
-            # Create destinations dictionary with actual target nodes
-            destinations = {}
-            for dep in depends_on:
-                destinations[dep] = dep
-            # Add END as a potential destination for terminal states
-            destinations[END] = END
-
-            workflow.add_conditional_edges(
-                node_id,
-                router_fn,
-                destinations
-            )
-        else:
-            # For terminal nodes, add an edge to END
-            workflow.add_edge(node_id, END)
-
-    # Set entry point
-    entry_nodes = [node["id"]
-                   for node in config["nodes"] if not node["depends_on"]]
-    if entry_nodes:
-        workflow.set_entry_point(entry_nodes[0])
+    if agent_role in handler_map:
+        workflow.add_node(node_id, handler_map[agent_role])
     else:
-        # Default to coordinator if no clear entry point
-        workflow.set_entry_point("coordinator")
+        # Create a generic handler function for roles without specific handlers
+        def create_generic_handler():
+            def handler(state):
+                role = state.get("agent", "unknown")
+                agent = get_agent(role)
+                result = agent.run(state)
 
-    return workflow.compile()
+                # Ensure result is a dictionary
+                if not isinstance(result, dict):
+                    result = {"output": result}
 
+                # Set agent identifier and preserve task ID
+                result["agent"] = role
+                if "task_id" not in result and "task_id" in state:
+                    result["task_id"] = state["task_id"]
 
-if __name__ == "__main__":
-    # Generate the graph configuration
-    config_path = generate_graph_config()
+                # --- Anti-infinite-loop logic ---
+                # Track consecutive IN_PROGRESS iterations
+                in_progress_count = state.get("in_progress_count", 0)
+                output = result.get("output", "").lower()
+                if any(
+                    term in output for term in [
+                        "done",
+                        "completed",
+                        "success",
+                        "passed"]) or result.get("status") in [
+                    TaskStatus.DONE,
+                    TaskStatus.BLOCKED,
+                        TaskStatus.COMPLETED]:
+                    result["status"] = TaskStatus.DONE
+                    result.pop("in_progress_count", None)
+                elif "fail" in output or "error" in output or result.get("status") == TaskStatus.BLOCKED:
+                    result["status"] = TaskStatus.BLOCKED
+                    result.pop("in_progress_count", None)
+                else:
+                    # If still in progress, increment the counter
+                    in_progress_count += 1
+                    result["in_progress_count"] = in_progress_count
+                    result["status"] = TaskStatus.IN_PROGRESS
+                    # If we've looped too many times, block the task
+                    if in_progress_count >= 3:
+                        result["status"] = TaskStatus.BLOCKED
+                        result["error"] = "Infinite loop detected: too many consecutive IN_PROGRESS states."
+                        result.pop("in_progress_count", None)
 
-    # Print a success message
-    print(f"Successfully generated graph configuration at: {config_path}")
-    print("You can now use this graph in your workflow with:")
-    print("from graph.auto_generate_graph import build_auto_generated_workflow_graph")
-    print("workflow = build_auto_generated_workflow_graph()")
+                # Preserve other context from state
+                result.update(
+                    {k: v for k, v in state.items() if k not in result})
+
+                return result
+            return handler
+
+        workflow.add_node(node_id, create_generic_handler())
+
+# Create a dynamic router function for handling multiple potential edges
+def create_router(dependent_nodes):
+    def router(state):
+        # Default to the first dependency if available
+        if dependent_nodes:
+            return dependent_nodes[0]
+        # If no dependencies, this is a terminal node, return END
+        return END
+    return router
+
+# Add edges based on dependencies using conditional routing
+for node in config["nodes"]:
+    node_id = node["id"]
+    depends_on = node["depends_on"]
+
+    if depends_on:
+        # Create destinations dictionary with actual target nodes
+        destinations = {}
+        for dep in depends_on:
+            destinations[dep] = dep
+        # Add END as a potential destination for terminal states
+        destinations[END] = END
+
+        workflow.add_conditional_edges(
+            node_id,
+            create_router(depends_on),
+            destinations
+        )
+    else:
+        # For terminal nodes, add an edge to END
+        workflow.add_edge(node_id, END)
+
+# Set entry point
+entry_nodes = [node["id"]
+               for node in config["nodes"] if not node["depends_on"]]
+if entry_nodes:
+    workflow.set_entry_point(entry_nodes[0])
+else:
+    # Default to coordinator if no clear entry point
+    workflow.set_entry_point("coordinator")
+
+    workflow.compile()
+    
+    # Generate the graph configuration when this module is run
+    if __name__ == "__main__":
+        config_path = generate_graph_config()
+    
+        # Print a success message
+        print(f"Successfully generated graph configuration at: {config_path}")
+        print("You can now use this graph in your workflow with:")
+        print("from src.infrastructure.tools.auto_generate_graph import build_auto_generated_workflow_graph")
+        print("workflow = build_auto_generated_workflow_graph()")

@@ -21,20 +21,17 @@ Usage:
 import argparse
 import json
 import logging
-import os
 import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-# Add project root to path for imports
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 # Set up logging
 logger = logging.getLogger(__name__)
-
 
 @dataclass
 class TaskArtifact:
@@ -44,7 +41,6 @@ class TaskArtifact:
     size_bytes: int
     language: Optional[str] = None
     description: Optional[str] = None
-
 
 @dataclass
 class AgentOutput:
@@ -56,7 +52,6 @@ class AgentOutput:
     files_modified: List[str]
     metadata: Dict[str, Any]
 
-
 @dataclass
 class QAResults:
     """Represents QA analysis results."""
@@ -67,7 +62,6 @@ class QAResults:
     warnings: int
     overall_status: str
     detailed_findings: List[Dict[str, Any]]
-
 
 @dataclass
 class TaskSummary:
@@ -85,7 +79,6 @@ class TaskSummary:
     total_files_created: int
     total_files_modified: int
     total_code_lines: int
-
 
 class TaskSummarizer:
     """
@@ -675,7 +668,6 @@ class TaskSummarizer:
             logger.error(f"Error extracting files for agent {agent_id}: {e}")
             return []
 
-
 def main():
     """CLI interface for task summarization."""
     parser = argparse.ArgumentParser(
@@ -719,7 +711,6 @@ Examples:
 
     # Configure logging
     if args.verbose:
-        import logging
         logging.basicConfig(level=logging.INFO)
 
     try:
@@ -752,7 +743,6 @@ Examples:
     except Exception as e:
         print(f"❌ Error during task summarization: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

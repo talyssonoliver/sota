@@ -2,14 +2,18 @@
 Plan Execution Manager for orchestrating JSON-based plans from the Coordinator Agent.
 """
 
+
+try:
+    from typing import Any, Dict, List, Optional
+except ImportError:
+    pass
+try:
+    from src.core.workflows.states import TaskStatus
+except ImportError:
+    pass
 import json
 import logging
-from typing import Any, Dict, List, Optional
-
-from src.core.workflows.states import TaskStatus
-
 logger = logging.getLogger(__name__)
-
 
 class PlanExecutionManager:
     """

@@ -3,27 +3,65 @@ Real-time Workflow Monitoring CLI
 Provides a live view of LangGraph workflow execution progress.
 """
 
-import argparse
+import sys
+import os
 import json
 import logging
-import os
-import sys
-import time
+try:
+    import time
+except ImportError:
+    pass
+import argparse
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from pythonjsonlogger import jsonlogger
-from watchdog.events import FileSystemEventHandler
-from watchdog.observers import Observer
+try:
+    from pythonjsonlogger import jsonlogger
+except ImportError:
+    jsonlogger = None
 
-from src.core.workflows.states import TaskStatus
-from src.platform.utils.execution_monitor import get_dashboard_logger, get_execution_monitor
+try:
+    from watchdog.events import FileSystemEventHandler
+    from watchdog.observers import Observer
+except ImportError:
+    # Fallback classes for when watchdog is not available
+    class FileSystemEventHandler:
+        def on_modified(self, event):
+            pass
+    
+    class Observer:
+        def __init__(self):
+            pass
+        
+        def schedule(self, handler, path, recursive=False):
+            pass
+        
+        def start(self):
+            pass
+        
+        def stop(self):
+            pass
+        
+        def join(self):
+            pass
 
-# Add parent directory to path to allow imports
+try:
+    from src.core.workflows.states import TaskStatus
+except ImportError:
+    # Fallback TaskStatus
+    class TaskStatus:
+        PENDING = "pending"
+        IN_PROGRESS = "in_progress"
+        COMPLETED = "completed"
+        FAILED = "failed"
+
+try:
+    from src.infrastructure.utils.execution_monitor import get_dashboard_logger, get_execution_monitor
+except ImportError:
+    pass
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 # Configure structured JSON logging for production
 logger = logging.getLogger("workflow_monitor")
@@ -36,14 +74,12 @@ logger.setLevel(logging.INFO)
 
 # Function to clear terminal screen
 
-
 def clear_screen():
     """Clear the terminal screen based on the operating system."""
     if os.name == 'nt':  # For Windows
         os.system('cls')
     else:  # For Linux/Mac
         os.system('clear')
-
 
 class NodeStatus(str, Enum):
     """Status of a node in the workflow"""
@@ -52,7 +88,6 @@ class NodeStatus(str, Enum):
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
     WAITING = "WAITING"
-
 
 class WorkflowMonitor:
     """
@@ -352,7 +387,6 @@ class WorkflowMonitor:
         except KeyboardInterrupt:
             print("\n✅ Monitoring stopped by user")
 
-
 class OutputDirectoryEventHandler(FileSystemEventHandler):
     """
     Event handler for file system changes in the output directory.
@@ -386,7 +420,6 @@ class OutputDirectoryEventHandler(FileSystemEventHandler):
         """
         if not event.is_directory:
             self.monitor.scan_output_directory()
-
 
 def draw_ui(stdscr, monitor: WorkflowMonitor, curses_module):
     """
@@ -524,7 +557,6 @@ def draw_ui(stdscr, monitor: WorkflowMonitor, curses_module):
 
     stdscr.refresh()
 
-
 def run_ui_wrapper_fn(stdscr, monitor: WorkflowMonitor, curses_module):
     """
     Run the UI for the workflow monitor.
@@ -585,7 +617,6 @@ def run_ui_wrapper_fn(stdscr, monitor: WorkflowMonitor, curses_module):
     finally:
         observer.stop()
         observer.join()
-
 
 def main():
     """Command-line interface for workflow monitoring."""
@@ -652,7 +683,7 @@ def main():
     else:
         # Curses UI mode
         try:
-            import curses  # Moved import here
+            import curses  # Moved here
             curses.wrapper(lambda scr: run_ui_wrapper_fn(scr, monitor, curses))
         except ImportError:
             print("Curses module not available. Please run in simple mode (--simple) or install curses (e.g., windows-curses on Windows).")
@@ -660,7 +691,6 @@ def main():
         except Exception as e:
             print(f"Error running UI: {str(e)}")
             sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

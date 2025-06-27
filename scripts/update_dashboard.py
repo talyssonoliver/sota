@@ -6,20 +6,28 @@ Updates dashboard with task completion data, QA results, and progress metrics.
 Integrates with completion metrics and real-time monitoring systems.
 """
 
-import json
-import os
 import sys
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+import json
+import logging
 
-# Add project root to path for imports
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Any, Dict, List, Optional
+except ImportError:
+    pass
+
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.platform.utils.completion_metrics import CompletionMetricsCalculator
-from src.platform.utils.execution_monitor import DashboardLogger
-
+from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
+from src.infrastructure.utils.execution_monitor import DashboardLogger
 
 class DashboardUpdater:
     """Updates dashboard with latest completion data"""
@@ -262,7 +270,6 @@ class DashboardUpdater:
 """
         return summary
 
-
 def main():
     """CLI interface for dashboard updates"""
     import argparse
@@ -310,7 +317,6 @@ def main():
             import traceback
             traceback.print_exc()
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

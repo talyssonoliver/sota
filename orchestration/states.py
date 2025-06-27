@@ -3,10 +3,15 @@ Task Lifecycle States
 Defines the standard states that a task can be in throughout its lifecycle.
 """
 
+try:
+    pass
+except ImportError:
+    pass
 from enum import Enum
-from typing import Dict, Optional, Set, Union
-
-
+try:
+    pass
+except ImportError:
+    pass
 class TaskStatus(str, Enum):
     """
     Enum for tracking task status through the workflow
@@ -32,12 +37,12 @@ class TaskStatus(str, Enum):
     @classmethod
     def from_string(cls, value: str):
         """Convert a string to the corresponding TaskStatus enum value."""
+        from typing import Dict, Optional, Set, Union
         try:
             return cls(value)
         except ValueError:
             # Default to IN_PROGRESS if invalid status
             return cls.IN_PROGRESS
-
 
 def get_next_status(current_status: Union[str,
                                           TaskStatus],
@@ -108,7 +113,6 @@ def get_next_status(current_status: Union[str,
         current_status, role_transitions.get(
             None, current_status))
 
-
 def is_terminal_status(status: Union[str, TaskStatus]) -> bool:
     """
     Check if a status is terminal (no further processing needed).
@@ -130,7 +134,6 @@ def is_terminal_status(status: Union[str, TaskStatus]) -> bool:
     }
 
     return status in terminal_statuses
-
 
 def get_valid_transitions(
         current_status: Union[str, TaskStatus]) -> Dict[str, TaskStatus]:

@@ -3,17 +3,74 @@ Markdown Tool - Helps agents generate and format markdown documentation
 """
 
 import json
+import logging
 import os
 import re
 from datetime import datetime
 from typing import Any, Dict
 
-import frontmatter
-from pydantic import BaseModel, ValidationError
+# External dependencies with error handling
+try:
+    import frontmatter
+    FRONTMATTER_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"python-frontmatter not available: {e}")
+    FRONTMATTER_AVAILABLE = False
+    # Create mock frontmatter module
+    class MockFrontmatter:
+        @staticmethod
+        def loads(content):
+            # Simple mock - just return content without frontmatter parsing
+            return type('MockPost', (), {
+                'content': content,
+                'metadata': {}
+            })()
+        
+        @staticmethod
+        def dumps(post):
+            # Simple mock - just return the content
+            return getattr(post, 'content', str(post))
+        
+        @staticmethod
+        def Post(content, **metadata):
+            # Simple mock post
+            return type('MockPost', (), {
+                'content': content,
+                'metadata': metadata
+            })()
+    
+    frontmatter = MockFrontmatter()
 
-from tools.base_tool import ArtesanatoBaseTool
+try:
+    from pydantic import BaseModel, ValidationError
+    PYDANTIC_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Pydantic not available: {e}")
+    PYDANTIC_AVAILABLE = False
+    # Create mock classes
+    class BaseModel:
+        def __init__(self, **kwargs):
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+    
+    class ValidationError(Exception):
+        pass
 
+# Local imports with error handling
+try:
+    from tools.base_tool import ArtesanatoBaseTool
+except ImportError as e:
+    logging.error(f"Base tool not available: {e}")
+    # Create mock base class
+    class ArtesanatoBaseTool:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def _make_request(self, *args, **kwargs):
+            logging.error("Base tool not available - using mock")
+            return {"error": "Base tool not available"}
 
+logger = logging.getLogger(__name__)
 class MarkdownTool(ArtesanatoBaseTool):
     """Tool for generating and formatting markdown documentation."""
 

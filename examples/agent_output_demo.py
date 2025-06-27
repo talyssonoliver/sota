@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
 """
+import sys
 Step 4.4 — Register Agent Output Demo
 
 Demonstrates the complete agent output registration workflow
 with real examples and validation.
 """
 
+
+from pathlib import Path
+from src.core.workflows.register_output import AgentOutputRegistry
 import os
 import sys
-from pathlib import Path
-
-from orchestration.register_output import AgentOutputRegistry
-
-# Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 def demonstrate_step_4_4():
     """Demonstrate Step 4.4 — Register Agent Output functionality."""
@@ -79,7 +77,6 @@ def demonstrate_step_4_4():
     print(f"\n🎉 Step 4.4 Demo Complete!")
     print(f"✅ Agent output registration system is operational")
     print(f"✅ Ready for Phase 5 — Reporting, QA & Completion")
-
 
 if __name__ == "__main__":
     demonstrate_step_4_4()

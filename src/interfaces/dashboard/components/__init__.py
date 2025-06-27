@@ -1,1 +1,3 @@
-"""Unified dashboard module - components"""
+"""Module initialization."""
+
+__all__ = []

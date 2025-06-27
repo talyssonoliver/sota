@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """
+import sys
+import sys
 Simple Step 3.6 Chunking Test
 
 This script tests the Step 3.6 enhanced chunking functionality
@@ -7,16 +9,23 @@ by directly testing the LangChain CharacterTextSplitter integration
 without access control checks.
 """
 
-import os
-import sys
+try:
+    pass
+except ImportError:
+    pass
 from pathlib import Path
-
+try:
+    pass
+except ImportError:
+    pass
 from langchain_text_splitters import CharacterTextSplitter
-
-# Add project root to path
+try:
+    pass
+except ImportError:
+    pass
+    pass
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
 
 def test_step_3_6_chunking():
     """Test Step 3.6 enhanced chunking with LangChain CharacterTextSplitter"""
@@ -139,7 +148,6 @@ This document continues with additional sections to provide sufficient content f
             len(chunks)} chunks from {
             len(sample_content)} character document")
     print(f"   ✓ Chunking strategy validated for Step 3.6 implementation")
-
 
 if __name__ == "__main__":
     test_step_3_6_chunking()

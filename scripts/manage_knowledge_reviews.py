@@ -6,15 +6,19 @@ This script helps manage the review process for knowledge summaries in the conte
 It can list summaries that need review, show summary details, and mark summaries as reviewed.
 """
 
+
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from typing import Dict, List, Optional
+except ImportError:
+    pass
 import argparse
-import csv
 import os
 import re
-import sys
-from datetime import datetime
-from typing import Dict, List, Optional
-
-# Constants
+import csv
 CONTEXT_STORE_DIR = "context-store"
 REVIEWS_LOG_FILE = "reviews/knowledge_review_log.csv"
 DOMAIN_EXPERTS = {
@@ -26,7 +30,6 @@ DOMAIN_EXPERTS = {
     "infra": "Technical Lead",
     "sprint": "Product Manager"
 }
-
 
 def find_unreviewed_summaries() -> List[Dict]:
     """Find all summaries that need review."""
@@ -58,7 +61,6 @@ def find_unreviewed_summaries() -> List[Dict]:
 
     return unreviewed
 
-
 def show_summary_details(filepath: str) -> None:
     """Show details of a specific summary file."""
     try:
@@ -70,7 +72,6 @@ def show_summary_details(filepath: str) -> None:
         print(f"\n{'=' * 80}\n")
     except Exception as e:
         print(f"Error reading {filepath}: {e}")
-
 
 def mark_as_reviewed(
         filepath: str,
@@ -110,7 +111,6 @@ def mark_as_reviewed(
         print(f"❌ Error marking review for {filepath}: {e}")
         return False
 
-
 def log_review(
         filepath: str,
         reviewer_name: str,
@@ -137,7 +137,6 @@ def log_review(
         if not file_exists:
             writer.writeheader()
         writer.writerow(review_data)
-
 
 def main() -> None:
     """Main entry point."""
@@ -188,7 +187,6 @@ def main() -> None:
 
     elif args.command == "review":
         mark_as_reviewed(args.filepath, args.reviewer, args.role)
-
 
 if __name__ == "__main__":
     main()

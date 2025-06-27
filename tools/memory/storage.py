@@ -1,8 +1,10 @@
 """
 Memory Engine Storage System
+
 Handles tiered storage (hot/warm/cold) and data lifecycle management
 """
 
+import hashlib
 import json
 import logging
 import os
@@ -13,17 +15,46 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+# External dependencies with error handling
 try:
     import psutil
     PSUTIL_AVAILABLE = True
-except ImportError:
+except ImportError as e:
+    logging.warning(f"psutil not available: {e}")
     PSUTIL_AVAILABLE = False
+    # Create mock psutil for memory monitoring
+    class MockPsutil:
+        def virtual_memory(self):
+            return type('MockMemory', (), {'available': 1024*1024*1024})()  # 1GB mock
+        
+        def disk_usage(self, path):
+            return type('MockDisk', (), {'free': 10*1024*1024*1024})()  # 10GB mock
+    
+    psutil = MockPsutil()
 
-from .config import StorageConfig
-from .exceptions import StorageError
+# Local imports with error handling
+try:
+    from .config import StorageConfig
+    STORAGE_CONFIG_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Storage config not available: {e}")
+    STORAGE_CONFIG_AVAILABLE = False
+    class StorageConfig:
+        def __init__(self, *args, **kwargs):
+            self.hot_storage_size_mb = 100
+            self.warm_storage_size_mb = 500
+            self.cold_storage_path = "cold_storage"
+
+try:
+    from .exceptions import StorageError
+    STORAGE_EXCEPTIONS_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Storage exceptions not available: {e}")
+    STORAGE_EXCEPTIONS_AVAILABLE = False
+    class StorageError(Exception):
+        pass
 
 logger = logging.getLogger(__name__)
-
 
 class TieredStorageManager:
     """
@@ -374,7 +405,6 @@ class TieredStorageManager:
             
             return stats
 
-
 class PartitionManager:
     """
     Manages data partitioning for performance and scalability.
@@ -392,7 +422,6 @@ class PartitionManager:
         Determine partition key for data.
         """
         # Simple hash-based partitioning
-        import hashlib
         hash_value = hashlib.md5(data_key.encode()).hexdigest()
         partition_id = int(hash_value[:2], 16) % 16  # 16 partitions
         return f"partition_{partition_id:02d}"

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+import sys
 Step 4.1 Implementation Demo: Task Declaration & Preparation
 
 This script demonstrates the complete Step 4.1 workflow for transforming
@@ -15,22 +16,17 @@ The demo shows:
 Usage:
     python examples/step_4_1_demo.py [--task-id BE-07] [--verbose]
 """
-
-import json
-import logging
-import os
 import sys
+import logging
 from datetime import datetime
 from pathlib import Path
-
-from orchestration.task_declaration import (TaskDeclarationManager,
-                                            TaskPreparationStatus)
-from tools.memory_engine import MemoryEngine
+from src.core.workflows.task_declaration import (TaskDeclarationManager,
+TaskPreparationStatus)
+from tools.memory.engine import MemoryEngine
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
 
 def setup_logging(verbose: bool = False):
     """Set up logging configuration"""
@@ -40,19 +36,16 @@ def setup_logging(verbose: bool = False):
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
 
-
 def print_section_header(title: str):
     """Print a formatted section header"""
     print("\n" + "=" * 60)
     print(f" {title}")
     print("=" * 60)
 
-
 def print_subsection(title: str):
     """Print a formatted subsection header"""
     print(f"\n📋 {title}")
     print("-" * 40)
-
 
 def demo_task_declaration(
         manager: TaskDeclarationManager,
@@ -88,7 +81,6 @@ def demo_task_declaration(
     except Exception as e:
         print(f"❌ Error declaring task {task_id}: {e}")
         return None
-
 
 def demo_task_preparation(
         manager: TaskDeclarationManager,
@@ -135,7 +127,6 @@ def demo_task_preparation(
         print(f"❌ Error preparing task {task_id}: {e}")
         return None
 
-
 def demo_context_analysis(declaration):
     """Demonstrate context analysis and content preview"""
     if not declaration or not declaration.context_content:
@@ -158,7 +149,6 @@ def demo_context_analysis(declaration):
     print(context[:500] + ("..." if len(context) > 500 else ""))
     print("─" * 50)
 
-
 def demo_prompt_analysis(declaration):
     """Demonstrate prompt analysis and content preview"""
     if not declaration or not declaration.generated_prompt:
@@ -180,7 +170,6 @@ def demo_prompt_analysis(declaration):
     print("─" * 50)
     print(prompt[:800] + ("..." if len(prompt) > 800 else ""))
     print("─" * 50)
-
 
 def demo_execution_readiness(declaration):
     """Demonstrate execution readiness check"""
@@ -224,7 +213,6 @@ def demo_execution_readiness(declaration):
 
     return ready
 
-
 def demo_batch_processing(manager: TaskDeclarationManager):
     """Demonstrate batch processing of multiple tasks"""
     print_section_header("BATCH PROCESSING DEMO")
@@ -258,7 +246,6 @@ def demo_batch_processing(manager: TaskDeclarationManager):
             print(f"   {status}: {count}")
 
     return summary
-
 
 def demo_file_outputs(task_id: str = "BE-07"):
     """Demonstrate the file outputs created during preparation"""
@@ -298,7 +285,6 @@ def demo_file_outputs(task_id: str = "BE-07"):
             except Exception as e:
                 print(f"   Error reading file: {e}")
             print("─" * 30)
-
 
 def main():
     """Main demo function"""
@@ -379,7 +365,6 @@ def main():
             import traceback
             traceback.print_exc()
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

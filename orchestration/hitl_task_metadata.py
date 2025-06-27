@@ -13,10 +13,7 @@ from pathlib import Path
 from typing import Dict, List, Any, Optional, Union
 from dataclasses import dataclass, field, asdict
 from enum import Enum
-
-from orchestration.states import TaskStatus
-
-
+from src.core.workflows.states import TaskStatus
 class HITLStatus(str, Enum):
     """HITL-specific status for tasks."""
     NO_HITL = "no_hitl"                    # Task doesn't require HITL
@@ -26,14 +23,12 @@ class HITLStatus(str, Enum):
     HITL_ESCALATED = "hitl_escalated"      # HITL checkpoint escalated
     HITL_TIMEOUT = "hitl_timeout"          # HITL checkpoint timed out
 
-
 class HITLRiskLevel(str, Enum):
     """Risk levels for HITL assessment."""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
-
 
 @dataclass
 class HITLCheckpointMetadata:
@@ -75,7 +70,6 @@ class HITLCheckpointMetadata:
             data['timeout_at'] = datetime.fromisoformat(data['timeout_at'])
         
         return cls(**data)
-
 
 @dataclass
 class HITLTaskMetadata:
@@ -268,7 +262,6 @@ class HITLTaskMetadata:
         
         return cls(**data)
 
-
 class HITLTaskMetadataManager:
     """Manager for HITL task metadata operations."""
     
@@ -446,7 +439,6 @@ class HITLTaskMetadataManager:
             "risk_distribution": risk_dist,
             "hitl_status_distribution": hitl_status_dist
         }
-
 
 # Global metadata manager instance
 hitl_metadata_manager = HITLTaskMetadataManager()

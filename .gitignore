@@ -112,7 +112,8 @@ claude-code/
 CLAUDE.md
 
 # Memory engine files
-.memory_engine_key
+.memory_engine_key*
+memory_engine_key*
 
 docs/api/
 

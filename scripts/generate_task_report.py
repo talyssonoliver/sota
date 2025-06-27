@@ -176,14 +176,12 @@ from datetime import datetime, date, timedelta
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 
-# Add project root to path for imports
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from scripts.update_dashboard import DashboardUpdater
 from scripts.generate_progress_report import ProgressReportGenerator
 from src.core.workflows.end_of_day_report import EndOfDayReportGenerator
-
 
 def update_dashboard(task_id: Optional[str] = None) -> bool:
     """Update dashboard with latest completion metrics"""
@@ -202,7 +200,6 @@ def update_dashboard(task_id: Optional[str] = None) -> bool:
         print("❌ Dashboard update failed")
     
     return result
-
 
 def generate_daily_report(day: int) -> bool:
     """Generate daily progress report"""
@@ -238,7 +235,6 @@ def generate_daily_report(day: int) -> bool:
         print(f"❌ Daily report generation failed: {e}")
         return False
 
-
 def generate_task_specific_report(task_id: str) -> bool:
     """Generate report for specific task"""
     print(f"📋 Generating report for task {task_id}...")
@@ -265,7 +261,6 @@ def generate_task_specific_report(task_id: str) -> bool:
     except Exception as e:
         print(f"❌ Task report generation failed: {e}")
         return False
-
 
 def generate_end_of_day_report(day: int) -> bool:
     """Generate enhanced end-of-day report with velocity tracking and tomorrow's preparation"""
@@ -332,7 +327,6 @@ def generate_end_of_day_report(day: int) -> bool:
         print(f"❌ Enhanced end-of-day report generation failed: {e}")
         return False
 
-
 def _calculate_sprint_velocity(progress_generator: ProgressReportGenerator, target_date: date) -> Dict[str, Any]:
     """Calculate sprint velocity and trend analysis."""
     try:
@@ -368,7 +362,6 @@ def _calculate_sprint_velocity(progress_generator: ProgressReportGenerator, targ
         print(f"⚠️ Error calculating velocity: {e}")
         return {"current_velocity": 0, "trend": "unknown", "velocity_history": []}
 
-
 def _analyze_tomorrow_preparation(progress_generator: ProgressReportGenerator, target_date: date) -> Dict[str, Any]:
     """Analyze and prepare tomorrow's task priorities and blockers."""
     try:
@@ -397,7 +390,6 @@ def _analyze_tomorrow_preparation(progress_generator: ProgressReportGenerator, t
     except Exception as e:
         print(f"⚠️ Error analyzing tomorrow's preparation: {e}")
         return {"total_planned": 0, "high_priority": 0, "priority_tasks": []}
-
 
 def _assess_sprint_health(progress_generator: ProgressReportGenerator) -> Dict[str, Any]:
     """Assess overall sprint health with comprehensive indicators."""
@@ -440,7 +432,6 @@ def _assess_sprint_health(progress_generator: ProgressReportGenerator) -> Dict[s
         print(f"⚠️ Error assessing sprint health: {e}")
         return {"overall_score": 0, "status": "unknown"}
 
-
 def _generate_visual_progress_summary(progress_generator: ProgressReportGenerator, velocity_data: Dict[str, Any]) -> str:
     """Generate visual ASCII charts and progress indicators."""
     try:
@@ -457,6 +448,8 @@ def _generate_visual_progress_summary(progress_generator: ProgressReportGenerato
         health_indicator = _create_health_indicator(team_metrics)
         
         visual_summary = f"""
+    except ImportError:
+        pass
 ## 📊 Visual Progress Summary
 
 ### Sprint Completion Progress
@@ -478,7 +471,6 @@ def _generate_visual_progress_summary(progress_generator: ProgressReportGenerato
     except Exception as e:
         print(f"⚠️ Error generating visual summary: {e}")
         return "## 📊 Visual Progress Summary\n\n*Error generating visual elements*"
-
 
 def _create_enhanced_eod_report(day: int, target_date: date, daily_report: str, 
                               velocity_data: Dict[str, Any], tomorrow_prep: Dict[str, Any],
@@ -567,7 +559,6 @@ def _create_enhanced_eod_report(day: int, target_date: date, daily_report: str,
     
     return enhanced_report
 
-
 # Helper functions for calculations and analysis
 
 def _get_tasks_for_date(task_metrics: List[Dict[str, Any]], date: str) -> List[Dict[str, Any]]:
@@ -583,7 +574,6 @@ def _get_tasks_for_date(task_metrics: List[Dict[str, Any]], date: str) -> List[D
             except Exception:
                 continue
     return tasks
-
 
 def _calculate_velocity_score(tasks: List[Dict[str, Any]]) -> float:
     """Calculate velocity score based on task complexity and quality."""
@@ -609,13 +599,11 @@ def _calculate_velocity_score(tasks: List[Dict[str, Any]]) -> float:
     
     return total_score
 
-
 def _calculate_burn_rate(task_metrics: List[Dict[str, Any]]) -> float:
     """Calculate sprint burn rate."""
     completed_tasks = len([t for t in task_metrics if t.get("status") == "COMPLETED"])
     total_tasks = len(task_metrics)
     return (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0
-
 
 def _project_sprint_completion(metrics: Dict[str, Any], current_velocity: float) -> float:
     """Project sprint completion percentage."""
@@ -629,7 +617,6 @@ def _project_sprint_completion(metrics: Dict[str, Any], current_velocity: float)
         return max(0, completion_projection)
     
     return team_metrics.get("completion_rate", 0)
-
 
 def _get_planned_tasks_for_tomorrow(metrics: Dict[str, Any], target_date: date) -> List[Dict[str, Any]]:
     """Get planned tasks for tomorrow (simplified implementation)."""
@@ -649,13 +636,11 @@ def _get_planned_tasks_for_tomorrow(metrics: Dict[str, Any], target_date: date) 
     
     return planned_tasks[:10]  # Limit to reasonable number
 
-
 def _prioritize_tomorrow_tasks(tasks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Prioritize tomorrow's tasks based on various factors."""
     # Sort by priority, then by estimated impact
     priority_order = {"HIGH": 3, "MEDIUM": 2, "LOW": 1}
     return sorted(tasks, key=lambda t: priority_order.get(t.get("priority", "LOW"), 1), reverse=True)
-
 
 def _identify_potential_blockers(metrics: Dict[str, Any]) -> List[Dict[str, Any]]:
     """Identify potential blockers for tomorrow."""
@@ -681,7 +666,6 @@ def _identify_potential_blockers(metrics: Dict[str, Any]) -> List[Dict[str, Any]
     
     return blockers
 
-
 def _generate_preparation_checklist(priority_tasks: List[Dict[str, Any]], blockers: List[Dict[str, Any]]) -> List[str]:
     """Generate preparation checklist for tomorrow."""
     checklist = [
@@ -705,7 +689,6 @@ def _generate_preparation_checklist(priority_tasks: List[Dict[str, Any]], blocke
     
     return checklist
 
-
 def _analyze_resource_requirements(tasks: List[Dict[str, Any]]) -> Dict[str, Any]:
     """Analyze resource requirements for tomorrow's tasks."""
     return {
@@ -715,12 +698,10 @@ def _analyze_resource_requirements(tasks: List[Dict[str, Any]]) -> Dict[str, Any
         "testing_resources_needed": len(tasks) > 3
     }
 
-
 def _calculate_velocity_consistency(progress_generator: ProgressReportGenerator) -> float:
     """Calculate velocity consistency score."""
     # Simplified implementation - in real system would analyze velocity variance
     return 75.0  # Placeholder - would calculate from historical data
-
 
 def _safe_float(value, default: float = 0.0) -> float:
     """Safely convert value to float, handling Mock objects."""
@@ -732,7 +713,6 @@ def _safe_float(value, default: float = 0.0) -> float:
     except (TypeError, ValueError):
         return default
 
-
 def _assess_blocker_impact(team_metrics: Dict[str, Any]) -> float:
     """Assess the impact of current blockers."""
     # Simplified implementation - would analyze actual blocked tasks
@@ -741,7 +721,6 @@ def _assess_blocker_impact(team_metrics: Dict[str, Any]) -> float:
     if total_tasks == 0:
         return 0.0
     return (failed_tasks / total_tasks * 100)
-
 
 def _generate_health_recommendations(health_score: float, team_metrics: Dict[str, Any]) -> List[str]:
     """Generate recommendations based on sprint health."""
@@ -764,7 +743,6 @@ def _generate_health_recommendations(health_score: float, team_metrics: Dict[str
     
     return recommendations
 
-
 def _identify_risk_factors(team_metrics: Dict[str, Any], sprint_metrics: Dict[str, Any]) -> List[str]:
     """Identify risk factors for the sprint."""
     risks = []
@@ -780,13 +758,11 @@ def _identify_risk_factors(team_metrics: Dict[str, Any], sprint_metrics: Dict[st
     
     return risks
 
-
 def _create_progress_bar(percentage: float, width: int = 50) -> str:
     """Create ASCII progress bar."""
     filled = int(width * percentage / 100)
     bar = "█" * filled + "░" * (width - filled)
     return f"[{bar}] {percentage:.1f}%"
-
 
 def _create_velocity_chart(velocity_history: List[Dict[str, Any]]) -> str:
     """Create simple ASCII velocity chart."""
@@ -804,7 +780,6 @@ def _create_velocity_chart(velocity_history: List[Dict[str, Any]]) -> str:
     
     chart += "```"
     return chart
-
 
 def _create_health_indicator(team_metrics: Dict[str, Any]) -> str:
     """Create sprint health visual indicator."""
@@ -830,7 +805,6 @@ def _create_health_indicator(team_metrics: Dict[str, Any]) -> str:
         indicators.append("🔴 Quality: Needs Attention")
     
     return "\n".join(indicators)
-
 
 def main():
     """Main CLI interface for task report generation."""
@@ -921,7 +895,6 @@ Examples:
             import traceback
             traceback.print_exc()
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

@@ -7,18 +7,20 @@ of the system implementation plan. It tracks which documents were used in each
 task run and stores the information under /outputs/[TASK-ID]/context_log.json.
 
 Usage:
-    from tools.context_tracker import track_context_usage, get_context_log
 
-    # Track context usage during task execution
-    track_context_usage(
-        task_id="BE-07",
-        context_topics=["db-schema", "service-pattern"],
-        documents_used=documents,
-        agent_role="backend"
-    )
+    1. Import the functions you need:
+       >>> from tools.context_tracker import track_context_usage, get_context_log
+    
+    2. Track context usage for a task:
+       >>> track_context_usage(
+       ...     task_id="BE-07",
+       ...     context_topics=["db-schema", "service-pattern"],
+       ...     documents_used=documents,
+       ...     agent_role="backend"
+       ... )
 
-    # Retrieve context log for analysis
-    log = get_context_log("BE-07")
+    3. Retrieve context log for analysis:
+       >>> log = get_context_log("BE-07")
 """
 
 import json
@@ -29,7 +31,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 logger = logging.getLogger(__name__)
-
 
 def track_context_usage(
     task_id: str,
@@ -103,7 +104,6 @@ def track_context_usage(
         logger.error(f"Failed to track context usage for task {task_id}: {e}")
         return False
 
-
 def get_context_log(task_id: str) -> Optional[Dict[str, Any]]:
     """
     Retrieve the context log for a specific task.
@@ -127,7 +127,6 @@ def get_context_log(task_id: str) -> Optional[Dict[str, Any]]:
     except Exception as e:
         logger.error(f"Failed to retrieve context log for task {task_id}: {e}")
         return None
-
 
 def get_all_context_logs() -> Dict[str, Dict[str, Any]]:
     """
@@ -153,7 +152,6 @@ def get_all_context_logs() -> Dict[str, Dict[str, Any]]:
         logger.error(f"Failed to retrieve all context logs: {e}")
 
     return logs
-
 
 def analyze_context_usage(task_ids: List[str] = None) -> Dict[str, Any]:
     """
@@ -209,7 +207,6 @@ def analyze_context_usage(task_ids: List[str] = None) -> Dict[str, Any]:
             reverse=True)[
             :5]}
 
-
 def export_context_usage_report(
         output_path: str = "reports/context_usage_report.json") -> bool:
     """
@@ -246,7 +243,6 @@ def export_context_usage_report(
     except Exception as e:
         logger.error(f"Failed to export context usage report: {e}")
         return False
-
 
 def track_context_from_memory_engine(
     task_id: str,
@@ -291,7 +287,6 @@ def track_context_from_memory_engine(
         context_length=total_length,
         additional_metadata=additional_metadata
     )
-
 
 # CLI interface for Step 3.7 context tracking
 if __name__ == "__main__":

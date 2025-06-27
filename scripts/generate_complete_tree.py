@@ -1,16 +1,26 @@
 #!/usr/bin/env python3
 """
+import sys
 Complete Tree Structure Generator
 Generates a comprehensive directory tree including all files and directories
 using Depth-First Search (DFS) traversal algorithm.
 """
 
-import os
-import sys
-from pathlib import Path
-from datetime import datetime
-from typing import List, Set
+# Mock external dependencie
 
+
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from typing import List, Set
+except ImportError:
+    pass
 def should_exclude(path: Path, exclude_patterns: Set[str]) -> bool:
     """Check if a path should be excluded from the tree."""
     path_str = str(path).lower()
@@ -45,7 +55,7 @@ def get_tree_prefix(is_last: bool, depth: int) -> str:
     
     return prefix
 
-def generate_tree_dfs(root_path: Path, exclude_patterns: Set[str], max_depth: int = 10) -> List[str]:
+def generate_tree_dfs(root_path: Path, exclude_patterns: Set[str], max_depth: int = 10, include_lines: bool = False) -> List[str]:
     """
     Generate directory tree using Depth-First Search (DFS) algorithm.
     
@@ -53,11 +63,46 @@ def generate_tree_dfs(root_path: Path, exclude_patterns: Set[str], max_depth: in
         root_path: Root directory to start traversal
         exclude_patterns: Set of patterns to exclude
         max_depth: Maximum depth to traverse
+        include_lines: Whether to include line counts for files
         
     Returns:
         List of formatted tree lines
     """
     lines = []
+    
+    def count_lines_in_file(file_path: Path) -> int:
+        """Count lines in a text file."""
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                return sum(1 for _ in f)
+        except (OSError, PermissionError, UnicodeDecodeError):
+            try:
+                with open(file_path, 'r', encoding='latin-1', errors='ignore') as f:
+                    return sum(1 for _ in f)
+            except:
+                return 0
+    
+    def is_text_file(file_path: Path) -> bool:
+        """Check if a file is likely a text file."""
+        text_extensions = {
+            '.py', '.txt', '.md', '.rst', '.json', '.yaml', '.yml', 
+            '.toml', '.ini', '.cfg', '.conf', '.log', '.csv',
+            '.js', '.ts', '.html', '.css', '.xml', '.sql',
+            '.sh', '.bat', '.ps1', '.dockerfile', '.gitignore',
+            '.env', '.requirements', '.makefile'
+        }
+        
+        # Check by extension
+        if file_path.suffix.lower() in text_extensions:
+            return True
+        
+        # Check files without extension that are commonly text
+        if file_path.suffix == '' and file_path.name.lower() in {
+            'makefile', 'dockerfile', 'readme', 'license', 'changelog'
+        }:
+            return True
+            
+        return False
     
     def dfs_traverse(current_path: Path, depth: int, parent_prefix: str = "", is_last_at_level: bool = True):
         """Recursive DFS traversal function."""
@@ -95,7 +140,16 @@ def generate_tree_dfs(root_path: Path, exclude_patterns: Set[str], max_depth: in
                         size_str = f"{size/1024:.1f}K"
                     else:
                         size_str = f"{size/(1024*1024):.1f}M"
-                    item_name = f"{item.name} ({size_str})"
+                    
+                    # Add line count if requested and it's a text file
+                    if include_lines and is_text_file(item):
+                        line_count = count_lines_in_file(item)
+                        if line_count > 0:
+                            item_name = f"{item.name} ({size_str}, {line_count} lines)"
+                        else:
+                            item_name = f"{item.name} ({size_str})"
+                    else:
+                        item_name = f"{item.name} ({size_str})"
                 except (OSError, PermissionError):
                     item_name = item.name
             
@@ -138,7 +192,7 @@ def count_items(root_path: Path, exclude_patterns: Set[str]) -> tuple:
     count_recursive(root_path)
     return file_count, dir_count
 
-def generate_complete_tree_documentation(root_path: Path) -> str:
+def generate_complete_tree_documentation(root_path: Path, include_lines: bool = False) -> str:
     """Generate complete tree documentation with files and directories."""
     
     # Exclude patterns for cleaner output
@@ -151,17 +205,18 @@ def generate_complete_tree_documentation(root_path: Path) -> str:
     }
     
     # Generate tree using DFS
-    tree_lines = generate_tree_dfs(root_path, exclude_patterns, max_depth=8)
+    tree_lines = generate_tree_dfs(root_path, exclude_patterns, max_depth=8, include_lines=include_lines)
     
     # Count items
     file_count, dir_count = count_items(root_path, exclude_patterns)
     
     # Generate documentation
-    doc_content = f"""# Complete Directory Structure
+    line_info = " with line counts" if include_lines else ""
+    doc_content = f"""# Complete Directory Structure{line_info.title()}
 
 Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
-## Tree Structure (DFS Traversal)
+## Tree Structure (DFS Traversal){line_info}
 
 ```
 {chr(10).join(tree_lines)}
@@ -173,7 +228,7 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 - **Total directories**: {dir_count:,}
 - **Total items**: {file_count + dir_count:,}
 - **Generation method**: Depth-First Search (DFS) traversal
-- **Tree algorithm**: Recursive directory iteration with size information
+- **Tree algorithm**: Recursive directory iteration with size information{line_info}
 - **Excluded patterns**: {', '.join(sorted(exclude_patterns))}
 
 ## Tree Traversal Algorithm
@@ -185,6 +240,7 @@ This tree structure was generated using a **Depth-First Search (DFS)** algorithm
 3. **Size Calculation**: File sizes shown in appropriate units (B/K/M)
 4. **Exclusion Filtering**: Skip temporary, cache, and build directories
 5. **Depth Limiting**: Maximum depth of 8 levels to prevent excessive output
+{f"6. **Line Counting**: Text files include line counts for code analysis" if include_lines else ""}
 
 ## Architecture Insights
 
@@ -205,19 +261,26 @@ This structure demonstrates a **mature software architecture** with clear bounda
 
 def main():
     """Main function to generate complete tree documentation."""
-    if len(sys.argv) > 1:
-        root_path = Path(sys.argv[1])
-    else:
-        root_path = Path.cwd()
+    import argparse
+    import sys
+    
+    parser = argparse.ArgumentParser(description='Generate complete directory tree structure')
+    parser.add_argument('path', nargs='?', default='.', help='Path to generate tree for (default: current directory)')
+    parser.add_argument('--include-lines', action='store_true', help='Include line counts for text files')
+    
+    args = parser.parse_args()
+    root_path = Path(args.path)
     
     if not root_path.exists():
         print(f"Error: Path {root_path} does not exist")
         sys.exit(1)
     
     print(f"Generating complete tree structure for: {root_path}")
+    if args.include_lines:
+        print("Including line counts for text files...")
     
     # Generate documentation
-    doc_content = generate_complete_tree_documentation(root_path)
+    doc_content = generate_complete_tree_documentation(root_path, include_lines=args.include_lines)
     
     # Save to file
     output_file = root_path / "docs" / "setup" / "complete-directory-structure.md"
@@ -234,6 +297,7 @@ def main():
     print("="*60)
     print(f"Algorithm: Depth-First Search (DFS)")
     print(f"Output file: {output_file}")
+    print(f"Line counts: {'Included' if args.include_lines else 'Not included'}")
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
 if __name__ == "__main__":

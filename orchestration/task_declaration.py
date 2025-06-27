@@ -9,6 +9,7 @@ This module provides the complete task declaration and preparation system that:
 4. Validates task readiness and dependencies
 """
 
+import argparse
 import json
 import logging
 import os
@@ -19,21 +20,17 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-import yaml
-
-from orchestration.states import TaskStatus
+from src.core.workflows.states import TaskStatus
 from tools.context_tracker import track_context_usage
 from tools.memory import get_memory_instance, MemoryEngine
-from utils.task_loader import (get_all_tasks, load_task_metadata,
+from src.infrastructure.utils.task_loader import (get_all_tasks, load_task_metadata,
                                save_task_metadata)
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
 # Configure logging
 logger = logging.getLogger(__name__)
-
 
 class TaskPreparationStatus(str, Enum):
     """Status of task preparation process"""
@@ -42,7 +39,6 @@ class TaskPreparationStatus(str, Enum):
     PROMPT_GENERATED = "PROMPT_GENERATED"
     READY_FOR_EXECUTION = "READY_FOR_EXECUTION"
     FAILED = "FAILED"
-
 
 @dataclass
 class TaskDeclaration:
@@ -128,7 +124,6 @@ class TaskDeclaration:
             declared_at=data.get('declared_at'),
             prepared_by=data.get('prepared_by')
         )
-
 
 class TaskDeclarationManager:
     """
@@ -652,11 +647,8 @@ Please execute this task according to your role as {agent_role}. Consider the pr
                 TaskPreparationStatus.FAILED,
                 0)}
 
-
 def main():
     """Command-line interface for task declaration and preparation"""
-    import argparse
-
     parser = argparse.ArgumentParser(
         description="Step 4.1 - Task Declaration & Preparation")
     parser.add_argument(
@@ -750,7 +742,6 @@ def main():
         logger.error(f"Error in task declaration workflow: {e}")
         print(f"❌ Error: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

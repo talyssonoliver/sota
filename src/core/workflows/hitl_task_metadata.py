@@ -6,17 +6,33 @@ Extends existing task metadata schema to support Human-in-the-Loop
 checkpoints, approval workflows, and risk assessment.
 """
 
+
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Dict, List, Any, Optional, Union
+except ImportError:
+    pass
+try:
+    from dataclasses import dataclass, field, asdict
+except ImportError:
+    pass
+try:
+    from enum import Enum
+except ImportError:
+    pass
+try:
+    from src.core.workflows.states import TaskStatus
+except ImportError:
+    pass
 import json
 import logging
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Any, Optional, Union
-from dataclasses import dataclass, field, asdict
-from enum import Enum
-
-from src.core.workflows.states import TaskStatus
-
-
 class HITLStatus(str, Enum):
     """HITL-specific status for tasks."""
     NO_HITL = "no_hitl"                    # Task doesn't require HITL
@@ -26,14 +42,12 @@ class HITLStatus(str, Enum):
     HITL_ESCALATED = "hitl_escalated"      # HITL checkpoint escalated
     HITL_TIMEOUT = "hitl_timeout"          # HITL checkpoint timed out
 
-
 class HITLRiskLevel(str, Enum):
     """Risk levels for HITL assessment."""
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
-
 
 @dataclass
 class HITLCheckpointMetadata:
@@ -75,7 +89,6 @@ class HITLCheckpointMetadata:
             data['timeout_at'] = datetime.fromisoformat(data['timeout_at'])
         
         return cls(**data)
-
 
 @dataclass
 class HITLTaskMetadata:
@@ -232,7 +245,7 @@ class HITLTaskMetadata:
         result['hitl_status'] = self.hitl_status.value
         result['overall_risk_level'] = self.overall_risk_level.value
           # Convert checkpoints
-        result['hitl_checkpoints'] = [cp.to_dict() for cp in self.checkpoints]
+        result['checkpoints'] = [cp.to_dict() for cp in self.checkpoints]
         
         return result
     
@@ -247,7 +260,7 @@ class HITLTaskMetadata:
         
         # Convert string values back to enums
         if 'status' in data and isinstance(data['status'], str):
-            data['status'] = TaskStatus.from_string(data['status'])
+            data['status'] = TaskStatus(data['status'])
         if 'hitl_status' in data and isinstance(data['hitl_status'], str):
             data['hitl_status'] = HITLStatus(data['hitl_status'])
         if 'overall_risk_level' in data and isinstance(data['overall_risk_level'], str):
@@ -267,7 +280,6 @@ class HITLTaskMetadata:
             del data['hitl_checkpoints']  # Remove old key
         
         return cls(**data)
-
 
 class HITLTaskMetadataManager:
     """Manager for HITL task metadata operations."""
@@ -377,7 +389,7 @@ class HITLTaskMetadataManager:
             task_id=task_data.get('id', task_data.get('task_id', 'unknown')),
             title=task_data.get('title', task_data.get('name', 'Untitled Task')),
             description=task_data.get('description', ''),
-            status=TaskStatus.from_string(task_data.get('status', 'CREATED')),
+            status=TaskStatus(task_data.get('status', 'created')),
             owner=task_data.get('owner', task_data.get('assigned_to', 'unknown')),
             created_at=datetime.now(),
             updated_at=datetime.now(),
@@ -446,7 +458,6 @@ class HITLTaskMetadataManager:
             "risk_distribution": risk_dist,
             "hitl_status_distribution": hitl_status_dist
         }
-
 
 # Global metadata manager instance
 hitl_metadata_manager = HITLTaskMetadataManager()

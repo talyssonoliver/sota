@@ -1,27 +1,29 @@
 #!/usr/bin/env python3
 """
+import sys
 HITL Kanban CLI - Quick Command Line Interface for HITL Dashboard
 
 Provides quick CLI access to the HITL Kanban board with various display
 options and export capabilities.
 """
 
-import argparse
-import json
-import sys
-from pathlib import Path
-from typing import Dict, List, Any
 
-# Add project root to path
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Dict, List, Any
+except ImportError:
+    pass
 sys.path.append(str(Path(__file__).parent.parent))
 
-from src.interfaces.dashboard.hitl_kanban_board import HITLKanbanBoard
+from src.interfaces.dashboard.components.hitl_kanban_board import HITLKanbanBoard
 from src.interfaces.dashboard.hitl_widgets import HITLDashboardManager, get_hitl_kanban_data, process_hitl_action
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 from rich import box
-
 
 def main():
     """Main CLI entry point."""
@@ -230,7 +232,6 @@ Examples:
             console.print(f"[red]{traceback.format_exc()}[/red]")
         return 1
 
-
 def apply_filters(items: List, args) -> List:
     """Apply command line filters to items."""
     filtered_items = items
@@ -257,11 +258,10 @@ def apply_filters(items: List, args) -> List:
     
     return filtered_items
 
-
 def output_table(items: List, console: Console, show_completed: bool, verbose: bool):
     """Output items in table format."""
     if not show_completed:
-        from src.interfaces.dashboard.hitl_kanban_board import ReviewStatus
+        from src.interfaces.dashboard.components.hitl_kanban_board import ReviewStatus
         items = [item for item in items if item.status not in [ReviewStatus.COMPLETED, ReviewStatus.APPROVED]]
     
     # Create table
@@ -317,7 +317,6 @@ def output_table(items: List, console: Console, show_completed: bool, verbose: b
     summary = f"Total: {total} | Overdue: {overdue} | High Priority: {high_priority}"
     console.print(f"\n[dim]{summary}[/dim]")
 
-
 def output_summary(items: List, console: Console):
     """Output summary statistics."""
     from collections import Counter
@@ -358,7 +357,6 @@ def output_summary(items: List, console: Console):
     
     console.print(Panel(summary_text, title="Dashboard Summary", border_style="blue"))
 
-
 def output_json(items: List, console: Console):
     """Output items in JSON format."""
     from dataclasses import asdict
@@ -381,11 +379,16 @@ def output_json(items: List, console: Console):
     
     console.print(json.dumps(json_data, indent=2))
 
-
 def output_csv(items: List, console: Console):
     """Output items in CSV format."""
+try:
     import csv
+except ImportError:
+    pass
+try:
     import io
+except ImportError:
+    pass
     
     output = io.StringIO()
     writer = csv.writer(output)
@@ -412,7 +415,6 @@ def output_csv(items: List, console: Console):
     
     console.print(output.getvalue())
 
-
 def handle_approval_action(checkpoint_id: str, action: str, reviewer: str, comments: str, console: Console) -> int:
     """Handle approval actions."""
     console.print(f"[yellow]Processing {action} for checkpoint {checkpoint_id}...[/yellow]")
@@ -433,7 +435,9 @@ def handle_approval_action(checkpoint_id: str, action: str, reviewer: str, comme
         console.print(f"[red]Error processing {action}: {e}[/red]")
         return 1
 
-
 if __name__ == "__main__":
     from datetime import datetime
+    import argparse
+    import json
+    import sys
     exit(main())

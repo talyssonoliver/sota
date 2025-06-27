@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/envimport sys
+
 """
 Daily Cycle Automation Orchestrator - Phase 6 Step 6.1
 
@@ -6,34 +7,40 @@ Automated daily task processing orchestrator that manages the complete
 daily cycle of task processing, reporting, and dashboard updates.
 Integrates with existing Phase 5 infrastructure for seamless automation.
 """
-
+import json
+import logging
+import subprocess
+import time
+import asyncio
+import schedule
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Any
+import sys
+import os
+from pathlib import Path
+from typing import Dict, Any
+import logging
 import asyncio
 import json
 import logging
-import os
-import schedule
-import sys
-import time
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict, List, Optional, Any
-from config.build_paths import LOGS_DIR
-
-# Add parent directory to path for imports
-sys.path.append(str(Path(__file__).parent.parent))
-
-from utils.input_validation import (
-    validate_file_path, validate_string_content, validate_integer_range,
-    ValidationError
-)
-
-from utils.completion_metrics import CompletionMetricsCalculator
-from utils.execution_monitor import ExecutionMonitor
-from orchestration.generate_briefing import BriefingGenerator
-from orchestration.end_of_day_report import EndOfDayReportGenerator
-from orchestration.email_integration import EmailIntegration
 import subprocess
-
+import time
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Any
+import psutil
+import schedule
+from config.build_paths import LOGS_DIR
+sys.path.append(str(Path(__file__).parent.parent))
+from src.infrastructure.utils.input_validation import (
+    validate_file_path, ValidationError)
+from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
+from src.infrastructure.utils.execution_monitor import ExecutionMonitor
+from src.core.workflows.generate_briefing import BriefingGenerator
+from src.core.workflows.end_of_day_report import EndOfDayReportGenerator
+from src.core.workflows.email_integration import EmailIntegration
+import subprocess
 
 class DailyCycleOrchestrator:
     """
@@ -472,7 +479,7 @@ class DailyCycleOrchestrator:
             }
             
             # System metrics
-            import psutil
+
             performance_metrics["system_metrics"] = {
                 "cpu_percent": psutil.cpu_percent(interval=1),
                 "memory_percent": psutil.virtual_memory().percent,
@@ -633,6 +640,7 @@ class DailyCycleOrchestrator:
             return {"status": "error", "message": str(e)}
 
     # ...existing code...
+
 def main():
     """Main function for CLI usage."""
     import argparse
@@ -681,7 +689,6 @@ def main():
             asyncio.run(orchestrator.run_performance_check())
         else:
             asyncio.run(orchestrator.run_manual_cycle(cycle_type=args.cycle))
-
 
 if __name__ == "__main__":
     main()

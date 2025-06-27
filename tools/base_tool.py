@@ -2,16 +2,32 @@
 Base Tool - Foundation class for all agent tools
 """
 
-import os
+import logging
+import sys
 from typing import Any, Dict, List, Optional, Union
 
-from dotenv import load_dotenv
-from langchain_core.tools import BaseTool as LangChainBaseTool
-from pydantic import Field
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError as e:
+    logging.warning(f"Failed to import dotenv: {e}")
 
-# Load environment variables
-load_dotenv()
+try:
+    from langchain_core.tools import BaseTool as LangChainBaseTool
+except ImportError as e:
+    logging.warning(f"Failed to import langchain_core.tools: {e}")
+    # Create a mock LangChainBaseTool class
+    class LangChainBaseTool:
+        """Mock LangChainBaseTool for when langchain is not available."""
+        def __init__(self, **kwargs):
+            for key, value in kwargs.items():
+                setattr(self, key, value)
 
+try:
+    from pydantic import Field
+except ImportError as e:
+    logging.error(f"Failed to import pydantic: {e}")
+    sys.exit(1)
 
 class ArtesanatoBaseTool(LangChainBaseTool):
     """

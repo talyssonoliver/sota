@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 """Debug script to test code extraction patterns."""
 
-import os
-import re
 import sys
-
-from src.core.workflows.extract_code import CodeExtractor
-
-# Add parent directory to path for imports
+import re
+try:
+    pass
+except ImportError:
+    pass
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Sample test data from the test file
 sample_output_advanced = """# Backend Agent Output for BE-07
@@ -100,7 +98,13 @@ redis:
 ```python
 # filename: utils/validation.py
 from typing import Optional, Dict, Any
-import re
+from src.core.workflows.extract_code import CodeExtractor
+try:
+    pass
+except ImportError:
+    pass
+import logging
+import os
 
 def validate_email(email: str) -> bool:
     \"\"\"Validate email format.\"\"\"
@@ -156,7 +160,6 @@ npm start
 ## Summary
 All service functions implemented successfully with proper error handling and TypeScript types."""
 
-
 def debug_patterns():
     """Debug the regex patterns to see what's being matched."""
 
@@ -189,7 +192,6 @@ def debug_patterns():
     for file_info in result.extracted_files:
         print(
             f"  - {file_info['filename']} ({file_info['language']}, {len(file_info['content'])} chars)")
-
 
 if __name__ == "__main__":
     debug_patterns()

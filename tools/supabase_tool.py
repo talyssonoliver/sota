@@ -4,16 +4,91 @@ Supabase Tool - Provides database querying and schema information
 
 import json
 import os
+import logging
 from typing import Any, Dict, Optional, Union
 
-from dotenv import load_dotenv
-from pydantic import BaseModel, Field, ValidationError
-from supabase import Client, create_client
+# External dependencies with error handling
+try:
+    from dotenv import load_dotenv
+    DOTENV_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Python-dotenv not available: {e}")
+    DOTENV_AVAILABLE = False
+    def load_dotenv():
+        logging.warning("dotenv not available - environment variables not loaded")
 
-from tools.base_tool import ArtesanatoBaseTool
+try:
+    from pydantic import BaseModel, Field, ValidationError
+    PYDANTIC_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Pydantic not available: {e}")
+    PYDANTIC_AVAILABLE = False
+    # Create mock classes
+    class BaseModel:
+        def __init__(self, **kwargs):
+            for key, value in kwargs.items():
+                setattr(self, key, value)
+    
+    def Field(**kwargs):
+        return kwargs.get('default', None)
+    
+    class ValidationError(Exception):
+        pass
 
-load_dotenv()
+try:
+    from supabase import Client, create_client
+    SUPABASE_AVAILABLE = True
+except ImportError as e:
+    logging.error(f"Supabase client not available: {e}")
+    SUPABASE_AVAILABLE = False
+    # Create mock supabase client
+    class Client:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def table(self, *args, **kwargs):
+            logging.error("Supabase not available - using mock")
+            return MockTable()
+    
+    def create_client(*args, **kwargs):
+        logging.error("Supabase not available - using mock client")
+        return Client()
+    
+    class MockTable:
+        def select(self, *args, **kwargs):
+            return self
+        
+        def insert(self, *args, **kwargs):
+            return self
+        
+        def update(self, *args, **kwargs):
+            return self
+        
+        def delete(self, *args, **kwargs):
+            return self
+        
+        def execute(self):
+            return {"error": "Supabase client not available"}
 
+# Local imports with error handling
+try:
+    from tools.base_tool import ArtesanatoBaseTool
+except ImportError as e:
+    logging.error(f"Base tool not available: {e}")
+    # Create mock base class
+    class ArtesanatoBaseTool:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def _make_request(self, *args, **kwargs):
+            logging.error("Base tool not available - using mock")
+            return {"error": "Base tool not available"}
+
+logger = logging.getLogger(__name__)
+
+# Load environment variables
+if DOTENV_AVAILABLE:
+    load_dotenv()
 
 class SupabaseTool(ArtesanatoBaseTool):
     """Tool for interacting with Supabase database."""
@@ -195,14 +270,12 @@ class SupabaseTool(ArtesanatoBaseTool):
                     nullable = "NULL" if column.get(
                         'is_nullable') == "YES" else "NOT NULL"
 
-
                     # Add default value if present
                     default = (
                         f" DEFAULT {column.get('column_default')}"
                         if column.get('column_default')
                         else ""
                     )
-
 
                     # Add identity/serial info
                     identity = (

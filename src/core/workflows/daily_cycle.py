@@ -7,33 +7,44 @@ daily cycle of task processing, reporting, and dashboard updates.
 Integrates with existing Phase 5 infrastructure for seamless automation.
 """
 
-import asyncio
+try:
+    import asyncio
+except ImportError:
+    pass
+import os
+import sys
 import json
 import logging
-import os
-import schedule
-import sys
-import time
+try:
+    import schedule
+except ImportError:
+    pass
 from datetime import datetime, timedelta
 from pathlib import Path
+from time import time
 from typing import Dict, List, Optional, Any
-from config.build_paths import LOGS_DIR
 
-# Add parent directory to path for imports
+try:
+    from config.build_paths import LOGS_DIR
+except ImportError:
+    LOGS_DIR = "logs"
+
 sys.path.append(str(Path(__file__).parent.parent))
 
-from src.platform.utils.input_validation import (
+from src.infrastructure.utils.input_validation import (
     validate_file_path, validate_string_content, validate_integer_range,
     ValidationError
 )
 
-from src.platform.utils.completion_metrics import CompletionMetricsCalculator
-from src.platform.utils.execution_monitor import ExecutionMonitor
+from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
+from src.infrastructure.utils.execution_monitor import ExecutionMonitor
 from src.core.workflows.generate_briefing import BriefingGenerator
 from src.core.workflows.end_of_day_report import EndOfDayReportGenerator
 from src.core.workflows.email_integration import EmailIntegration
-import subprocess
-
+try:
+    import subprocess
+except ImportError:
+    pass
 
 class DailyCycleOrchestrator:
     """
@@ -472,19 +483,23 @@ class DailyCycleOrchestrator:
             }
             
             # System metrics
-            import psutil
-            performance_metrics["system_metrics"] = {
-                "cpu_percent": psutil.cpu_percent(interval=1),
-                "memory_percent": psutil.virtual_memory().percent,
-                "disk_usage": psutil.disk_usage('.').percent
-            }
-            
-            # Process metrics
-            process = psutil.Process()
-            performance_metrics["process_metrics"] = {
-                "memory_mb": process.memory_info().rss / 1024 / 1024,
-                "cpu_percent": process.cpu_percent()
-            }
+            try:
+                import psutil
+                performance_metrics["system_metrics"] = {
+                    "cpu_percent": psutil.cpu_percent(interval=1),
+                    "memory_percent": psutil.virtual_memory().percent,
+                    "disk_usage": psutil.disk_usage('.').percent
+                }
+                
+                # Process metrics
+                process = psutil.Process()
+                performance_metrics["process_metrics"] = {
+                    "memory_mb": process.memory_info().rss / 1024 / 1024,
+                    "cpu_percent": process.cpu_percent()
+                }
+            except ImportError:
+                performance_metrics["system_metrics"] = {"error": "psutil not available"}
+                performance_metrics["process_metrics"] = {"error": "psutil not available"}
             
             # Log directory size
             logs_dir = Path(self.config["paths"]["logs_dir"])
@@ -681,7 +696,6 @@ def main():
             asyncio.run(orchestrator.run_performance_check())
         else:
             asyncio.run(orchestrator.run_manual_cycle(cycle_type=args.cycle))
-
 
 if __name__ == "__main__":
     main()

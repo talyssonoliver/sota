@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+import sys
 Step 3.9 Demo: Visualise Context Coverage
 
 This script demonstrates and validates the Step 3.9 implementation
@@ -8,21 +9,18 @@ CSV and HTML reports showing context usage patterns.
 
 """
 
-import json
 import os
 import sys
+import logging
 from datetime import datetime
 from pathlib import Path
-
 from tools.context_tracker import get_all_context_logs
 from tools.context_visualizer import (analyze_context_coverage,
-                                      generate_context_coverage_report,
+generate_context_coverage_report,
                                       generate_csv_report,
-                                      generate_html_report)
-
+                                      generate_html_report, generate_json_report)
 # Add parent directory to Python path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
 
 def test_context_coverage_analysis():
     """Test context coverage analysis functionality"""
@@ -84,7 +82,6 @@ def test_context_coverage_analysis():
 
     return True
 
-
 def test_csv_generation():
     """Test CSV report generation"""
     print("\n" + "=" * 60)
@@ -122,7 +119,6 @@ def test_csv_generation():
     else:
         print("❌ CSV report generation failed")
         return False
-
 
 def test_html_generation():
     """Test HTML report generation and JSON data generation for dynamic HTML"""
@@ -184,7 +180,6 @@ def test_html_generation():
         print("❌ HTML or JSON report generation failed")
         return False
 
-
 def test_json_generation():
     """Test JSON data generation for context-coverage.html dynamic report"""
     print("\n" + "=" * 60)
@@ -197,7 +192,6 @@ def test_json_generation():
         print(f"⚠️  Skipping JSON test - no context data available")
         return False
     json_path = "reports/context-coverage.json"
-    from tools.context_visualizer import generate_json_report
     success_json = generate_json_report(coverage_data, json_path)
     if success_json:
         print(f"✅ JSON data generated: {json_path}")
@@ -208,7 +202,6 @@ def test_json_generation():
     else:
         print("❌ JSON data generation failed")
         return False
-
 
 def test_full_report_generation():
     """Test full report generation with both formats"""
@@ -237,7 +230,6 @@ def test_full_report_generation():
     else:
         print("❌ Full report generation failed")
         return False
-
 
 def run_step_3_9_validation():
     """Run complete Step 3.9 validation suite"""
@@ -303,7 +295,6 @@ def run_step_3_9_validation():
         print(f"   {total - passed} test(s) failed")
 
     return passed == total
-
 
 if __name__ == "__main__":
     success = run_step_3_9_validation()

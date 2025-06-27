@@ -18,26 +18,36 @@ Outputs:
 - Examples for fine-tuning
 """
 
-import argparse
-import json
-import logging
 import os
 import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Counter as TypingCounter
 
-import yaml
+from pydantic import BaseModel, Field
 
-# Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.platform.utils.feedback_system import FeedbackSystem
+# Define a Pydantic model for feedback entries to improve type safety
+class FeedbackEntry(BaseModel):
+    task_id: str
+    content: str
+    overall_score: float = 0.0
+    agent_name: Optional[str] = None
+    timestamp: datetime = Field(default_factory=datetime.now)
+    category_scores: Dict[str, float] = Field(default_factory=dict)
+    agent_output: Optional[str] = None
+
+from src.infrastructure.utils.feedback_system import FeedbackSystem
+import argparse
+import json
+import logging
+import os
+import sys
 
 # Configure logger
 logger = logging.getLogger("feedback_analysis")
-
 
 class FeedbackAnalyzer:
     """Analyzes human feedback to improve agent performance"""
@@ -138,7 +148,7 @@ class FeedbackAnalyzer:
         
         return analysis
     
-    def _analyze_feedback_summary(self, feedback_entries: List[Any]) -> Dict[str, Any]:
+    def _analyze_feedback_summary(self, feedback_entries: List[FeedbackEntry]) -> Dict[str, Any]:
         """Analyze feedback summary statistics"""
         if not feedback_entries:
             return {}
@@ -148,9 +158,8 @@ class FeedbackAnalyzer:
         category_scores = defaultdict(list)
         
         for feedback in feedback_entries:
-            if hasattr(feedback, 'category_scores'):
-                for category, score in feedback.category_scores.items():
-                    category_scores[category].append(score)
+            for category, score in feedback.category_scores.items():
+                category_scores[category].append(score)
         
         for category, scores in category_scores.items():
             if scores:
@@ -167,14 +176,13 @@ class FeedbackAnalyzer:
             "average_overall_score": self._calculate_average_score(feedback_entries)
         }
     
-    def _identify_recurring_edits(self, feedback_entries: List[Any]) -> List[Dict[str, Any]]:
+    def _identify_recurring_edits(self, feedback_entries: List[FeedbackEntry]) -> List[Dict[str, Any]]:
         """Identify patterns in human edits and corrections"""
         edit_patterns = Counter()
         edit_details = defaultdict(list)
         
         for feedback in feedback_entries:
-            if hasattr(feedback, 'content') and feedback.content:
-                # Extract common edit patterns from feedback content
+            if feedback.content:
                 content_lower = feedback.content.lower()
                 
                 # Common patterns to look for
@@ -208,7 +216,7 @@ class FeedbackAnalyzer:
         
         return recurring_edits
     
-    def _suggest_prompt_modifications(self, feedback_entries: List[Any]) -> List[Dict[str, Any]]:
+    def _suggest_prompt_modifications(self, feedback_entries: List[FeedbackEntry]) -> List[Dict[str, Any]]:
         """Suggest prompt template modifications based on feedback"""
         suggestions = []
         
@@ -221,7 +229,7 @@ class FeedbackAnalyzer:
         }
         
         for feedback in feedback_entries:
-            if hasattr(feedback, 'content') and feedback.content:
+            if feedback.content:
                 content_lower = feedback.content.lower()
                 
                 if any(word in content_lower for word in ["unclear", "confusing", "ambiguous"]):
@@ -271,13 +279,13 @@ class FeedbackAnalyzer:
         
         return suggestions
     
-    def _suggest_tool_improvements(self, feedback_entries: List[Any]) -> List[Dict[str, Any]]:
+    def _suggest_tool_improvements(self, feedback_entries: List[FeedbackEntry]) -> List[Dict[str, Any]]:
         """Suggest tool function improvements based on feedback"""
         suggestions = []
         tool_issues = Counter()
         
         for feedback in feedback_entries:
-            if hasattr(feedback, 'content') and feedback.content:
+            if feedback.content:
                 content_lower = feedback.content.lower()
                 
                 # Look for tool-related feedback
@@ -302,13 +310,13 @@ class FeedbackAnalyzer:
         
         return suggestions
     
-    def _suggest_context_adjustments(self, feedback_entries: List[Any]) -> List[Dict[str, Any]]:
+    def _suggest_context_adjustments(self, feedback_entries: List[FeedbackEntry]) -> List[Dict[str, Any]]:
         """Suggest retrieval context adjustments"""
         suggestions = []
         context_issues = Counter()
         
         for feedback in feedback_entries:
-            if hasattr(feedback, 'content') and feedback.content:
+            if feedback.content:
                 content_lower = feedback.content.lower()
                 
                 if any(word in content_lower for word in ["context", "background", "related"]):
@@ -332,25 +340,25 @@ class FeedbackAnalyzer:
         
         return suggestions
     
-    def _generate_fine_tuning_examples(self, feedback_entries: List[Any]) -> List[Dict[str, Any]]:
+    def _generate_fine_tuning_examples(self, feedback_entries: List[FeedbackEntry]) -> List[Dict[str, Any]]:
         """Generate examples for fine-tuning based on feedback"""
         examples = []
         
         for feedback in feedback_entries:
-            if hasattr(feedback, 'content') and feedback.content and len(feedback.content) > 50:
+            if feedback.content and len(feedback.content) > 50:
                 # Create fine-tuning example from high-quality feedback
-                if hasattr(feedback, 'overall_score') and feedback.overall_score >= 8:
+                if feedback.overall_score >= 8:
                     examples.append({
                         "task_id": feedback.task_id,
-                        "input": getattr(feedback, 'agent_output', ''),
+                        "input": feedback.agent_output or '',
                         "feedback": feedback.content,
                         "score": feedback.overall_score,
                         "category": "positive_example"
                     })
-                elif hasattr(feedback, 'overall_score') and feedback.overall_score <= 5:
+                elif feedback.overall_score <= 5:
                     examples.append({
                         "task_id": feedback.task_id,
-                        "input": getattr(feedback, 'agent_output', ''),
+                        "input": feedback.agent_output or '',
                         "feedback": feedback.content,
                         "score": feedback.overall_score,
                         "category": "improvement_needed"
@@ -358,7 +366,7 @@ class FeedbackAnalyzer:
         
         return examples[:10]  # Limit to top 10 examples
     
-    def _analyze_global_patterns(self, all_feedback: List[Any]) -> Dict[str, Any]:
+    def _analyze_global_patterns(self, all_feedback: List[FeedbackEntry]) -> Dict[str, Any]:
         """Analyze global patterns across all feedback"""
         patterns = {
             "common_issues": Counter(),
@@ -367,7 +375,7 @@ class FeedbackAnalyzer:
         }
         
         for feedback in all_feedback:
-            if hasattr(feedback, 'content') and feedback.content:
+            if feedback.content:
                 content_lower = feedback.content.lower()
                 
                 # Identify common issues
@@ -382,15 +390,14 @@ class FeedbackAnalyzer:
         
         return patterns
     
-    def _analyze_agent_performance(self, feedback_by_agent: Dict[str, List[Any]]) -> Dict[str, Dict[str, Any]]:
+    def _analyze_agent_performance(self, feedback_by_agent: Dict[str, List[FeedbackEntry]]) -> Dict[str, Dict[str, Any]]:
         """Analyze performance by agent"""
         agent_analysis = {}
         
         for agent_name, feedback_list in feedback_by_agent.items():
             scores = []
             for feedback in feedback_list:
-                if hasattr(feedback, 'overall_score'):
-                    scores.append(feedback.overall_score)
+                scores.append(feedback.overall_score)
             
             if scores:
                 agent_analysis[agent_name] = {
@@ -401,7 +408,7 @@ class FeedbackAnalyzer:
         
         return agent_analysis
     
-    def _analyze_task_patterns(self, feedback_by_task: Dict[str, List[Any]]) -> Dict[str, Any]:
+    def _analyze_task_patterns(self, feedback_by_task: Dict[str, List[FeedbackEntry]]) -> Dict[str, Any]:
         """Analyze patterns by task type"""
         task_patterns = {
             "by_task_type": defaultdict(list),
@@ -413,15 +420,14 @@ class FeedbackAnalyzer:
             
             scores = []
             for feedback in feedback_list:
-                if hasattr(feedback, 'overall_score'):
-                    scores.append(feedback.overall_score)
+                scores.append(feedback.overall_score)
             
             if scores:
                 task_patterns["by_task_type"][task_type].extend(scores)
         
         return task_patterns
     
-    def _suggest_system_improvements(self, all_feedback: List[Any]) -> List[Dict[str, Any]]:
+    def _suggest_system_improvements(self, all_feedback: List[FeedbackEntry]) -> List[Dict[str, Any]]:
         """Suggest system-wide improvements"""
         improvements = []
         
@@ -429,7 +435,7 @@ class FeedbackAnalyzer:
         system_issues = Counter()
         
         for feedback in all_feedback:
-            if hasattr(feedback, 'content') and feedback.content:
+            if feedback.content:
                 content_lower = feedback.content.lower()
                 
                 if any(word in content_lower for word in ["slow", "timeout", "performance"]):
@@ -453,7 +459,7 @@ class FeedbackAnalyzer:
         
         return improvements
     
-    def _generate_training_recommendations(self, all_feedback: List[Any]) -> List[Dict[str, Any]]:
+    def _generate_training_recommendations(self, all_feedback: List[FeedbackEntry]) -> List[Dict[str, Any]]:
         """Generate training recommendations for agents"""
         recommendations = []
         
@@ -466,7 +472,7 @@ class FeedbackAnalyzer:
         }
         
         for feedback in all_feedback:
-            if hasattr(feedback, 'content') and feedback.content:
+            if feedback.content:
                 content_lower = feedback.content.lower()
                 
                 for need_type in training_needs.keys():
@@ -502,21 +508,20 @@ class FeedbackAnalyzer:
         
         return recommendations
     
-    def _calculate_average_score(self, feedback_entries: List[Any]) -> float:
+    def _calculate_average_score(self, feedback_entries: List[FeedbackEntry]) -> float:
         """Calculate average overall score from feedback entries"""
         scores = []
         for feedback in feedback_entries:
-            if hasattr(feedback, 'overall_score'):
-                scores.append(feedback.overall_score)
+            scores.append(feedback.overall_score)
         
         return sum(scores) / len(scores) if scores else 0.0
     
-    def _identify_agent_improvement_areas(self, feedback_list: List[Any]) -> List[str]:
+    def _identify_agent_improvement_areas(self, feedback_list: List[FeedbackEntry]) -> List[str]:
         """Identify improvement areas for a specific agent"""
         issues = Counter()
         
         for feedback in feedback_list:
-            if hasattr(feedback, 'content') and feedback.content:
+            if feedback.content:
                 content_lower = feedback.content.lower()
                 
                 if any(word in content_lower for word in ["accuracy", "correct", "wrong"]):
@@ -636,7 +641,6 @@ class FeedbackAnalyzer:
         
         return "\n".join(report)
 
-
 def main():
     """Main CLI interface for feedback analysis"""
     parser = argparse.ArgumentParser(description="Analyze human feedback for agent refinement")
@@ -689,7 +693,6 @@ def main():
         print(f"   • Generated {len(analysis['prompt_modifications'])} prompt modification suggestions")
     if "overall_recommendations" in analysis:
         print(f"   • Created {len(analysis['overall_recommendations'])} overall recommendations")
-
 
 if __name__ == "__main__":
     main()

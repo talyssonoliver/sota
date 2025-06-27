@@ -1,24 +1,23 @@
 #!/usr/bin/env python3
 """
+import sys
 Enhanced QA System CLI
 Command-line interface for comprehensive QA validation, test generation, and quality analysis.
 """
+
+from pathlib import Path
+from typing import List, Optional
+from src.core.agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
+from src.core.workflows.qa_validation import QAValidationPipeline
+from src.infrastructure.utils.coverage_analyzer import CoverageAnalyzer
+from tests.components.test_generator import QATestFramework, QATestGenerator
+
 
 import argparse
 import json
 import logging
 import sys
-from pathlib import Path
-from typing import List, Optional
-
-from src.core.agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
-from src.core.workflows.qa_validation import QAValidationPipeline
-from src.platform.utils.coverage_analyzer import CoverageAnalyzer
-from tests.components.test_generator import QATestFramework, QATestGenerator
-
-# Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
 
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
@@ -31,7 +30,6 @@ def setup_logging(verbose: bool = False):
             logging.FileHandler('qa_cli.log')
         ]
     )
-
 
 def cmd_generate_tests(args):
     """Generate comprehensive test suite."""
@@ -76,7 +74,6 @@ def cmd_generate_tests(args):
         print(f"❌ Error generating tests: {e}")
         sys.exit(1)
 
-
 def cmd_analyze_coverage(args):
     """Analyze test coverage patterns."""
     print(f"📈 Analyzing coverage for: {args.project_root}")
@@ -104,7 +101,6 @@ def cmd_analyze_coverage(args):
     except Exception as e:
         print(f"❌ Error analyzing coverage: {e}")
         sys.exit(1)
-
 
 def cmd_validate_quality(args):
     """Run comprehensive QA validation."""
@@ -143,7 +139,6 @@ def cmd_validate_quality(args):
     except Exception as e:
         print(f"❌ Error running QA validation: {e}")
         sys.exit(1)
-
 
 def cmd_run_workflow(args):
     """Run complete enhanced QA workflow."""
@@ -186,7 +181,6 @@ def cmd_run_workflow(args):
         print(f"❌ Error running QA workflow: {e}")
         sys.exit(1)
 
-
 def cmd_show_config(args):
     """Show current QA configuration."""
     print(f"⚙️ QA Configuration for: {args.project_root}")
@@ -210,7 +204,6 @@ def cmd_show_config(args):
     except Exception as e:
         print(f"❌ Error loading configuration: {e}")
         sys.exit(1)
-
 
 def main():
     """Main CLI entry point."""
@@ -292,7 +285,6 @@ Examples:
 
     # Run command
     args.func(args)
-
 
 if __name__ == "__main__":
     main()

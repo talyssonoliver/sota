@@ -1,25 +1,39 @@
 """
+import sys
 Workflow Notification System
 Implements Slack notifications for LangGraph workflow events.
 """
 
+
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from enum import Enum
+except ImportError:
+    pass
+try:
+    from typing import Any, Callable, Dict, List, Optional, Union
+except ImportError:
+    pass
+try:
+    from langgraph.graph import Graph, StateGraph
+except ImportError:
+    pass
+try:
+    from pythonjsonlogger import jsonlogger
+except ImportError:
+    pass
+try:
+    from src.core.workflows.states import TaskStatus
 import json
 import logging
 import os
 import sys
-from datetime import datetime
-from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Union
-
-import requests
-from langgraph.graph import Graph, StateGraph
-from pythonjsonlogger import jsonlogger
-
-from orchestration.states import TaskStatus
-
-# Add parent directory to path to allow imports
+except ImportError:
+    pass
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 # Configure structured JSON logging for production
 logger = logging.getLogger("workflow_notifications")
@@ -30,7 +44,6 @@ handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.setLevel(logging.INFO)
 
-
 class NotificationLevel(Enum):
     """Notification level enumeration"""
     ALL = "all"
@@ -39,7 +52,6 @@ class NotificationLevel(Enum):
     COMPLETION = "completion"
     INFO = "info"  # Add INFO level
     NONE = "none"         # Do not send notifications
-
 
 class SlackNotifier:
     """
@@ -280,7 +292,6 @@ class SlackNotifier:
         # Get the node that caused the state change
         node_id = new_state.get("agent", "Unknown")
         self.send_notification("state_change", node_id, new_state)
-
 
 def attach_notifications_to_workflow(workflow: Union[Graph,
                                                      StateGraph],

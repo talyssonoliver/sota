@@ -1,16 +1,42 @@
 """
 Memory Engine Factory Functions
+
 Provides factory functions for backward compatibility and easy initialization
 """
 
+import logging
 from typing import Any, Dict, List, Optional
 
-from .engine import MemoryEngine
-from .config import MemoryEngineConfig
+# Local imports with error handling
+try:
+    from .engine import MemoryEngine
+    MEMORY_ENGINE_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Memory engine not available: {e}")
+    MEMORY_ENGINE_AVAILABLE = False
+    class MemoryEngine:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def store(self, *args, **kwargs):
+            return {"error": "Memory engine not available"}
+        
+        def retrieve(self, *args, **kwargs):
+            return {"error": "Memory engine not available"}
 
-# Global singleton instance
+try:
+    from .config import MemoryEngineConfig
+    MEMORY_CONFIG_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Memory config not available: {e}")
+    MEMORY_CONFIG_AVAILABLE = False
+    class MemoryEngineConfig:
+        def __init__(self, *args, **kwargs):
+            pass
+
+logger = logging.getLogger(__name__)
+
 _memory_instance: Optional[MemoryEngine] = None
-
 
 def initialize_memory(config: Optional[Dict[str, Any]] = None) -> MemoryEngine:
     """
@@ -34,10 +60,8 @@ def initialize_memory(config: Optional[Dict[str, Any]] = None) -> MemoryEngine:
     
     return _memory_instance
 
-
 def get_memory_instance() -> MemoryEngine:
-    """
-    Get the memory engine singleton instance.
+    """    Get the memory engine singleton instance.
     
     Returns:
         MemoryEngine instance
@@ -46,35 +70,28 @@ def get_memory_instance() -> MemoryEngine:
     
     if _memory_instance is None:
         _memory_instance = initialize_memory()
-    
     return _memory_instance
 
-
-def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
-    """
-    Backward compatibility function for getting relevant context.
-    
-    Args:
-        query: Search query
-        k: Number of results to return
-        **kwargs: Additional arguments
+# Import consolidated functions from main memory module
+try:
+    from src.infrastructure.memory import get_relevant_context
+except ImportError:
+    def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
+        """
+        Fallback implementation for getting relevant context.
+        """
+        memory = get_memory_instance()
         
-    Returns:
-        Formatted context string
-    """
-    memory = get_memory_instance()
-    
-    try:
-        results = memory.get_context(query, k=k, **kwargs)
-        
-        if isinstance(results, list):
-            return '\n\n'.join(str(result) for result in results)
-        else:
-            return str(results)
+        try:
+            results = memory.get_context(query, k=k, **kwargs)
             
-    except Exception:
-        return f"# Context for: {query}\n\nNo relevant context available."
-
+            if isinstance(results, list):
+                return '\n\n'.join(str(result) for result in results)
+            else:
+                return str(results)
+                
+        except Exception:
+            return f"# Context for: {query}\n\nNo relevant context available."
 
 def get_context_by_keys(keys: List[str], **kwargs) -> List[str]:
     """
@@ -99,7 +116,6 @@ def get_context_by_keys(keys: List[str], **kwargs) -> List[str]:
             
     except Exception:
         return [f"No context available for keys: {keys}"]
-
 
 def get_answer(question: str, context: Optional[str] = None, **kwargs) -> str:
     """

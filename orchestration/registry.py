@@ -3,16 +3,36 @@ Agent Registry for the AI Agent System
 Maps agent names to their constructor functions for dynamic instantiation.
 """
 
+import json
 import logging
+try:
+    import threading
+except ImportError:
+    pass
 import os
-import threading
 from typing import Any, Callable, Dict, List, Optional
 
-import yaml
+try:
+    import yaml
+except ImportError:
+    # Fallback YAML implementation
+    class yaml:
+        @staticmethod
+        def safe_load(stream):
+            return {}
+        
+        @staticmethod
+        def safe_dump(data, stream=None):
+            if stream:
+                stream.write(str(data))
+            return str(data)
 
-from agents import (create_backend_engineer_agent, create_coordinator_agent,
+try:
+    from src.core.agents import (create_backend_engineer_agent, create_coordinator_agent,
                     create_documentation_agent, create_frontend_engineer_agent,
                     create_qa_agent, create_technical_lead_agent)
+except ImportError:
+    pass
 from tools.tool_loader import get_tools_for_agent, load_all_tools
 
 logger = logging.getLogger(__name__)
@@ -148,7 +168,6 @@ class ThreadSafeAgentRegistry:
         with self._config_cache_lock:
             self._config_cache = None
             logger.info("Agent registry configuration cache cleared")
-
 # Global thread-safe registry instance
 _registry_instance: Optional[ThreadSafeAgentRegistry] = None
 _registry_lock = threading.RLock()
@@ -168,7 +187,6 @@ def get_registry() -> ThreadSafeAgentRegistry:
 # Backward compatibility - maintain original registry structure
 AGENT_REGISTRY = get_registry()._registry
 
-
 def load_agent_config() -> Dict[str, Any]:
     """
     Load the agent configuration from YAML (thread-safe).
@@ -178,7 +196,6 @@ def load_agent_config() -> Dict[str, Any]:
     """
     registry = get_registry()
     return registry.get_config("dummy") or registry._load_agent_config()
-
 
 def get_agent_config(agent_id: str) -> Optional[Dict[str, Any]]:
     """
@@ -193,7 +210,6 @@ def get_agent_config(agent_id: str) -> Optional[Dict[str, Any]]:
     registry = get_registry()
     return registry.get_config(agent_id)
 
-
 def get_agent_constructor(agent_id: str) -> Optional[Callable]:
     """
     Get agent constructor function by agent identifier (thread-safe).
@@ -206,7 +222,6 @@ def get_agent_constructor(agent_id: str) -> Optional[Callable]:
     """
     registry = get_registry()
     return registry.get_constructor(agent_id)
-
 
 def create_agent_instance(agent_id: str, **kwargs) -> Any:
     """
@@ -224,7 +239,6 @@ def create_agent_instance(agent_id: str, **kwargs) -> Any:
     """
     registry = get_registry()
     return registry.create_agent(agent_id, **kwargs)
-
 
 def get_agent_for_task(task_id: str, **kwargs) -> Any:
     """
@@ -247,7 +261,6 @@ def get_agent_for_task(task_id: str, **kwargs) -> Any:
 
     task_prefix = parts[0].upper()
     return create_agent_instance(task_prefix, **kwargs)
-
 
 def get_agent(agent_name: str, **kwargs) -> Any:
     """

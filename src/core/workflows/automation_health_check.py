@@ -5,24 +5,23 @@ Automation Health Check - Phase 6 Enhancement
 Comprehensive health monitoring for the daily automation system,
 providing diagnostics and system status validation.
 """
-
+import asyncio
+import sys
 import json
 import logging
-import os
-import sys
-import time
+try:
+    import requests
+except ImportError:
+    pass
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-import requests
 
-# Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
-from src.platform.utils.completion_metrics import CompletionMetricsCalculator
-from src.platform.utils.execution_monitor import ExecutionMonitor
+from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
+from src.infrastructure.utils.execution_monitor import ExecutionMonitor
 from src.core.workflows.daily_cycle import DailyCycleOrchestrator
-
 
 class AutomationHealthChecker:
     """
@@ -377,7 +376,6 @@ class AutomationHealthChecker:
         
         return recommendations
 
-
 async def main():
     """Main entry point for health check."""
     import argparse
@@ -425,7 +423,5 @@ async def main():
         
         print("\n" + "=" * 60)
 
-
 if __name__ == "__main__":
-    import asyncio
     asyncio.run(main())

@@ -11,14 +11,24 @@ Enhanced to include:
 - Auto-updates directory-structure.md files
 """
 
-import argparse
-import os
-import sys
-from pathlib import Path
-from datetime import datetime
-from typing import List, Optional, Set, Tuple
 
-
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from typing import List, Optional, Set, Tuple
+except ImportError:
+    pass
+try:
+    import argparse
+except ImportError:
+    pass
+    pass
 def count_lines_in_file(file_path: Path) -> Optional[int]:
     """Count lines in a text file."""
     try:
@@ -32,7 +42,6 @@ def count_lines_in_file(file_path: Path) -> Optional[int]:
     except (OSError, PermissionError, UnicodeDecodeError):
         return None
 
-
 def format_size(size_bytes: int) -> str:
     """Format file size in appropriate units."""
     if size_bytes < 1024:
@@ -41,7 +50,6 @@ def format_size(size_bytes: int) -> str:
         return f"{size_bytes/1024:.1f}K"
     else:
         return f"{size_bytes/(1024*1024):.1f}M"
-
 
 def should_exclude(path: Path, exclude_patterns: Set[str]) -> bool:
     """Check if a path should be excluded from the tree."""
@@ -67,7 +75,6 @@ def should_exclude(path: Path, exclude_patterns: Set[str]) -> bool:
             return True
             
     return False
-
 
 def generate_tree_structure(
     root_path: str,
@@ -182,7 +189,6 @@ def generate_tree_structure(
     _traverse_directory(root)
     
     return "\n".join(tree_lines), file_count, dir_count, total_lines
-
 
 def update_directory_structure_files(
     tree_structure: str, 
@@ -299,7 +305,6 @@ This represents a **substantial codebase** with comprehensive documentation and 
     
     print(f"✅ Updated: {simple_output}")
     print(f"✅ Updated: {complete_output}")
-
 
 def main():
     """Command-line interface for directory tree visualization."""
@@ -427,7 +432,6 @@ Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
         print(f"✅ Directory structure saved to: {args.output}")
     else:
         print(f"\n{tree_structure}")
-
 
 if __name__ == "__main__":
     main()

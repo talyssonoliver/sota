@@ -4,26 +4,50 @@ Integrates all PHASE 2 enhancements: auto-generated graphs, resilience features,
 notifications, and support for monitoring.
 """
 
-import argparse
+import sys
 import json
 import logging
+import argparse
 import os
-import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Dict, List, Optional, Any
 
-from dotenv import load_dotenv
-from pythonjsonlogger import jsonlogger
 
 try:
-    from graph.auto_generate_graph import build_auto_generated_workflow_graph
-    from graph.graph_builder import (build_advanced_workflow_graph,
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Any, Dict, Optional, Union
+except ImportError:
+    pass
+try:
+    from dotenv import load_dotenv
+    def load_dotenv():
+        pass
+except ImportError:
+    pass
+
+try:
+    from pythonjsonlogger import jsonlogger
+    import logging
+    jsonlogger = None
+except ImportError:
+    pass
+
+try:
+    from src.infrastructure.tools.auto_generate_graph import build_auto_generated_workflow_graph
+    from src.infrastructure.tools.graph_builder import (build_advanced_workflow_graph,
                                      build_dynamic_workflow_graph,
                                      build_workflow_graph)
-    from graph.notifications import (NotificationLevel, SlackNotifier,
+    from src.infrastructure.tools.notifications import (NotificationLevel, SlackNotifier,
                                      attach_notifications_to_workflow)
-    from graph.resilient_workflow import create_resilient_workflow
+    from src.infrastructure.tools.resilient_workflow import create_resilient_workflow
     GRAPH_IMPORTS_AVAILABLE = True
 except ImportError as e:
     # Handle missing langgraph dependencies gracefully
@@ -51,22 +75,18 @@ except ImportError as e:
         return MagicMock()
     
     def build_advanced_workflow_graph(*args, **kwargs):
-        from unittest.mock import MagicMock
         return MagicMock()
         
     def build_dynamic_workflow_graph(*args, **kwargs):
-        from unittest.mock import MagicMock
         return MagicMock()
         
     def build_workflow_graph(*args, **kwargs):
-        from unittest.mock import MagicMock
         return MagicMock()
         
     def create_resilient_workflow(*args, **kwargs):
-        from unittest.mock import MagicMock
         return MagicMock()
 from src.core.workflows.states import TaskStatus
-from src.platform.utils.task_loader import load_task_metadata, update_task_state
+from src.infrastructure.utils.task_loader import load_task_metadata, update_task_state
 
 # Load environment variables
 load_dotenv()
@@ -74,12 +94,15 @@ load_dotenv()
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
 # Configure structured JSON logging for production
 logger = logging.getLogger("enhanced_workflow")
 handler = logging.StreamHandler()
-formatter = jsonlogger.JsonFormatter(
-    '%(asctime)s %(levelname)s %(name)s %(message)s %(agent)s %(task_id)s %(event)s')
+if jsonlogger:
+    formatter = jsonlogger.JsonFormatter(
+        '%(asctime)s %(levelname)s %(name)s %(message)s %(agent)s %(task_id)s %(event)s')
+else:
+    formatter = logging.Formatter(
+        '%(asctime)s %(levelname)s %(name)s %(message)s')
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.setLevel(logging.INFO)
@@ -91,9 +114,9 @@ try:
     from langsmith import traceable
     os.environ["LANGCHAIN_TRACING_V2"] = "true"
     tracing_enabled = True
-except ImportError:
     tracing_enabled = False
-
+except ImportError:
+    pass
 
 class EnhancedWorkflowExecutor:
     """
@@ -453,7 +476,6 @@ class EnhancedWorkflowExecutor:
                 f"Task {result.get('task_id')} failed: {result.get('error')}")
         return result
 
-
 def main():
     """Command-line interface for the enhanced workflow executor."""
     parser = argparse.ArgumentParser(
@@ -504,7 +526,6 @@ def main():
     print(f"Output saved to: {executor.output_dir / args.task}")
     print("\nFor real-time monitoring, run:")
     print(f"python scripts/monitor_workflow.py --task {args.task}")
-
 
 if __name__ == "__main__":
     main()

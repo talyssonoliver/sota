@@ -22,24 +22,40 @@ Output format matches system_implementation.txt specification:
 Saved to: outputs/[TASK-ID]/qa_report.json
 """
 
+import sys
+import argparse
 import json
 import logging
-import os
-import subprocess
-import sys
-import tempfile
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
 
-from agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
-from utils.coverage_analyzer import CoverageAnalyzer
-from utils.integration_analyzer import IntegrationAnalyzer
-from tests.components.test_generator import QATestFramework, QATestGenerator
-
-# Add project root to path
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Any, Dict, List, Optional
+except ImportError:
+    pass
+try:
+    from src.core.agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
+except ImportError:
+    pass
+try:
+    from src.infrastructure.utils.coverage_analyzer import CoverageAnalyzer
+except ImportError:
+    pass
+try:
+    from src.infrastructure.utils.integration_analyzer import IntegrationAnalyzer
+except ImportError:
+    pass
+try:
+    from tests.components.test_generator import QATestFramework, QATestGenerator
+except ImportError:
+    pass
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
 
 class QAExecutionEngine:
     """QA Agent Execution Engine for automated validation"""
@@ -398,7 +414,6 @@ class QAExecutionEngine:
         self._save_qa_report(task_id, qa_report)
         return qa_report
 
-
 def execute_qa_validation(task_id: str) -> Dict[str, Any]:
     """
     Main entry point for QA Agent execution.
@@ -414,11 +429,8 @@ def execute_qa_validation(task_id: str) -> Dict[str, Any]:
     qa_engine = QAExecutionEngine()
     return qa_engine.execute_qa_for_task(task_id)
 
-
 if __name__ == "__main__":
     # CLI interface for manual QA execution
-    import argparse
-
     parser = argparse.ArgumentParser(
         description="Execute QA validation for a task")
     parser.add_argument("task_id", help="Task ID to validate (e.g., BE-07)")

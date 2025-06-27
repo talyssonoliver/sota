@@ -1,15 +1,11 @@
-"""
-Core Module - Business Logic
-
-Contains the core business logic including agents, workflows, and tasks.
-"""
+"""Core module for AI Agent System."""
 
 try:
     from . import agents
+except ImportError:
+    pass
+
     from . import workflows
     from . import tasks
-    
-    __all__ = ["agents", "workflows", "tasks"]
-except ImportError:
-    # Graceful fallback if dependencies are missing
-    __all__ = []
+    from . import states
+__all__ = ["agents", "workflows", "tasks", "states"]

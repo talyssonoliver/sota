@@ -1,15 +1,19 @@
-# Core dependencies
-langchain==0.3.25 
-langchain_openai==0.3.16 
-langchain_community
-langchain_core
-langchain_text_splitters
-langgraph==0.4.1 
+# LangChain ecosystem
+langchain>=0.3.25
+langchain-community>=0.3.0
+langchain-core>=0.3.64
+langchain-openai>=0.3.16
+langchain-text-splitters>=0.3.0
+langgraph>=0.4.8
+langsmith>=0.3.0
 
-crewai==0.126.0 
-litellm==1.72.2
-chromadb
-openai==1.77.0 
+# Agent framework
+crewai>=0.130.0
+litellm==1.72.0
+
+# Vector database
+chromadb>=1.0.13
+openai==1.75.0 
 tiktoken==0.8.0 
 pyyaml==6.0.1 
 rich==13.7.0
@@ -33,28 +37,42 @@ pytest-watch==4.2.0
 # Tools for code quality
 ruff==0.4.4
 mypy==1.10.0
-langsmith
 cryptography==42.0.5
 
-# Development utilities
+# Visualization
+matplotlib>=3.10.3
+plotly>=5.24.0
+
+# Web automation
+selenium>=4.33.0
+
+# Utilities
 black==25.1.0 
-isort==6.0.1 
-python-dotenv==1.1.0 
+isort==6.0.1
+python-dotenv>=1.0.1 
+pydantic>=2.10.0
+numpy>=1.26.0,<2.0.0
+schedule>=1.2.2
 typer==0.15.3 
 jupyterlab==4.4.1 
 watchdog==6.0.0
 
+# Terminal UI support (Windows compatible)
+windows-curses>=2.4.0; sys_platform == "win32"
+curses>=2.2; sys_platform != "win32"
+
 # Phase 6 daily automation dependencies
-schedule==1.2.2
 APScheduler==3.11.0
 jinja2==3.1.4
 flask==3.1.0
 flask-cors==5.0.0
-plotly==5.18.0
-pandas==2.1.4
+pandas>=2.2.0
 
 # Logging
 python-json-logger
+
+# File monitoring
+watchdog>=6.0.0
 
 # Optional enterprise dependencies (for secrets management)
 # Install only if needed:

@@ -7,18 +7,40 @@ and updates about Human-in-the-Loop checkpoints.
 
 import json
 import logging
+import os
 import smtplib
 import requests
-from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, List
-from datetime import datetime
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from pathlib import Path
-import os
 
+try:
+    from abc import ABC, abstractmethod
+except ImportError:
+    pass
+try:
+    from typing import Dict, Any, Optional, List
+except ImportError:
+    pass
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from email.mime.text import MIMEText
+except ImportError:
+    pass
+try:
+    from email.mime.multipart import MIMEMultipart
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    import logging
+    import os
+except ImportError:
+    pass
 logger = logging.getLogger(__name__)
-
 
 class NotificationHandler(ABC):
     """Abstract base class for notification handlers"""
@@ -27,7 +49,6 @@ class NotificationHandler(ABC):
     def send_notification(self, checkpoint, notification_type: str, recipients=None, metadata=None):
         """Send notification for checkpoint event"""
         pass
-
 
 class DashboardNotificationHandler(NotificationHandler):
     """Handler for dashboard notifications"""
@@ -55,7 +76,9 @@ class DashboardNotificationHandler(NotificationHandler):
                 'assigned_reviewers': checkpoint.assigned_reviewers,
                 'deadline': checkpoint.timeout_at.isoformat() if checkpoint.timeout_at else None
             }
-        }# Save notification to dashboard storage
+        }
+        
+        # Save notification to dashboard storage
         notification_file = self.storage_dir / f"{notification['id']}.json"
         with open(notification_file, 'w', encoding='utf-8') as f:
             json.dump(notification, f, indent=2, ensure_ascii=False)
@@ -156,7 +179,6 @@ class DashboardNotificationHandler(NotificationHandler):
         # Save updated data
         with open(dashboard_data_file, 'w', encoding='utf-8') as f:
             json.dump(dashboard_data, f, indent=2, ensure_ascii=False)
-
 
 class EmailNotificationHandler(NotificationHandler):
     """Handler for email notifications"""
@@ -409,7 +431,6 @@ HITL System
             
             server.send_message(msg)
 
-
 class SlackNotificationHandler(NotificationHandler):
     """Handler for Slack notifications"""   
     def __init__(self, config=None):
@@ -536,7 +557,6 @@ class SlackNotificationHandler(NotificationHandler):
                 "fallback": f"HITL {notification_type} for {checkpoint.task_id}"
             }]
         }
-
 
 # Export notification handlers
 __all__ = [

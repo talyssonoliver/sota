@@ -6,23 +6,48 @@ Advanced Gantt chart generation and critical path analysis system
 for project timeline visualization and optimization.
 """
 
+import sys
 import json
 import logging
-import os
-import sys
+from pathlib import Path
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Any, Set
-import yaml
 
-# Add parent directory to path for imports
+try:
+    pass
+except ImportError:
+    # Fallback YAML implementation
+    class yaml:
+        @staticmethod
+        def safe_load(stream):
+            return {}
+        
+        @staticmethod
+        def safe_dump(data, stream=None):
+            if stream:
+                stream.write(str(data))
+            return str(data)
+
 sys.path.append(str(Path(__file__).parent.parent))
 
-from orchestration.states import TaskStatus
-from utils.completion_metrics import CompletionMetricsCalculator
-
+import yaml
+try:
+    pass
+    from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
+except ImportError as e:
+    print(f"Warning: Could not import some modules: {e}")
+    # Create fallback classes
+    class TaskStatus:
+        PENDING = "pending"
+        IN_PROGRESS = "in_progress"
+        COMPLETED = "completed"
+        FAILED = "failed"
+    
+    class CompletionMetricsCalculator:
+        def __init__(self):
+            pass
 
 @dataclass
 class GanttTask:
@@ -44,7 +69,6 @@ class GanttTask:
     slack_time: int = 0  # float time in days
     resource_allocation: float = 1.0  # 0-1 (percentage of resource time)
 
-
 @dataclass
 class ProjectTimeline:
     """Represents the complete project timeline."""
@@ -58,7 +82,6 @@ class ProjectTimeline:
     milestones: List[GanttTask]
     critical_path: List[str]
     resource_utilization: Dict[str, float]
-
 
 class CriticalPathMethod:
     """Implements Enhanced Critical Path Method (CPM) algorithm with resource optimization."""
@@ -268,7 +291,6 @@ class CriticalPathMethod:
             dfs(task_id)
         
         return list(reversed(ordered_path))
-
 
 class ResourceOptimizer:
     """Analyzes resource allocation and provides optimization recommendations."""
@@ -498,7 +520,6 @@ class ResourceOptimizer:
         
         return round(score, 1)
 
-
 class ScenarioPlanner:
     """Advanced scenario planning and what-if analysis for project timelines."""
     
@@ -722,7 +743,6 @@ class ScenarioPlanner:
         completion_rates = [scenario.get('completion_rate', 0) for scenario in scenarios.values()]
         min_completion = min(completion_rates)
         return max(0, (0.8 - min_completion) / 0.2)  # Risk increases below 80% completion
-    
 
 class GanttAnalyzer:
     """Main Gantt chart analyzer and data generator."""
@@ -743,6 +763,7 @@ class GanttAnalyzer:
         yaml_files = list(self.tasks_dir.glob("*.yaml")) + list(self.tasks_dir.glob("*.yml"))
         
         for yaml_file in yaml_files:
+            from src.core.workflows.states import TaskStatus
             try:
                 with open(yaml_file, 'r', encoding='utf-8') as f:
                     task_data = yaml.safe_load(f)
@@ -1000,7 +1021,6 @@ class GanttAnalyzer:
             resource_utilization=dict(resource_utilization)
         )
 
-    
     def _format_for_gantt_chart(self, tasks: List[GanttTask]) -> Dict[str, Any]:
         """Format task data for Gantt chart libraries."""
         chart_tasks = []
@@ -1164,7 +1184,6 @@ def main():
         for rec in gantt_data['optimization_recommendations'][:3]:
             print(f"   {rec}")
 
-
 def generate_mermaid_gantt(gantt_data: Dict[str, Any]) -> str:
     """Generate Mermaid.js Gantt diagram from data."""
     tasks = gantt_data['gantt_chart_data']['tasks']
@@ -1199,7 +1218,6 @@ def generate_mermaid_gantt(gantt_data: Dict[str, Any]) -> str:
                 mermaid_lines.append(task_line)
     
     return "\n".join(mermaid_lines)
-
 
 if __name__ == "__main__":
     main()

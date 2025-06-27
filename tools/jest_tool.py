@@ -3,14 +3,18 @@ Jest Tool - Helps agents generate and run Jest tests
 """
 
 import json
+import logging
 import os
 import re
 import subprocess
+import sys
 from typing import Any, Dict, List, Optional
 
-from tools.base_tool import ArtesanatoBaseTool
-
-
+try:
+    from tools.base_tool import ArtesanatoBaseTool
+except ImportError as e:
+    logging.error(f"Failed to import ArtesanatoBaseTool: {e}")
+    sys.exit(1)
 class JestTool(ArtesanatoBaseTool):
     """Tool for generating and running Jest tests for JavaScript/TypeScript code."""
 

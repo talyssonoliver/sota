@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+import sys
 Step 5.8 — Archive Outputs for Long-Term Use
 
 Compress task data for traceability, compliance, and retrospective audits.
@@ -10,24 +11,31 @@ Usage:
     python scripts/archive_task.py --task-id BE-07 --output-dir custom_archives
 """
 
+
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Dict, List, Optional
+except ImportError:
+    pass
+
 import argparse
 import json
 import logging
-import shutil
 import sys
 import tarfile
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Optional
-
-# Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 class TaskArchiver:
     """Handles archiving of completed task outputs."""
@@ -212,7 +220,6 @@ class TaskArchiver:
             logger.error(f"Archive extraction failed: {e}")
             return False
 
-
 def main():
     """CLI interface for task archiving."""
     parser = argparse.ArgumentParser(
@@ -308,7 +315,6 @@ Examples:
     else:
         print(f"\n❌ Failed to archive task {args.task_id}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

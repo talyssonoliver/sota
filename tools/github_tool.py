@@ -1,17 +1,24 @@
 """
 GitHub Tool - Allows agents to interact with GitHub repositories
 """
-
 import json
+import logging
 import os
+import requests
+import sys
 from typing import Any, Dict, List, Optional
 
-import requests
-from pydantic import Field
+try:
+    from pydantic import Field
+except ImportError as e:
+    logging.error(f"Failed to import pydantic: {e}")
+    sys.exit(1)
 
-from tools.base_tool import ArtesanatoBaseTool
-
-
+try:
+    from tools.base_tool import ArtesanatoBaseTool
+except ImportError as e:
+    logging.error(f"Failed to import ArtesanatoBaseTool: {e}")
+    sys.exit(1)
 class GitHubTool(ArtesanatoBaseTool):
     """Tool for interacting with GitHub repositories, issues, pull requests, branches, and commits."""
 

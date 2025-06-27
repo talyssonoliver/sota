@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+import sys
 End-to-End Command Sequence Test for Phase 4
 
 Tests the complete workflow from prompt generation to task completion
@@ -15,23 +16,19 @@ following the Step 4.8 sample command sequence:
 This validates the complete Phase 4 implementation.
 """
 
-import json
-import os
-import shutil
-import subprocess
-import sys
-import tempfile
-import time
+
+
 from datetime import datetime
 from pathlib import Path
-
 from src.core.workflows.states import TaskStatus
-from src.platform.utils.execution_monitor import get_execution_monitor
-from src.platform.utils.task_loader import load_task_metadata, update_task_state
-
-# Add parent directory to path for imports
+from src.infrastructure.utils.execution_monitor import get_execution_monitor
+from src.infrastructure.utils.task_loader import load_task_metadata, update_task_state
+import os
+import sys
+import tempfile
+import subprocess
+import shutil
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 def run_command(cmd: list, cwd: str = None, timeout: int = 60) -> tuple:
     """
@@ -59,13 +56,11 @@ def run_command(cmd: list, cwd: str = None, timeout: int = 60) -> tuple:
     except Exception as e:
         return False, "", str(e)
 
-
 def print_step(step_num: int, description: str):
     """Print a formatted step header."""
     print(f"\n{'=' * 60}")
     print(f"STEP {step_num}: {description}")
     print('=' * 60)
-
 
 def print_result(success: bool, stdout: str = "", stderr: str = ""):
     """Print command result."""
@@ -78,7 +73,6 @@ def print_result(success: bool, stdout: str = "", stderr: str = ""):
         print("❌ FAILED")
         if stderr:
             print(f"Error: {stderr}")
-
 
 def test_end_to_end_workflow():
     """
@@ -157,6 +151,8 @@ def test_end_to_end_workflow():
         mock_output_file = mock_output_dir / f"output_{agent_id}.md"
 
         mock_content = f"""# {agent_id.title()} Agent Output for {test_task_id}
+    except ImportError:
+        pass
 
 ## Implementation Complete
 
@@ -376,7 +372,6 @@ Task ready for QA review and final approval.
             print("✅ Cleanup complete")
         except Exception as e:
             print(f"⚠️  Warning: Could not clean up test directory: {e}")
-
 
 if __name__ == "__main__":
     print("🎬 Starting End-to-End Phase 4 Test")

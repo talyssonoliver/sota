@@ -5,15 +5,25 @@ This module provides the main entry points for the AI Agent System
 with proper import paths for the new src/ architecture.
 """
 
-# Re-export main modules for convenience
 try:
     from . import core
+except ImportError:
+    pass
+
+try:
     from . import interfaces
-    from . import platform
+except ImportError:
+    pass
+
+try:
+    from . import infrastructure
+except ImportError:
+    pass
+
+try:
     from . import integrations
 except ImportError:
-    # Graceful fallback if dependencies are missing
     pass
 
 __version__ = "1.0.0"
-__all__ = ["core", "interfaces", "platform", "integrations"]
+__all__ = ["core", "interfaces", "infrastructure", "integrations"]

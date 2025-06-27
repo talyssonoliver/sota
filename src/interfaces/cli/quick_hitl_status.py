@@ -6,13 +6,27 @@ A lightweight tool to quickly check the current HITL Kanban board status
 without starting the full dashboard server.
 """
 
+
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import List, Dict, Any
+except ImportError:
+    pass
+
+try:
+    import re
+except ImportError:
+    pass
+
 import json
 import sys
-import os
-from datetime import datetime
-from pathlib import Path
-from typing import List, Dict, Any
-
 
 def safe_print(text: str):
     """Print text safely, handling Unicode encoding issues on Windows."""
@@ -20,10 +34,8 @@ def safe_print(text: str):
         print(text)
     except UnicodeEncodeError:
         # Strip emoji and unicode characters for Windows console
-        import re
         safe_text = re.sub(r'[^\x00-\x7F]+', '', text)
         print(safe_text)
-
 
 def get_mock_data() -> List[Dict[str, Any]]:
     """Get mock HITL board data for demonstration."""
@@ -70,7 +82,6 @@ def get_mock_data() -> List[Dict[str, Any]]:
         }
     ]
 
-
 def check_pending_reviews_directory() -> List[Dict[str, Any]]:
     """Check the pending_reviews directory for actual pending items."""
     items = []
@@ -111,7 +122,6 @@ def check_pending_reviews_directory() -> List[Dict[str, Any]]:
         })
     
     return items
-
 
 def check_feedback_logs() -> List[Dict[str, Any]]:
     """Check feedback logs for recently completed items."""
@@ -156,7 +166,6 @@ def check_feedback_logs() -> List[Dict[str, Any]]:
     
     return items
 
-
 def display_status_simple(items: List[Dict[str, Any]]):
     """Display status in simple text format."""
     print("\n" + "=" * 85)
@@ -195,7 +204,6 @@ def display_status_simple(items: List[Dict[str, Any]]):
     safe_print(f"Last Updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 85)
 
-
 def display_status_json(items: List[Dict[str, Any]]):
     """Display status in JSON format."""
     output = {
@@ -210,7 +218,6 @@ def display_status_json(items: List[Dict[str, Any]]):
     }
     
     print(json.dumps(output, indent=2))
-
 
 def main():
     """Main function."""
@@ -257,7 +264,6 @@ Examples:
         display_status_json(items)
     else:
         display_status_simple(items)
-
 
 if __name__ == "__main__":
     main()

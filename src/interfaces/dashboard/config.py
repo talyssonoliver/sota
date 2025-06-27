@@ -6,12 +6,24 @@ Centralized configuration management for the dashboard API server.
 Supports environment-based configuration for different deployment scenarios.
 """
 
-import os
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Optional
 
-
+try:
+    from dataclasses import dataclass
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Optional
+except ImportError:
+    pass
+try:
+    import logging
+except ImportError:
+    pass
+    pass
 @dataclass
 class DashboardConfig:
     """Dashboard configuration with environment variable support."""

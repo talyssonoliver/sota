@@ -6,15 +6,23 @@ Enhanced interrupt node implementation for workflow pausing, human checkpoints,
 and approval-based workflow continuation in the AI Agent System.
 """
 
-import os
-import json
-import logging
-import time
-from datetime import datetime, timedelta
-from typing import Dict, Any, Optional, List, Callable
-from pathlib import Path
-from dataclasses import dataclass, asdict
 
+try:
+    from datetime import datetime, timedelta
+except ImportError:
+    pass
+try:
+    from typing import Dict, Any, Optional, List, Callable
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from dataclasses import dataclass, asdict
+except ImportError:
+    pass
 logger = logging.getLogger(__name__)
 
 # Ensure required directories exist
@@ -23,7 +31,6 @@ APPROVED_DIR = Path(".approved")
 
 for directory in [PENDING_REVIEWS_DIR, APPROVED_DIR]:
     directory.mkdir(exist_ok=True)
-
 
 @dataclass
 class InterruptCheckpoint:
@@ -70,7 +77,6 @@ class InterruptCheckpoint:
         """Create checkpoint from dictionary."""
         data["created_at"] = datetime.fromisoformat(data["created_at"])
         return cls(**data)
-
 
 class InterruptNodeManager:
     """Manages LangGraph interrupt nodes and human checkpoints."""
@@ -237,7 +243,6 @@ class InterruptNodeManager:
         self.logger.info(f"Cleaned up {len(expired)} expired checkpoints")
         return len(expired)
 
-
 # Global interrupt node manager instance
 _interrupt_manager = None
 
@@ -247,7 +252,6 @@ def get_interrupt_manager() -> InterruptNodeManager:
     if _interrupt_manager is None:
         _interrupt_manager = InterruptNodeManager()
     return _interrupt_manager
-
 
 # LangGraph interrupt node functions
 def human_checkpoint_node(state: Dict[str, Any]) -> Dict[str, Any]:
@@ -322,7 +326,6 @@ def human_checkpoint_node(state: Dict[str, Any]) -> Dict[str, Any]:
             "human_checkpoint_result": "created"
         }
 
-
 def conditional_human_checkpoint(state: Dict[str, Any]) -> str:
     """
     Conditional edge function that determines if human review is needed.
@@ -346,7 +349,6 @@ def conditional_human_checkpoint(state: Dict[str, Any]) -> str:
     else:
         return "continue"
 
-
 # Utility functions for LangGraph integration
 def create_qa_checkpoint_node(qa_threshold: int = 80) -> Callable:
     """Create a QA checkpoint node with specific threshold."""
@@ -365,7 +367,6 @@ def create_qa_checkpoint_node(qa_threshold: int = 80) -> Callable:
     
     return qa_checkpoint
 
-
 def create_code_review_checkpoint_node() -> Callable:
     """Create a code review checkpoint node."""
     def code_review_checkpoint(state: Dict[str, Any]) -> Dict[str, Any]:
@@ -378,7 +379,6 @@ def create_code_review_checkpoint_node() -> Callable:
     
     return code_review_checkpoint
 
-
 def create_documentation_checkpoint_node() -> Callable:
     """Create a documentation review checkpoint node."""
     def doc_checkpoint(state: Dict[str, Any]) -> Dict[str, Any]:
@@ -390,7 +390,6 @@ def create_documentation_checkpoint_node() -> Callable:
         })
     
     return doc_checkpoint
-
 
 # CLI interface functions
 def list_pending_reviews() -> List[Dict[str, Any]]:
@@ -411,22 +410,21 @@ def list_pending_reviews() -> List[Dict[str, Any]]:
         for cp in pending
     ]
 
-
 def approve_task_cli(task_id: str, approver: str, comments: str = "") -> bool:
     """Approve a task via CLI."""
     manager = get_interrupt_manager()
     return manager.approve_task(task_id, approver, comments)
-
 
 def reject_task_cli(task_id: str, reviewer: str, reason: str) -> bool:
     """Reject a task via CLI."""
     manager = get_interrupt_manager()
     return manager.reject_task(task_id, reviewer, reason)
 
-
 if __name__ == "__main__":
     # Example usage and testing
     import sys
+import json
+import logging
     
     if len(sys.argv) > 1:
         command = sys.argv[1]

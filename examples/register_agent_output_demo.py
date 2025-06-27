@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+import sys
 Step 4.4 — Register Agent Output Demo
 
 This demo showcases the complete agent output registration system,
@@ -14,19 +15,20 @@ Demo Scenarios:
 5. Multi-agent workflow demonstration
 """
 
-import json
-import os
-import shutil
-import sys
-import tempfile
-from datetime import datetime
-from pathlib import Path
 
-from orchestration.register_output import AgentOutputRegistry
-
-# Add parent directory to path for imports
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from src.core.workflows.register_output import AgentOutputRegistry
+except ImportError:
+    pass
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 def print_section(title: str):
     """Print a formatted section header."""
@@ -34,16 +36,13 @@ def print_section(title: str):
     print(f"📋 {title}")
     print('=' * 60)
 
-
 def print_success(message: str):
     """Print a success message."""
     print(f"✅ {message}")
 
-
 def print_info(message: str):
     """Print an info message."""
     print(f"ℹ️  {message}")
-
 
 def create_realistic_backend_output() -> str:
     """Create a realistic backend agent output for demonstration."""
@@ -58,8 +57,14 @@ Successfully implemented comprehensive CRUD operations for the Supabase service 
 
 ```typescript
 // filename: lib/services/customerService.ts
-import { supabase } from '../supabase/client';
-import { Customer, CreateCustomerData, UpdateCustomerData } from '../types/customer';
+try:
+    import { supabase } from '../supabase/client';
+except ImportError:
+    pass
+try:
+    import { Customer, CreateCustomerData, UpdateCustomerData } from '../types/customer';
+except ImportError:
+    pass
 
 export class CustomerService {
   /**
@@ -130,8 +135,19 @@ export const customerService = new CustomerService();
 
 ```typescript
 // filename: lib/services/orderService.ts
-import { supabase } from '../supabase/client';
-import { Order, CreateOrderData, OrderStatus } from '../types/order';
+try:
+    import { supabase } from '../supabase/client';
+except ImportError:
+    pass
+try:
+    import { Order, CreateOrderData, OrderStatus } from '../types/order';
+except ImportError:
+    pass
+import json
+import logging
+import os
+import sys
+import tempfile
 
 export class OrderService {
   /**
@@ -329,7 +345,6 @@ The implemented service functions are ready for integration with:
 
 **Task BE-07 implementation complete and ready for QA review.**"""
 
-
 def create_realistic_qa_report() -> dict:
     """Create a realistic QA report for demonstration."""
     return {"task_id": "BE-07",
@@ -402,7 +417,6 @@ def create_realistic_qa_report() -> dict:
                              "Add input validation to private methods",
                              "Create comprehensive test suite",
                              "Document API usage examples"]}
-
 
 def demo_step_4_4():
     """Main demo function for Step 4.4 functionality."""
@@ -615,7 +629,6 @@ def demo_step_4_4():
             print_success("Demo environment cleaned up")
         except Exception as e:
             print(f"⚠️  Warning: Could not clean up demo directory: {e}")
-
 
 if __name__ == "__main__":
     print("🎬 Starting Step 4.4 — Register Agent Output Demo")

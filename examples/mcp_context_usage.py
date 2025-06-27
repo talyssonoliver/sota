@@ -6,24 +6,37 @@ This script demonstrates how to use the enhanced memory-enabled agents
 to execute tasks with contextual knowledge.
 """
 
+import sys
 import logging
 import os
-import sys
 
-from agents import agent_builder
-from agents.backend import build_backend_agent, get_backend_context
-from agents.frontend import build_frontend_agent, get_frontend_context
-from orchestration.inject_context import context_injector
-from tools.memory_engine import memory
+try:
+    from src.core.agents import agent_builder
+except ImportError:
+    pass
+try:
+    from src.core.agents.backend import build_backend_agent, get_backend_context
+except ImportError:
+    pass
+try:
+    from src.core.agents.frontend import build_frontend_agent, get_frontend_context
+except ImportError:
+    pass
+try:
+    from src.core.workflows.inject_context import context_injector
+except ImportError:
+    pass
+try:
+    from tools.memory.engine import MemoryEngine
+    memory = MemoryEngine()
+except ImportError:
+    pass
 
-# Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
 
 def example_1_basic_context_retrieval():
     """Example 1: Basic context retrieval for different domains"""
@@ -42,7 +55,6 @@ def example_1_basic_context_retrieval():
 
     except Exception as e:
         logger.error(f"Error in basic context retrieval: {e}")
-
 
 def example_2_memory_enhanced_agent_creation():
     """Example 2: Creating memory-enhanced agents"""
@@ -81,7 +93,6 @@ def example_2_memory_enhanced_agent_creation():
     except Exception as e:
         logger.error(f"Error in agent creation: {e}")
 
-
 def example_3_context_injector_usage():
     """Example 3: Using context injector for task execution"""
     print("\n=== Example 3: Context Injector Usage ===")
@@ -109,7 +120,6 @@ def example_3_context_injector_usage():
 
     except Exception as e:
         logger.error(f"Error in context injection: {e}")
-
 
 def example_4_direct_memory_queries():
     """Example 4: Direct memory engine queries"""
@@ -139,7 +149,6 @@ def example_4_direct_memory_queries():
     except Exception as e:
         logger.error(f"Error in direct memory queries: {e}")
 
-
 def example_5_prompt_enhancement():
     """Example 5: Prompt enhancement with context"""
     print("\n=== Example 5: Prompt Enhancement ===")
@@ -147,6 +156,8 @@ def example_5_prompt_enhancement():
     try:
         # Sample prompt template
         prompt_template = """# Backend Development Task
+    except ImportError:
+        pass
 
 ## Role
 You are a backend developer specializing in Supabase implementations.
@@ -195,7 +206,6 @@ Follow the established patterns and ensure proper error handling.
     except Exception as e:
         logger.error(f"Error in prompt enhancement: {e}")
 
-
 def example_6_agent_comparison():
     """Example 6: Compare agents with and without context"""
     print("\n=== Example 6: Agent Comparison ===")
@@ -238,7 +248,6 @@ def example_6_agent_comparison():
     except Exception as e:
         logger.error(f"Error in agent comparison: {e}")
 
-
 def main():
     """Run all examples"""
     print("MCP Context Integration Usage Examples")
@@ -263,11 +272,10 @@ def main():
 
     print("\n=== Examples Complete ===")
     print("To use in your own code:")
-    print("1. Import the agent builders: from agents.backend import build_backend_agent")
+    print("1. Import the agent builders: from src.core.agents.backend import build_backend_agent")
     print("2. Create task metadata with context_topics")
     print("3. Build agents with task_metadata parameter")
     print("4. Access agent._context for the retrieved context")
-
 
 if __name__ == "__main__":
     main()

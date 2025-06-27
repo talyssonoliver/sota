@@ -6,17 +6,15 @@ Automated quality assurance, testing, and validation for task outputs.
 Provides comprehensive QA reporting and quality gate validation.
 """
 
-import json
-import os
-import subprocess
 import sys
+import argparse
+import json
+import logging
+import yaml
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
-
-import yaml
-
 
 @dataclass
 class QAResult:
@@ -33,7 +31,6 @@ class QAResult:
     overall_status: str
     recommendations: List[str]
     next_steps: List[str]
-
 
 @dataclass
 class QAConfig:
@@ -54,7 +51,6 @@ class QAConfig:
             }
         if self.required_test_types is None:
             self.required_test_types = ["unit", "integration", "e2e"]
-
 
 class QAValidationEngine:
     """Main QA validation engine"""
@@ -189,7 +185,7 @@ class QAValidationEngine:
         print(f"  📊 Analyzing test coverage for {task_id}")
         # Import coverage analyzer
         try:
-            from utils.coverage_analyzer import CoverageAnalyzer
+            from src.infrastructure.utils.coverage_analyzer import CoverageAnalyzer
             coverage_analyzer = CoverageAnalyzer()
         except ImportError:
             print(
@@ -658,11 +654,8 @@ class QAValidationEngine:
         # Mock security analysis
         return []
 
-
 def main():
     """CLI interface for QA validation"""
-    import argparse
-
     parser = argparse.ArgumentParser(description="QA Validation System")
     parser.add_argument("task_id", help="Task ID to validate")
     parser.add_argument("--config", help="Path to QA configuration file")
@@ -694,7 +687,6 @@ def main():
     except Exception as e:
         print(f"❌ QA validation failed: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

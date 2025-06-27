@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+import sys
 Step 3.8 Implementation: Human-in-the-Loop Review of Context
 
 This CLI tool allows users to inspect and override context before task execution.
@@ -12,22 +13,34 @@ Usage:
     python orchestration/review_context.py --task BE-07 --export context_review.json
 """
 
+
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Any, Dict, List, Optional, Tuple
+except ImportError:
+    pass
+try:
+    from tools.context_tracker import get_context_log, track_context_usage
+except ImportError:
+    pass
+from src.infrastructure.memory import get_memory_instance
+
+from src.infrastructure.utils.task_loader import load_task_metadata
 import argparse
 import json
-import os
+import logging
 import sys
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
-
-from tools.context_tracker import get_context_log, track_context_usage
-from tools.memory import get_memory_instance
-from utils.task_loader import load_task_metadata
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
 
 class ContextReviewer:
     """
@@ -105,7 +118,6 @@ class ContextReviewer:
             print(f"   {i}. {source}")
             print(f"      Topic: {topic}")
             print(f"      Length: {content_length} chars")
-
 
 def main():
     """Main CLI interface"""
@@ -216,7 +228,6 @@ Examples:
         return 1
 
     return 0
-
 
 if __name__ == "__main__":
     exit(main())

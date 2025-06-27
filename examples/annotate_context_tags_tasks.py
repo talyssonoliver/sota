@@ -10,19 +10,28 @@ Usage:
     python examples/step_3_5_3_6_demo.py
 """
 
-import json
-import os
 import sys
+import json
+import traceback
 from pathlib import Path
 
-import yaml
+# Add YAML import with proper error handling
+try:
+    import yaml
+except ImportError as e:
+    print(f"CRITICAL: Cannot import yaml: {e}")
+    sys.exit(1)
 
-from tools.memory_engine import MemoryEngine
-
-# Add the project root to the Python path
+# Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+# Secure imports
+try:
+    from tools.memory.engine import MemoryEngine
+except ImportError as e:
+    print(f"CRITICAL: Cannot import MemoryEngine: {e}")
+    sys.exit(1)
 
 def load_task_metadata(task_id: str) -> dict:
     """Load task metadata from YAML file"""
@@ -31,7 +40,6 @@ def load_task_metadata(task_id: str) -> dict:
         with open(task_file, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f)
     return {}
-
 
 def demo_step_3_5_context_topics(memory_engine):
     """
@@ -105,9 +113,7 @@ def demo_step_3_5_context_topics(memory_engine):
 
     except Exception as e:
         print(f"❌ Error in Step 3.5 demo: {e}")
-        import traceback
         traceback.print_exc()
-
 
 def demo_step_3_6_chunking(memory_engine):
     """
@@ -228,9 +234,7 @@ This document demonstrates how large files benefit from chunking to improve sear
 
     except Exception as e:
         print(f"❌ Error in Step 3.6 demo: {e}")
-        import traceback
         traceback.print_exc()
-
 
 def demo_integrated_workflow(memory_engine):
     """
@@ -311,9 +315,7 @@ Generate a customerService.ts file with full CRUD operations using Supabase clie
 
     except Exception as e:
         print(f"❌ Error in integrated workflow demo: {e}")
-        import traceback
         traceback.print_exc()
-
 
 def main():
     """Main demo function"""
@@ -347,7 +349,6 @@ def main():
     print("   - outputs/integrated_demo/")
     print()
     print("✅ Steps 3.5 and 3.6 implementation verified!")
-
 
 if __name__ == "__main__":
     main()

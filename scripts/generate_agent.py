@@ -1,17 +1,32 @@
 #!/usr/bin/env python3
 """SOTA Agent Generator - Creates agent code, tests, and docs."""
+
+try:
+    pass
+except ImportError:
+    pass
 from __future__ import annotations
-
-import argparse
-import os
+try:
+    pass
+except ImportError:
+    pass
 from pathlib import Path
+try:
+    pass
+except ImportError:
+    pass
 from typing import Dict
-
+try:
+    pass
+except ImportError:
+    pass
 from jinja2 import Environment, FileSystemLoader
-import yaml
-
+try:
+    pass
+except ImportError:
+    pass
+    pass
 CONFIG_PATH = Path("config/agent_generator.yaml")
-
 
 def load_config(path: Path) -> Dict[str, str]:
     if path.exists():
@@ -24,17 +39,14 @@ def load_config(path: Path) -> Dict[str, str]:
         "doc_dir": "docs",
     }
 
-
 def slugify(name: str) -> str:
     return name.lower().replace(" ", "_")
-
 
 def render_template(
     env: Environment, template_name: str, context: Dict[str, str]
 ) -> str:
     template = env.get_template(template_name)
     return template.render(**context)
-
 
 def append_import(agent_file: Path, func_name: str) -> None:
     init_file = Path("agents/__init__.py")
@@ -43,7 +55,6 @@ def append_import(agent_file: Path, func_name: str) -> None:
     import_line = f"from .{agent_file.stem} import {func_name}\n"
     with open(init_file, "a") as f:
         f.write(import_line)
-
 
 def update_config(agent_key: str, description: str) -> None:
     cfg_file = Path("config/agents.yaml")
@@ -62,7 +73,6 @@ def update_config(agent_key: str, description: str) -> None:
     }
     with open(cfg_file, "w") as f:
         yaml.safe_dump(data, f, sort_keys=False)
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate a new agent")
@@ -101,6 +111,7 @@ def main() -> None:
     os.system(f"black {agent_path} {test_path} >/dev/null")
     os.system(f"ruff check --fix {agent_path} {test_path} >/dev/null")
 
+    import argparse
     try:
         compile(agent_code, str(agent_path), "exec")
     except SyntaxError as e:
@@ -111,7 +122,6 @@ def main() -> None:
         return
 
     print(f"✅ Created agent {args.name} at {agent_path}")
-
 
 if __name__ == "__main__":
     main()

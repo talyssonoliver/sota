@@ -2,14 +2,30 @@
 Echo Tool - A simple tool for testing agent setup and configuration
 """
 
+import logging
+import sys
 from typing import Optional
 
-from langchain_core.tools import BaseTool
-from pydantic import BaseModel, ValidationError
+try:
+    from langchain_core.tools import BaseTool
+except ImportError as e:
+    logging.warning(f"Failed to import langchain_core.tools: {e}")
+    # Create a mock BaseTool class
+    class BaseTool:
+        """Mock BaseTool for when langchain is not available."""
+        pass
 
-from tools.base_tool import ArtesanatoBaseTool
+try:
+    from pydantic import BaseModel, ValidationError
+except ImportError as e:
+    logging.error(f"Failed to import pydantic: {e}")
+    sys.exit(1)
 
-
+try:
+    from tools.base_tool import ArtesanatoBaseTool
+except ImportError as e:
+    logging.error(f"Failed to import ArtesanatoBaseTool: {e}")
+    sys.exit(1)
 class EchoTool(ArtesanatoBaseTool):
     """A simple tool that echoes back the input, used for testing agent functionality."""
 

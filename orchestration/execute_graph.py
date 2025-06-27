@@ -1,4 +1,5 @@
 """
+import sys
 Step 4.3 Implementation: Run LangGraph Workflow
 
 This script implements the Step 4.3 requirements for executing LangGraph workflows with:
@@ -21,36 +22,44 @@ Usage:
     python orchestration/execute_graph.py --task BE-07 --generate-prompt --monitor
 """
 
-import argparse
-import json
-import logging
-import os
-import sys
-import threading
-import time
+# Mock external dependencies
+
+# Add common mock attributes
+
+# Original imports with error handling
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
-
 from pythonjsonlogger import jsonlogger
-
-from graph.graph_builder import (build_advanced_workflow_graph,
-                                 build_dynamic_workflow_graph,
+from src.infrastructure.tools.graph_builder import (build_advanced_workflow_graph,
+build_dynamic_workflow_graph,
                                  build_state_workflow_graph,
                                  build_workflow_graph)
-from graph.notifications import (NotificationLevel, SlackNotifier,
+from src.infrastructure.tools.notifications import (NotificationLevel, SlackNotifier,
                                  attach_notifications_to_workflow)
-from graph.resilient_workflow import create_resilient_workflow
-from orchestration.generate_prompt import generate_prompt
-from orchestration.states import TaskStatus
-from tools.memory import get_context_by_keys
-from utils.execution_monitor import (create_langgraph_hook,
+from src.infrastructure.tools.resilient_workflow import create_resilient_workflow
+from src.core.workflows.generate_prompt import generate_prompt
+from src.core.workflows.states import TaskStatus
+from src.infrastructure.memory import get_context_by_keys
+from src.infrastructure.utils.execution_monitor import (create_langgraph_hook,
                                      get_execution_monitor)
-from utils.task_loader import load_task_metadata, update_task_state
+from src.infrastructure.utils.task_loader import load_task_metadata, update_task_state
+import os
+import argparse
+import json
+import logging
+try:
+    import threading
+except ImportError:
+    pass
+try:
+    import time
+except ImportError:
+    pass
+import sys
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
 # Configure structured JSON logging for Step 4.3 execution tracking
 logger = logging.getLogger("step_4_3_executor")
@@ -60,7 +69,6 @@ formatter = jsonlogger.JsonFormatter(
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.setLevel(logging.INFO)
-
 
 def build_task_state(task_id):
     """
@@ -190,7 +198,6 @@ def build_task_state(task_id):
             "prior_knowledge": task_context,
             "timestamp": datetime.now().isoformat()
         }
-
 
 def run_task_graph(
         task_id,
@@ -564,7 +571,6 @@ def run_task_graph(
 
     return result
 
-
 def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
     """
     Get relevant context for a query using the memory system.
@@ -583,7 +589,6 @@ def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
     except ImportError:
         # Fallback if memory system is not available
         return ""
-
 
 def main():
     """
@@ -811,7 +816,6 @@ Workflow Types:
         })
 
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

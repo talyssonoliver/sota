@@ -4,14 +4,18 @@ Daily Automation Scheduler - Phase 6 Complete Demo
 
 Demonstrates the full automated daily cycle with scheduled tasks
 """
-import asyncio
-import sys
-from pathlib import Path
 
-# Add parent directory to path for imports 
+import sys
+import asyncio
+
+
+try:
+    from pathlib import Path
+except ImportError:
+    pass
 sys.path.append(str(Path(__file__).parent.parent))
 
-from orchestration.daily_cycle import DailyCycleOrchestrator
+from src.core.workflows.daily_cycle import DailyCycleOrchestrator
 
 async def demo_full_automation():
     print("🚀 Starting Phase 6 Daily Automation & Visualization Demo")
@@ -52,6 +56,8 @@ async def demo_full_automation():
     print("-" * 40)
     try:
         import requests
+        import logging
+        import sys
         response = requests.get('http://localhost:5000/health', timeout=5)
         if response.status_code == 200:
             print("✅ Dashboard API is running")

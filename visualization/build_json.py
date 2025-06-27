@@ -9,24 +9,44 @@ Usage:
     python visualization/build_json.py > static/progress_data.json
 """
 
+import sys
 import json
 import logging
-import os
-import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 
-# Add parent directory to path for imports
+# Add parent directory to path
 sys.path.append(str(Path(__file__).parent.parent))
 
+# Local imports with error handling
 try:
-    from utils.completion_metrics import CompletionMetricsCalculator
-    from src.interfaces.dashboard.api.unified_api_server import UnifiedDashboardAPI
-    from orchestration.daily_cycle import DailyCycleOrchestrator
+    from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
+    COMPLETION_METRICS_AVAILABLE = True
 except ImportError as e:
-    logging.warning(f"Import warning: {e}. Using mock data for visualization.")
+    logging.warning(f"Completion metrics not available: {e}")
+    COMPLETION_METRICS_AVAILABLE = False
+    class CompletionMetricsCalculator:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def calculate_metrics(self, *args, **kwargs):
+            return {"error": "Completion metrics not available"}
 
+try:
+    from src.core.workflows.daily_cycle import DailyCycleOrchestrator
+    DAILY_CYCLE_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Daily cycle orchestrator not available: {e}")
+    DAILY_CYCLE_AVAILABLE = False
+    class DailyCycleOrchestrator:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def get_status(self, *args, **kwargs):
+            return {"error": "Daily cycle orchestrator not available"}
+
+logger = logging.getLogger(__name__)
 
 class VisualProgressChartsDataBuilder:
     """
@@ -728,7 +748,6 @@ class VisualProgressChartsDataBuilder:
             "critical_tasks": ["BE-08", "QA-03"]
         }
 
-
 def main():
     """Main function to generate and output progress data JSON."""
     try:
@@ -748,7 +767,6 @@ def main():
         }
         print(json.dumps(error_data, indent=2, ensure_ascii=True))
         sys.exit(1)
-
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

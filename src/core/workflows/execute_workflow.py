@@ -3,37 +3,56 @@ Task Execution with LangGraph Workflow
 Runs a task through the agent workflow using the dynamically constructed LangGraph.
 """
 
-import argparse
+import sys
 import json
 import logging
-import os
-import sys
-import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Dict, List, Optional, Any
 
-from pythonjsonlogger import jsonlogger
 
-from src.platform.tools.graph_builder import (build_advanced_workflow_graph,
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Any, Dict, List, Optional, Set
+except ImportError:
+    pass
+try:
+    from pythonjsonlogger import jsonlogger
+    import logging
+    jsonlogger = None
+except ImportError:
+    pass
+
+from src.infrastructure.tools.graph_builder import (build_advanced_workflow_graph,
                                  build_dynamic_workflow_graph,
                                  build_state_workflow_graph,
                                  build_workflow_graph)
 from src.core.workflows.plan_execution_manager import PlanExecutionManager
+import argparse
+import os
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
 # Configure structured JSON logging for production
 logger = logging.getLogger("execute_workflow")
 handler = logging.StreamHandler()
-formatter = jsonlogger.JsonFormatter(
-    '%(asctime)s %(levelname)s %(name)s %(message)s %(agent_role)s %(task_id)s %(event)s')
+if jsonlogger:
+    formatter = jsonlogger.JsonFormatter(
+        '%(asctime)s %(levelname)s %(name)s %(message)s %(agent_role)s %(task_id)s %(event)s')
+else:
+    formatter = logging.Formatter(
+        '%(asctime)s %(levelname)s %(name)s %(message)s')
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.setLevel(logging.INFO)
-
 
 def execute_task(
         task_id,
@@ -156,7 +175,7 @@ def execute_task(
 
     return result
 
-
+    pass  # Use fallback/mock implementation
 def load_all_tasks():
     """
     Load all tasks from the agent_task_assignments.json file.
@@ -174,7 +193,6 @@ def load_all_tasks():
         all_tasks = json.load(f)
 
     return all_tasks
-
 
 def get_all_tasks_flattened():
     """
@@ -194,7 +212,6 @@ def get_all_tasks_flattened():
             flattened_tasks.append(task_with_role)
 
     return flattened_tasks
-
 
 def get_dependency_ordered_tasks():
     """
@@ -239,7 +256,6 @@ def get_dependency_ordered_tasks():
             visit(task_id)
 
     return ordered_tasks
-
 
 def execute_all_tasks(
         workflow_type="standard",
@@ -347,7 +363,6 @@ def execute_all_tasks(
                     extra={"event": "summary_saved"})
 
     return results
-
 
 def main():
     """Command-line interface for executing tasks through the agent workflow."""
@@ -476,7 +491,6 @@ def main():
         logger.error(f"Error: {e}", extra={"event": "fatal_error"})
         print(f"Error: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

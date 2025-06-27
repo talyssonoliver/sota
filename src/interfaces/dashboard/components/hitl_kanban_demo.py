@@ -5,13 +5,23 @@ HITL Kanban Board Demo - Simple Version
 Demonstrates the Kanban-style HITL board with mock data for testing.
 """
 
-import sys
-import json
-from datetime import datetime, timedelta
-from dataclasses import dataclass
-from enum import Enum
-from typing import List, Optional
 
+try:
+    from datetime import datetime, timedelta
+except ImportError:
+    pass
+try:
+    from dataclasses import dataclass
+except ImportError:
+    pass
+try:
+    from enum import Enum
+except ImportError:
+    pass
+try:
+    from typing import List, Optional
+except ImportError:
+    pass
 try:
     from rich.console import Console
     from rich.table import Table
@@ -21,6 +31,8 @@ try:
 except ImportError:
     RICH_AVAILABLE = False
 
+import json
+import sys
 
 class ReviewStatus(str, Enum):
     """Status categories for Kanban board."""
@@ -31,7 +43,6 @@ class ReviewStatus(str, Enum):
     REJECTED = "Rejected"
     ESCALATED = "Escalated"
     COMPLETED = "Completed"
-
 
 @dataclass
 class KanbanItem:
@@ -45,7 +56,6 @@ class KanbanItem:
     overdue: bool = False
     risk_level: str = "medium"
     checkpoint_type: str = "general"
-
 
 def get_mock_kanban_data() -> List[KanbanItem]:
     """Get mock data for demonstration."""
@@ -119,7 +129,6 @@ def get_mock_kanban_data() -> List[KanbanItem]:
             checkpoint_type="output_evaluation"
         )
     ]
-
 
 def display_rich_table(items: List[KanbanItem]):
     """Display the board using Rich formatting."""
@@ -200,7 +209,6 @@ Status Breakdown:"""
     
     console.print(Panel(summary_text, title="Board Summary", border_style="blue"))
 
-
 def display_simple_table(items: List[KanbanItem]):
     """Display the board using simple text formatting."""
     print("\n" + "=" * 100)
@@ -240,7 +248,6 @@ def display_simple_table(items: List[KanbanItem]):
     print(f"\nLast Updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 100)
 
-
 def export_json(items: List[KanbanItem], filename: str = "hitl_kanban_data.json"):
     """Export board data to JSON."""
     export_data = {
@@ -266,7 +273,6 @@ def export_json(items: List[KanbanItem], filename: str = "hitl_kanban_data.json"
         json.dump(export_data, f, indent=2)
     
     print(f"✅ Board data exported to {filename}")
-
 
 def main():
     """Main demo function."""
@@ -316,7 +322,6 @@ Examples:
         display_rich_table(items)
     else:
         display_simple_table(items)
-
 
 if __name__ == "__main__":
     main()

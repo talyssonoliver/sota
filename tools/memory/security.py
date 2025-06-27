@@ -1,9 +1,9 @@
 """
 Memory Engine Security System
+
 Handles encryption, PII detection, access control, and audit logging
 """
 
-import base64
 import hashlib
 import logging
 import os
@@ -13,21 +13,74 @@ import threading
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from .config import MemoryEngineConfig
-from .exceptions import SecurityError, AccessDeniedError, EncryptionError
+# Local imports with error handling
+try:
+    from .config import MemoryEngineConfig
+    MEMORY_CONFIG_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Memory config not available: {e}")
+    MEMORY_CONFIG_AVAILABLE = False
+    class MemoryEngineConfig:
+        def __init__(self, *args, **kwargs):
+            self.encryption_enabled = False
+            self.pii_detection_enabled = False
+            self.access_control_enabled = False
+
+try:
+    from .exceptions import SecurityError, AccessDeniedError, EncryptionError
+    SECURITY_EXCEPTIONS_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Security exceptions not available: {e}")
+    SECURITY_EXCEPTIONS_AVAILABLE = False
+    class SecurityError(Exception):
+        pass
+    
+    class AccessDeniedError(Exception):
+        pass
+    
+    class EncryptionError(Exception):
+        pass
 
 logger = logging.getLogger(__name__)
 
-# Cryptography imports
+# Cryptography imports with proper error handling
 try:
     from cryptography.fernet import Fernet
     from cryptography.hazmat.primitives import hashes
     from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
     CRYPTO_AVAILABLE = True
-except ImportError:
+except ImportError as e:
     CRYPTO_AVAILABLE = False
-    logger.warning("cryptography library not available, falling back to insecure encryption")
-
+    logger.warning(f"cryptography library not available, falling back to insecure encryption: {e}")
+    
+    # Create mock encryption classes
+    class Fernet:
+        def __init__(self, key):
+            pass
+        
+        def encrypt(self, data):
+            logger.warning("Insecure mock encryption - do not use in production")
+            return b"mock_encrypted_" + data
+        
+        def decrypt(self, data):
+            logger.warning("Insecure mock decryption - do not use in production")
+            return data.replace(b"mock_encrypted_", b"")
+        
+        @staticmethod
+        def generate_key():
+            return b"mock_key_not_secure"
+    
+    class MockHashes:
+        SHA256 = "SHA256"
+    
+    class PBKDF2HMAC:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def derive(self, password):
+            return b"mock_derived_key"
+    
+    hashes = MockHashes()
 
 class SecurityManager:
     """Manages encryption, access control, and security policies"""
@@ -62,7 +115,7 @@ class SecurityManager:
     
     def _load_or_generate_key(self) -> bytes:
         """Load encryption key from environment variable or generate a new one"""
-        # First try to load from environment variable
+        # Try to load from environment variable
         env_key = os.environ.get('MEMORY_ENGINE_KEY')
         if env_key:
             try:
@@ -72,28 +125,23 @@ class SecurityManager:
                 logger.error(f"Invalid MEMORY_ENGINE_KEY environment variable: {e}")
                 raise EncryptionError(f"Invalid encryption key in environment: {e}")
         
-        # Legacy support: check for old key file (will be removed)
-        key_file = ".memory_engine_key"
-        if os.path.exists(key_file):
-            logger.warning("Found legacy key file. Please migrate to MEMORY_ENGINE_KEY environment variable")
-            try:
-                with open(key_file, 'rb') as f:
-                    key_data = f.read()
-                    # Convert to base64 for environment variable format
-                    b64_key = base64.b64encode(key_data).decode('utf-8')
-                    logger.info(f"Legacy key file detected. Set MEMORY_ENGINE_KEY={b64_key} in your environment")
-                    return key_data
-            except Exception as e:
-                logger.warning(f"Could not load legacy key file: {e}")
+        # No key found - this is a security issue in production
+        if os.environ.get('ENVIRONMENT', '').lower() == 'production':
+            logger.error("MEMORY_ENGINE_KEY environment variable is required in production")
+            raise EncryptionError("Missing encryption key in production environment")
         
-        # Generate new key if none found
-        logger.info("No encryption key found. Generating new key")
+        # Development/testing: Generate new key but warn about it
+        logger.warning("No MEMORY_ENGINE_KEY found in environment. Generating temporary key for development.")
+        logger.warning("SECURITY WARNING: This key is NOT persistent and will change on restart!")
+        logger.warning("For production or persistent development, set MEMORY_ENGINE_KEY in your .env file.")
+        
         key = Fernet.generate_key()
         
-        # Log the generated key for user to set in environment
-        b64_key = base64.b64encode(key).decode('utf-8')
-        logger.warning(f"Generated new encryption key. Please set MEMORY_ENGINE_KEY={b64_key} in your environment")
-        logger.warning("WARNING: This key is shown only once. Store it securely!")
+        # Log the generated key for development convenience
+        key_str = key.decode('utf-8')
+        logger.info(f"Generated temporary key: MEMORY_ENGINE_KEY={key_str}")
+        logger.info("To make this key persistent, add it to your .env file")
+        logger.info("Or generate a new one with: python scripts/generate_memory_key.py")
         
         return key
     
@@ -261,7 +309,6 @@ class SecurityManager:
             logger.error(f"Secure delete failed for {file_path}: {e}")
             return False
 
-
 class AccessControlManager:
     """Manages user access control and permissions"""
     
@@ -317,7 +364,6 @@ class AccessControlManager:
                     return True
             
             return False
-
 
 class AuditLogger:
     """Handles audit logging for security events"""

@@ -6,18 +6,25 @@ Automated documentation generation and task completion reporting.
 Creates comprehensive reports for completed tasks with artifacts,
 summaries, and next steps.
 """
-
 import json
-import os
 import sys
-from dataclasses import asdict, dataclass
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
 
-import yaml
-
-
+try:
+    from dataclasses import asdict, dataclass
+except ImportError:
+    pass
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Any, Dict, List, Optional
+except ImportError:
+    pass
 @dataclass
 class TaskArtifact:
     """Represents a task artifact"""
@@ -26,7 +33,6 @@ class TaskArtifact:
     type: str  # code, documentation, config, test, etc.
     size_bytes: int
     description: str
-
 
 @dataclass
 class TaskSummary:
@@ -40,7 +46,6 @@ class TaskSummary:
     completion_date: str
     duration_hours: Optional[float]
 
-
 @dataclass
 class QASummary:
     """QA results summary"""
@@ -50,7 +55,6 @@ class QASummary:
     coverage_percentage: float
     critical_issues: int
     recommendations_count: int
-
 
 @dataclass
 class DocumentationReport:
@@ -64,7 +68,6 @@ class DocumentationReport:
     references: List[Dict[str, str]]
     generated_at: str
     version: str = "1.0.0"
-
 
 class DocumentationAgent:
     """Automated documentation generation system"""
@@ -464,7 +467,7 @@ class DocumentationAgent:
 
         try:
             # Import GitHub tool to fetch PR information
-            from src.platform.tools.github_tool import GitHubTool
+            from tools.github_tool import GitHubTool
             github_tool = GitHubTool()
 
             # Check if GitHub token is available
@@ -732,7 +735,6 @@ class DocumentationAgent:
 
         return total_lines
 
-
 def main():
     """CLI interface for documentation generation"""
     import argparse
@@ -762,7 +764,5 @@ def main():
         print(f"❌ Documentation generation failed: {e}")
         sys.exit(1)
 
-
 if __name__ == "__main__":
-    import sys
     main()

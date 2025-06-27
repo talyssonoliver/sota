@@ -1,0 +1,173 @@
+{
+  "summary": {
+    "total_files": 0,
+    "total_imports": 0,
+    "circular_dependencies": 0,
+    "duplicate_paths": 13
+  },
+  "leaf_nodes": [],
+  "root_nodes": [],
+  "circular_dependencies": [],
+  "migration_order": [
+    {
+      "old_path": "orchestration/",
+      "new_path": "src/core/workflows/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "tools/memory/",
+      "new_path": "src/infrastructure/memory/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "engines/",
+      "new_path": "src/infrastructure/memory/engines/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "tools/",
+      "new_path": "src/infrastructure/tools/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "agents/",
+      "new_path": "src/core/agents/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "handlers/",
+      "new_path": "src/infrastructure/tools/handlers/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "graph/",
+      "new_path": "src/infrastructure/tools/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "patches/",
+      "new_path": "src/infrastructure/security/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "security/",
+      "new_path": "src/infrastructure/security/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "analytics/",
+      "new_path": "src/integrations/analytics/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "cli/",
+      "new_path": "src/interfaces/cli/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "api/",
+      "new_path": "src/interfaces/api/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    },
+    {
+      "old_path": "dashboard/",
+      "new_path": "src/interfaces/dashboard/",
+      "strategy": "simple",
+      "risk": "low",
+      "complexity_score": 0,
+      "dependent_count": 0,
+      "dependency_count": 0,
+      "leaf_files": [],
+      "root_files": []
+    }
+  ],
+  "test_dependencies": {},
+  "critical_path_analysis": {},
+  "duplicate_mappings": {
+    "orchestration/": "src/core/workflows/",
+    "tools/memory/": "src/infrastructure/memory/",
+    "engines/": "src/infrastructure/memory/engines/",
+    "tools/": "src/infrastructure/tools/",
+    "agents/": "src/core/agents/",
+    "handlers/": "src/infrastructure/tools/handlers/",
+    "graph/": "src/infrastructure/tools/",
+    "patches/": "src/infrastructure/security/",
+    "security/": "src/infrastructure/security/",
+    "analytics/": "src/integrations/analytics/",
+    "cli/": "src/interfaces/cli/",
+    "api/": "src/interfaces/api/",
+    "dashboard/": "src/interfaces/dashboard/"
+  }
+}

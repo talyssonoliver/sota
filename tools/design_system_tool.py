@@ -2,18 +2,36 @@
 Design System Tool - Provides utilities for working with the Artesanato design system
 """
 
-import json
-import os
+import logging
+import sys
 from typing import Any, Dict, List, Optional
 
-from dotenv import load_dotenv
-from langchain_core.tools import BaseTool
-from pydantic import BaseModel, ValidationError
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError as e:
+    logging.warning(f"Failed to import dotenv: {e}")
 
-from tools.base_tool import ArtesanatoBaseTool
+try:
+    from langchain_core.tools import BaseTool
+except ImportError as e:
+    logging.warning(f"Failed to import langchain_core.tools: {e}")
+    # Create a mock BaseTool class
+    class BaseTool:
+        """Mock BaseTool for when langchain is not available."""
+        pass
 
-load_dotenv()
+try:
+    from pydantic import BaseModel, ValidationError
+except ImportError as e:
+    logging.error(f"Failed to import pydantic: {e}")
+    sys.exit(1)
 
+try:
+    from tools.base_tool import ArtesanatoBaseTool
+except ImportError as e:
+    logging.error(f"Failed to import ArtesanatoBaseTool: {e}")
+    sys.exit(1)
 
 class DesignSystemTool(ArtesanatoBaseTool):
     """Tool for working with the Artesanato design system."""

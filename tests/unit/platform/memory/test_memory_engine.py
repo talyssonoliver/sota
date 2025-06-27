@@ -1,167 +1,148 @@
+"""
+Memory Engine Test Module - Unit and Integration Tests for MemoryEngine
+Covers: Initialization, document addition, retrieval, secure deletion, PII scan, and performance benchmarking.
+"""
+import logging
 import os
-import shutil
 import sys
 import time
 import unittest
-from typing import List
 from unittest.mock import MagicMock, patch
+try:
+    from tests.helpers import cleanup_test_files
+except ImportError as e:
+    logging.warning(f'Failed to import test helpers: {e}')
 
-import numpy as np
+    def cleanup_test_files():
+        """Fallback cleanup function."""
+        pass
+try:
+    from tests.mock_environment import setup_mock_environment
+except ImportError as e:
+    logging.warning(f'Failed to import mock environment: {e}')
 
-from tests.helpers import cleanup_test_files
-from tests.mock_environment import setup_mock_environment
-from tests.mock_openai_embeddings import create_mock_openai_embeddings
-from tools.memory import (MemoryEngine, MemoryEngineConfig, 
-                          get_relevant_context, initialize_memory)
-from src.platform.memory.config.memory_config import ChunkingConfig
+    def setup_mock_environment():
+        """Fallback mock environment setup."""
+        return {}
+try:
+    from tests.mock_openai_embeddings import create_mock_openai_embeddings
+except ImportError as e:
+    logging.warning(f'Failed to import mock OpenAI embeddings: {e}')
 
-sys.path.insert(0, os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..")))
+    def create_mock_openai_embeddings():
+        """Fallback mock function."""
+        return MagicMock()
+from tools.memory.engine import MemoryEngine
+from src.infrastructure.memory.config.memory_config import MemoryEngineConfig
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 setup_mock_environment()
 
-"""
-Unit and Integration Tests for MemoryEngine
-Covers: Initialization, document addition, retrieval, secure deletion, PII scan, and performance benchmarking.
-"""
-
-
 class TestMemoryEngine(unittest.TestCase):
-    def setUp(self):
-        # Create mock OpenAI embeddings
-        self.mock_embeddings, self.mock_embeddings_instance = create_mock_openai_embeddings()
 
-        # Patch OpenAIEmbeddings to use our mock
-        self.patcher = patch(
-            'tools.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
+    def setUp(self):
+        self.mock_embeddings, self.mock_embeddings_instance = create_mock_openai_embeddings()
+        self.patcher = patch('tools.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
         self.patcher.start()
-        # Grant 'tester' read/write/delete/admin permissions for testing and
-        # set small chunk size
-        test_config = MemoryEngineConfig(
-            collection_name="test_collection",
-            knowledge_base_path="tests/test_data/context-store/"
-        )        # Update chunking config for testing
-        test_config.chunking.min_chunk_size = 1  # allow small test docs
+        test_config = MemoryEngineConfig()
+        test_config.chunking.min_chunk_size = 1
         test_config.chunking.chunk_size = 2048
         test_config.chunking.chunk_overlap = 0
         self.memory = MemoryEngine(config=test_config)
         from config.build_paths import TEST_OUTPUTS_DIR
-        self.test_file = str(TEST_OUTPUTS_DIR / "test_doc.md")        # Create a test document
+        self.test_file = str(TEST_OUTPUTS_DIR / 'test_doc.md')
         os.makedirs(os.path.dirname(self.test_file), exist_ok=True)
-        with open(self.test_file, "w", encoding="utf-8") as f:
-            f.write(
-                "This is a test document.\nContact: test@example.com\nSSN: 123-45-6789\n")
+        with open(self.test_file, 'w', encoding='utf-8') as f:
+            f.write('This is a test document.\nContact: test@example.com\nSSN: 123-45-6789\n')
 
     def tearDown(self):
-        # Stop patching
         self.patcher.stop()
-
-        # Clear memory engine to release file handles
         try:
             if hasattr(self, 'memory'):
-                self.memory.clear(user="test_cleanup")
+                self.memory.clear(user='test_cleanup')
         except Exception:
             pass
-
-        # Remove test file with retry for Windows file locking
         if hasattr(self, 'test_file') and os.path.exists(self.test_file):
             try:
                 os.remove(self.test_file)
             except PermissionError:
-                # File is still in use, try after brief delay
-                import time
                 time.sleep(0.1)
                 try:
                     os.remove(self.test_file)
                 except (PermissionError, FileNotFoundError):
-                    # Still locked or already deleted, skip for now - cleanup will handle it
                     pass
-
-        # Clean up all test files and directories
         cleanup_test_files()
 
     def test_add_and_retrieve_document(self):
-        self.memory.add_document(self.test_file, user="tester")
-        # Monkeypatch vector_store.as_retriever().get_relevant_documents to        # return the chunked content
+        self.memory.add_document(self.test_file, user='tester')
         original_as_retriever = None
         if self.memory.vector_store is not None:
-            original_as_retriever = getattr(self.memory.vector_store, "as_retriever", None)
+            original_as_retriever = getattr(self.memory.vector_store, 'as_retriever', None)
 
         class MockRetriever:
+
             def get_relevant_documents(inner_self, query):
+
                 class Doc:
+
                     def __init__(self, content):
                         self.page_content = content
-                return [Doc(chunk)
-                        for chunk in self.memory.tiered_storage.hot.keys()]
+                return [Doc(chunk) for chunk in self.memory.tiered_storage.hot.keys()]
 
         def patched_as_retriever():
             return MockRetriever()
-        
         if self.memory.vector_store is not None:
             self.memory.vector_store.as_retriever = patched_as_retriever
-            
-        context = self.memory.get_context("test document", k=1, user="tester")
-        
+        context = self.memory.get_context('test document', k=1, user='tester')
         if self.memory.vector_store is not None:
             if original_as_retriever:
                 self.memory.vector_store.as_retriever = original_as_retriever
             else:
                 del self.memory.vector_store.as_retriever
-                
-        self.assertIn("test document", context)
+        self.assertIn('test document', context)
 
     def test_secure_delete(self):
-        self.memory.add_document(self.test_file, user="tester")
-        # Use the chunk key directly for test (simulate chunking)
-        chunk_key = "This is a test document.\nContact: test@example.com\nSSN: 123-45-6789"
-        result = self.memory.secure_delete(chunk_key, user="tester")
+        self.memory.add_document(self.test_file, user='tester')
+        chunk_key = 'This is a test document.\nContact: test@example.com\nSSN: 123-45-6789'
+        result = self.memory.secure_delete(chunk_key, user='tester')
         self.assertTrue(result)
 
     def test_scan_for_pii(self):
-        self.memory.add_document(self.test_file, user="tester")
-        flagged = self.memory.scan_for_pii(user="tester")
-        # At least one flagged chunk should contain PII
-        self.assertTrue(
-            any("SSN" in k or "test@example.com" in k for k in flagged) or len(flagged) > 0)
+        self.memory.add_document(self.test_file, user='tester')
+        flagged = self.memory.scan_for_pii(user='tester')
+        self.assertTrue(any(('SSN' in k or 'test@example.com' in k for k in flagged)) or len(flagged) > 0)
 
     def test_index_health(self):
         health = self.memory.get_index_health()
-        self.assertIn("cache", health)
-        self.assertIn("storage", health)
+        self.assertIn('cache', health)
+        self.assertIn('storage', health)
 
     def test_profiler_stats(self):
         stats = self.memory.profiler.stats()
         self.assertIsInstance(stats, list)
 
     def test_clear(self):
-        self.memory.clear(user="tester")
-        # After clear, caches should be empty
+        self.memory.clear(user='tester')
         health = self.memory.get_index_health()
-        self.assertEqual(health["cache"]["l1"]["size"], 0)
-        self.assertEqual(health["cache"]["l2"]["size"], 0)
+        self.assertEqual(health['cache']['l1']['size'], 0)
+        self.assertEqual(health['cache']['l2']['size'], 0)
 
-
-# Performance Benchmarking
-
-
-def benchmark_memory_engine_add_retrieve(iterations: int = 10):
+def benchmark_memory_engine_add_retrieve(iterations: int=10):
     """Benchmark add and retrieve operations."""
     memory = MemoryEngine()
-    test_file = "context-store/benchmark_doc.md"
-    with open(test_file, "w", encoding="utf-8") as f:
-        f.write("Benchmarking document.\n" * 100)
+    test_file = 'context-store/benchmark_doc.md'
+    with open(test_file, 'w', encoding='utf-8') as f:
+        f.write('Benchmarking document.\n' * 100)
     start = time.time()
     for _ in range(iterations):
-        memory.add_document(test_file, user="bench")
-        _ = memory.get_context("Benchmarking document", k=1, user="bench")
+        memory.add_document(test_file, user='bench')
+        _ = memory.get_context('Benchmarking document', k=1, user='bench')
     elapsed = time.time() - start
-    print(
-        f"Benchmark: {iterations} add+retrieve cycles in {elapsed:.2f}s ({elapsed / iterations:.3f}s per op)")
+    print(f'Benchmark: {iterations} add+retrieve cycles in {elapsed:.2f}s ({elapsed / iterations:.3f}s per op)')
     os.remove(test_file)
-
 
 def teardown_module(module):
     """Cleanup test_outputs directory after tests finish."""
+    import shutil
     from config.build_paths import TEST_OUTPUTS_DIR
     test_output_dir = str(TEST_OUTPUTS_DIR)
     if os.path.exists(test_output_dir):
@@ -171,9 +152,7 @@ def teardown_module(module):
                 shutil.rmtree(child_path)
             else:
                 os.remove(child_path)
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
-    print("\nRunning performance benchmark...")
+    print('\nRunning performance benchmark...')
     benchmark_memory_engine_add_retrieve(5)

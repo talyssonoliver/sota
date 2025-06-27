@@ -3,12 +3,24 @@ Prompt Loader Utility for AI agents
 Handles loading and formatting prompt templates from markdown files
 """
 
-import os
-from pathlib import Path
-from string import Template
-from typing import Any, Dict, Optional
 
-
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from string import Template
+except ImportError:
+    pass
+try:
+    from typing import Any, Dict, Optional
+except ImportError:
+    pass
+try:
+    import os
+except ImportError:
+    pass
+    pass
 def load_prompt_template(template_path: str) -> str:
     """
     Load a prompt template from a markdown file.
@@ -31,7 +43,6 @@ def load_prompt_template(template_path: str) -> str:
     with open(full_path, "r", encoding="utf-8") as file:
         return file.read()
 
-
 def format_prompt_template(template: str, variables: Dict[str, Any]) -> str:
     """
     Format a prompt template by replacing variables with their values.
@@ -53,7 +64,6 @@ def format_prompt_template(template: str, variables: Dict[str, Any]) -> str:
     # Then handle $variable format using Template
     template_obj = Template(formatted)
     return template_obj.safe_substitute(variables)
-
 
 def load_and_format_prompt(
     template_path: str,
@@ -78,7 +88,6 @@ def load_and_format_prompt(
     # Format the template with variables
     return format_prompt_template(template, variables)
 
-
 def load_prompt(prompt_path: str) -> str:
     """Load prompt template with enhanced error handling"""
     try:
@@ -87,7 +96,6 @@ def load_prompt(prompt_path: str) -> str:
     except FileNotFoundError:
         # Fallback to generic prompt
         return load_generic_prompt(prompt_path)
-
 
 def load_generic_prompt(prompt_path: str) -> str:
     """Load generic prompt template as fallback"""
@@ -111,7 +119,6 @@ Use the provided context to complete the assigned task efficiently and accuratel
 ## Output Format
 Provide clear, implementable solutions with code examples where appropriate. Include explanations of your approach and any assumptions made.
 """
-
 
 def format_prompt_with_context(prompt_template: str,
                                context: str,
@@ -145,7 +152,6 @@ def format_prompt_with_context(prompt_template: str,
             formatted_prompt = formatted_prompt.replace(
                 placeholder, str(value))
     return formatted_prompt
-
 
 def extract_context_sources(context):
     """Extract context sources from formatted context. Accepts str or list."""

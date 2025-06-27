@@ -1,5 +1,5 @@
 {
-  "python.defaultInterpreterPath": "./.venv/bin/python",
+  "python.defaultInterpreterPath": "./.venv/Scripts/python.exe",
   "python.linting.enabled": true,
   "python.linting.ruffEnabled": true,
   "python.formatting.provider": "black",
@@ -7,6 +7,7 @@
   "python.testing.pytestEnabled": true,
   "python.testing.pytestArgs": ["tests"],
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true
+  "source.organizeImports": "explicit",
+  "source.fixAll": "explicit"
   }
 }

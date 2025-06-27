@@ -4,16 +4,21 @@ Demo script for Step 4.5 — Code Extraction functionality
 """
 
 import os
-import shutil
 import sys
 import tempfile
+import re
+import shutil
 from pathlib import Path
 
-from orchestration.extract_code import CodeExtractor
-
-# Add parent directory to path for imports
+# Add project root to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# Secure imports
+try:
+    from src.core.workflows.extract_code import CodeExtractor
+except ImportError as e:
+    print(f"CRITICAL: Cannot import CodeExtractor: {e}")
+    sys.exit(1)
 
 def demo_code_extraction():
     """Demonstrate the code extraction functionality."""
@@ -83,7 +88,6 @@ CREATE INDEX idx_orders_status ON orders(status);
 ```python
 # filename: utils/validation.py
 def validate_email(email: str) -> bool:
-    import re
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
     return bool(re.match(pattern, email))
 ```
@@ -143,7 +147,6 @@ def validate_email(email: str) -> bool:
         print(f"❌ Error during extraction: {e}")
         shutil.rmtree(test_dir)
         return False
-
 
 if __name__ == "__main__":
     success = demo_code_extraction()

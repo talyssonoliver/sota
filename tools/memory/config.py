@@ -1,12 +1,14 @@
 """
 Memory Engine Configuration Management
+
 Centralized configuration for all memory system components
 """
 
+import logging
 from dataclasses import dataclass, field
 from typing import Dict, Any, Optional
 
-
+logger = logging.getLogger(__name__)
 @dataclass
 class CacheConfig:
     """LRU and disk cache configuration"""
@@ -14,7 +16,6 @@ class CacheConfig:
     disk_maxsize: int = 5000
     disk_cache_dir: str = "runtime/cache/memory_disk_cache"
     ttl_hours: int = 24
-
 
 @dataclass
 class ChunkingConfig:
@@ -29,7 +30,6 @@ class ChunkingConfig:
     overlap_percent: float = 0.2  # For backward compatibility
     deduplicate: bool = True  # For backward compatibility
 
-
 @dataclass
 class RetrievalConfig:
     """Context retrieval configuration"""
@@ -39,14 +39,12 @@ class RetrievalConfig:
     token_budget: int = 8000
     max_tokens: int = 16000
 
-
 @dataclass
 class ResourceConfig:
     """Resource monitoring configuration"""
     memory_limit_mb: int = 2048
     disk_limit_gb: int = 10
     monitor_interval: int = 300
-
 
 @dataclass
 class StorageConfig:
@@ -55,7 +53,6 @@ class StorageConfig:
     warm_storage_limit_gb: int = 5
     cold_storage_enabled: bool = True
     migration_interval_hours: int = 24
-
 
 @dataclass
 class MemoryEngineConfig:

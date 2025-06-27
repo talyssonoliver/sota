@@ -3,9 +3,11 @@ Centralized build path configuration for AI Agent System.
 All runtime-generated files should use these paths instead of hardcoded directories.
 """
 
-from pathlib import Path
 
-# Base build directory
+try:
+    from pathlib import Path
+except ImportError:
+    pass
 BUILD_DIR = Path("build")
 
 # Dashboard paths

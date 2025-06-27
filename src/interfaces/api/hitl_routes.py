@@ -6,16 +6,29 @@ Flask routes for Human-in-the-Loop dashboard integration,
 checkpoint management, and approval workflows.
 """
 
-import json
 import logging
-import asyncio
-from datetime import datetime
-from typing import Dict, Any, List
+from types import SimpleNamespace
 
-from flask import Blueprint, request, jsonify, make_response
-from src.core.workflows.hitl_engine import HITLPolicyEngine
-from src.platform.utils.feedback_system import get_feedback_system  # Add feedback system import
-
+try:
+    from datetime import datetime
+except ImportError:
+    pass
+try:
+    from typing import Dict, Any, List
+except ImportError:
+    pass
+try:
+    from flask import Blueprint, request, jsonify, make_response
+except ImportError:
+    pass
+try:
+    from src.core.workflows.hitl_engine import HITLPolicyEngine
+except ImportError:
+    pass
+try:
+    from src.infrastructure.utils.feedback_system import get_feedback_system  # Add feedback system import
+except ImportError:
+    pass
 try:
     from src.interfaces.dashboard.hitl_widgets import HITLDashboardManager
     
@@ -47,7 +60,6 @@ except ImportError:    # Fallback if dashboard module is not available
         def process_widget_action(self, widget_id, action, action_data):
             return {"status": "dashboard_unavailable"}
 
-
 # Create HITL blueprint
 hitl_bp = Blueprint('hitl', __name__, url_prefix='/api/hitl')
 logger = logging.getLogger("hitl.api")
@@ -57,7 +69,6 @@ hitl_engine = HITLPolicyEngine()
 hitl_dashboard = HITLDashboardManager()
 feedback_system = get_feedback_system()  # Add feedback system instance
 
-
 @hitl_bp.after_request
 def after_request(response):
     """Add CORS headers and rate limiting headers to all responses."""
@@ -66,7 +77,6 @@ def after_request(response):
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
     response.headers['X-RateLimit-Remaining'] = '100'  # Mock rate limiting
     return response
-
 
 @hitl_bp.route('/health', methods=['GET'])
 def hitl_health():
@@ -100,7 +110,6 @@ def hitl_health():
             "timestamp": datetime.now().isoformat()
         }), 500
 
-
 @hitl_bp.route('/dashboard', methods=['GET'])
 def get_dashboard_data():
     """Get all HITL dashboard widget data."""
@@ -115,7 +124,6 @@ def get_dashboard_data():
             "error": str(e),
             "timestamp": datetime.now().isoformat()
         }), 500
-
 
 @hitl_bp.route('/dashboard/widget/<widget_id>', methods=['GET'])
 def get_widget_data(widget_id: str):
@@ -132,7 +140,6 @@ def get_widget_data(widget_id: str):
             "widget_id": widget_id,
             "timestamp": datetime.now().isoformat()
         }), 500
-
 
 @hitl_bp.route('/dashboard/widget/<widget_id>/action', methods=['POST'])
 def process_widget_action(widget_id: str):
@@ -162,7 +169,6 @@ def process_widget_action(widget_id: str):
             "error": str(e),
             "timestamp": datetime.now().isoformat()
         }), 500
-
 
 @hitl_bp.route('/checkpoints', methods=['GET'])
 def get_checkpoints():
@@ -225,7 +231,6 @@ def get_checkpoints():
             "error": str(e),
             "timestamp": datetime.now().isoformat()        }), 500
 
-
 @hitl_bp.route('/checkpoints', methods=['POST'])
 def create_checkpoint():
     """Create a new HITL checkpoint."""
@@ -282,7 +287,6 @@ def create_checkpoint():
             "error": str(e)
         }), 500
 
-
 @hitl_bp.route('/checkpoints/<checkpoint_id>', methods=['GET'])
 def get_checkpoint_details(checkpoint_id: str):
     """Get detailed information about a specific checkpoint."""
@@ -335,7 +339,6 @@ def get_checkpoint_details(checkpoint_id: str):
             "error": str(e),
             "timestamp": datetime.now().isoformat()
         }), 500
-
 
 @hitl_bp.route('/checkpoints/<checkpoint_id>/approve', methods=['POST'])
 def approve_checkpoint(checkpoint_id: str):
@@ -398,7 +401,6 @@ def approve_checkpoint(checkpoint_id: str):
             "error": str(e)
         }), 500
 
-
 @hitl_bp.route('/checkpoints/<checkpoint_id>/reject', methods=['POST'])
 def reject_checkpoint(checkpoint_id: str):
     """Reject a HITL checkpoint."""
@@ -414,7 +416,6 @@ def reject_checkpoint(checkpoint_id: str):
                 "error": "Missing required field: reviewer_id"
             }), 400
           # Use process_decision method that the tests expect  
-        from types import SimpleNamespace
         decision_obj = SimpleNamespace(
             checkpoint_id=checkpoint_id,
             decision='reject',
@@ -445,7 +446,6 @@ def reject_checkpoint(checkpoint_id: str):
             "status": "error",
             "error": str(e)
         }), 500
-
 
 @hitl_bp.route('/checkpoints/<checkpoint_id>/escalate', methods=['POST'])
 def escalate_checkpoint(checkpoint_id: str):
@@ -485,7 +485,6 @@ def escalate_checkpoint(checkpoint_id: str):
         return jsonify({
             "status": "error",
             "error": str(e)        }), 500
-
 
 @hitl_bp.route('/tasks/<task_id>/checkpoints', methods=['GET'])
 def get_task_checkpoints(task_id: str):
@@ -534,7 +533,6 @@ def get_task_checkpoints(task_id: str):
             "error": str(e)
         }), 404
 
-
 @hitl_bp.route('/audit-trail', methods=['GET'])
 def get_audit_trail():
     """Get audit trail for checkpoints."""
@@ -576,7 +574,6 @@ def get_audit_trail():
             "error": str(e)
         }), 200  # Return 200 with empty trail instead of error
 
-
 @hitl_bp.route('/dashboard/tasks/<task_id>', methods=['GET'])
 def get_task_dashboard_data(task_id: str):
     """Get dashboard data for a specific task."""
@@ -601,7 +598,6 @@ def get_task_dashboard_data(task_id: str):
             "task_id": task_id,
             "timestamp": datetime.now().isoformat()
         }), 500
-
 
 @hitl_bp.route('/checkpoints/batch/process', methods=['POST'])
 def batch_process_checkpoints():
@@ -670,7 +666,6 @@ def batch_process_checkpoints():
             "timestamp": datetime.now().isoformat()
         }), 500
 
-
 @hitl_bp.route('/metrics', methods=['GET'])
 def get_hitl_metrics():
     """Get HITL metrics and statistics."""
@@ -709,7 +704,6 @@ def get_hitl_metrics():
             "timestamp": datetime.now().isoformat()
         }), 500
 
-
 @hitl_bp.route('/workflows', methods=['GET'])
 def get_hitl_workflows():
     """Get workflows with HITL integration status."""
@@ -732,7 +726,6 @@ def get_hitl_workflows():
             "timestamp": datetime.now().isoformat()
         }), 500
 
-
 @hitl_bp.route('/policies', methods=['GET'])
 def get_hitl_policies():
     """Get current HITL policies configuration."""
@@ -752,7 +745,6 @@ def get_hitl_policies():
             "error": str(e),
             "timestamp": datetime.now().isoformat()
         }), 500
-
 
 @hitl_bp.route('/notifications', methods=['GET'])
 def get_hitl_notifications():
@@ -782,7 +774,6 @@ def get_hitl_notifications():
             "timestamp": datetime.now().isoformat()
         }), 500
 
-
 # Error handlers
 @hitl_bp.errorhandler(400)
 def bad_request(error):
@@ -794,7 +785,6 @@ def bad_request(error):
         "timestamp": datetime.now().isoformat()
     }), 400
 
-
 @hitl_bp.errorhandler(404)
 def not_found(error):
     """Handle not found errors."""
@@ -804,7 +794,6 @@ def not_found(error):
         "message": str(error),
         "timestamp": datetime.now().isoformat()
     }), 404
-
 
 @hitl_bp.errorhandler(500)
 def internal_error(error):
@@ -816,7 +805,6 @@ def internal_error(error):
         "message": "An unexpected error occurred",
         "timestamp": datetime.now().isoformat()
     }), 500
-
 
 @hitl_bp.route('/checkpoints/<checkpoint_id>/feedback', methods=['POST'])
 def capture_checkpoint_feedback(checkpoint_id: str):
@@ -909,7 +897,6 @@ def capture_checkpoint_feedback(checkpoint_id: str):
             "timestamp": datetime.now().isoformat()
         }), 500
 
-
 @hitl_bp.route('/checkpoints/<checkpoint_id>/feedback', methods=['GET'])
 def get_checkpoint_feedback(checkpoint_id: str):
     """Get feedback for a specific checkpoint."""
@@ -956,7 +943,6 @@ def get_checkpoint_feedback(checkpoint_id: str):
             "timestamp": datetime.now().isoformat()
         }), 500
 
-
 @hitl_bp.route('/feedback/analytics', methods=['GET'])
 def get_feedback_analytics():
     """Get feedback analytics across all HITL checkpoints."""
@@ -979,7 +965,6 @@ def get_feedback_analytics():
             "error": str(e),
             "timestamp": datetime.now().isoformat()
         }), 500
-
 
 @hitl_bp.route('/feedback/export', methods=['POST'])
 def export_feedback_data():
@@ -1035,7 +1020,6 @@ def export_feedback_data():
             "timestamp": datetime.now().isoformat()
         }), 500
 
-
 @hitl_bp.route('/checkpoints/<checkpoint_id>/audit', methods=['GET'])
 def get_checkpoint_audit_trail(checkpoint_id: str):
     """Get audit trail for a specific checkpoint."""
@@ -1077,14 +1061,12 @@ def get_checkpoint_audit_trail(checkpoint_id: str):
             "timestamp": datetime.now().isoformat()
         }), 500
 
-
 def create_hitl_blueprint(engine=None):
     """Factory function to create HITL blueprint."""
     global hitl_engine
     if engine:
         hitl_engine = engine
     return hitl_bp
-
 
 @hitl_bp.route('/checkpoints/batch/approve', methods=['POST'])
 def batch_approve_checkpoints():
@@ -1162,7 +1144,6 @@ def batch_approve_checkpoints():
             "error": str(e)
         }), 500
 
-
 @hitl_bp.route('/checkpoints/batch/reject', methods=['POST'])
 def batch_reject_checkpoints():
     """Reject multiple checkpoints in batch."""
@@ -1190,7 +1171,6 @@ def batch_reject_checkpoints():
         
         for checkpoint_id in checkpoint_ids:
             try:
-                from types import SimpleNamespace
                 decision_obj = SimpleNamespace(
                     checkpoint_id=checkpoint_id,
                     decision='reject',
@@ -1239,14 +1219,13 @@ def batch_reject_checkpoints():
             "error": str(e)
         }), 500
 
-
 #
 # Webhook and External API Integration Endpoints (Phase 7 Step 7.7)
 #
 
 from src.interfaces.api.webhook_manager import webhook_bp, webhook_manager
 from src.interfaces.api.external_integrations import external_api_manager
-
+import logging
 
 @hitl_bp.route('/webhooks/register', methods=['POST'])
 def register_webhook():
@@ -1277,7 +1256,6 @@ def register_webhook():
         logger.error(f"Error registering webhook: {e}")
         return jsonify({"error": str(e)}), 500
 
-
 @hitl_bp.route('/webhooks/<webhook_id>', methods=['DELETE'])
 def unregister_webhook(webhook_id):
     """Unregister a webhook endpoint"""
@@ -1296,7 +1274,6 @@ def unregister_webhook(webhook_id):
         logger.error(f"Error unregistering webhook: {e}")
         return jsonify({"error": str(e)}), 500
 
-
 @hitl_bp.route('/webhooks', methods=['GET'])
 def list_webhooks():
     """List all registered webhooks"""
@@ -1312,7 +1289,6 @@ def list_webhooks():
         logger.error(f"Error listing webhooks: {e}")
         return jsonify({"error": str(e)}), 500
 
-
 @hitl_bp.route('/external/integrations', methods=['GET'])
 def list_external_integrations():
     """List available external system integrations"""
@@ -1326,7 +1302,6 @@ def list_external_integrations():
     except Exception as e:
         logger.error(f"Error listing integrations: {e}")
         return jsonify({"error": str(e)}), 500
-
 
 @hitl_bp.route('/external/github/pr/<int:pr_number>/request-review', methods=['POST'])
 def request_github_pr_review(pr_number):
@@ -1353,7 +1328,6 @@ def request_github_pr_review(pr_number):
     except Exception as e:
         logger.error(f"Error requesting GitHub PR review: {e}")
         return jsonify({"error": str(e)}), 500
-
 
 @hitl_bp.route('/external/slack/send-approval', methods=['POST'])
 def send_slack_approval_request():
@@ -1385,7 +1359,6 @@ def send_slack_approval_request():
     except Exception as e:
         logger.error(f"Error sending Slack approval: {e}")
         return jsonify({"error": str(e)}), 500
-
 
 @hitl_bp.route('/external/jira/create-review-issue', methods=['POST'])
 def create_jira_review_issue():
@@ -1421,7 +1394,6 @@ def create_jira_review_issue():
         logger.error(f"Error creating JIRA issue: {e}")
         return jsonify({"error": str(e)}), 500
 
-
 @hitl_bp.route('/external/requests/<request_id>/status', methods=['GET'])
 def get_external_request_status(request_id):
     """Get status of external API request"""
@@ -1440,7 +1412,6 @@ def get_external_request_status(request_id):
     except Exception as e:
         logger.error(f"Error getting request status: {e}")
         return jsonify({"error": str(e)}), 500
-
 
 @hitl_bp.route('/external/requests', methods=['GET'])
 def list_external_requests():
@@ -1465,7 +1436,6 @@ def list_external_requests():
     except Exception as e:
         logger.error(f"Error listing external requests: {e}")
         return jsonify({"error": str(e)}), 500
-
 
 # Include webhook blueprint in the HITL API
 hitl_bp.register_blueprint(webhook_bp, url_prefix='/webhooks')

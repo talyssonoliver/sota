@@ -6,20 +6,36 @@ Comprehensive external system integration for review workflows including
 GitHub PR reviews, Slack approvals, JIRA integrations, and custom external systems.
 """
 
-import json
 import logging
 import requests
-import time
-from datetime import datetime, timedelta
-from typing import Dict, Any, List, Optional, Union
-from dataclasses import dataclass, asdict
-from enum import Enum
-from pathlib import Path
-
 import asyncio
-from abc import ABC, abstractmethod
+import json
+import time
 
-
+try:
+    from datetime import datetime, timedelta
+except ImportError:
+    pass
+try:
+    from typing import Dict, Any, List, Optional, Union
+except ImportError:
+    pass
+try:
+    from dataclasses import dataclass, asdict
+except ImportError:
+    pass
+try:
+    from enum import Enum
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from abc import ABC, abstractmethod
+except ImportError:
+    pass
 class ExternalSystemType(Enum):
     """Types of external systems."""
     GITHUB = "github"
@@ -29,7 +45,6 @@ class ExternalSystemType(Enum):
     TEAMS = "teams"
     CUSTOM = "custom"
 
-
 class IntegrationStatus(Enum):
     """Integration request status."""
     PENDING = "pending"
@@ -38,7 +53,6 @@ class IntegrationStatus(Enum):
     FAILED = "failed"
     TIMEOUT = "timeout"
     CANCELLED = "cancelled"
-
 
 @dataclass
 class ExternalSystemConfig:
@@ -53,7 +67,6 @@ class ExternalSystemConfig:
     rate_limit_per_hour: int = 1000
     retry_count: int = 3
     retry_delay: int = 30
-
 
 @dataclass
 class ExternalReviewRequest:
@@ -75,7 +88,6 @@ class ExternalReviewRequest:
     response_data: Optional[Dict[str, Any]] = None
     completed_at: Optional[datetime] = None
     error_message: Optional[str] = None
-
 
 class ExternalSystemIntegration(ABC):
     """Abstract base class for external system integrations."""
@@ -122,7 +134,6 @@ class ExternalSystemIntegration(ABC):
         if hour_key not in self.rate_limit_tracker:
             self.rate_limit_tracker[hour_key] = 0
         self.rate_limit_tracker[hour_key] += 1
-
 
 class GitHubIntegration(ExternalSystemIntegration):
     """GitHub Pull Request integration."""
@@ -260,7 +271,6 @@ class GitHubIntegration(ExternalSystemIntegration):
                 "status": "error",
                 "error": str(e)
             }
-
 
 class SlackIntegration(ExternalSystemIntegration):
     """Slack approval integration."""
@@ -420,7 +430,6 @@ class SlackIntegration(ExternalSystemIntegration):
                 "error": str(e)
             }
 
-
 class JIRAIntegration(ExternalSystemIntegration):
     """JIRA issue integration."""
     
@@ -541,7 +550,6 @@ class JIRAIntegration(ExternalSystemIntegration):
                 "error": str(e)
             }
 
-
 class ExternalAPIManager:
     """Manager for external API integrations."""
     
@@ -551,14 +559,16 @@ class ExternalAPIManager:
         self.logger = logging.getLogger("external.api.manager")
         self.systems: Dict[str, ExternalSystemIntegration] = {}
         self.requests: Dict[str, ExternalReviewRequest] = {}
-          # Load configuration
-        self._load_config()
+          # Load configuration        self._load_config()
         
         # Start background task for monitoring requests (only if event loop is running)
         try:
-            asyncio.create_task(self._monitor_requests())
+            # Only create the task if we're in an async context
+            loop = asyncio.get_running_loop()
+            if loop and not loop.is_closed():
+                asyncio.create_task(self._monitor_requests())
         except RuntimeError:
-            # No event loop running, task will be started when needed
+            # No event loop running, don't create the task
             pass
     
     def _load_config(self):
@@ -709,6 +719,8 @@ class ExternalAPIManager:
                 
                 # Send webhook notification
                 from src.interfaces.api.webhook_manager import send_review_rejected_webhook
+                import json
+                import logging
                 send_review_rejected_webhook(
                     request.task_id,
                     request.checkpoint_id,
@@ -821,7 +833,6 @@ class ExternalAPIManager:
             "success_rate": (completed / total * 100) if total > 0 else 0
         }
 
-
 # Global external API manager instance
 _external_api_manager = None
 
@@ -831,7 +842,6 @@ def get_external_api_manager() -> ExternalAPIManager:
     if _external_api_manager is None:
         _external_api_manager = ExternalAPIManager()
     return _external_api_manager
-
 
 # Convenience functions
 async def create_github_review(
@@ -862,7 +872,6 @@ async def create_github_review(
         }
     )
 
-
 async def create_slack_approval(
     task_id: str,
     checkpoint_id: str,
@@ -885,7 +894,6 @@ async def create_slack_approval(
         priority=priority,
         metadata={"channel": channel}
     )
-
 
 # Module-level exports for integration
 external_api_manager = get_external_api_manager()

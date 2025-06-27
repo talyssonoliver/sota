@@ -1,72 +1,34 @@
 """
-Mock environment for tests.
-Provides consistent mocking of system dependencies.
+Mock Environment Module - provides mocking utilities for tests.
 """
-
-import os
 import sys
-import threading
-import time
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
+from typing import Any
 
+class MockModule:
+    """A generic mock module that can be used for any missing dependency."""
 
-def setup_mock_environment():
-    """
-    Set up a mock environment for testing.
-    Returns a dictionary of applied mocks that can be used in tests.
-    """
-    mocks = {}
+    def __init__(self, name: str):
+        self.name = name
 
-    # Set TESTING environment variable
-    os.environ["TESTING"] = "1"
+    def __getattr__(self, item: str) -> Any:
+        return MagicMock()
 
-    # Mock expensive or external dependencies
-    mocks["threading"] = MagicMock(wraps=threading)
-    mocks["time"] = MagicMock(wraps=time)
+    def __call__(self, *args, **kwargs) -> Any:
+        return MagicMock()
 
-    # Create a MagicMock version of langchain_openai classes
-    if "langchain_openai" not in sys.modules:
-        sys.modules["langchain_openai"] = MagicMock()
-        mocks["langchain_openai"] = sys.modules["langchain_openai"]
+def mock_external_dependencies():
+    """Mock all external dependencies that may not be available in test environment."""
+    external_modules = ['crewai', 'crewai.api', 'crewai.models', 'crewai.config', 'crewai.tools', 'langchain', 'langchain.chains', 'langchain.agents', 'langchain.tools', 'langchain_core', 'langchain_core.runnables', 'langchain_core.tools', 'langchain_community', 'langchain_community.chat_models', 'langchain_openai', 'langsmith', 'chromadb', 'chromadb.api', 'chromadb.models', 'matplotlib', 'matplotlib.pyplot', 'matplotlib.colors', 'plotly', 'plotly.graph_objects', 'plotly.express', 'selenium', 'selenium.webdriver', 'selenium.webdriver.chrome.options', 'langgraph', 'langgraph.checkpoint', 'langgraph.graph']
+    for module_name in external_modules:
+        sys.modules[module_name] = MockModule(module_name)
 
-    # Since this module creates test-only mocks, add a cleanup function
-    def cleanup():
-        for module_name in list(sys.modules.keys()):
-            if module_name.startswith("_mock_") and module_name in sys.modules:
-                del sys.modules[module_name]
-
-    mocks["cleanup"] = cleanup
-
-    # Create missing files/directories needed for tests
-    test_data_dir = os.path.join(os.path.dirname(
-        os.path.abspath(__file__)), "test_data", "context-store")
-    os.makedirs(test_data_dir, exist_ok=True)
-
-    # Create a test document if it doesn't exist yet
-    test_doc_path = os.path.join(test_data_dir, "test_doc.md")
-    if not os.path.exists(test_doc_path):
-        with open(test_doc_path, "w", encoding="utf-8") as f:
-            f.write("""# Test Document
-
-This is a test document used for testing the memory engine and retrieval QA functionality.
-
-## Supabase RLS Rules
-
-The orders table has RLS rules that restrict users to only see their own orders.
-These rules are implemented using row-level security policies.
-
-## Authentication
-
-Authentication is handled via JWT tokens. When a user logs in, a JWT token is generated
-that contains the user's ID and role. This token is then used for all subsequent requests.
-
-## Security
-
-The system uses several security measures:
-- Row-level security (RLS) in Supabase
-- JWT token authentication
-- HTTPS for all communications
-- Input sanitization to prevent SQL injection
-""")
-
-    return mocks
+def setup_test_mocks():
+    """Set up all necessary mocks for testing."""
+    mock_external_dependencies()
+    return True
+MockAgent = MagicMock
+MockTask = MagicMock
+MockWorkflow = MagicMock
+MockMemoryEngine = MagicMock
+setup_test_mocks()

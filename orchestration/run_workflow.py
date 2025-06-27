@@ -11,13 +11,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
-from orchestration.execute_graph import run_task_graph
-from orchestration.execute_workflow import get_dependency_ordered_tasks
-from orchestration.generate_prompt import generate_prompt
-
-# Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from src.core.workflows.execute_graph import run_task_graph
+from src.core.workflows.execute_workflow import get_dependency_ordered_tasks
+from src.core.workflows.generate_prompt import generate_prompt
 
 def get_agent_for_task(task_id: str) -> str:
     """
@@ -43,7 +41,6 @@ def get_agent_for_task(task_id: str) -> str:
     else:
         # Default to coordinator for task delegation
         return "coordinator"
-
 
 def run_single_task(
         task_id: str,
@@ -86,7 +83,6 @@ def run_single_task(
     result = run_task_graph(task_id, dry_run, output_dir)
 
     return result
-
 
 def run_task_sequence(
         tasks: Optional[List[str]] = None,
@@ -165,7 +161,6 @@ def run_task_sequence(
 
     print(f"\nWorkflow execution complete. Summary saved to {summary_path}")
 
-
 def main() -> None:
     """Command-line interface for running agent workflows."""
     parser = argparse.ArgumentParser(
@@ -212,7 +207,6 @@ def main() -> None:
     except Exception as e:
         print(f"Error running workflow: {str(e)}", file=sys.stderr)
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

@@ -1,5 +1,6 @@
 """
 Memory Engine Chunking System
+
 Handles semantic and adaptive chunking of documents
 """
 
@@ -7,11 +8,29 @@ import logging
 import re
 from typing import List, Dict, Any, Optional
 
-from .config import ChunkingConfig
-from .exceptions import ValidationError
+# Local imports with error handling
+try:
+    from .config import ChunkingConfig
+    CHUNKING_CONFIG_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Chunking config not available: {e}")
+    CHUNKING_CONFIG_AVAILABLE = False
+    class ChunkingConfig:
+        def __init__(self, *args, **kwargs):
+            self.chunk_size = 1000
+            self.chunk_overlap = 200
+            self.separator = "\n\n"
+
+try:
+    from .exceptions import ValidationError
+    VALIDATION_EXCEPTIONS_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Validation exceptions not available: {e}")
+    VALIDATION_EXCEPTIONS_AVAILABLE = False
+    class ValidationError(Exception):
+        pass
 
 logger = logging.getLogger(__name__)
-
 
 class SemanticChunker:
     """
@@ -256,7 +275,6 @@ class SemanticChunker:
                 estimated_chunks = min(estimated_chunks * 2, paragraphs)
         
         return estimated_chunks
-
 
 class AdaptiveChunker:
     """

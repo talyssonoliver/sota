@@ -9,15 +9,14 @@ Usage:
     python examples/step_3_8_demo.py
 """
 
-import os
-import subprocess
 import sys
+import json
+import logging
+import subprocess
 from pathlib import Path
 
-# Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
 
 def test_context_review_summary():
     """Test context review summary functionality"""
@@ -54,7 +53,6 @@ def test_context_review_summary():
         print(f"❌ Error testing context review: {e}")
         return False
 
-
 def test_context_review_help():
     """Test help functionality"""
     print("\n" + "=" * 60)
@@ -86,7 +84,6 @@ def test_context_review_help():
     except Exception as e:
         print(f"❌ Error testing help: {e}")
         return False
-
 
 def test_context_review_export():
     """Test export functionality"""
@@ -129,7 +126,6 @@ def test_context_review_export():
         print(f"❌ Error testing export: {e}")
         return False
 
-
 def test_integration_with_step_3_7():
     """Test integration with Step 3.7 context tracking"""
     print("\n" + "=" * 60)
@@ -149,10 +145,9 @@ def test_integration_with_step_3_7():
             # Check if Step 3.7 context log was updated
             context_log_path = project_root / "outputs" / "BE-07" / "context_log.json"
             if context_log_path.exists():
-                import json
                 with open(context_log_path, 'r') as f:
                     log_data = json.load(f)
-                  # Check for Step 3.8 integration markers
+                # Check for Step 3.8 integration markers
                 additional_metadata = log_data.get('additional_metadata', {})
                 if (log_data.get('agent_role') in ['human_reviewer', 'reviewer'] or
                         additional_metadata.get('step_3_8_review')):
@@ -175,7 +170,6 @@ def test_integration_with_step_3_7():
     except Exception as e:
         print(f"❌ Error testing Step 3.7 integration: {e}")
         return False
-
 
 def validate_step_3_8_complete():
     """Validate that Step 3.8 implementation meets all requirements"""
@@ -216,7 +210,6 @@ def validate_step_3_8_complete():
         print("⚠️  Step 3.8 implementation needs attention.")
         return False
 
-
 def main():
     """Run all Step 3.8 tests and validation"""
     print("🔍 Starting Step 3.8 Implementation Test Suite")
@@ -239,7 +232,6 @@ def main():
         print("\n❌ Step 3.8 implementation requires fixes")
 
     return success
-
 
 if __name__ == "__main__":
     main()

@@ -14,28 +14,44 @@ Key improvements:
 - Health checks and monitoring
 """
 
-import argparse
-import json
-import logging
 import sys
-import threading
+import logging
+import argparse
 import time
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Dict, List, Optional
-from functools import wraps
+import threading
 
-from flask import Flask, jsonify, request, send_from_directory
-from flask_cors import CORS
-
-# Add parent directory to path for imports
-sys.path.append(str(Path(__file__).parent.parent))
-
-from dashboard.config import DashboardConfig
 
 try:
-    from src.platform.utils.completion_metrics import CompletionMetricsCalculator
-    from src.platform.utils.execution_monitor import ExecutionMonitor
+    from datetime import datetime, timedelta
+except ImportError:
+    pass
+try:
+    from pathlib import Path
+except ImportError:
+    pass
+try:
+    from typing import Any, Dict, List, Optional
+except ImportError:
+    pass
+try:
+    from functools import wraps
+except ImportError:
+    pass
+try:
+    from flask import Flask, jsonify, request, send_from_directory
+except ImportError:
+    pass
+try:
+    from flask_cors import CORS
+except ImportError:
+    pass
+sys.path.append(str(Path(__file__).parent.parent))
+
+from ...dashboard.config import DashboardConfig
+
+try:
+    from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
+    from src.infrastructure.utils.execution_monitor import ExecutionMonitor
     from src.core.workflows.generate_briefing import BriefingGenerator
 except ImportError as e:
     logging.warning(f"Import error: {e}. Some features may be unavailable.")
@@ -43,11 +59,9 @@ except ImportError as e:
     ExecutionMonitor = None
     BriefingGenerator = None
 
-
 class CircuitBreakerError(Exception):
     """Circuit breaker open error."""
     pass
-
 
 class CircuitBreaker:
     """Simple circuit breaker implementation for service resilience."""
@@ -82,7 +96,6 @@ class CircuitBreaker:
             
             raise e
 
-
 def with_error_handling(func):
     """Decorator for consistent error handling across endpoints."""
     @wraps(func)
@@ -103,7 +116,6 @@ def with_error_handling(func):
                 "timestamp": datetime.now().isoformat()
             }), 500
     return wrapper
-
 
 class MetricsService:
     """Service for handling metrics calculations with circuit breaker protection."""
@@ -363,7 +375,6 @@ class MetricsService:
             "current": 88.5,
             "direction": "improving"
         }
-    
 
 class HealthService:
     """Service for health checks and system monitoring."""
@@ -466,7 +477,6 @@ class HealthService:
         except Exception as e:
             return {"status": "error", "message": f"File system error: {e}"}
 
-
 class CacheService:
     """Service for caching metrics and other data."""
     
@@ -501,7 +511,6 @@ class CacheService:
         """Clear all cache."""
         self.cache.clear()
         self.cache_timestamps.clear()
-
 
 class UnifiedDashboardAPI:
     """
@@ -934,7 +943,9 @@ class UnifiedDashboardAPI:
                     "last_updated": datetime.now().isoformat()
                 },
                 "timestamp": datetime.now().isoformat()
-            })        @self.app.route('/api/timeline/data', methods=['GET'])
+            })
+        
+        @self.app.route('/api/timeline/data', methods=['GET'])
         @with_error_handling
         def get_timeline_data():
             """Get timeline data for interactive timeline."""
@@ -947,7 +958,7 @@ class UnifiedDashboardAPI:
         
         # Register HITL blueprint for Phase 7 integration
         try:
-            from api.hitl_routes import hitl_bp
+            from src.interfaces.api.hitl_routes import hitl_bp
             self.app.register_blueprint(hitl_bp)
             self.logger.info("HITL blueprint registered successfully")
         except ImportError as e:
@@ -1653,7 +1664,6 @@ def main():
     except Exception as e:
         print(f"❌ Dashboard API server error: {e}")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

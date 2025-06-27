@@ -7,18 +7,21 @@ and Step 3.6 (Pre-Compress Large Files with Chunking Strategy) are working
 correctly with real task data.
 """
 
-import os
 import sys
-from pathlib import Path
-
+import traceback
 import yaml
-
-from tools.memory_engine import MemoryEngine
+from pathlib import Path
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
+# Secure imports
+try:
+    from tools.memory.engine import MemoryEngine
+except ImportError as e:
+    print(f"CRITICAL: Cannot import MemoryEngine: {e}")
+    sys.exit(1)
 
 def load_task_metadata(task_id: str) -> dict:
     """Load task metadata from YAML file"""
@@ -28,7 +31,6 @@ def load_task_metadata(task_id: str) -> dict:
 
     with open(task_file, 'r') as f:
         return yaml.safe_load(f)
-
 
 def validate_step_3_5(task_data: dict):
     """Validate Step 3.5: Annotate Context Tags in Tasks"""
@@ -95,7 +97,6 @@ def validate_step_3_5(task_data: dict):
     except Exception as e:
         print(f"❌ Step 3.5 validation failed: {e}")
         return False
-
 
 def validate_step_3_6():
     """Validate Step 3.6: Pre-Compress Large Files with Chunking Strategy"""
@@ -209,10 +210,8 @@ This document continues with detailed implementation examples and best practices
 
     except Exception as e:
         print(f"❌ Step 3.6 validation failed: {e}")
-        import traceback
         traceback.print_exc()
         return False
-
 
 def validate_integrated_workflow(task_data: dict):
     """Validate the integrated Step 3.5 + 3.6 workflow"""
@@ -246,6 +245,8 @@ def validate_integrated_workflow(task_data: dict):
 
         # Simulate prompt generation (like orchestration modules would do)
         task_prompt = f"""# Task: {task_id}
+    except ImportError:
+        pass
 
 ## Title
 {task_data.get('title', 'Unknown Task')}
@@ -269,7 +270,6 @@ Please implement the required functionality following the provided context and p
     except Exception as e:
         print(f"❌ Integrated workflow validation failed: {e}")
         return False
-
 
 def main():
     """Main validation function"""
@@ -321,9 +321,7 @@ def main():
 
     except Exception as e:
         print(f"❌ Validation script failed: {e}")
-        import traceback
         traceback.print_exc()
-
 
 if __name__ == "__main__":
     main()

@@ -1,25 +1,84 @@
 #!/usr/bin/env python3
 """
 QA CLI Tool - Command Line Interface for Enhanced QA Agent
+
 Provides command-line access to QA agent capabilities including test generation,
 coverage analysis, integration gap detection, and quality validation.
 """
 
+import sys
+import logging
 import argparse
 import json
-import logging
-import sys
+import traceback
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
-from utils.coverage_analyzer import CoverageAnalyzer
-from utils.integration_analyzer import IntegrationAnalyzer
-from tests.components.test_generator import QATestFramework, QATestGenerator
-
-# Add the project root to the path
+# Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+# Local imports with error handling
+try:
+    from src.core.agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
+    QA_AGENT_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"QA agent not available: {e}")
+    QA_AGENT_AVAILABLE = False
+    class EnhancedQAAgent:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def run_analysis(self, *args, **kwargs):
+            return {"error": "QA agent not available"}
+    
+    def create_enhanced_qa_workflow(*args, **kwargs):
+        logging.error("QA workflow not available - using mock")
+        return {"error": "QA workflow not available"}
+
+try:
+    from src.infrastructure.utils.coverage_analyzer import CoverageAnalyzer
+    COVERAGE_ANALYZER_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Coverage analyzer not available: {e}")
+    COVERAGE_ANALYZER_AVAILABLE = False
+    class CoverageAnalyzer:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def analyze_coverage(self, *args, **kwargs):
+            return {"error": "Coverage analyzer not available"}
+
+try:
+    from src.infrastructure.utils.integration_analyzer import IntegrationAnalyzer
+    INTEGRATION_ANALYZER_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Integration analyzer not available: {e}")
+    INTEGRATION_ANALYZER_AVAILABLE = False
+    class IntegrationAnalyzer:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def analyze_integrations(self, *args, **kwargs):
+            return {"error": "Integration analyzer not available"}
+
+try:
+    from tests.components.test_generator import QATestFramework, QATestGenerator
+    TEST_GENERATOR_AVAILABLE = True
+except ImportError as e:
+    logging.warning(f"Test generator not available: {e}")
+    TEST_GENERATOR_AVAILABLE = False
+    class QATestFramework:
+        def __init__(self, *args, **kwargs):
+            pass
+    
+    class QATestGenerator:
+        def __init__(self, *args, **kwargs):
+            pass
+        
+        def generate_tests(self, *args, **kwargs):
+            return {"error": "Test generator not available"}
+
+logger = logging.getLogger(__name__)
 
 def setup_logging(verbose: bool = False):
     """Setup logging configuration."""
@@ -31,7 +90,6 @@ def setup_logging(verbose: bool = False):
             logging.StreamHandler(sys.stdout)
         ]
     )
-
 
 def generate_tests_command(args) -> int:
     """Generate tests for specified files or entire project."""
@@ -84,10 +142,8 @@ def generate_tests_command(args) -> int:
     except Exception as e:
         print(f"❌ Error generating tests: {e}")
         if args.verbose:
-            import traceback
             traceback.print_exc()
         return 1
-
 
 def analyze_coverage_command(args) -> int:
     """Analyze code coverage patterns."""
@@ -143,10 +199,8 @@ def analyze_coverage_command(args) -> int:
     except Exception as e:
         print(f"❌ Error analyzing coverage: {e}")
         if args.verbose:
-            import traceback
             traceback.print_exc()
         return 1
-
 
 def detect_integration_gaps_command(args) -> int:
     """Detect integration gaps in the project."""
@@ -187,10 +241,8 @@ def detect_integration_gaps_command(args) -> int:
     except Exception as e:
         print(f"❌ Error detecting integration gaps: {e}")
         if args.verbose:
-            import traceback
             traceback.print_exc()
         return 1
-
 
 def validate_quality_command(args) -> int:
     """Validate project quality against quality gates."""
@@ -243,10 +295,8 @@ def validate_quality_command(args) -> int:
     except Exception as e:
         print(f"❌ Error validating quality: {e}")
         if args.verbose:
-            import traceback
             traceback.print_exc()
         return 1
-
 
 def report_command(args) -> int:
     """Generate comprehensive QA report."""
@@ -297,10 +347,8 @@ def report_command(args) -> int:
     except Exception as e:
         print(f"❌ Error generating report: {e}")
         if args.verbose:
-            import traceback
             traceback.print_exc()
         return 1
-
 
 def main():
     """Main CLI entry point."""
@@ -379,10 +427,8 @@ Examples:
     except Exception as e:
         print(f"❌ Unexpected error: {e}")
         if args.verbose:
-            import traceback
             traceback.print_exc()
         return 1
-
 
 if __name__ == "__main__":
     sys.exit(main())

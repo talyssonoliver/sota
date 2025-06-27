@@ -7,16 +7,13 @@ Creates comprehensive reports for completed tasks with artifacts,
 summaries, and next steps.
 """
 
-import json
-import os
 import sys
+import json
+import logging
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-
-import yaml
-
 
 @dataclass
 class TaskArtifact:
@@ -26,7 +23,6 @@ class TaskArtifact:
     type: str  # code, documentation, config, test, etc.
     size_bytes: int
     description: str
-
 
 @dataclass
 class TaskSummary:
@@ -40,7 +36,6 @@ class TaskSummary:
     completion_date: str
     duration_hours: Optional[float]
 
-
 @dataclass
 class QASummary:
     """QA results summary"""
@@ -50,7 +45,6 @@ class QASummary:
     coverage_percentage: float
     critical_issues: int
     recommendations_count: int
-
 
 @dataclass
 class DocumentationReport:
@@ -64,7 +58,6 @@ class DocumentationReport:
     references: List[Dict[str, str]]
     generated_at: str
     version: str = "1.0.0"
-
 
 class DocumentationAgent:
     """Automated documentation generation system"""
@@ -732,7 +725,6 @@ class DocumentationAgent:
 
         return total_lines
 
-
 def main():
     """CLI interface for documentation generation"""
     import argparse
@@ -762,7 +754,5 @@ def main():
         print(f"❌ Documentation generation failed: {e}")
         sys.exit(1)
 
-
 if __name__ == "__main__":
-    import sys
     main()

@@ -13,14 +13,16 @@ Features:
 - Integration with Steps 3.7 and 3.8 context tracking data
 
 Usage:
-    from tools.context_visualizer import generate_context_coverage_report
 
-    # Generate both CSV and HTML reports
-    generate_context_coverage_report()
+    1. Import the main function:
+       >>> from tools.context_visualizer import generate_context_coverage_report
+    
+    2. Generate coverage report:
+       >>> generate_context_coverage_report()
 
-    # Generate specific format
-    generate_context_coverage_report(format="csv")
-    generate_context_coverage_report(format="html")
+    3. Generate specific format:
+       >>> generate_context_coverage_report(format="csv")
+       >>> generate_context_coverage_report(format="html")
 
 CLI Usage:
     python tools/context_visualizer.py --format csv
@@ -40,11 +42,11 @@ from typing import Any, Dict, List, Optional, Tuple
 # Import from Step 3.7 context tracking
 try:
     from .context_tracker import analyze_context_usage, get_all_context_logs
+    from tools.context_tracker import analyze_context_usage, get_all_context_logs
 except ImportError:
-    from context_tracker import analyze_context_usage, get_all_context_logs
+    pass
 
 logger = logging.getLogger(__name__)
-
 
 def analyze_context_coverage() -> Dict[str, Any]:
     """
@@ -150,7 +152,6 @@ def analyze_context_coverage() -> Dict[str, Any]:
             "coverage_matrix": []
         }
 
-
 def generate_csv_report(
         coverage_data: Dict[str, Any], output_path: str = "reports/context-coverage.csv") -> bool:
     """
@@ -231,7 +232,6 @@ def generate_csv_report(
         logger.error(f"Failed to generate CSV report: {e}")
         return False
 
-
 def generate_html_report(
         coverage_data: Dict[str, Any], output_path: str = "reports/context-coverage.html") -> bool:
     """
@@ -261,7 +261,6 @@ def generate_html_report(
     except Exception as e:
         logger.error(f"Failed to generate HTML report: {e}")
         return False
-
 
 def generate_html_content(coverage_data: Dict[str, Any]) -> str:
     """Generate HTML content for context coverage visualization."""
@@ -494,7 +493,6 @@ def generate_html_content(coverage_data: Dict[str, Any]) -> str:
 
     return html_template
 
-
 def generate_json_report(coverage_data: dict, output_path: str) -> bool:
     """Generate a JSON file with all stats and chart data for dynamic HTML reports."""
     try:
@@ -552,7 +550,6 @@ def generate_json_report(coverage_data: dict, output_path: str) -> bool:
     except Exception as e:
         logger.error(f"Failed to generate JSON report: {e}")
         return False
-
 
 def generate_context_coverage_report(
         format: str = "both",
@@ -622,7 +619,6 @@ def generate_context_coverage_report(
     except Exception as e:
         logger.error(f"Failed to generate context coverage report: {e}")
         return False
-
 
 # CLI interface for Step 3.9 context coverage visualization
 if __name__ == "__main__":
