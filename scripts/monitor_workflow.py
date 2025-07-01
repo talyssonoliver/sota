@@ -15,7 +15,7 @@ import argparse
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Optional
 
 try:
     from pythonjsonlogger import jsonlogger
@@ -320,7 +320,7 @@ class WorkflowMonitor:
         # Current execution
         if dashboard_data.get('live_execution'):
             live = dashboard_data['live_execution']
-            print(f"🔴 CURRENT EXECUTION:")
+            print("🔴 CURRENT EXECUTION:")
             print(f"   Task: {live.get('current_task', 'None')}")
             print(f"   Agent: {live.get('current_agent', 'None')}")
             print(f"   Status: {live.get('status', 'Unknown')}")
@@ -332,7 +332,7 @@ class WorkflowMonitor:
         # Summary statistics
         if dashboard_data.get('summary_stats'):
             stats = dashboard_data['summary_stats']
-            print(f"\n📈 EXECUTION STATISTICS:")
+            print("\n📈 EXECUTION STATISTICS:")
             print(f"   Total Executions: {stats.get('total_executions', 0)}")
             print(
                 f"   Success Rate: {
@@ -351,7 +351,7 @@ class WorkflowMonitor:
 
         # Agent status
         if dashboard_data.get('agent_status'):
-            print(f"\n🤖 AGENT STATUS:")
+            print("\n🤖 AGENT STATUS:")
             for task_id, agents in dashboard_data['agent_status'].items():
                 print(f"   Task {task_id}:")
                 for agent_name, agent_info in agents.items():
@@ -381,7 +381,7 @@ class WorkflowMonitor:
                     print(f"\n📋 TASK SUMMARY ({self.task_id}):")
                     print(report)
 
-                print(f"\n⏰ Monitoring... (refreshing every 5 seconds)")
+                print("\n⏰ Monitoring... (refreshing every 5 seconds)")
                 time.sleep(5)
 
         except KeyboardInterrupt:

@@ -473,7 +473,7 @@ class DocumentationAgent:
             # Check if GitHub token is available
             import os
             if not os.getenv("GITHUB_TOKEN"):
-                print(f"Info: GITHUB_TOKEN not set, using manual PR link fallback")
+                print("Info: GITHUB_TOKEN not set, using manual PR link fallback")
                 raise Exception("GitHub token not available")
 
             # List pull requests and filter for those related to this task
@@ -700,7 +700,7 @@ class DocumentationAgent:
                 file_path.stem}",
             "tests": f"Test file for {
                 file_path.stem}",
-            "output": f"Agent output containing implementation details",
+            "output": "Agent output containing implementation details",
             "reports": f"Report file containing {
                 file_path.stem} results"}
 
@@ -752,7 +752,7 @@ def main():
         doc_report = doc_agent.generate_documentation(args.task_id)
 
         if args.verbose:
-            print(f"\nDocumentation Report Summary:")
+            print("\nDocumentation Report Summary:")
             print(f"Task: {doc_report.task_summary.title}")
             print(f"Artifacts: {len(doc_report.artifacts)}")
             print(f"QA Status: {doc_report.qa_summary.overall_status}")

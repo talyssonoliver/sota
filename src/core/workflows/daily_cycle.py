@@ -19,10 +19,10 @@ try:
     import schedule
 except ImportError:
     pass
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from time import time
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Any
 
 try:
     from config.build_paths import LOGS_DIR
@@ -32,8 +32,7 @@ except ImportError:
 sys.path.append(str(Path(__file__).parent.parent))
 
 from src.infrastructure.utils.input_validation import (
-    validate_file_path, validate_string_content, validate_integer_range,
-    ValidationError
+    validate_file_path, ValidationError
 )
 
 from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator

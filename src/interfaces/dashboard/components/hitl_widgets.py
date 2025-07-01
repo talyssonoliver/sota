@@ -6,12 +6,9 @@ Dashboard widgets for Human-in-the-Loop checkpoint management,
 review interfaces, and approval workflows.
 """
 
-
-import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, List, Any, Optional
-from pathlib import Path
 from src.core.workflows.hitl_engine import HITLPolicyEngine, HITLCheckpoint
 
 class HITLDashboardWidget:
@@ -291,22 +288,11 @@ class HITLApprovalActionsWidget(HITLDashboardWidget):
                     comments=actual_notes,
                     reviewed_at=datetime.now()
                 )
-                  # For async compatibility, try both sync and async calls
+                  # Always try to call process_decision first for consistency with tests
                 try:
-                    if asyncio.iscoroutinefunction(self.hitl_engine.process_decision):
-                        # Try to get running loop, but don't create new one in tests
-                        try:
-                            loop = asyncio.get_running_loop()
-                            # Don't use run_until_complete as it can cause issues
-                            # Instead, convert to sync call
-                            result = self.hitl_engine.reject_checkpoint(checkpoint_id, actual_reviewer, reason)
-                        except RuntimeError:
-                            # No running loop, use sync fallback
-                            result = self.hitl_engine.reject_checkpoint(checkpoint_id, actual_reviewer, reason)
-                    else:
-                        result = self.hitl_engine.process_decision(decision)
+                    result = self.hitl_engine.process_decision(decision)
                 except:
-                    # Fallback to direct method call
+                    # Fallback to direct method call if process_decision doesn't work
                     result = self.hitl_engine.reject_checkpoint(checkpoint_id, actual_reviewer, reason)
                 
                 return {"success": result, "action": "reject", "checkpoint_id": checkpoint_id}
@@ -1012,6 +998,7 @@ def get_hitl_kanban_data(task_filter=None):
     Returns:
         Dict: Kanban board data with columns and tasks
     """
+    logger = logging.getLogger("hitl.kanban")
     try:
         # Mock kanban data structure
         kanban_data = {
@@ -1055,7 +1042,6 @@ def get_hitl_kanban_data(task_filter=None):
             "columns": {},
             "last_updated": datetime.now().isoformat()
         }
-
 def process_hitl_action(action_type, task_id, data=None):
     """Process HITL action (approve, reject, request changes).
     
@@ -1067,6 +1053,7 @@ def process_hitl_action(action_type, task_id, data=None):
     Returns:
         Dict: Result of the action processing
     """
+    logger = logging.getLogger("hitl.actions")
     try:
         data = data or {}
         

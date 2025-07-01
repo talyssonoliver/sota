@@ -53,7 +53,7 @@ class Coordinator:
         result = {
             "task_id": task.get("id", "unknown"),
             "status": "completed",
-            "output": f"Coordinator task completed successfully",
+            "output": "Coordinator task completed successfully",
             "agent": "Coordinator"
         }
         

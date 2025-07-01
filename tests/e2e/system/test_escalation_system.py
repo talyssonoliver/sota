@@ -17,7 +17,7 @@ import pytest
 import threading
 from datetime import datetime, timedelta
 from unittest.mock import Mock, patch
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from src.infrastructure.utils.escalation_system import EscalationLevel, EscalationRule, EscalationEvent, EscalationEngine, EscalationNotifier, EscalationTracker, EscalationPolicy, EscalationTimer
 _escalation_engines = []
 

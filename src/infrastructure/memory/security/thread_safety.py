@@ -14,6 +14,7 @@ Thread-Safe Memory Engine Access Patterns
 Provides thread-safe wrappers and access patterns for memory engine operations.
 """
 
+import threading
 
 try:
     from typing import Any, Dict, List, Optional, Union
@@ -24,7 +25,7 @@ try:
 except ImportError:
     pass
 try:
-    from ..engines.memory_engine import MemoryEngine
+    from tools.memory.engine import MemoryEngine
     pass  # Use fallback implementations
 except ImportError:
     pass

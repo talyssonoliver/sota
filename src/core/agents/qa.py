@@ -3,9 +3,9 @@ Quality Assurance Agent for testing and validating implementations.
 """
 
 import logging
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional
 from datetime import datetime
-from tools import memory
+from enum import Enum
 
 try:
     from crewai import Agent, Task
@@ -26,7 +26,15 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-class QATestFramework:
+class QATestFramework(Enum):
+    """Supported test frameworks for QA testing."""
+    PYTEST = 'pytest'
+    UNITTEST = 'unittest'
+    JEST = 'jest'
+    MOCHA = 'mocha'
+    CYPRESS = 'cypress'
+
+class QATestFrameworkImpl:
     """Framework for QA testing operations."""
     
     def __init__(self, config: Optional[Dict[str, Any]] = None):
@@ -124,7 +132,7 @@ class QAEngineer:
         """Initialize QA Engineer."""
         self.tools = tools or []
         self.memory_engine = memory_engine
-        self.test_framework = QATestFramework()
+        self.test_framework = QATestFrameworkImpl()
         
         # Agent configuration
         self.agent = Agent(
@@ -487,14 +495,42 @@ class EnhancedQAAgent:
             'duplication': 2.0  # Mock duplication percentage
         }
     
-    def calculate_overall_quality_score(self, metrics):
-        """Calculate overall quality score from metrics."""
+    def calculate_overall_quality_score(self, metrics_or_results):
+        """Calculate overall quality score from metrics or test results."""
         weights = {
             'test_coverage': 0.4,
             'code_quality': 0.3,
             'complexity': 0.2,
             'duplication': 0.1
         }
+        
+        # Handle both metrics dict and full results dict
+        if 'generated_tests' in metrics_or_results:
+            # Extract metrics from test results structure
+            generated_tests = metrics_or_results.get('generated_tests', [])
+            coverage_analysis = metrics_or_results.get('coverage_analysis', {})
+            
+            # Calculate test success rate as proxy for test coverage
+            total_tests = len(generated_tests)
+            successful_tests = len([t for t in generated_tests if t.get('status') == 'success'])
+            test_coverage = (successful_tests / max(total_tests, 1)) * 100
+            
+            # Use coverage analysis quality score if available
+            code_quality = coverage_analysis.get('overall_quality_score', 75)
+            
+            # Use reasonable defaults for complexity and duplication
+            complexity = 5.0  # Lower is better
+            duplication = 2.0  # Lower is better
+            
+            metrics = {
+                'test_coverage': test_coverage,
+                'code_quality': code_quality,
+                'complexity': complexity,
+                'duplication': duplication
+            }
+        else:
+            # Already in metrics format
+            metrics = metrics_or_results
         
         score = 0.0
         for metric, weight in weights.items():
@@ -717,6 +753,7 @@ def create_enhanced_qa_workflow(project_root, config_path=None):
 # Export classes and framework
 __all__ = [
     "QATestFramework",
+    "QATestFrameworkImpl", 
     "QAEngineer",
     "EnhancedQAAgent",
     "create_enhanced_qa_workflow"

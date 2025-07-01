@@ -719,8 +719,6 @@ class ExternalAPIManager:
                 
                 # Send webhook notification
                 from src.interfaces.api.webhook_manager import send_review_rejected_webhook
-                import json
-                import logging
                 send_review_rejected_webhook(
                     request.task_id,
                     request.checkpoint_id,

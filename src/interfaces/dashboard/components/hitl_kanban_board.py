@@ -14,24 +14,20 @@ Live-updated from pending_reviews/ and feedback_logs/
 
 
 import json
-import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
+from typing import List, Optional, Tuple
 from dataclasses import dataclass, asdict
 from enum import Enum
 import argparse
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
-from rich.layout import Layout
-from rich.text import Text
-from rich.progress import Progress, BarColumn, TextColumn
 from rich import box
 sys.path.append(str(Path(__file__).parent.parent))
 from src.core.workflows.hitl_engine import HITLEngine, CheckpointStatus, RiskLevel
-from src.core.workflows.hitl_task_metadata import HITLTaskMetadataManager, HITLStatus
+from src.core.workflows.hitl_task_metadata import HITLTaskMetadataManager
 from src.infrastructure.utils.feedback_system import FeedbackSystem
 
 class ReviewStatus(str, Enum):

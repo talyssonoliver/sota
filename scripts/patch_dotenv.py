@@ -6,8 +6,6 @@ to prevent Unicode decoding errors from breaking test execution.
 """
 
 import os
-from functools import wraps
-from pathlib import Path
 
 def patch_dotenv():
     """
@@ -16,7 +14,6 @@ def patch_dotenv():
     os.environ["PYTHON_DOTENV_SKIP_ERRORS"] = "1"
 
     # Patch pydantic environment settings
-    import logging
     try:
         import pydantic.v1.env_settings
         

@@ -1,16 +1,216 @@
 {
+  "version": "2.0.0",
   "tasks": [
     {
-      "label": "Run Tests",
+      "label": "Quick Tests (Parallel)",
+      "type": "shell", 
+      "command": "python",
+      "args": ["-m", "tests.enhanced_test_runner", "--quick", "--verbose"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "pytest",
+        "pattern": {
+          "regexp": "^(.*):(\\d+):\\s+(.*?)\\s+(FAILED|ERROR)",
+          "file": 1,
+          "line": 2,
+          "message": 3
+        }
+      }
+    },
+    {
+      "label": "Full Test Suite (Optimized)",
       "type": "shell",
-      "command": "python -m tests.run_tests --quick",
-      "group": "test"
+      "command": "python", 
+      "args": ["-m", "tests.enhanced_test_runner", "--verbose"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always", 
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "pytest",
+        "pattern": {
+          "regexp": "^(.*):(\\d+):\\s+(.*?)\\s+(FAILED|ERROR)",
+          "file": 1,
+          "line": 2,
+          "message": 3
+        }
+      }
+    },
+    {
+      "label": "Unit Tests (High Concurrency)",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "tests.enhanced_test_runner", "--suite", "unit", "--verbose"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Integration Tests (Parallel)",
+      "type": "shell", 
+      "command": "python",
+      "args": ["-m", "tests.enhanced_test_runner", "--suite", "integration", "--verbose"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Memory Tests (Controlled)",
+      "type": "shell",
+      "command": "python", 
+      "args": ["-m", "tests.enhanced_test_runner", "--suite", "memory", "--verbose"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Run Tests with Coverage",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "tests.enhanced_test_runner", "--quick", "--coverage", "--verbose"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Parallel Test Suites",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "tests.enhanced_test_runner", "--parallel", "unit", "integration", "--verbose"],
+      "group": "test", 
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Super Fast Tests (Sequential)",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "tests.enhanced_test_runner", "--super-fast", "--verbose"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "pytest",
+        "pattern": {
+          "regexp": "^(.*):(\\d+):\\s+(.*?)\\s+(FAILED|ERROR)",
+          "file": 1,
+          "line": 2,
+          "message": 3
+        }
+      }
+    },
+    {
+      "label": "Sample Tests (Quick Validation)",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "tests.enhanced_test_runner", "--sample", "10", "--verbose"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "pytest",
+        "pattern": {
+          "regexp": "^(.*):(\\d+):\\s+(.*?)\\s+(FAILED|ERROR)",
+          "file": 1,
+          "line": 2,
+          "message": 3
+        }
+      }
+    },
+    {
+      "label": "Fast Development Mode",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "tests.fast_test_runner"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": true
+      },
+      "problemMatcher": {
+        "owner": "pytest",
+        "pattern": {
+          "regexp": "^(.*):(\\d+):\\s+(.*?)\\s+(FAILED|ERROR)",
+          "file": 1,
+          "line": 2,
+          "message": 3
+        }
+      }
+    },
+    {
+      "label": "Legacy Test Runner",
+      "type": "shell",
+      "command": "python",
+      "args": ["-m", "tests.run_tests", "--quick"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
     },
     {
       "label": "Lint and Format",
       "type": "shell",
-      "command": "python tools/run_code_quality.py",
-      "group": "build"
+      "command": "python",
+      "args": ["tools/run_code_quality.py"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
     }
   ]
 }

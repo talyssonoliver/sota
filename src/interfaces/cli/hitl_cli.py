@@ -11,7 +11,7 @@ import argparse
 import json
 import logging
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 try:
@@ -27,8 +27,8 @@ from src.infrastructure.utils.input_validation import (
     validate_integer_range, ValidationError
 )
 
-from src.core.workflows.hitl_engine import HITLPolicyEngine, CheckpointStatus, RiskLevel
-from src.core.workflows.hitl_task_metadata import HITLTaskMetadataManager, HITLStatus
+from src.core.workflows.hitl_engine import HITLPolicyEngine
+from src.core.workflows.hitl_task_metadata import HITLTaskMetadataManager
 from src.interfaces.dashboard.components.hitl_widgets import HITLDashboardManager
 
 def setup_logging(verbose: bool = False):
@@ -77,6 +77,11 @@ class HITLCLIManager:
                     checkpoint_dict = cp if isinstance(cp, dict) else vars(cp)
                 
                 checkpoint_list.append(checkpoint_dict)
+            
+            # Filter by task_id if specified (in case engine didn't filter properly)
+            if task_id and checkpoint_list:
+                checkpoint_list = [cp for cp in checkpoint_list 
+                                 if cp.get('task_id') == task_id]
             
             # Filter by reviewer if specified
             if reviewer and checkpoint_list:
@@ -279,7 +284,7 @@ def cmd_list_checkpoints(args):
     
     if not checkpoints:
         print("No pending checkpoints found.")
-        return
+        return 0
     
     print(f"\n📋 Pending HITL Checkpoints ({len(checkpoints)})")
     print("=" * 80)
@@ -301,6 +306,8 @@ def cmd_list_checkpoints(args):
         print(f"   Deadline: {deadline}")
         print(f"   Reviewers: {', '.join(cp.get('reviewers', []))}")
         print("")  # Empty line separator
+    
+    return 0
 
 def cmd_show_checkpoint(args):
     """Show checkpoint details command."""
@@ -309,7 +316,7 @@ def cmd_show_checkpoint(args):
     details = cli_manager.show_checkpoint_details(args.checkpoint_id)
     if not details:
         print(f"❌ Checkpoint {args.checkpoint_id} not found.")
-        return
+        return 1
     
     print(f"\n🔍 Checkpoint Details: {args.checkpoint_id}")
     print("=" * 80)
@@ -325,16 +332,18 @@ def cmd_show_checkpoint(args):
         print(f"\nDescription:\n{details['description']}")
     
     if details['mitigation_suggestions']:
-        print(f"\nMitigation Suggestions:")
+        print("\nMitigation Suggestions:")
         for i, suggestion in enumerate(details['mitigation_suggestions'], 1):
             print(f"  {i}. {suggestion}")
     
     if details['content']:
-        print(f"\nContent:")
+        print("\nContent:")
         if isinstance(details['content'], dict):
             print(json.dumps(details['content'], indent=2))
         else:
             print(details['content'])
+    
+    return 0
 
 def cmd_approve_checkpoint(args):
     """Approve checkpoint command."""
@@ -344,7 +353,7 @@ def cmd_approve_checkpoint(args):
     details = cli_manager.show_checkpoint_details(args.checkpoint_id)
     if not details:
         print(f"❌ Checkpoint {args.checkpoint_id} not found.")
-        return
+        return 1
     
     # Show checkpoint summary
     print(f"\n🔍 Approving Checkpoint: {args.checkpoint_id}")
@@ -357,7 +366,7 @@ def cmd_approve_checkpoint(args):
         response = input("\nApprove this checkpoint? (y/N): ")
         if response.lower() not in ['y', 'yes']:
             print("❌ Approval cancelled.")
-            return
+            return 1
     
     # Process approval
     success = cli_manager.approve_checkpoint(
@@ -368,8 +377,10 @@ def cmd_approve_checkpoint(args):
     
     if success:
         print(f"✅ Checkpoint {args.checkpoint_id} approved by {args.reviewer}")
+        return 0
     else:
         print(f"❌ Failed to approve checkpoint {args.checkpoint_id}")
+        return 1
 
 def cmd_reject_checkpoint(args):
     """Reject checkpoint command."""
@@ -379,7 +390,7 @@ def cmd_reject_checkpoint(args):
     details = cli_manager.show_checkpoint_details(args.checkpoint_id)
     if not details:
         print(f"❌ Checkpoint {args.checkpoint_id} not found.")
-        return
+        return 1
     
     # Show checkpoint summary
     print(f"\n❌ Rejecting Checkpoint: {args.checkpoint_id}")
@@ -392,14 +403,14 @@ def cmd_reject_checkpoint(args):
         args.reason = input("Rejection reason (required): ")
         if not args.reason.strip():
             print("❌ Rejection reason is required.")
-            return
+            return 1
     
     # Get confirmation if not forced
     if not args.force:
         response = input(f"\nReject this checkpoint with reason '{args.reason}'? (y/N): ")
         if response.lower() not in ['y', 'yes']:
             print("❌ Rejection cancelled.")
-            return
+            return 1
     
     # Process rejection
     success = cli_manager.reject_checkpoint(
@@ -411,8 +422,10 @@ def cmd_reject_checkpoint(args):
     
     if success:
         print(f"❌ Checkpoint {args.checkpoint_id} rejected by {args.reviewer}")
+        return 0
     else:
         print(f"❌ Failed to reject checkpoint {args.checkpoint_id}")
+        return 1
 
 def cmd_escalate_checkpoint(args):
     """Escalate checkpoint command."""
@@ -422,7 +435,7 @@ def cmd_escalate_checkpoint(args):
     details = cli_manager.show_checkpoint_details(args.checkpoint_id)
     if not details:
         print(f"❌ Checkpoint {args.checkpoint_id} not found.")
-        return
+        return 1
     
     # Show checkpoint summary
     print(f"\n⚠️ Escalating Checkpoint: {args.checkpoint_id}")
@@ -436,14 +449,14 @@ def cmd_escalate_checkpoint(args):
         args.reason = input("Escalation reason (required): ")
         if not args.reason.strip():
             print("❌ Escalation reason is required.")
-            return
+            return 1
     
     # Get confirmation if not forced
     if not args.force:
         response = input(f"\nEscalate this checkpoint to level {args.level}? (y/N): ")
         if response.lower() not in ['y', 'yes']:
             print("❌ Escalation cancelled.")
-            return
+            return 1
     
     # Process escalation
     success = cli_manager.escalate_checkpoint(
@@ -455,8 +468,10 @@ def cmd_escalate_checkpoint(args):
     
     if success:
         print(f"⚠️ Checkpoint {args.checkpoint_id} escalated to level {args.level}")
+        return 0
     else:
         print(f"❌ Failed to escalate checkpoint {args.checkpoint_id}")
+        return 1
 
 def cmd_audit_trail(args):
     """Show audit trail command."""
@@ -469,7 +484,7 @@ def cmd_audit_trail(args):
     
     if not audit_entries:
         print("No audit trail entries found.")
-        return
+        return 0
     
     print(f"\n📜 HITL Audit Trail ({len(audit_entries)} entries)")
     print("=" * 80)
@@ -490,6 +505,8 @@ def cmd_audit_trail(args):
         if entry.get('details'):
             print(f"   Details: {entry['details']}")
         print()
+    
+    return 0
 
 def cmd_metrics(args):
     """Show HITL metrics command."""
@@ -498,7 +515,7 @@ def cmd_metrics(args):
     metrics = cli_manager.show_metrics(days=args.days)
     if not metrics:
         print("❌ Failed to retrieve metrics.")
-        return
+        return 1
     
     print(f"\n📊 HITL Metrics (Last {args.days} days)")
     print("=" * 50)
@@ -506,7 +523,7 @@ def cmd_metrics(args):
     # Overall statistics
     if 'checkpoints' in metrics:
         cp_metrics = metrics['checkpoints']
-        print(f"📋 Checkpoints:")
+        print("📋 Checkpoints:")
         print(f"   Total Created: {cp_metrics.get('total_created', 0)}")
         print(f"   Approved: {cp_metrics.get('approved', 0)}")
         print(f"   Rejected: {cp_metrics.get('rejected', 0)}")
@@ -517,7 +534,7 @@ def cmd_metrics(args):
     # Response times
     if 'response_times' in metrics:
         rt_metrics = metrics['response_times']
-        print(f"⏱️ Response Times:")
+        print("⏱️ Response Times:")
         print(f"   Average: {rt_metrics.get('average_hours', 0):.1f} hours")
         print(f"   Median: {rt_metrics.get('median_hours', 0):.1f} hours")
         print(f"   SLA Breaches: {rt_metrics.get('sla_breaches', 0)}")
@@ -526,11 +543,18 @@ def cmd_metrics(args):
     # Risk distribution
     if 'risk_distribution' in metrics:
         risk_dist = metrics['risk_distribution']
-        print(f"🎯 Risk Distribution:")
+        print("🎯 Risk Distribution:")
         for risk_level, count in risk_dist.items():
             emoji = {"low": "🟢", "medium": "🟡", "high": "🟠", "critical": "🔴"}.get(risk_level, "⚪")
             print(f"   {emoji} {risk_level.capitalize()}: {count}")
         print()
+    
+    return 0
+
+def handle_metrics_command(args):
+    """Handle metrics command - wrapper for compatibility."""
+    cmd_metrics(args)
+    return 0
 
 def cmd_export_checkpoint(args):
     """Export checkpoint data command."""
@@ -539,8 +563,15 @@ def cmd_export_checkpoint(args):
     success = cli_manager.export_checkpoint_data(args.checkpoint_id, args.output)
     if success:
         print(f"✅ Checkpoint data exported to {args.output}")
+        return 0
     else:
-        print(f"❌ Failed to export checkpoint data")
+        print("❌ Failed to export checkpoint data")
+        return 1
+
+def handle_list_command(args):
+    """Handle list command - wrapper for compatibility."""
+    cmd_list_checkpoints(args)
+    return 0
 
 def main():
     """Main CLI entry point."""

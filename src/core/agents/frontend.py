@@ -5,7 +5,6 @@ Frontend Engineer Agent for implementing user interfaces.
 import logging
 from typing import Dict, Any, List, Optional
 
-from tools import memory
 
 try:
     from crewai import Agent, Task
@@ -50,7 +49,7 @@ class FrontendEngineer:
         result = {
             "task_id": task.get("id", "unknown"),
             "status": "completed",
-            "output": f"FrontendEngineer task completed successfully",
+            "output": "FrontendEngineer task completed successfully",
             "agent": "FrontendEngineer"
         }
         

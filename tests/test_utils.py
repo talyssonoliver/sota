@@ -26,10 +26,6 @@ def cleanup_temp_file(file_path: str) -> None:
 
 def cleanup_temp_dir(dir_path: str) -> None:
     """Clean up a temporary directory."""
-try:
-    pass
-except ImportError:
-    pass
     import shutil
     try:
         shutil.rmtree(dir_path)

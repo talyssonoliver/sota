@@ -360,7 +360,7 @@ class TestRealTimeDashboard(unittest.TestCase):
 
     def setUp(self):
         """Set up test environment for dashboard testing."""
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent.parent.parent
         self.dashboard_file = project_root / 'dashboard' / 'unified_dashboard.html'
         self.javascript_file = project_root / 'dashboard' / 'enhanced_dashboard_working.js'
 

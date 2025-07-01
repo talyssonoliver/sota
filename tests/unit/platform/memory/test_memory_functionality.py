@@ -7,7 +7,7 @@ import os
 import sys
 import tempfile
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, Mock, patch
 try:
     from tests.mock_openai_embeddings import create_mock_openai_embeddings
 except ImportError as e:
@@ -50,7 +50,7 @@ class TestMemoryEngineCore(unittest.TestCase):
     def setUp(self):
         """Set up test environment"""
         self.mock_embeddings, self.mock_embeddings_instance = create_mock_openai_embeddings()
-        self.patcher = patch('tools.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
+        self.patcher = patch('src.infrastructure.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
         self.patcher.start()
         test_config = MemoryEngineConfig(security_options={'roles': {'test_user': ['read', 'write']}, 'sanitize_inputs': True}, chunking=ChunkingConfig(semantic=True, adaptive=True, min_chunk_size=1, max_chunk_size=512, overlap_percent=0.0, deduplicate=False))
         self.memory = MemoryEngine(config=test_config)
@@ -114,7 +114,7 @@ class TestMemoryEngineIntegration(unittest.TestCase):
     def setUp(self):
         """Set up test environment"""
         self.mock_embeddings, self.mock_embeddings_instance = create_mock_openai_embeddings()
-        self.patcher = patch('tools.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
+        self.patcher = patch('src.infrastructure.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
         self.patcher.start()
 
     def tearDown(self):
@@ -136,9 +136,12 @@ class TestMemoryEngineIntegration(unittest.TestCase):
     def test_retrieval_qa_integration(self):
         """Test that retrieval QA functionality is accessible"""
         try:
-            from tools.retrieval_qa import get_answer
-            with patch('tools.retrieval_qa.memory') as mock_memory:
+            # Updated import path after retrieval_qa migration to src/
+            from src.infrastructure.tools.retrieval_qa import get_answer
+            with patch('src.infrastructure.tools.retrieval_qa.get_memory_instance') as mock_get_memory:
+                mock_memory = Mock()
                 mock_memory.retrieval_qa.return_value = 'Test answer from knowledge base'
+                mock_get_memory.return_value = mock_memory
                 result = get_answer('Test question')
                 self.assertEqual(result, 'Test answer from knowledge base')
         except ImportError:
@@ -150,7 +153,7 @@ class TestMemoryEngineSecurity(unittest.TestCase):
     def setUp(self):
         """Set up test environment"""
         self.mock_embeddings, self.mock_embeddings_instance = create_mock_openai_embeddings()
-        self.patcher = patch('tools.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
+        self.patcher = patch('src.infrastructure.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
         self.patcher.start()
         test_config = MemoryEngineConfig(security_options={'roles': {'test_user': ['read', 'write', 'delete', 'admin']}, 'sanitize_inputs': True})
         self.memory = MemoryEngine(config=test_config)

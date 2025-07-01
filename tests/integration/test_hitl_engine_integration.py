@@ -31,6 +31,7 @@ except ImportError:
     pass
 sys.path.append(str(Path(__file__).parent.parent))
 from src.core.workflows.hitl_engine import HITLPolicyEngine, CheckpointStatus, RiskLevel
+from config.build_paths import HITL_STORAGE_DIR
 
 class TestHITLEngineIntegration(unittest.IsolatedAsyncioTestCase):
     """Integration tests for HITL engine with existing components."""
@@ -176,19 +177,24 @@ class TestHITLEngineIntegration(unittest.IsolatedAsyncioTestCase):
                 }
             }
         }
-          # Mock the engine to avoid file I/O
+        
+        # Mock the engine to avoid file I/O
         with patch('src.core.workflows.hitl_engine.HITLPolicyEngine.__init__', return_value=None):
             self.engine = HITLPolicyEngine.__new__(HITLPolicyEngine)
             self.engine.policies = self.test_config
             self.engine.checkpoints = {}
             self.engine.checkpoint_counter = 0
-            self.engine.storage_dir = Path(tempfile.mkdtemp())
             self.engine.audit_log = []
+            self.temp_dir = tempfile.mkdtemp()
+            self.engine.storage_dir = Path(self.temp_dir)
 
     def tearDown(self):
         """Clean up test environment."""
-        # No file cleanup needed since we're using mocks
-        pass
+        try:
+            import shutil
+            shutil.rmtree(self.temp_dir)
+        except ImportError:
+            pass
 
     async def test_task_status_integration(self):
         """Test integration with existing task status system."""

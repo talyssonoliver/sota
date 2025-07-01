@@ -51,7 +51,7 @@ class TechnicalLead:
         result = {
             "task_id": task.get("id", "unknown"),
             "status": "completed",
-            "output": f"TechnicalLead task completed successfully",
+            "output": "TechnicalLead task completed successfully",
             "agent": "TechnicalLead"
         }
         

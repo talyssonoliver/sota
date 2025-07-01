@@ -240,7 +240,7 @@ This tree structure was generated using a **Depth-First Search (DFS)** algorithm
 3. **Size Calculation**: File sizes shown in appropriate units (B/K/M)
 4. **Exclusion Filtering**: Skip temporary, cache, and build directories
 5. **Depth Limiting**: Maximum depth of 8 levels to prevent excessive output
-{f"6. **Line Counting**: Text files include line counts for code analysis" if include_lines else ""}
+{"6. **Line Counting**: Text files include line counts for code analysis" if include_lines else ""}
 
 ## Architecture Insights
 
@@ -295,7 +295,7 @@ def main():
     print("\n" + "="*60)
     print("TREE GENERATION COMPLETE")
     print("="*60)
-    print(f"Algorithm: Depth-First Search (DFS)")
+    print("Algorithm: Depth-First Search (DFS)")
     print(f"Output file: {output_file}")
     print(f"Line counts: {'Included' if args.include_lines else 'Not included'}")
     print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")

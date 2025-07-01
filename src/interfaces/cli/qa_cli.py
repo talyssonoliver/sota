@@ -6,11 +6,9 @@ Command-line interface for comprehensive QA validation, test generation, and qua
 """
 
 from pathlib import Path
-from typing import List, Optional
 from src.core.agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
 from src.core.workflows.qa_validation import QAValidationPipeline
 from src.infrastructure.utils.coverage_analyzer import CoverageAnalyzer
-from tests.components.test_generator import QATestFramework, QATestGenerator
 
 
 import argparse
@@ -52,7 +50,7 @@ def cmd_generate_tests(args):
             json.dump(results, f, indent=2)
 
         # Print summary
-        print(f"✅ Test generation completed!")
+        print("✅ Test generation completed!")
         print(
             f"📊 Generated {
                 results['quality_metrics']['total_generated_tests']} tests")
@@ -89,7 +87,7 @@ def cmd_analyze_coverage(args):
         with open(output_file, 'w') as f:
             json.dump(analysis, f, indent=2)
 
-        print(f"✅ Coverage analysis completed!")
+        print("✅ Coverage analysis completed!")
         print(
             f"📊 Quality Score: {
                 analysis.get(
@@ -118,7 +116,7 @@ def cmd_validate_quality(args):
             json.dump(results, f, indent=2)
 
         # Print summary
-        print(f"✅ QA validation completed!")
+        print("✅ QA validation completed!")
         print(f"📊 Overall Status: {results.get('overall_status', 'UNKNOWN')}")
         print(f"📄 Report saved to: {output_file}")
 
@@ -170,7 +168,7 @@ def cmd_run_workflow(args):
         with open(output_file, 'w') as f:
             json.dump(workflow_results, f, indent=2)
 
-        print(f"✅ QA workflow completed!")
+        print("✅ QA workflow completed!")
         print(
             f"📊 Overall Quality: {
                 test_results['quality_metrics']['quality_score']:.1f}%")

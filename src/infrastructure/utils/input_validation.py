@@ -70,7 +70,7 @@ class InputValidator:
         self.task_id_pattern = re.compile(r'^[A-Z]{2,4}-\d{1,4}[a-zA-Z]?$')
         self.checkpoint_id_pattern = re.compile(r'^hitl_[A-Z]{2,4}-\d{1,4}_[a-zA-Z0-9]{8,}$')
         self.agent_type_pattern = re.compile(r'^[a-zA-Z_][a-zA-Z0-9_]*$')
-        self.reviewer_name_pattern = re.compile(r'^[a-zA-Z][a-zA-Z0-9_.-]{0,49}$')
+        self.reviewer_name_pattern = re.compile(r'^[a-zA-Z][a-zA-Z0-9_. -]{0,49}$')
         
         # Compile dangerous patterns for performance
         self.dangerous_compiled_patterns = [re.compile(pattern, re.IGNORECASE) for pattern in DANGEROUS_PATTERNS]
@@ -200,7 +200,7 @@ class InputValidator:
         if not self.reviewer_name_pattern.match(reviewer):
             raise ValidationError(
                 f"Invalid reviewer name: {reviewer}. "
-                "Must start with letter and contain only letters, numbers, dots, dashes, underscores"
+                "Must start with letter and contain only letters, numbers, spaces, dots, dashes, underscores"
             )
         
         logger.debug(f"Validated reviewer name: {reviewer}")

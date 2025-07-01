@@ -63,7 +63,13 @@ class TestStep43CLIInterface:
         """Test main function with task argument."""
         test_args = ['execute_graph.py', '--task', 'BE-07']
         with patch('sys.argv', test_args), patch('src.core.workflows.execute_graph.run_task_graph') as mock_run:
-            mock_run.return_value = {'result': 'Success', 'status': 'COMPLETED'}
+            # Import TaskStatus to return the proper enum value
+            try:
+                from src.core.workflows.states import TaskStatus
+                mock_run.return_value = {'result': 'Success', 'status': TaskStatus.COMPLETED}
+            except ImportError:
+                # Fallback if TaskStatus is not available
+                mock_run.return_value = {'result': 'Success', 'status': 'COMPLETED'}
             with pytest.raises(SystemExit) as excinfo:
                 main()
             assert excinfo.value.code == 0

@@ -1,5 +1,4 @@
 """
-import json
 test_qa_validation.py - Optimized Test Structure
 
 Migrated from: tests/agents	est_qa_validation.py
@@ -10,6 +9,8 @@ Part of the optimized test pyramid reorganization:
 - Proper categorization (unit/integration/e2e)
 - Improved mocking and isolation
 """
+import json
+
 try:
     pass
 except ImportError:

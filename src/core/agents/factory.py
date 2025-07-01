@@ -94,8 +94,8 @@ def create_agent(agent_type: str, tools: Optional[List] = None, **kwargs) -> Age
         return Agent(**config)
     except Exception as e:
         logger.error(f"Failed to create {agent_type} agent: {e}")
-        # Return a mock agent for testing
-        return Agent()
+        print(f"DEBUG: Exception caught in create_agent: {e}")
+        raise
 
 def agent_builder(config: Dict[str, Any]) -> Agent:
     """Build an agent from configuration."""
@@ -137,15 +137,57 @@ def create_coordinator_agent(tools: Optional[List] = None, **kwargs) -> Agent:
     """Create a Project Coordinator agent."""
     return create_agent("coordinator", tools=tools, **kwargs)
 
-# Export all factory functions
+class AgentFactory:
+    """Factory class for creating agents with various configurations."""
+    
+    def __init__(self, memory_engine=None):
+        """Initialize the agent factory.
+        
+        Args:
+            memory_engine: Optional memory engine for context integration
+        """
+        self.memory_engine = memory_engine
+        logger.info("AgentFactory initialized")
+    
+    def create_agent(self, agent_type: str, context_domains: Optional[List[str]] = None, 
+                    tools: Optional[List] = None, **kwargs) -> Agent:
+        """Create an agent of the specified type.
+        
+        Args:
+            agent_type: Type of agent to create
+            context_domains: Optional list of context domains for memory integration
+            tools: Optional list of tools for the agent
+            **kwargs: Additional arguments for agent creation
+            
+        Returns:
+            Created agent instance
+        """
+        # If memory engine is available and context domains are specified,
+        # retrieve relevant context
+        if self.memory_engine and context_domains:
+            try:
+                relevant_context = self.memory_engine.get_relevant_context(
+                    query="agent context",
+                    domains=context_domains
+                )
+                if relevant_context:
+                    kwargs['context'] = relevant_context
+            except Exception as e:
+                logger.warning(f"Failed to retrieve context for agent: {e}")
+        
+        # Use the existing create_agent function
+        return create_agent(agent_type, tools=tools, **kwargs)
+
+# Export all factory functions and classes
 __all__ = [
+    "AgentFactory",
     "create_agent",
-    "agent_builder",
+    "agent_builder", 
     "create_technical_lead_agent",
     "create_backend_engineer_agent",
     "create_backend_agent",
-    "create_frontend_engineer_agent", 
-    "create_frontend_agent",
+    "create_frontend_engineer_agent",
+    "create_frontend_agent", 
     "create_qa_agent",
     "create_documentation_agent",
     "create_coordinator_agent"

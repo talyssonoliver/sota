@@ -9,7 +9,6 @@ Addresses scalability concerns for systems handling thousands of tasks:
 - Performance monitoring
 """
 
-import os
 import random
 import shutil
 import threading
@@ -17,7 +16,7 @@ import time
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Dict, List
 
 @dataclass
 class StorageMetrics:
@@ -130,7 +129,6 @@ class ScalableTaskStorage:
 
             # Check modification time
             if task_dir.stat().st_mtime < cutoff_date.timestamp():
-                from typing import Dict, List, Optional
                 try:
                     pass
                     shutil.rmtree(task_dir)
@@ -200,7 +198,7 @@ def benchmark_storage_performance(
 
     metrics = storage.get_storage_metrics()
 
-    print(f"📊 Performance Results:")
+    print("📊 Performance Results:")
     print(
         f"   Directory creation: {
             creation_time:.2f}s ({
@@ -222,7 +220,7 @@ if __name__ == "__main__":
 
     # Show metrics
     metrics = storage.get_storage_metrics()
-    print(f"\n📈 Storage Metrics:")
+    print("\n📈 Storage Metrics:")
     print(f"   Total tasks: {metrics.total_tasks}")
     print(f"   Directory depth: {metrics.directory_depth}")
     print(f"   Files per top-level dir: {metrics.files_per_directory}")

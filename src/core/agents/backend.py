@@ -46,7 +46,7 @@ class BackendEngineer:
         result = {
             "task_id": task.get("id", "unknown"),
             "status": "completed",
-            "output": f"BackendEngineer task completed successfully",
+            "output": "BackendEngineer task completed successfully",
             "agent": "BackendEngineer"
         }
         

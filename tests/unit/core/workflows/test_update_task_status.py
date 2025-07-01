@@ -2,6 +2,9 @@
 Test for Step 4.7 — Update Task Status
 Validates that the update_task_state function sets the correct state in the YAML file.
 """
+import os
+import yaml
+
 try:
     pass
 except ImportError:
@@ -23,7 +26,6 @@ def test_update_task_status_sets_done(tmp_path):
         yaml.safe_dump(initial_data, f)
     orig_cwd = os.getcwd()
     os.chdir(tmp_path)
-    import os
     try:
         update_task_state(task_id, 'DONE')
         updated = load_task_metadata(task_id)

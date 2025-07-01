@@ -19,13 +19,20 @@ try:
 except ImportError:
     pass
 
-# Mock StateGraph and Graph for typing
+# Import StateGraph and Graph for typing
 try:
     from langgraph.graph import Graph, StateGraph
-    Graph = None
-    StateGraph = None
+    LANGGRAPH_AVAILABLE = True
 except ImportError:
-    pass
+    LANGGRAPH_AVAILABLE = False
+    # Create fallback classes
+    from unittest.mock import MagicMock
+    
+    class Graph(MagicMock):
+        pass
+    
+    class StateGraph(MagicMock):
+        pass
 
 # Configure logging
 logger = logging.getLogger("workflow_notifications")

@@ -117,9 +117,12 @@ class TestHITLApprovalActionsWidget(unittest.TestCase):
         self.mock_engine.process_decision.return_value = True
         result = self.widget.process_action(checkpoint_id='cp-2', action='reject', reviewer_id='jane.smith', comments='Needs improvement')
         self.assertTrue(result['success'])
-        call_args = self.mock_engine.process_decision.call_args[0][0]
-        self.assertEqual(call_args.decision, 'reject')
-        self.assertEqual(call_args.comments, 'Needs improvement')
+        # Ensure the method was actually called before accessing call_args
+        self.mock_engine.process_decision.assert_called_once()
+        if self.mock_engine.process_decision.call_args:
+            call_args = self.mock_engine.process_decision.call_args[0][0]
+            self.assertEqual(call_args.decision, 'reject')
+            self.assertEqual(call_args.comments, 'Needs improvement')
 
     def test_escalate_checkpoint(self):
         """Test checkpoint escalation."""
@@ -279,8 +282,8 @@ class TestHITLDashboardManager(unittest.TestCase):
         """Test real-time update capabilities."""
         data = self.manager.get_dashboard_data()
         self.assertIn('last_updated', data)
-        last_updated = datetime.datetime.fromisoformat(data['last_updated'])
-        now = datetime.datetime.now()
+        last_updated = datetime.fromisoformat(data['last_updated'])
+        now = datetime.now()
         self.assertLess((now - last_updated).total_seconds(), 5)
 if __name__ == '__main__':
     unittest.main(verbosity=2)

@@ -38,7 +38,7 @@ async def demo_full_automation():
     print("-" * 40)
     result = await orchestrator.run_midday_check()
     if result.get('status') == 'success':
-        print(f"✅ System health check completed")
+        print("✅ System health check completed")
         print(f"🎯 Tasks analyzed: {result.get('tasks_analyzed', 0)}")
         print(f"⚠️  Issues found: {result.get('issues_count', 0)}")
     
@@ -56,12 +56,10 @@ async def demo_full_automation():
     print("-" * 40)
     try:
         import requests
-        import logging
-        import sys
         response = requests.get('http://localhost:5000/health', timeout=5)
         if response.status_code == 200:
             print("✅ Dashboard API is running")
-            print(f"🔗 Access at: http://localhost:5000")
+            print("🔗 Access at: http://localhost:5000")
             
             # Test metrics endpoint
             metrics_response = requests.get('http://localhost:5000/api/metrics', timeout=5)

@@ -12,7 +12,6 @@ Part of the optimized test pyramid reorganization:
 - Improved mocking and isolation
 """
 '\nTest for Step 4.7 — Update Task Status\nValidates that the update_task_state function sets the correct state in the YAML file.\n'
-import os as _os
 import yaml
 from src.infrastructure.utils.task_loader import load_task_metadata, update_task_state
 try:

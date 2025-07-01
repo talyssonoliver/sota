@@ -3,14 +3,13 @@ Agent Registry for the AI Agent System
 Maps agent names to their constructor functions for dynamic instantiation.
 """
 
-import json
 import logging
 try:
     import threading
 except ImportError:
     pass
 import os
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Optional
 
 try:
     import yaml
@@ -33,7 +32,7 @@ try:
                     create_qa_agent, create_technical_lead_agent)
 except ImportError:
     pass
-from tools.tool_loader import get_tools_for_agent, load_all_tools
+from src.infrastructure.tools.tool_loader import get_tools_for_agent
 
 logger = logging.getLogger(__name__)
 

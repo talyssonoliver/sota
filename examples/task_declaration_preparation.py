@@ -22,7 +22,7 @@ from datetime import datetime
 from pathlib import Path
 from src.core.workflows.task_declaration import (TaskDeclarationManager,
 TaskPreparationStatus)
-from tools.memory.engine import MemoryEngine
+from src.infrastructure.memory import MemoryEngine
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
@@ -138,13 +138,13 @@ def demo_context_analysis(declaration):
     context = declaration.context_content
     lines = context.split('\n')
 
-    print(f"📊 Context Statistics:")
+    print("📊 Context Statistics:")
     print(f"   Total lines: {len(lines)}")
     print(f"   Total characters: {len(context)}")
     print(f"   Estimated tokens: ~{len(context) // 4}")
 
     # Show context preview
-    print(f"\n📖 Context Preview (first 500 characters):")
+    print("\n📖 Context Preview (first 500 characters):")
     print("─" * 50)
     print(context[:500] + ("..." if len(context) > 500 else ""))
     print("─" * 50)
@@ -160,13 +160,13 @@ def demo_prompt_analysis(declaration):
     prompt = declaration.generated_prompt
     lines = prompt.split('\n')
 
-    print(f"📊 Prompt Statistics:")
+    print("📊 Prompt Statistics:")
     print(f"   Total lines: {len(lines)}")
     print(f"   Total characters: {len(prompt)}")
     print(f"   Estimated tokens: ~{len(prompt) // 4}")
 
     # Show prompt preview
-    print(f"\n📝 Prompt Preview (first 800 characters):")
+    print("\n📝 Prompt Preview (first 800 characters):")
     print("─" * 50)
     print(prompt[:800] + ("..." if len(prompt) > 800 else ""))
     print("─" * 50)
@@ -197,7 +197,7 @@ def demo_execution_readiness(declaration):
         print("   ✓ Agent assignment completed")
 
         if declaration.execution_plan:
-            print(f"\n🎮 Ready to execute with:")
+            print("\n🎮 Ready to execute with:")
             print(
                 f"   Entry point: {declaration.execution_plan['entry_point']}")
             print(
@@ -234,7 +234,7 @@ def demo_batch_processing(manager: TaskDeclarationManager):
 
     # Show preparation summary
     summary = manager.get_preparation_summary()
-    print(f"\n📊 Preparation Summary:")
+    print("\n📊 Preparation Summary:")
     print(f"   Total tasks: {summary['total_tasks']}")
     print(f"   Ready for execution: {summary['ready_for_execution']}")
     print(f"   Failed preparation: {summary['failed_preparation']}")

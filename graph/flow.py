@@ -31,7 +31,6 @@ def status_router(state: Dict[str, Any]) -> str:
     Returns:
         The next node to route to
     """
-    from src.core.workflows.states import TaskStatus
 
     status = state.get("status", TaskStatus.CREATED)
 

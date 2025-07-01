@@ -3,7 +3,7 @@ Human agents for product and UX decisions.
 """
 
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
 

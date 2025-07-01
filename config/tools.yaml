@@ -1,6 +1,22 @@
 # Tools Configuration YAML
 # Defines all available tools and their configurations
 
+gemini_cli:
+  type: AI/CLI
+  description: Google Gemini CLI integration for AI-powered development workflows
+  file: src/interfaces/cli/gemini_cli.py
+  class: GeminiCLI
+  env:
+    - GEMINI_API_KEY
+  config: config/gemini_config.json
+  features:
+    - interactive_chat
+    - file_processing
+    - codebase_analysis
+    - code_generation
+    - memory_integration
+    - langgraph_support
+
 supabase:
   type: SDK
   description: Allows querying and interacting with Supabase database and auth

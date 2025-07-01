@@ -8,28 +8,26 @@ task run and stores the information under /outputs/[TASK-ID]/context_log.json.
 
 Usage:
 
+    1. Import the functions you need:
+       >>> from tools.context_tracker import track_context_usage, get_context_log
+    
+    2. Track context usage for a task:
+       >>> track_context_usage(
+       ...     task_id="BE-07",
+       ...     context_topics=["db-schema", "service-pattern"],
+       ...     documents_used=documents,
+       ...     agent_role="backend"
+       ... )
 
-try:
-        from tools.context_tracker import track_context_usage, get_context_log
-    track_context_usage(
-        task_id="BE-07",
-        context_topics=["db-schema", "service-pattern"],
-        documents_used=documents,
-        agent_role="backend"
-    )
-
-    # Retrieve context log for analysis
-    log = get_context_log("BE-07")
-except ImportError:
-    pass
+    3. Retrieve context log for analysis:
+       >>> log = get_context_log("BE-07")
 """
 
 import json
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -60,35 +58,45 @@ def track_context_usage(
         output_dir = Path("outputs") / task_id
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        # Prepare the context log data
+        # Prepare context usage data according to Step 3.7 specification
         context_log = {
-            "task_id": task_id,
+            "task": task_id,
+            "context_used": context_topics or [],
             "timestamp": datetime.now().isoformat(),
             "agent_role": agent_role,
-            "context_used": context_topics or [],
             "context_length": context_length,
-            "document_sources": [],
-            "metadata": additional_metadata or {}
-        }
+            "documents_retrieved": len(documents_used) if documents_used else 0,
+            "document_sources": []}
 
-        # Process documents used
+        # Extract document source information
         if documents_used:
             for doc in documents_used:
-                doc_info = {
-                    "source": doc.get("metadata", {}).get("source", "unknown"),
-                    "topic": doc.get("metadata", {}).get("topic", "general"),
-                    "length": len(doc.get("page_content", "")),
-                    "query_used": doc.get("metadata", {}).get("query_used", ""),
-                    "retrieved_at": doc.get("metadata", {}).get("retrieved_at", "")
+                metadata = doc.get("metadata", {})
+                source_info = {
+                    "source": metadata.get("source", "unknown"),
+                    "topic": metadata.get("topic", "unknown"),
+                    "query_used": metadata.get("query_used", ""),
+                    "retrieved_at": metadata.get("retrieved_at", ""),
+                    "content_length": len(doc.get("page_content", ""))
                 }
-                context_log["document_sources"].append(doc_info)
+                context_log["document_sources"].append(source_info)
 
-        # Save the context log
-        log_path = output_dir / "context_log.json"
-        with open(log_path, 'w', encoding='utf-8') as f:
+        # Add any additional metadata
+        if additional_metadata:
+            context_log.update(additional_metadata)
+
+        # Save to the context log file as specified in Step 3.7
+        log_file = output_dir / "context_log.json"
+
+        with open(log_file, 'w', encoding='utf-8') as f:
             json.dump(context_log, f, indent=2, ensure_ascii=False)
 
-        logger.info(f"Context usage tracked for task {task_id}")
+        logger.info(
+            f"Context usage tracked for task {task_id}: {
+                len(
+                    context_topics or [])} topics, {
+                len(
+                    documents_used or [])} documents")
         return True
 
     except Exception as e:
@@ -103,16 +111,21 @@ def get_context_log(task_id: str) -> Optional[Dict[str, Any]]:
         task_id (str): The task identifier
 
     Returns:
-        Optional[Dict[str, Any]]: The context log data or None if not found
+        Dict[str, Any] or None: The context log data, or None if not found
     """
     try:
-        log_path = Path("outputs") / task_id / "context_log.json"
-        if log_path.exists():
-            with open(log_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+        log_file = Path("outputs") / task_id / "context_log.json"
+
+        if not log_file.exists():
+            logger.warning(f"Context log not found for task {task_id}")
+            return None
+
+        with open(log_file, 'r', encoding='utf-8') as f:
+            return json.load(f)
+
     except Exception as e:
-        logger.error(f"Failed to get context log for task {task_id}: {e}")
-    return None
+        logger.error(f"Failed to retrieve context log for task {task_id}: {e}")
+        return None
 
 def get_all_context_logs() -> Dict[str, Dict[str, Any]]:
     """
@@ -185,12 +198,13 @@ def analyze_context_usage(task_ids: List[str] = None) -> Dict[str, Any]:
         "most_used_topics": sorted(
             topic_usage.items(),
             key=lambda x: x[1],
-            reverse=True)[:5],
+            reverse=True)[
+            :5],
         "most_used_documents": sorted(
             document_usage.items(),
             key=lambda x: x[1],
-            reverse=True)[:5]
-    }
+            reverse=True)[
+            :5]}
 
 def export_context_usage_report(
         output_path: str = "reports/context_usage_report.json") -> bool:
@@ -237,32 +251,40 @@ def track_context_from_memory_engine(
     max_tokens: int = 2000
 ) -> bool:
     """
-    Track context usage from memory engine retrieval.
-    
-    This function integrates with the MemoryEngine to automatically track
-    context usage when documents are retrieved for a task.
+    Helper function to track context usage directly from memory engine operations.
+
+    This integrates with the memory engine's get_documents and build_focused_context
+    methods to automatically track context usage.
 
     Args:
-        task_id (str): The task identifier
-        context_topics (List[str]): Topics that were requested
+        task_id (str): Task identifier
+        context_topics (List[str]): Context topics requested
         documents (List[Dict]): Documents retrieved from memory engine
-        agent_role (str): Role of the agent requesting context
-        max_tokens (int): Token limit for context window
+        agent_role (str): Agent role executing the task
+        max_tokens (int): Token budget used
 
     Returns:
         bool: True if tracking was successful
     """
     # Calculate total context length
     total_length = sum(len(doc.get("page_content", "")) for doc in documents)
-    
-    # Track usage
+
+    # Additional metadata for memory engine integration
+    additional_metadata = {
+        "token_budget": max_tokens,
+        "estimated_tokens": total_length // 4,  # Rough token estimation
+        "within_budget": (total_length // 4) <= max_tokens,
+        "step_3_5_integration": True,
+        "step_3_6_integration": any(doc.get("metadata", {}).get("chunk_id") is not None for doc in documents)
+    }
+
     return track_context_usage(
         task_id=task_id,
         context_topics=context_topics,
         documents_used=documents,
         agent_role=agent_role,
         context_length=total_length,
-        additional_metadata={"max_tokens": max_tokens}
+        additional_metadata=additional_metadata
     )
 
 # CLI interface for Step 3.7 context tracking
@@ -273,36 +295,40 @@ if __name__ == "__main__":
         description="Step 3.7 Context Tracking CLI")
     parser.add_argument(
         "command",
-        choices=["analyze", "export", "logs"],
-        help="Command to execute"
-    )
-    parser.add_argument(
-        "--task-id",
-        help="Specific task ID to analyze"
-    )
+        choices=[
+            "analyze",
+            "export",
+            "list"],
+        help="Command to execute")
+    parser.add_argument("--task-id", help="Specific task ID to analyze")
     parser.add_argument(
         "--output",
         default="reports/context_usage_report.json",
-        help="Output file for export command"
-    )
+        help="Output file for export")
 
     args = parser.parse_args()
 
     if args.command == "analyze":
         if args.task_id:
-            result = analyze_context_usage([args.task_id])
+            analysis = analyze_context_usage([args.task_id])
+            print(f"Context analysis for task {args.task_id}:")
         else:
-            result = analyze_context_usage()
-        print(json.dumps(result, indent=2))
-    
+            analysis = analyze_context_usage()
+            print("Context analysis for all tasks:")
+
+        print(json.dumps(analysis, indent=2))
+
     elif args.command == "export":
         success = export_context_usage_report(args.output)
-        print(f"Export {'successful' if success else 'failed'}")
-    
-    elif args.command == "logs":
-        if args.task_id:
-            log = get_context_log(args.task_id)
-            print(json.dumps(log, indent=2) if log else "No log found")
+        if success:
+            print(f"Context usage report exported to {args.output}")
         else:
-            logs = get_all_context_logs()
-            print(json.dumps(logs, indent=2))
+            print("Failed to export context usage report")
+
+    elif args.command == "list":
+        logs = get_all_context_logs()
+        print(f"Found context logs for {len(logs)} tasks:")
+        for task_id, log_data in logs.items():
+            timestamp = log_data.get("timestamp", "unknown")
+            topics = log_data.get("context_used", [])
+            print(f"  {task_id}: {len(topics)} topics at {timestamp}")

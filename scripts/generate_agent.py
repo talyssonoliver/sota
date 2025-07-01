@@ -111,7 +111,6 @@ def main() -> None:
     os.system(f"black {agent_path} {test_path} >/dev/null")
     os.system(f"ruff check --fix {agent_path} {test_path} >/dev/null")
 
-    import argparse
     try:
         compile(agent_code, str(agent_path), "exec")
     except SyntaxError as e:

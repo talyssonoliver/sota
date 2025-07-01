@@ -87,7 +87,7 @@ def display_qa_report(report: dict, verbose: bool = False) -> None:
 
     # Verbose details
     if verbose:
-        print(f"\n📊 Detailed Metrics:")
+        print("\n📊 Detailed Metrics:")
         if 'test_generation' in report:
             gen = report['test_generation']
             print(
@@ -162,7 +162,7 @@ def test_langgraph_integration(
         result = qa_integration.handle_qa_pending_state(
             task_id, {"agent": "test"})
 
-        logger.info(f"LangGraph integration test completed")
+        logger.info("LangGraph integration test completed")
         return result
 
     except Exception as e:

@@ -4,7 +4,7 @@ Design System Tool - Provides utilities for working with the Artesanato design s
 
 import logging
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 try:
     from dotenv import load_dotenv

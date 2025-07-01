@@ -46,7 +46,6 @@ def load_all_tasks(tasks_dir):
 
     # Find all YAML files in the tasks directory
     for yaml_file in tasks_dir.glob("*.yaml"):
-        import argparse
         try:
             with open(yaml_file, 'r') as f:
                 task_data = yaml.safe_load(f)

@@ -352,7 +352,7 @@ def approve_checkpoint(checkpoint_id: str):
                     "status": "error",
                     "error": "Invalid JSON in request body"
                 }), 400
-        except Exception as json_error:
+        except Exception:
             return jsonify({
                 "status": "error", 
                 "error": "Invalid JSON in request body"

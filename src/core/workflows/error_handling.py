@@ -284,7 +284,6 @@ class ErrorPropagationManager:
         """Create comprehensive error context from exception"""
         import uuid
         import traceback
-        import logging
         
         error_id = f"ERR_{task_id}_{uuid.uuid4().hex[:8]}"
         error_type = self.classify_error(exception, task_id, agent_role)

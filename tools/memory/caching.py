@@ -7,13 +7,12 @@ Multi-tiered caching implementation with LRU in-memory and disk persistence
 import hashlib
 import json
 import logging
-import os
 import threading
 import time
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 
 # Local imports with error handling
 try:
@@ -346,6 +345,10 @@ class CacheManager:
             self.disk_cache.clear()
             self.hits = 0
             self.misses = 0
+    
+    def clear_all(self) -> None:
+        """Alias for clear() to maintain backward compatibility"""
+        self.clear()
     
     def get_stats(self) -> Dict[str, Any]:
         """Get cache statistics"""

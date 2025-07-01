@@ -4,7 +4,6 @@ Uses the new modular memory system and improved structure.
 """
 
 import logging
-import sys
 
 try:
     from tools.retrieval_qa_refactored import retrieval_qa

@@ -4,7 +4,6 @@ Revert and Fix Syntax Errors
 This script identifies and fixes the syntax errors introduced by malformed import blocks.
 """
 
-import re
 import ast
 from pathlib import Path
 import logging
@@ -288,7 +287,7 @@ class SyntaxRevertFixer:
                 logger.warning(f"⚠️ File not found: {file_path}")
         
         # Summary
-        logger.info(f"\n📊 Syntax Fix Summary:")
+        logger.info("\n📊 Syntax Fix Summary:")
         logger.info(f"✅ Successfully fixed: {len(self.fixed_files)} files")
         logger.info(f"❌ Still have errors: {len(self.failed_files)} files")
         

@@ -509,7 +509,7 @@ def main():
     # Run maintenance
     stats = manager.run_lifecycle_maintenance()
 
-    print(f"\n📊 Maintenance Results:")
+    print("\n📊 Maintenance Results:")
     print(f"   Tasks archived: {stats['tasks_archived']}")
     print(f"   Tasks moved to cold: {stats['tasks_moved_to_cold']}")
     print(f"   Tasks purged: {stats['tasks_purged']}")
@@ -517,7 +517,7 @@ def main():
 
     # Show storage stats
     storage_stats = manager.get_storage_statistics()
-    print(f"\n💾 Storage Statistics:")
+    print("\n💾 Storage Statistics:")
     print(f"   Hot storage: {storage_stats['hot_storage']['count']} tasks, "
           f"{storage_stats['hot_storage']['size_bytes']:,} bytes")
     print(f"   Warm storage: {storage_stats['warm_storage']['count']} tasks, "

@@ -22,12 +22,9 @@ try:
     from langchain_core.tools import BaseTool
     LANGCHAIN_AVAILABLE = True
 except ImportError as e:
-    logging.warning(f"LangChain not available: {e}")
+    logging.debug(f"LangChain not available: {e}")
     LANGCHAIN_AVAILABLE = False
-    # Create mock base class
-    class BaseTool:
-        def __init__(self, *args, **kwargs):
-            pass
+    BaseTool = None
 
 try:
     from pydantic import BaseModel, Field, ValidationError

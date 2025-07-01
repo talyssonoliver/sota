@@ -23,12 +23,11 @@ import argparse
 import logging
 import os
 import sys
-import time  # Standard library - no need for try/except
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Dict
 
 # Import secure import manager
-from security.import_security import secure_import_manager, secure_import
+from security.import_security import secure_import
 
 # Securely load dotenv with proper fallback
 dotenv_module = secure_import('dotenv', lambda: None)
@@ -132,8 +131,8 @@ else:
         logger.error("Could not import agent initialization functions")
         langchain_available = False
 
-from tools.echo_tool import EchoTool
-from tools.supabase_tool import SupabaseTool
+from src.infrastructure.tools.echo_tool import EchoTool
+from src.infrastructure.tools.supabase_tool import SupabaseTool
 
 # Load environment variables
 if callable(load_dotenv):
@@ -254,7 +253,7 @@ def run_memory_test() -> bool:
         
         # Test memory engine functionality
         try:
-            from tools.memory import MemoryEngine
+            from src.infrastructure.memory.engine import MemoryEngine
             memory = MemoryEngine()
             
             # Test basic context retrieval
@@ -276,7 +275,7 @@ def run_memory_test() -> bool:
         except ImportError:
             # Fallback to legacy memory function if available
             try:
-                from tools.memory import get_memory_instance, get_context_by_keys
+                from src.infrastructure.memory.engine import get_memory_instance, get_context_by_keys
                 memory = get_memory_instance()
                 context = get_context_by_keys(["database", "schema"])
                 
@@ -406,7 +405,7 @@ def run_comprehensive_tests() -> bool:
             print("✅ Comprehensive test suite: PASSED")
         else:
             logger.error(f"❌ Comprehensive test suite failed: {result.stderr}")
-            print(f"❌ Comprehensive test suite: FAILED")
+            print("❌ Comprehensive test suite: FAILED")
         
         return success
         
@@ -483,7 +482,7 @@ def print_summary(results: Dict[str, bool], comprehensive_test: bool = False) ->
     print("\n📚 Next Steps:")
     print("   • Review logs in 'logs/main.log' for details")
     print("   • Check README.md for usage instructions")
-    print("   • Run 'python orchestration/execute_workflow.py --help' for workflow options")
+    print("   • Run 'python src/core/workflows/execute_workflow.py --help' for workflow options")
     print("="*60)
 
 def main():

@@ -5,11 +5,8 @@ Generate Memory Engine Encryption Key
 Creates a secure encryption key for the Memory Engine system.
 """
 
-import os
 import sys
-import logging
 from pathlib import Path
-import warnings
 from cryptography.fernet import Fernet
 
 # Add the project root to the Python path

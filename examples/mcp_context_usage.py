@@ -27,7 +27,7 @@ try:
 except ImportError:
     pass
 try:
-    from tools.memory.engine import MemoryEngine
+    from src.infrastructure.memory.engine import MemoryEngine
     memory = MemoryEngine()
 except ImportError:
     pass
@@ -138,7 +138,7 @@ def example_4_direct_memory_queries():
             context_topics=["user-management", "authentication"],
             max_results=2
         )
-        print(f"\nTask-specific context:")
+        print("\nTask-specific context:")
         print(f"Length: {len(task_context)} characters")
         print(f"Preview: {task_context[:300]}...")
 

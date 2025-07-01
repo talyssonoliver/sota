@@ -12,11 +12,12 @@ import shutil
 import json
 from pathlib import Path
 from unittest.mock import MagicMock, patch
-try:
-    pass
-except ImportError:
-    pass
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Add the project root to the path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+
+# Import from the new location in src
+from src.core.workflows.extract_code import CodeExtractor, CodeExtractionResult
 
 class TestCodeExtractor(unittest.TestCase):
     """Test cases for the CodeExtractor class."""

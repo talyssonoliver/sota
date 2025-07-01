@@ -260,7 +260,7 @@ try:
     from tests.components.test_generator import CodeLanguage, QATestFramework, QATestGenerator
 except ImportError:
     pass
-sys.path.insert(0, str(Path(__file__).parent.parent))
+
 
 class TestEnhancedQAAgent:
     """Test cases for EnhancedQAAgent."""

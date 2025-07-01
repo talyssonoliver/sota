@@ -1,0 +1,39 @@
+{
+  "model": "gemini-2.0-flash-lite",
+  "temperature": 0.7,
+  "max_tokens": 8192,
+  "system_instruction": "You are an AI assistant integrated with a sophisticated multi-agent system. You have access to memory engines, code analysis tools, and system integration capabilities. Follow clean architecture principles and provide comprehensive, actionable responses.",
+  "tools_enabled": true,
+  "mcp_integration": true,
+  "langgraph_integration": true,
+  "safety_settings": [
+    {
+      "category": "HARM_CATEGORY_HARASSMENT",
+      "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+      "category": "HARM_CATEGORY_HATE_SPEECH", 
+      "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+      "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+      "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    },
+    {
+      "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+      "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    }
+  ],
+  "generation_config": {
+    "top_p": 0.95,
+    "top_k": 100,
+    "response_mime_type": "text/plain"
+  },
+  "project_context": {
+    "architecture": "Multi-Agent System with LangChain, LangGraph, CrewAI",
+    "memory_engine": "ChromaDB with AES-256 encryption",
+    "patterns": ["Clean Architecture", "DDD", "Hexagonal Architecture"],
+    "testing": "TDD with pytest, 90%+ coverage requirement",
+    "quality_gates": ["mypy --strict", "black", "flake8", "bandit"]
+  }
+}

@@ -377,7 +377,7 @@ def main():
     root_path = Path(args.path).resolve()
     
     print(f"Generating directory tree for: {root_path}")
-    print(f"Algorithm: Depth-First Search (DFS)")
+    print("Algorithm: Depth-First Search (DFS)")
     print(f"Max depth: {args.max_depth}")
     print(f"Show files: {not args.dirs_only}")
     print(f"Show sizes: {not args.no_sizes}")
@@ -393,7 +393,7 @@ def main():
     )
     
     # Display summary
-    print(f"\n📊 Tree Analysis Complete:")
+    print("\n📊 Tree Analysis Complete:")
     print(f"   Files: {file_count:,}")
     print(f"   Directories: {dir_count:,}")
     print(f"   Total items: {file_count + dir_count:,}")

@@ -19,7 +19,7 @@ except ImportError:
 sys.path.append(str(Path(__file__).parent.parent))
 
 from src.interfaces.dashboard.components.hitl_kanban_board import HITLKanbanBoard
-from src.interfaces.dashboard.hitl_widgets import HITLDashboardManager, get_hitl_kanban_data, process_hitl_action
+from src.interfaces.dashboard.hitl_widgets import process_hitl_action
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -439,5 +439,4 @@ if __name__ == "__main__":
     from datetime import datetime
     import argparse
     import json
-    import sys
     exit(main())

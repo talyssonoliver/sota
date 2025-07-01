@@ -20,7 +20,7 @@ try:
 except ImportError:
     pass
 try:
-    from ..engines.memory_engine import MemoryEngine
+    from ..engine import MemoryEngine
     pass  # Use fallback implementations
 except ImportError:
     pass

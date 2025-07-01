@@ -294,7 +294,7 @@ class HITLCLIIntegrationDemo:
                 # Verify export file
                 export_data = json.loads(Path(temp_path).read_text())
                 if export_data.get('checkpoint_id') == checkpoint_id:
-                    print(f"   ✅ Successfully exported checkpoint data")
+                    print("   ✅ Successfully exported checkpoint data")
                     print(f"       File: {temp_path}")
                     print(f"       Size: {len(export_data)} fields")
                     

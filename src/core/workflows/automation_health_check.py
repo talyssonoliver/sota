@@ -15,7 +15,7 @@ except ImportError:
     pass
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Any
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -417,7 +417,7 @@ async def main():
                 print(f"  • {issue}")
         
         if results['recommendations']:
-            print(f"\n💡 RECOMMENDATIONS:")
+            print("\n💡 RECOMMENDATIONS:")
             for rec in results['recommendations']:
                 print(f"  • {rec}")
         

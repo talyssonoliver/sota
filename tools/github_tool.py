@@ -6,7 +6,7 @@ import logging
 import os
 import requests
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Dict, Optional
 
 try:
     from pydantic import Field

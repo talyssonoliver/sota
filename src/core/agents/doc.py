@@ -51,7 +51,7 @@ class DocumentationWriter:
         result = {
             "task_id": task.get("id", "unknown"),
             "status": "completed",
-            "output": f"DocumentationWriter task completed successfully",
+            "output": "DocumentationWriter task completed successfully",
             "agent": "DocumentationWriter"
         }
         

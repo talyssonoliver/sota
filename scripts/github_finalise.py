@@ -164,7 +164,7 @@ Task has been completed successfully and passed all QA validation checks.
             latest_archive = max(archive_files, key=lambda x: x.stat().st_mtime)
             comment += f"- [Task Archive]({latest_archive})\n"
         
-        comment += f"""
+        comment += """
 ### ✅ QA Status
 All quality assurance checks have been completed successfully.
 
@@ -248,7 +248,7 @@ All quality assurance checks have been completed successfully.
         
         if not close_issue:
             comment = self.create_completion_comment()
-            print(f"\n📝 Manual GitHub Comment Template:")
+            print("\n📝 Manual GitHub Comment Template:")
             print("-" * 40)
             print(comment)
         

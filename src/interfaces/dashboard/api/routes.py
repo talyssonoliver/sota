@@ -250,7 +250,7 @@ def run_server(host='0.0.0.0', port=8080, debug=True):
     """Run the unified dashboard server."""
     app = create_dashboard_app()
     
-    print(f"🚀 Starting Unified Dashboard Server")
+    print("🚀 Starting Unified Dashboard Server")
     print(f"📊 Dashboard available: {DASHBOARD_AVAILABLE}")
     print(f"🌐 Server URL: http://{host}:{port}")
     print(f"🔧 API Health: http://{host}:{port}/api/dashboard/health")
@@ -260,7 +260,6 @@ def run_server(host='0.0.0.0', port=8080, debug=True):
 
 if __name__ == '__main__':
     import argparse
-    import sys
     
     parser = argparse.ArgumentParser(description='Unified Dashboard API Server')
     parser.add_argument('--host', default='0.0.0.0', help='Host to bind to')

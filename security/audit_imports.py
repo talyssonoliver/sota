@@ -10,13 +10,11 @@ It focuses on:
 4. Missing fallback implementations for critical functionality
 """
 
-import os
 import re
 import sys
-import ast
 import logging
 from pathlib import Path
-from typing import Dict, List, Set, Tuple, Optional
+from typing import Dict, List, Set, Tuple
 from dataclasses import dataclass
 from enum import Enum
 

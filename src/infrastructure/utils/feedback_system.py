@@ -3,6 +3,10 @@ Phase 7 Step 7.4: Structured Feedback Integration System
 Comprehensive feedback collection, storage, analytics, and export capabilities.
 """
 
+import csv
+import json
+import logging
+import uuid
 
 try:
     from datetime import datetime, timedelta
@@ -24,8 +28,7 @@ try:
     from enum import Enum
 except ImportError:
     pass
-import json
-import logging
+
 logger = logging.getLogger(__name__)
 
 class FeedbackCategory:

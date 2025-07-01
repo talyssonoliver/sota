@@ -23,6 +23,9 @@ try:
     import logging
 except ImportError:
     pass
+try:
+    import os
+except ImportError:
     pass
 @dataclass
 class DashboardConfig:

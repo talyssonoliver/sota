@@ -4,7 +4,7 @@ Base Tool - Foundation class for all agent tools
 
 import logging
 import sys
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional
 
 try:
     from dotenv import load_dotenv

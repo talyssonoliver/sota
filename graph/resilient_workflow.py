@@ -233,5 +233,5 @@ def create_resilient_workflow(base_graph_builder: Callable[[], Union[Graph, Stat
     return resilient_graph
 
 # Example usage:
-# from src.infrastructure.tools.graph_builder import build_workflow_graph
+# from graph.graph_builder import build_workflow_graph
 # resilient_workflow = create_resilient_workflow(build_workflow_graph)

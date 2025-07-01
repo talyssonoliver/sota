@@ -9,9 +9,9 @@ import json
 import logging
 import argparse
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Dict, Optional, Any
 
 
 try:
@@ -42,7 +42,7 @@ except ImportError:
 
 try:
     from src.infrastructure.tools.auto_generate_graph import build_auto_generated_workflow_graph
-    from src.infrastructure.tools.graph_builder import (build_advanced_workflow_graph,
+    from graph.graph_builder import (build_advanced_workflow_graph,
                                      build_dynamic_workflow_graph,
                                      build_workflow_graph)
     from src.infrastructure.tools.notifications import (NotificationLevel, SlackNotifier,
@@ -70,8 +70,9 @@ except ImportError as e:
     def attach_notifications_to_workflow(*args, **kwargs):
         pass
     
+    from unittest.mock import MagicMock
+    
     def build_auto_generated_workflow_graph(*args, **kwargs):
-        from unittest.mock import MagicMock
         return MagicMock()
     
     def build_advanced_workflow_graph(*args, **kwargs):
@@ -86,7 +87,7 @@ except ImportError as e:
     def create_resilient_workflow(*args, **kwargs):
         return MagicMock()
 from src.core.workflows.states import TaskStatus
-from src.infrastructure.utils.task_loader import load_task_metadata, update_task_state
+from src.infrastructure.utils.task_loader import load_task_metadata
 
 # Load environment variables
 load_dotenv()
@@ -244,7 +245,7 @@ class EnhancedWorkflowExecutor:
         status_with_time["timestamp"] = datetime.now().isoformat()
 
         with open(status_path, 'w') as f:
-            json.dump(status_with_time, f, indent=2)
+            json.dump(status_with_time, f, indent=2, default=str)
 
     def save_agent_output(self, task_id: str, agent: str,
                           output: Union[str, dict, Any]):

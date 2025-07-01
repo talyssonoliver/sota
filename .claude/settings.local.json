@@ -68,7 +68,15 @@
       "Bash(make:*)",
       "Bash(git merge:*)",
       "Bash(.venv/bin/python -m pytest --collect-only -q)",
-      "Bash(export PATH=$PATH:/home/talysson/.local/bin)"
+      "Bash(export PATH=$PATH:/home/talysson/.local/bin)",
+      "Bash(git worktree add:*)",
+      "Bash(cat:*)",
+      "Bash(git worktree:*)",
+      "Bash(PYTHONPATH=src:tests:. python3 -m pytest tests/unit/core/test_generate_briefing_comprehensive.py::TestBriefingGenerator::test_briefing_generator_initialization -v --tb=short --no-cov -p no:warnings --disable-warnings)",
+      "Bash(/home/talysson/.local/bin/pytest tests/unit/core/workflows/test_langgraph_workflow.py::TestStep43WorkflowExecution::test_run_task_graph_dry_run -v)",
+      "Bash(/home/talysson/.local/bin/pytest tests/unit/core/workflows/test_langgraph_workflow.py -k \"test_run_task_graph_dry_run\" --no-cov)",
+      "Bash(cmp:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }

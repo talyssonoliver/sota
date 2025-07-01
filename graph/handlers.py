@@ -5,6 +5,7 @@ Step 4.8 Enhancement: Added real-time monitoring hooks.
 Enhanced Error Handling: Added detailed error reporting and structured error information.
 """
 
+import logging
 
 try:
     from datetime import datetime
@@ -500,14 +501,14 @@ def execute_with_timeout(agent, state, timeout_seconds=30):
     Returns:
         Agent execution result
     """
-try:
-    import platform
-except ImportError:
-    pass
-try:
-    import threading
-except ImportError:
-    pass
+    try:
+        import platform
+    except ImportError:
+        pass
+    try:
+        import threading
+    except ImportError:
+        pass
 
     # For Windows or when testing, use threading approach
     if platform.system() == "Windows" or hasattr(state, '_test_mode'):
@@ -545,12 +546,10 @@ except ImportError:
 
     else:
         # Unix/Linux signal-based approach
-try:
-    import signal
-except ImportError:
-    pass
-import logging
-import traceback
+        try:
+            import signal
+        except ImportError:
+            pass
 
         class TimeoutException(Exception):
             pass

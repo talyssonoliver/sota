@@ -7,7 +7,7 @@ import logging
 import os
 import re
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 try:
     from tools.base_tool import ArtesanatoBaseTool
@@ -153,7 +153,7 @@ describe('{test_name}', () => {{
         # For now, return a mock response
 
         mode = "headless" if headless else "headed"
-        command = f"npx cypress run --spec '{spec}'" if spec else f"npx cypress run"
+        command = f"npx cypress run --spec '{spec}'" if spec else "npx cypress run"
         command += " --headless" if headless else ""
 
         return json.dumps(self.format_response(

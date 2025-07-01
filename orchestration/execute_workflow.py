@@ -15,9 +15,8 @@ except ImportError:
     pass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
 from pythonjsonlogger import jsonlogger
-from src.infrastructure.tools.graph_builder import (build_advanced_workflow_graph,
+from graph.graph_builder import (build_advanced_workflow_graph,
 build_dynamic_workflow_graph,
                                  build_state_workflow_graph,
                                  build_workflow_graph)

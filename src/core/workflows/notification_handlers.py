@@ -106,8 +106,8 @@ class DashboardNotificationHandler(NotificationHandler):
         messages = {
             'checkpoint_created': f"A {getattr(checkpoint.checkpoint_type, 'value', checkpoint.checkpoint_type)} checkpoint requires your review. Risk level: {getattr(checkpoint.risk_level, 'value', checkpoint.risk_level)}",
             'escalation_alert': f"Checkpoint has been escalated (Level {checkpoint.escalation_level}). Immediate attention required.",
-            'approval_granted': f"Checkpoint has been approved. Task can proceed.",
-            'approval_rejected': f"Checkpoint has been rejected. Task requires rework.",
+            'approval_granted': "Checkpoint has been approved. Task can proceed.",
+            'approval_rejected': "Checkpoint has been rejected. Task requires rework.",
             'timeout_warning': f"Checkpoint is approaching deadline: {checkpoint.timeout_at.strftime('%Y-%m-%d %H:%M')}" if checkpoint.timeout_at else "Checkpoint is approaching deadline."
         }
         return messages.get(notification_type, "HITL checkpoint update")

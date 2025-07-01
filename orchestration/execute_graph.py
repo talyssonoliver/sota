@@ -1,5 +1,4 @@
 """
-import sys
 Step 4.3 Implementation: Run LangGraph Workflow
 
 This script implements the Step 4.3 requirements for executing LangGraph workflows with:
@@ -28,13 +27,10 @@ Usage:
 
 # Original imports with error handling
 from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, Optional
 from pythonjsonlogger import jsonlogger
-from src.infrastructure.tools.graph_builder import (build_advanced_workflow_graph,
+from graph.graph_builder import (build_advanced_workflow_graph,
 build_dynamic_workflow_graph,
-                                 build_state_workflow_graph,
-                                 build_workflow_graph)
+                                 build_state_workflow_graph)
 from src.infrastructure.tools.notifications import (NotificationLevel, SlackNotifier,
                                  attach_notifications_to_workflow)
 from src.infrastructure.tools.resilient_workflow import create_resilient_workflow
@@ -492,7 +488,7 @@ def run_task_graph(
         log_path = os.path.join(
             output_dir, f"{task_id}_step_4_3_execution.log")
         with open(log_path, "w") as f:
-            f.write(f"Step 4.3 Execution Log\n")
+            f.write("Step 4.3 Execution Log\n")
             f.write(f"Task ID: {task_id}\n")
             f.write(f"Execution ID: {execution_id}\n")
             f.write(f"Workflow Type: {workflow_type}\n")
@@ -715,7 +711,7 @@ Workflow Types:
                 print(f"⚠ No metadata file found for task {args.task}")
                 print("Will use fallback task loading from agent_task_assignments.json")
 
-            print(f"\nStep 4.3 Configuration:")
+            print("\nStep 4.3 Configuration:")
             print(f"- Workflow Type: {args.workflow}")
             print(f"- Notifications: {'✓' if enable_notifications else '✗'}")
             print(f"- Monitoring: {'✓' if enable_monitoring else '✗'}")
@@ -758,10 +754,10 @@ Workflow Types:
 
         if not args.quiet:
             if final_status == TaskStatus.COMPLETED:
-                print(f"✓ Step 4.3 workflow completed successfully!")
+                print("✓ Step 4.3 workflow completed successfully!")
                 print(f"  Final status: {final_status}")
             elif final_status == TaskStatus.FAILED:
-                print(f"✗ Step 4.3 workflow failed")
+                print("✗ Step 4.3 workflow failed")
                 print(f"  Final status: {final_status}")
                 if result.get('error'):
                     print(f"  Error: {result['error']}")

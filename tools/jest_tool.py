@@ -6,9 +6,8 @@ import json
 import logging
 import os
 import re
-import subprocess
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 try:
     from tools.base_tool import ArtesanatoBaseTool

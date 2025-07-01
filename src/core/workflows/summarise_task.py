@@ -21,7 +21,7 @@ Usage:
 import sys
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
@@ -670,7 +670,6 @@ class TaskSummarizer:
 def main():
     """CLI interface for task summarization."""
     import argparse
-    import json
     import sys
     
     parser = argparse.ArgumentParser(
@@ -729,12 +728,12 @@ Examples:
         # Run analysis
         report_path = summarizer.run_full_analysis()
 
-        print(f"✅ Task summarization completed successfully!")
+        print("✅ Task summarization completed successfully!")
         print(f"📄 Report saved to: {report_path}")
 
         # Display summary stats
         summary = summarizer.analyze_task_completion()
-        print(f"\n📊 Summary Statistics:")
+        print("\n📊 Summary Statistics:")
         print(f"   Status: {summary.completion_status}")
         print(f"   Files Created: {summary.total_files_created}")
         print(f"   Files Modified: {summary.total_files_modified}")

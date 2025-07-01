@@ -1,6 +1,6 @@
 """LangChain Core Runnables compatibility module."""
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 from abc import ABC, abstractmethod
 
 class Runnable(ABC):

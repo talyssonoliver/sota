@@ -297,13 +297,12 @@ export const validateCustomerInput = (data: unknown) => {
 
 def populate_memory_engine():
     """Populate the memory engine with context documents"""
-    from src.infrastructure.memory.memory_engine import (add_document_with_enhanced_chunking,
-                                     get_memory_engine)
+    from src.infrastructure.memory import (get_memory_instance)
 
     try:
         print("\n🔧 Initializing memory engine...")
         # Initialize memory engine
-        memory_engine = get_memory_engine()
+        memory_engine = get_memory_instance()
 
         print("📚 Adding context documents to memory engine...")
 
@@ -322,12 +321,10 @@ def populate_memory_engine():
             full_path = project_root / file_path
             if full_path.exists():
                 print(f"   Adding {file_path}...")
-                add_document_with_enhanced_chunking(
+                memory_engine.add_document(
                     str(full_path),
-                    metadata=metadata,
-                    chunk_size=500,
-                    chunk_overlap=50,
-                    user="system"  # Use system user for proper permissions
+                    user="system",  # Use system user for proper permissions
+                    metadata=metadata
                 )
             else:
                 print(f"   ⚠️  File not found: {file_path}")

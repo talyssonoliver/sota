@@ -46,7 +46,17 @@ class TestFeedbackAnalyzer:
 
     def test_analyze_task_feedback_with_data(self):
         """Test analyzing task feedback with actual feedback data."""
-        mock_feedback = [Mock(task_id='BE-07', content='The code needs better error handling and documentation', timestamp=datetime.now().isoformat(), overall_score=6, category_scores={'code_quality': 7, 'documentation': 5}), Mock(task_id='BE-07', content='Performance is slow, needs optimization', timestamp=datetime.now().isoformat(), overall_score=5, category_scores={'performance': 4, 'code_quality': 6})]
+        # Create mock feedback with proper spec
+        mock_feedback = [
+            Mock(spec=['task_id', 'content', 'timestamp', 'overall_score', 'category_scores'],
+                 task_id='BE-07', content='The code needs better error handling and documentation',
+                 timestamp=datetime.now().isoformat(), overall_score=6,
+                 category_scores={'code_quality': 7, 'documentation': 5}),
+            Mock(spec=['task_id', 'content', 'timestamp', 'overall_score', 'category_scores'],
+                 task_id='BE-07', content='Performance is slow, needs optimization',
+                 timestamp=datetime.now().isoformat(), overall_score=5,
+                 category_scores={'performance': 4, 'code_quality': 6})
+        ]
         with patch.object(self.analyzer.feedback_system, 'get_feedback_by_task', return_value=mock_feedback), patch.object(self.analyzer, '_save_analysis_results'):
             result = self.analyzer.analyze_task_feedback('BE-07')
             assert result['task_id'] == 'BE-07'
@@ -65,7 +75,15 @@ class TestFeedbackAnalyzer:
 
     def test_analyze_all_feedback_with_data(self):
         """Test analyzing all feedback with data."""
-        mock_feedback = [Mock(task_id='BE-07', agent_name='backend_agent', content='Error handling needs improvement', timestamp=datetime.now().isoformat(), overall_score=6), Mock(task_id='FE-01', agent_name='frontend_agent', content='Performance optimization required', timestamp=datetime.now().isoformat(), overall_score=7)]
+        # Create mock feedback with proper spec
+        mock_feedback = [
+            Mock(spec=['task_id', 'agent_name', 'content', 'timestamp', 'overall_score'],
+                 task_id='BE-07', agent_name='backend_agent', content='Error handling needs improvement',
+                 timestamp=datetime.now().isoformat(), overall_score=6),
+            Mock(spec=['task_id', 'agent_name', 'content', 'timestamp', 'overall_score'],
+                 task_id='FE-01', agent_name='frontend_agent', content='Performance optimization required',
+                 timestamp=datetime.now().isoformat(), overall_score=7)
+        ]
         with patch.object(self.analyzer.feedback_system, 'get_feedback_by_period', return_value=mock_feedback), patch.object(self.analyzer, '_save_analysis_results'):
             result = self.analyzer.analyze_all_feedback(30)
             assert result['total_feedback'] == 2
@@ -76,7 +94,13 @@ class TestFeedbackAnalyzer:
 
     def test_analyze_feedback_summary(self):
         """Test feedback summary analysis."""
-        mock_feedback = [Mock(category_scores={'code_quality': 8, 'documentation': 6}, overall_score=7), Mock(category_scores={'code_quality': 6, 'performance': 5}, overall_score=5)]
+        # Create mock feedback with proper spec
+        mock_feedback = [
+            Mock(spec=['category_scores', 'overall_score'],
+                 category_scores={'code_quality': 8, 'documentation': 6}, overall_score=7),
+            Mock(spec=['category_scores', 'overall_score'],
+                 category_scores={'code_quality': 6, 'performance': 5}, overall_score=5)
+        ]
         result = self.analyzer._analyze_feedback_summary(mock_feedback)
         assert result['total_feedback'] == 2
         assert 'approval_rates' in result
@@ -85,7 +109,18 @@ class TestFeedbackAnalyzer:
 
     def test_identify_recurring_edits(self):
         """Test identification of recurring edit patterns."""
-        mock_feedback = [Mock(task_id='BE-07', content='Need to rename this function for better naming conventions', timestamp=datetime.now().isoformat()), Mock(task_id='BE-08', content='Should refactor this code structure for better organization', timestamp=datetime.now().isoformat()), Mock(task_id='BE-09', content='Add error handling and exception management', timestamp=datetime.now().isoformat())]
+        # Create mock feedback with proper spec
+        mock_feedback = [
+            Mock(spec=['task_id', 'content', 'timestamp'],
+                 task_id='BE-07', content='Need to rename this function for better naming conventions',
+                 timestamp=datetime.now().isoformat()),
+            Mock(spec=['task_id', 'content', 'timestamp'],
+                 task_id='BE-08', content='Should refactor this code structure for better organization',
+                 timestamp=datetime.now().isoformat()),
+            Mock(spec=['task_id', 'content', 'timestamp'],
+                 task_id='BE-09', content='Add error handling and exception management',
+                 timestamp=datetime.now().isoformat())
+        ]
         result = self.analyzer._identify_recurring_edits(mock_feedback)
         assert len(result) > 0
         pattern_types = [edit['pattern'] for edit in result]
@@ -95,7 +130,13 @@ class TestFeedbackAnalyzer:
 
     def test_suggest_prompt_modifications(self):
         """Test prompt modification suggestions."""
-        mock_feedback = [Mock(content='The instructions are unclear and confusing'), Mock(content='Missing important context about the requirements'), Mock(content='Need more specific details about the implementation'), Mock(content='The prompt is ambiguous and hard to understand')]
+        # Create mock feedback with proper spec
+        mock_feedback = [
+            Mock(spec=['content'], content='The instructions are unclear and confusing'),
+            Mock(spec=['content'], content='Missing important context about the requirements'),
+            Mock(spec=['content'], content='Need more specific details about the implementation'),
+            Mock(spec=['content'], content='The prompt is ambiguous and hard to understand')
+        ]
         result = self.analyzer._suggest_prompt_modifications(mock_feedback)
         assert len(result) > 0
         suggestion_types = [suggestion['type'] for suggestion in result]
@@ -104,7 +145,12 @@ class TestFeedbackAnalyzer:
 
     def test_suggest_tool_improvements(self):
         """Test tool improvement suggestions."""
-        mock_feedback = [Mock(content='The tool is slow and has performance issues'), Mock(content='Tool function failed with an error'), Mock(content='Missing functionality in the tool')]
+        # Create mock feedback with proper spec
+        mock_feedback = [
+            Mock(spec=['content'], content='The tool is slow and has performance issues'),
+            Mock(spec=['content'], content='Tool function failed with an error'),
+            Mock(spec=['content'], content='Missing functionality in the tool')
+        ]
         result = self.analyzer._suggest_tool_improvements(mock_feedback)
         assert len(result) > 0
         improvement_types = [improvement['type'] for improvement in result]
@@ -112,7 +158,12 @@ class TestFeedbackAnalyzer:
 
     def test_suggest_context_adjustments(self):
         """Test context adjustment suggestions."""
-        mock_feedback = [Mock(content='Missing context and background information'), Mock(content='Irrelevant context provided, not related to task'), Mock(content='Context is outdated and needs updating')]
+        # Create mock feedback with proper spec
+        mock_feedback = [
+            Mock(spec=['content'], content='Missing context and background information'),
+            Mock(spec=['content'], content='Irrelevant context provided, not related to task'),
+            Mock(spec=['content'], content='Context is outdated and needs updating')
+        ]
         result = self.analyzer._suggest_context_adjustments(mock_feedback)
         assert len(result) > 0
         adjustment_types = [adjustment['type'] for adjustment in result]
@@ -121,7 +172,15 @@ class TestFeedbackAnalyzer:
 
     def test_generate_fine_tuning_examples(self):
         """Test fine-tuning example generation."""
-        mock_feedback = [Mock(task_id='BE-07', content='Excellent implementation with good error handling', agent_output='def process_data(): ...', overall_score=9), Mock(task_id='BE-08', content='Poor implementation needs major improvements', agent_output='def bad_function(): ...', overall_score=3)]
+        # Create mock feedback with proper spec
+        mock_feedback = [
+            Mock(spec=['task_id', 'content', 'agent_output', 'overall_score'],
+                 task_id='BE-07', content='Excellent implementation with good error handling',
+                 agent_output='def process_data(): ...', overall_score=9),
+            Mock(spec=['task_id', 'content', 'agent_output', 'overall_score'],
+                 task_id='BE-08', content='Poor implementation needs major improvements',
+                 agent_output='def bad_function(): ...', overall_score=3)
+        ]
         result = self.analyzer._generate_fine_tuning_examples(mock_feedback)
         assert len(result) == 2
         categories = [example['category'] for example in result]
@@ -130,7 +189,13 @@ class TestFeedbackAnalyzer:
 
     def test_analyze_global_patterns(self):
         """Test global pattern analysis."""
-        mock_feedback = [Mock(content='Error occurred during processing'), Mock(content='Performance is very slow'), Mock(content='Documentation is missing'), Mock(content='Tests are failing')]
+        # Create mock feedback with proper spec
+        mock_feedback = [
+            Mock(spec=['content'], content='Error occurred during processing'),
+            Mock(spec=['content'], content='Performance is very slow'),
+            Mock(spec=['content'], content='Documentation is missing'),
+            Mock(spec=['content'], content='Tests are failing')
+        ]
         result = self.analyzer._analyze_global_patterns(mock_feedback)
         assert 'common_issues' in result
         assert result['common_issues']['errors'] >= 1
@@ -140,7 +205,16 @@ class TestFeedbackAnalyzer:
 
     def test_analyze_agent_performance(self):
         """Test agent performance analysis."""
-        feedback_by_agent = {'backend_agent': [Mock(overall_score=8, content='Good performance'), Mock(overall_score=6, content='Needs accuracy improvement')], 'frontend_agent': [Mock(overall_score=7, content='Fast but could be better quality')]}
+        # Create mock feedback with proper spec
+        feedback_by_agent = {
+            'backend_agent': [
+                Mock(spec=['overall_score', 'content'], overall_score=8, content='Good performance'),
+                Mock(spec=['overall_score', 'content'], overall_score=6, content='Needs accuracy improvement')
+            ],
+            'frontend_agent': [
+                Mock(spec=['overall_score', 'content'], overall_score=7, content='Fast but could be better quality')
+            ]
+        }
         result = self.analyzer._analyze_agent_performance(feedback_by_agent)
         assert 'backend_agent' in result
         assert 'frontend_agent' in result

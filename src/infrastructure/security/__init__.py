@@ -8,6 +8,12 @@ It should be imported at the start of your application.
 import logging
 from pathlib import Path
 
+# Import patches so they're available when module is imported
+try:
+    from . import chromadb_telemetry_patch
+except ImportError:
+    chromadb_telemetry_patch = None
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,

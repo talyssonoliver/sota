@@ -3,6 +3,7 @@ langchain>=0.3.25
 langchain-community>=0.3.0
 langchain-core>=0.3.64
 langchain-openai>=0.3.16
+langchain-google-genai>=2.0.6
 langchain-text-splitters>=0.3.0
 langgraph>=0.4.8
 langsmith>=0.3.0
@@ -14,6 +15,7 @@ litellm==1.72.0
 # Vector database
 chromadb>=1.0.13
 openai==1.75.0 
+google-generativeai>=0.8.3
 tiktoken==0.8.0 
 pyyaml==6.0.1 
 rich==13.7.0
@@ -33,6 +35,14 @@ pytest==8.3.5
 pytest-cov==6.1.1
 pytest-xdist==3.7.0
 pytest-watch==4.2.0
+pytest-timeout==2.3.1
+pytest-forked==1.6.0
+pytest-benchmark==4.0.0
+pytest-memray==1.7.0
+pytest-asyncio==0.23.8
+pytest-randomly==3.15.0
+pytest-clarity==1.0.1
+pytest-mock==3.14.0
 
 # Tools for code quality
 ruff==0.4.4
@@ -61,7 +71,7 @@ watchdog==6.0.0
 windows-curses>=2.4.0; sys_platform == "win32"
 curses>=2.2; sys_platform != "win32"
 
-# Phase 6 daily automation dependencies
+# Daily automation dependencies
 APScheduler==3.11.0
 jinja2==3.1.4
 flask==3.1.0

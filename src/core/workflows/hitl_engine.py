@@ -14,30 +14,13 @@ Key Features:
 """
 import json
 import uuid
-try:
-    from datetime import datetime, timedelta
-except ImportError:
-    pass
-try:
-    from typing import Dict, List, Optional, Any, Tuple, Union
-except ImportError:
-    pass
-try:
-    from dataclasses import dataclass, asdict
-except ImportError:
-    pass
-try:
-    from enum import Enum
-except ImportError:
-    pass
-try:
-    from pathlib import Path
-except ImportError:
-    pass
-try:
-    import logging
-except ImportError:
-    pass
+import logging
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Any, Tuple, Union
+from dataclasses import dataclass, asdict, field
+from enum import Enum
+from pathlib import Path
+
 try:
     import yaml
     YAML_AVAILABLE = True
@@ -90,30 +73,19 @@ class HITLCheckpoint:
     created_at: datetime
     timeout_at: Optional[datetime] = None
     resolved_at: Optional[datetime] = None
-    risk_factors: List[str] = None
+    risk_factors: List[str] = field(default_factory=list)
     required_approvals: int = 1
-    assigned_reviewers: List[str] = None
-    approvals: List[Dict[str, Any]] = None
-    rejections: List[Dict[str, Any]] = None
+    assigned_reviewers: List[str] = field(default_factory=list)
+    approvals: List[Dict[str, Any]] = field(default_factory=list)
+    rejections: List[Dict[str, Any]] = field(default_factory=list)
     escalation_level: int = 0
-    metadata: Dict[str, Any] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
     parent_checkpoint_id: Optional[str] = None
     description: str = ""
-    mitigation_suggestions: List[str] = None
+    mitigation_suggestions: List[str] = field(default_factory=list)
+    timeout_action: Optional[str] = None  # Add missing timeout_action field
     
     def __post_init__(self):
-        if self.metadata is None:
-            self.metadata = {}
-        if self.risk_factors is None:
-            self.risk_factors = []
-        if self.assigned_reviewers is None:
-            self.assigned_reviewers = []
-        if self.approvals is None:
-            self.approvals = []
-        if self.rejections is None:
-            self.rejections = []
-        if self.mitigation_suggestions is None:
-            self.mitigation_suggestions = []
         if self.timeout_at is None:
             self.timeout_at = self.created_at + timedelta(hours=24)
     
@@ -209,11 +181,7 @@ class HITLReviewDecision:
     reviewer_id: str
     comments: str
     reviewed_at: datetime
-    metadata: Dict[str, Any] = None
-    
-    def __post_init__(self):
-        if self.metadata is None:
-            self.metadata = {}
+    metadata: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
@@ -229,11 +197,7 @@ class HITLAuditEntry:
     action: str
     user_id: str
     details: Dict[str, Any]
-    metadata: Dict[str, Any] = None
-    
-    def __post_init__(self):
-        if self.metadata is None:
-            self.metadata = {}
+    metadata: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary"""
@@ -478,7 +442,7 @@ class HITLPolicyEngine:
         return suggestions
     
     def create_checkpoint(self, task_id: str, checkpoint_type: str, task_type: str,
-                         content: Dict[str, Any], risk_factors: List[str] = None,
+                         content: Dict[str, Any], risk_factors: Optional[List[str]] = None,
                          parent_checkpoint_id: Optional[str] = None) -> HITLCheckpoint:
         """Create a new HITL checkpoint"""
         # Generate unique checkpoint ID
@@ -605,7 +569,7 @@ class HITLPolicyEngine:
         return items
     
     async def approve_checkpoint(self, checkpoint_id: str, reviewer: str, 
-                               comments: str = None) -> bool:
+                               comments: Optional[str] = None) -> bool:
         """Approve a checkpoint"""
         checkpoint = self.checkpoints.get(checkpoint_id)
         if not checkpoint:
@@ -653,7 +617,7 @@ class HITLPolicyEngine:
         return True
     
     async def reject_checkpoint(self, checkpoint_id: str, reviewer: str, 
-                              reason: str, comments: str = None) -> bool:
+                              reason: str, comments: Optional[str] = None) -> bool:
         """Reject a checkpoint"""
         checkpoint = self.checkpoints.get(checkpoint_id)
         if not checkpoint:
@@ -747,7 +711,7 @@ class HITLPolicyEngine:
         
         # Extend deadline
         extension_hours = 24  # Default extension
-        checkpoint.deadline = datetime.now() + timedelta(hours=extension_hours)
+        checkpoint.timeout_at = datetime.now() + timedelta(hours=extension_hours)
         
         # Add escalation reviewers
         escalation_policies = self.policies.get('hitl_policies', {}).get('escalation_policies', {})
@@ -903,7 +867,7 @@ class HITLPolicyEngine:
         """Get a checkpoint by ID"""
         return self.checkpoints.get(checkpoint_id)
     
-    def get_pending_checkpoints(self, task_id: str = None) -> List[HITLCheckpoint]:
+    def get_pending_checkpoints(self, task_id: Optional[str] = None) -> List[HITLCheckpoint]:
         """Get all pending checkpoints, optionally filtered by task_id"""
         pending = [cp for cp in self.checkpoints.values() if cp.status == CheckpointStatus.PENDING]
         if task_id:
@@ -979,7 +943,7 @@ class HITLPolicyEngine:
             
             return True
             
-        except Exception as e:
+        except Exception:
             return False
     
     async def escalate_checkpoint(self, checkpoint_id: str, escalated_by_or_data) -> bool:
@@ -1059,7 +1023,7 @@ class HITLPolicyEngine:
         
         return timed_out
     
-    def get_audit_trail(self, checkpoint_id: str = None, task_id: str = None) -> List[HITLAuditEntry]:
+    def get_audit_trail(self, checkpoint_id: Optional[str] = None, task_id: Optional[str] = None) -> List[HITLAuditEntry]:
         """Get audit trail for a checkpoint or task
         
         Args:
@@ -1094,7 +1058,7 @@ class HITLPolicyEngine:
             entries = [_convert_entry(entry) for entry in self.audit_log]
         
         return entries
-    def get_metrics(self, period_days: int = 30, days: int = None) -> Dict[str, Any]:
+    def get_metrics(self, period_days: int = 30, days: Optional[int] = None) -> Dict[str, Any]:
         """Get HITL metrics for specified period
         
         Args:
@@ -1134,12 +1098,12 @@ class HITLPolicyEngine:
             approval_rate = len(approved) / total_resolved if total_resolved > 0 else 0
             
             # Calculate average review time for resolved checkpoints
-            resolved_checkpoints = [cp for cp in recent_checkpoints if cp.resolved_at]
+            resolved_checkpoints = [cp for cp in recent_checkpoints if cp.resolved_at and cp.created_at]
             avg_review_time_hours = 0
             if resolved_checkpoints:
                 total_hours = sum(
                     (cp.resolved_at - cp.created_at).total_seconds() / 3600
-                    for cp in resolved_checkpoints
+                    for cp in resolved_checkpoints if cp.resolved_at is not None
                 )
                 avg_review_time_hours = total_hours / len(resolved_checkpoints)
             
@@ -1167,7 +1131,7 @@ class HITLPolicyEngine:
                 "pending_count": 0
             }
     
-    def get_daily_trends(self, days: int = 30) -> Dict[str, List]:
+    def get_daily_trends(self, days: int = 30) -> Dict[str, Any]:
         """Get daily trends for checkpoints over the specified period."""
         try:
             start_date = datetime.now() - timedelta(days=days)
@@ -1379,13 +1343,21 @@ def create_hitl_engine(config_path: Optional[str] = None) -> HITLPolicyEngine:
 # Integration helper functions
 async def create_hitl_checkpoint_for_task(task_id: str, checkpoint_type: str, 
                                         task_data: Dict[str, Any], 
-                                        trigger_conditions: List[str] = None) -> Optional[HITLCheckpoint]:
+                                        trigger_conditions: Optional[List[str]] = None) -> Optional[HITLCheckpoint]:
     """Helper function to create HITL checkpoint for a task"""
     engine = create_hitl_engine()
     
     try:
         checkpoint_type_enum = CheckpointType(checkpoint_type)
-        return engine.create_checkpoint(task_id, checkpoint_type_enum, task_data, trigger_conditions)
+        # Extract task type from task_id or default to 'backend_tasks'
+        task_type = engine._get_task_type(task_id)
+        return engine.create_checkpoint(
+            task_id=task_id,
+            checkpoint_type=checkpoint_type_enum.value,
+            task_type=task_type,
+            content=task_data,
+            risk_factors=trigger_conditions
+        )
     except ValueError:
         logger.error(f"Invalid checkpoint type: {checkpoint_type}")
         return None
@@ -1399,7 +1371,7 @@ async def check_hitl_approval_required(task_id: str, task_data: Dict[str, Any]) 
     
     # Check all checkpoint types
     for checkpoint_type in CheckpointType:
-        risk_assessment = engine.assess_risk(task_id, task_data, checkpoint_type)
+        risk_assessment = await engine.assess_risk(task_id, task_data, checkpoint_type)
         
         if (risk_assessment.risk_level in [RiskLevel.HIGH, RiskLevel.CRITICAL] or 
             not risk_assessment.auto_approve_eligible):
@@ -1431,10 +1403,11 @@ if __name__ == "__main__":
         
         # Create checkpoint
         checkpoint = engine.create_checkpoint(
-            'BE-123',
-            CheckpointType.OUTPUT_EVALUATION,
-            task_data,
-            ['schema_modifications']
+            task_id='BE-123',
+            checkpoint_type=CheckpointType.OUTPUT_EVALUATION.value,
+            task_type='backend_tasks',
+            content=task_data,
+            risk_factors=['schema_modifications']
         )
         
         print(f"Created checkpoint: {checkpoint.id}")
@@ -1442,7 +1415,7 @@ if __name__ == "__main__":
         print(f"Deadline: {checkpoint.deadline}")
         
         # Get metrics
-        metrics = engine.get_checkpoint_metrics()
+        metrics = engine.get_metrics()
         print(f"Metrics: {metrics}")
     
     asyncio.run(main())

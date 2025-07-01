@@ -6,13 +6,11 @@ End-to-end task completion orchestration that coordinates QA validation,
 documentation generation, archival, and dashboard updates.
 """
 
-import sys
 import json
 import logging
-import os
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import List, Optional, Any
 from dataclasses import asdict, dataclass
 
 logger = logging.getLogger(__name__)
@@ -330,7 +328,7 @@ def _create_task_archive(self, task_id: str) -> str:
         print(f"    📦 Archive created: {archive_path}")
         return str(archive_path)
 
-    except Exception as e:
+    except Exception:
         # Fallback to shutil for simple zip
         try:
             import zipfile
@@ -426,7 +424,7 @@ def _update_task_status(
             with open(status_path, 'w') as f:
                 json.dump(status_data, f, indent=2)
 
-            print(f"    ✅ Task status updated to COMPLETED")
+            print("    ✅ Task status updated to COMPLETED")
             return True
 
         except Exception as e:
@@ -668,9 +666,6 @@ def _format_list(self, items: List[str]) -> str:
 def main():
     """CLI interface for task completion workflow"""
     import argparse
-    import json
-    import logging
-    import sys
 
     parser = argparse.ArgumentParser(
         description="Task Completion Orchestrator")
@@ -694,7 +689,7 @@ def main():
         )
 
         if args.verbose:
-            print(f"\nCompletion Workflow Summary:")
+            print("\nCompletion Workflow Summary:")
             print(f"Overall Status: {completion_result.overall_status}")
             print(
                 f"Steps Completed: {len([s for s in completion_result.steps if s.status == 'COMPLETED'])}/{len(completion_result.steps)}")

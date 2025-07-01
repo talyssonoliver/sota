@@ -4,7 +4,7 @@ Auto Graph Generator
 Scans task YAML files and dynamically generates a LangGraph workflow based on task dependencies.
 """
 
-from src.core.workflows import workflow
+# Note: workflow is created dynamically as StateGraph in generate_workflow function
 import os
 import json
 import logging
@@ -12,7 +12,7 @@ import yaml
 from glob import glob
 from typing import Any, Dict, List, Optional
 
-from tools.memory import config
+from src.infrastructure.memory import config
 
 # LangGraph imports with error handling
 try:

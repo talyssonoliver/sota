@@ -10,7 +10,7 @@ try:
 except ImportError:
     pass
 try:
-    from src.infrastructure.tools.graph_builder import (build_advanced_workflow_graph,
+    from graph.graph_builder import (build_advanced_workflow_graph,
                                  build_dynamic_workflow_graph,
                                  build_state_workflow_graph,
                                  build_workflow_graph)

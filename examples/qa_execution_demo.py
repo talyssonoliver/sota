@@ -225,7 +225,7 @@ def demo_qa_execution():
         qa_report = qa_engine.execute_qa_for_task(task_id)
 
         # Display results
-        print(f"\n📊 QA Validation Results:")
+        print("\n📊 QA Validation Results:")
         print(f"Status: {qa_report['status']}")
         print(f"Tests Passed: {qa_report['tests_passed']}")
         print(f"Tests Failed: {qa_report['tests_failed']}")
@@ -241,28 +241,28 @@ def demo_qa_execution():
         # Verify report was saved
         report_file = temp_dir / task_id / "qa_report.json"
         if report_file.exists():
-            print(f"✅ QA report saved to: qa_report.json")
+            print("✅ QA report saved to: qa_report.json")
 
         # Demo LangGraph integration
-        print(f"\n🔄 Testing LangGraph integration")
+        print("\n🔄 Testing LangGraph integration")
         qa_integration = LangGraphQAIntegration(str(temp_dir))
 
         integration_result = qa_integration.handle_qa_pending_state(
             task_id, {"agent": "backend"})
 
-        print(f"📊 LangGraph Integration Results:")
+        print("📊 LangGraph Integration Results:")
         print(f"Current State: {integration_result['current_state']}")
         print(f"Next State: {integration_result['next_state']}")
         print(f"Transition Reason: {integration_result.get('reason', 'N/A')}")
 
         # Show file structure
-        print(f"\n📁 Generated File Structure:")
+        print("\n📁 Generated File Structure:")
         for file_path in sorted(temp_dir.rglob("*")):
             if file_path.is_file():
                 relative_path = file_path.relative_to(temp_dir)
                 print(f"  {relative_path}")
 
-        print(f"\n✅ Step 5.3 Demo completed successfully!")
+        print("\n✅ Step 5.3 Demo completed successfully!")
         return True
 
     except Exception as e:
@@ -277,7 +277,7 @@ def demo_qa_execution():
 
 def demo_cli_usage():
     """Demonstrate CLI usage examples"""
-    print(f"\n🖥️ CLI Usage Examples:")
+    print("\n🖥️ CLI Usage Examples:")
     print("=" * 30)
 
     examples = [
@@ -311,7 +311,7 @@ def main():
     # Show CLI examples
     demo_cli_usage()
 
-    print(f"\n🎯 Implementation Summary:")
+    print("\n🎯 Implementation Summary:")
     print("- ✅ QA execution engine with automated validation")
     print("- ✅ LangGraph integration for state transitions")
     print("- ✅ Comprehensive test generation and coverage")

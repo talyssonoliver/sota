@@ -20,19 +20,28 @@ except ImportError:
 try:
     from langgraph.graph import Graph, StateGraph
 except ImportError:
-    pass
+    # Define dummy classes for type hints when langgraph is not available
+    class Graph:
+        pass
+    class StateGraph:
+        pass
 try:
     from pythonjsonlogger import jsonlogger
 except ImportError:
     pass
 try:
     from src.core.workflows.states import TaskStatus
+except ImportError:
+    pass
+
 import json
 import logging
 import os
 import sys
+try:
+    import requests
 except ImportError:
-    pass
+    requests = None
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Configure structured JSON logging for production

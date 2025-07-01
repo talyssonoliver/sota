@@ -10,6 +10,10 @@ and integration with the existing feedback and HITL systems.
 
 try:
     from datetime import datetime, timedelta
+    import time
+    import logging
+    import json
+    import threading
 except ImportError:
     pass
 try:

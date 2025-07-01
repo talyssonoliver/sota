@@ -11,11 +11,9 @@ CSV and HTML reports showing context usage patterns.
 
 import os
 import sys
-import logging
-from datetime import datetime
 from pathlib import Path
-from tools.context_tracker import get_all_context_logs
-from tools.context_visualizer import (analyze_context_coverage,
+from src.infrastructure.tools.context_tracker import get_all_context_logs
+from src.infrastructure.tools.context_visualizer import (analyze_context_coverage,
 generate_context_coverage_report,
                                       generate_csv_report,
                                       generate_html_report, generate_json_report)
@@ -68,7 +66,7 @@ def test_context_coverage_analysis():
     # Display some coverage matrix data
     coverage_matrix = coverage_data.get("coverage_matrix", [])
     if coverage_matrix:
-        print(f"\n📋 Sample Coverage Data:")
+        print("\n📋 Sample Coverage Data:")
         # Show first 3 tasks
         for i, task_data in enumerate(coverage_matrix[:3]):
             task_id = task_data["task_id"]
@@ -92,7 +90,7 @@ def test_csv_generation():
     coverage_data = analyze_context_coverage()
 
     if "error" in coverage_data:
-        print(f"⚠️  Skipping CSV test - no context data available")
+        print("⚠️  Skipping CSV test - no context data available")
         return False
 
     # Generate CSV report
@@ -130,7 +128,7 @@ def test_html_generation():
     coverage_data = analyze_context_coverage()
 
     if "error" in coverage_data:
-        print(f"⚠️  Skipping HTML test - no context data available")
+        print("⚠️  Skipping HTML test - no context data available")
         return False
 
     # Generate HTML report
@@ -138,7 +136,7 @@ def test_html_generation():
     json_path = "reports/step_3_9_test_coverage.json"
     success_html = generate_html_report(coverage_data, html_path)
     # Also generate the JSON file for dynamic HTML
-    from tools.context_visualizer import generate_json_report
+    from src.infrastructure.tools.context_visualizer import generate_json_report
     success_json = generate_json_report(coverage_data, json_path)
 
     if success_html and success_json:
@@ -189,7 +187,7 @@ def test_json_generation():
     # Get coverage data
     coverage_data = analyze_context_coverage()
     if "error" in coverage_data:
-        print(f"⚠️  Skipping JSON test - no context data available")
+        print("⚠️  Skipping JSON test - no context data available")
         return False
     json_path = "reports/context-coverage.json"
     success_json = generate_json_report(coverage_data, json_path)
@@ -285,13 +283,13 @@ def run_step_3_9_validation():
             if os.path.exists(report):
                 print(f"   📊 {report}")
 
-        print(f"\n🔗 Integration Status:")
-        print(f"   ✅ Step 3.7 context tracking: Integrated")
-        print(f"   ✅ Step 3.8 human review: Compatible")
-        print(f"   ✅ CSV output: Generated")
-        print(f"   ✅ HTML visualization: Generated")
+        print("\n🔗 Integration Status:")
+        print("   ✅ Step 3.7 context tracking: Integrated")
+        print("   ✅ Step 3.8 human review: Compatible")
+        print("   ✅ CSV output: Generated")
+        print("   ✅ HTML visualization: Generated")
     else:
-        print(f"\n⚠️  Step 3.9 implementation needs attention")
+        print("\n⚠️  Step 3.9 implementation needs attention")
         print(f"   {total - passed} test(s) failed")
 
     return passed == total

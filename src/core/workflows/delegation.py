@@ -9,8 +9,7 @@ from datetime import datetime
 
 from typing import Any, Dict, List, Optional
 from src.infrastructure.memory import get_context_by_keys
-from src.core.workflows.registry import (create_agent_instance, get_agent_config,
-                       get_agent_for_task)
+from src.core.workflows.registry import (create_agent_instance, get_agent_for_task)
 
 def delegate_task(
     task_id: str,

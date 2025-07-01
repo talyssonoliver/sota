@@ -18,12 +18,39 @@ try:
     pass
 except ImportError:
     pass
-from langchain_text_splitters import CharacterTextSplitter
 try:
-    pass
-except ImportError:
-    pass
-    pass
+    from langchain_text_splitters import CharacterTextSplitter
+    LANGCHAIN_AVAILABLE = True
+except ImportError as e:
+    print(f"Warning: LangChain text splitters not available: {e}")
+    LANGCHAIN_AVAILABLE = False
+    # Create a simple fallback class
+    class CharacterTextSplitter:
+        def __init__(self, chunk_size=1000, chunk_overlap=200, separator="\n\n"):
+            self.chunk_size = chunk_size
+            self.chunk_overlap = chunk_overlap
+            self.separator = separator
+        
+        def split_text(self, text):
+            # Simple fallback splitting
+            chunks = []
+            words = text.split()
+            current_chunk = []
+            current_length = 0
+            
+            for word in words:
+                if current_length + len(word) > self.chunk_size and current_chunk:
+                    chunks.append(" ".join(current_chunk))
+                    current_chunk = current_chunk[-self.chunk_overlap:] if self.chunk_overlap > 0 else []
+                    current_length = sum(len(w) for w in current_chunk)
+                
+                current_chunk.append(word)
+                current_length += len(word) + 1
+            
+            if current_chunk:
+                chunks.append(" ".join(current_chunk))
+            
+            return chunks
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
@@ -94,7 +121,7 @@ This document continues with additional sections to provide sufficient content f
     # Split the document
     chunks = text_splitter.split_text(sample_content)
 
-    print(f"📊 Chunking Results:")
+    print("📊 Chunking Results:")
     print(f"   Original length: {len(sample_content)} characters")
     print(f"   Number of chunks: {len(chunks)}")
     print(
@@ -109,7 +136,7 @@ This document continues with additional sections to provide sufficient content f
     for i, chunk in enumerate(chunks):
         print(f"   Chunk {i + 1}: {len(chunk)} characters")
         if len(chunk) > 500:
-            print(f"      ⚠️  Chunk exceeds target size (500 chars)")
+            print("      ⚠️  Chunk exceeds target size (500 chars)")
 
         # Show first 100 characters of each chunk
         preview = chunk.replace('\n', ' ').strip()[:100]
@@ -141,13 +168,13 @@ This document continues with additional sections to provide sufficient content f
     print("✅ Step 3.6 Enhanced Chunking Test Complete!")
     print()
     print("📋 Summary:")
-    print(f"   ✓ LangChain CharacterTextSplitter configured correctly")
-    print(f"   ✓ Chunk size target: 500 characters (with 50 char overlap)")
+    print("   ✓ LangChain CharacterTextSplitter configured correctly")
+    print("   ✓ Chunk size target: 500 characters (with 50 char overlap)")
     print(
         f"   ✓ Generated {
             len(chunks)} chunks from {
             len(sample_content)} character document")
-    print(f"   ✓ Chunking strategy validated for Step 3.6 implementation")
+    print("   ✓ Chunking strategy validated for Step 3.6 implementation")
 
 if __name__ == "__main__":
     test_step_3_6_chunking()

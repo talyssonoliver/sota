@@ -11,9 +11,8 @@ try:
 except ImportError:
     pass
 import sys
-import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 
@@ -578,8 +577,8 @@ async def main():
         report_data = await generator.generate_eod_report()
         
         print(f"✅ End-of-day report generated: {report_data['output_file']}")
-        print(f"📊 Report includes comprehensive daily analysis")
-        print(f"🔄 Integrated with Phase 5 infrastructure")
+        print("📊 Report includes comprehensive daily analysis")
+        print("🔄 Integrated with Phase 5 infrastructure")
         
         return True
         

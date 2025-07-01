@@ -1,6 +1,6 @@
 """LangChain retrieval QA base compatibility module."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 from abc import ABC, abstractmethod
 
 class BaseRetrievalQA(ABC):

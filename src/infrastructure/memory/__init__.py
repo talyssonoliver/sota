@@ -1,7 +1,7 @@
 """Infrastructure memory module."""
 
 try:
-    from .engines.memory_engine import MemoryEngine
+    from .engine import MemoryEngine
 except ImportError:
     pass
 
@@ -50,20 +50,28 @@ def get_context_by_keys(keys, **kwargs):
 
 def get_memory_instance():
     """Get memory instance."""
-    return MemoryEngine()
+    return initialize_memory()
 
 def get_memory_system():
     """Get memory system."""
-    return MemoryEngine()
+    return initialize_memory()
 
 def initialize_memory(config=None):
     """Initialize memory engine."""
+    if config is None:
+        # Import here to avoid circular imports
+        try:
+            from .config.memory_config import MemoryEngineConfig
+            config = MemoryEngineConfig()
+        except ImportError:
+            # Fallback to basic config
+            config = {}
     return MemoryEngine(config)
 
 def get_relevant_context(query, k=5, user="system"):
     """Get relevant context for a query."""
     memory_engine = get_memory_instance()
-    return memory_engine.get_relevant_context(query)
+    return memory_engine.get_context(query, k=k, user=user)
 
 __all__ = [
     "MemoryEngine", 

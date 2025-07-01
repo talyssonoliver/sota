@@ -220,6 +220,30 @@ ai-system/
    # This will generate a key and optionally add it to your .env file
    ```
 
+## 📦 Import Guidelines
+
+For detailed import guidelines and standard paths, see [IMPORT_GUIDELINES.md](IMPORT_GUIDELINES.md).
+
+### Quick Import Reference
+```python
+# Agents
+from src.core.agents.technical import TechnicalLeadAgent
+from src.core.agents.factory import AgentFactory
+
+# Workflows (Library)
+from src.core.workflows import execute_workflow
+from src.core.workflows.states import TaskStatus
+
+# Workflows (CLI)
+from orchestration.execute_task import execute_task_cli
+from orchestration.gantt_analyzer import generate_gantt_chart
+
+# Tools
+from tools.memory.engine import MemoryEngine
+from tools.github_tool import GitHubTool
+from tools.tool_loader import load_tools_for_agent
+```
+
 ## 🚀 Quick Start
 
 ### System Validation

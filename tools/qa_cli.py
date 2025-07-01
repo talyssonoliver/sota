@@ -12,7 +12,6 @@ import argparse
 import json
 import traceback
 from pathlib import Path
-from typing import Any, Dict, List, Optional
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -62,12 +61,12 @@ except ImportError as e:
             return {"error": "Integration analyzer not available"}
 
 try:
-    from tests.components.test_generator import QATestFramework, QATestGenerator
+    from tests.unit.core.test_generator import QAFramework, QATestGenerator
     TEST_GENERATOR_AVAILABLE = True
 except ImportError as e:
     logging.warning(f"Test generator not available: {e}")
     TEST_GENERATOR_AVAILABLE = False
-    class QATestFramework:
+    class QAFramework:
         def __init__(self, *args, **kwargs):
             pass
     
@@ -214,7 +213,7 @@ def detect_integration_gaps_command(args) -> int:
         gaps = results.get('gaps', [])
         components = results.get('components', [])
 
-        print(f"\n📊 Integration Analysis Results:")
+        print("\n📊 Integration Analysis Results:")
         print(f"Components analyzed: {len(components)}")
         print(f"Integration gaps found: {len(gaps)}")
 
@@ -257,7 +256,7 @@ def validate_quality_command(args) -> int:
         # Validate against quality gates
         validation = qa_agent.validate_quality_gates(results)
 
-        print(f"\n🎯 Quality Gate Validation:")
+        print("\n🎯 Quality Gate Validation:")
         print(f"Overall Status: {validation['overall_status']}")
         print(f"Summary: {validation['summary']}")
 
@@ -331,7 +330,7 @@ def report_command(args) -> int:
         with open(output_path, 'w') as f:
             json.dump(report, f, indent=2)
 
-        print(f"\n📊 QA Report Summary:")
+        print("\n📊 QA Report Summary:")
         print(f"Quality Status: {validation['overall_status']}")
         print(
             f"Quality Score: {

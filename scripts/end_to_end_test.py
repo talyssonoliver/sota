@@ -18,11 +18,10 @@ This validates the complete Phase 4 implementation.
 
 
 
-from datetime import datetime
 from pathlib import Path
 from src.core.workflows.states import TaskStatus
 from src.infrastructure.utils.execution_monitor import get_execution_monitor
-from src.infrastructure.utils.task_loader import load_task_metadata, update_task_state
+from src.infrastructure.utils.task_loader import update_task_state
 import os
 import sys
 import tempfile
@@ -329,17 +328,17 @@ Task ready for QA review and final approval.
         critical_passed = all(results[step] for step in critical_steps)
 
         if critical_passed:
-            print(f"\n🎉 PHASE 4 CORE FUNCTIONALITY: ✅ VERIFIED")
+            print("\n🎉 PHASE 4 CORE FUNCTIONALITY: ✅ VERIFIED")
             print("   - LangGraph workflow execution: Working")
             print("   - Real-time monitoring: Working")
             print("   - Step 4.8 implementation: Complete")
         else:
-            print(f"\n⚠️  PHASE 4 CORE FUNCTIONALITY: ❌ ISSUES DETECTED")
+            print("\n⚠️  PHASE 4 CORE FUNCTIONALITY: ❌ ISSUES DETECTED")
             for step in critical_steps:
                 if not results[step]:
                     print(f"   - {step}: Failed")
 
-        print(f"\n📊 Monitoring Summary:")
+        print("\n📊 Monitoring Summary:")
         final_stats = monitor.get_execution_stats()
         print(f"   Total Executions: {final_stats['total_executions']}")
         print(

@@ -10,19 +10,54 @@ import threading
 import subprocess
 import unittest
 import json
+from pathlib import Path
 from unittest.mock import patch
+import time
+# Ensure the project root is in the path
+project_root = Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(project_root))
+# Try to import required modules
 try:
     from config.build_paths import TEST_OUTPUTS_DIR
 except ImportError:
-    pass
+    TEST_OUTPUTS_DIR = Path('test_outputs')
 try:
-    from src.infrastructure.tools.notifications import NotificationLevel
+    from tests.utils.test_utils import Timer
 except ImportError:
-    pass
+    # Fallback Timer implementation
+    class Timer:
+        def __init__(self):
+            self.start_time = None
+            self.end_time = None
+        
+        def start(self):
+            self.start_time = time.time()
+            return self
+        
+        def stop(self):
+            self.end_time = time.time()
+            return self
+        
+        def elapsed(self):
+            if self.start_time is None:
+                return 0
+            if self.end_time is None:
+                return time.time() - self.start_time
+            return self.end_time - self.start_time
+
 try:
-    from src.core.workflows.enhanced_workflow import EnhancedWorkflowExecutor
+    from tests.utils.test_utils import FeedbackCollector
 except ImportError:
-    pass
+    # Fallback FeedbackCollector implementation
+    class FeedbackCollector:
+        @staticmethod
+        def print_section(title):
+            print(f"\n=== {title} ===")
+
+# Try to import required classes
+from src.infrastructure.tools.notifications import NotificationLevel
+from src.core.workflows.enhanced_workflow import EnhancedWorkflowExecutor
+
 try:
     from src.core.workflows.states import TaskStatus
 except ImportError:

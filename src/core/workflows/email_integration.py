@@ -17,7 +17,7 @@ try:
     import smtplib
 except ImportError:
     pass
-from datetime import datetime, timedelta
+from datetime import datetime
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
@@ -424,45 +424,45 @@ class EmailIntegration:
                 else:
                     return {"status": "error", "message": str(e)}
     
-def _add_attachment(self, msg: MIMEMultipart, attachment_path: str):
-    """Add attachment to email message."""
-    try:
-        with open(attachment_path, "rb") as attachment:
-            part = MIMEBase('application', 'octet-stream')
-            part.set_payload(attachment.read())
-        
-        encoders.encode_base64(part)
-        part.add_header(
-            'Content-Disposition',
-            f'attachment; filename= {Path(attachment_path).name}'
-        )
-        msg.attach(part)
-    except Exception as e:
-        self.logger.warning(f"Could not add attachment {attachment_path}: {e}")
+    def _add_attachment(self, msg: MIMEMultipart, attachment_path: str):
+        """Add attachment to email message."""
+        try:
+            with open(attachment_path, "rb") as attachment:
+                part = MIMEBase('application', 'octet-stream')
+                part.set_payload(attachment.read())
+            
+            encoders.encode_base64(part)
+            part.add_header(
+                'Content-Disposition',
+                f'attachment; filename= {Path(attachment_path).name}'
+            )
+            msg.attach(part)
+        except Exception as e:
+            self.logger.warning(f"Could not add attachment {attachment_path}: {e}")
 
-def _html_to_text(self, html_content: str) -> str:
-    """Convert HTML to plain text."""
-    # Simple HTML to text conversion
-    try:
-        import re
-    except ImportError:
-        pass
-    
-    # Remove HTML tags
-    text = re.sub('<[^<]+?>', '', html_content)
-    
-    # Replace HTML entities
-    text = text.replace('&nbsp;', ' ')
-    text = text.replace('&amp;', '&')
-    text = text.replace('&lt;', '<')
-    text = text.replace('&gt;', '>')
-    text = text.replace('&quot;', '"')
-    
-    # Clean up whitespace
-    text = re.sub(r'\n\s*\n', '\n\n', text)
-    text = text.strip()
-    
-    return text
+    def _html_to_text(self, html_content: str) -> str:
+        """Convert HTML to plain text."""
+        # Simple HTML to text conversion
+        try:
+            import re
+        except ImportError:
+            pass
+        
+        # Remove HTML tags
+        text = re.sub('<[^<]+?>', '', html_content)
+        
+        # Replace HTML entities
+        text = text.replace('&nbsp;', ' ')
+        text = text.replace('&amp;', '&')
+        text = text.replace('&lt;', '<')
+        text = text.replace('&gt;', '>')
+        text = text.replace('&quot;', '"')
+        
+        # Clean up whitespace
+        text = re.sub(r'\n\s*\n', '\n\n', text)
+        text = text.strip()
+        
+        return text
     
     def configure_email(self, smtp_server: str, smtp_port: int, username: str, 
                        password: str, from_address: str) -> bool:

@@ -1,8 +1,9 @@
 {
   "configurations": [
+
     {
       "name": "Debug SOTA Main",
-      "type": "python",
+      "type": "debugpy",
       "request": "launch",
       "program": "main.py",
       "env": {"ENVIRONMENT": "development"}

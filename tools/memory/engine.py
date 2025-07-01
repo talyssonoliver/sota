@@ -41,9 +41,8 @@ try:
 except ImportError as e:
     logging.warning(f"Memory config not available: {e}")
     MEMORY_CONFIG_AVAILABLE = False
-    class MemoryEngineConfig:
-        def __init__(self, *args, **kwargs):
-            pass
+    # Import the real config class
+    from src.infrastructure.memory.config.memory_config import MemoryEngineConfig
 
 try:
     from .exceptions import MemoryEngineError, SecurityError
@@ -98,12 +97,9 @@ try:
     CHROMADB_AVAILABLE = True
 except ImportError as e:
     CHROMADB_AVAILABLE = False
-    logging.warning(f"ChromaDB not available: {e}")
-    # Create mock ChromaDB
-    class MockChromaDB:
-        def __init__(self, *args, **kwargs):
-            pass
-    chromadb = MockChromaDB()
+    logger.debug(f"ChromaDB not available: {e}")
+    chromadb = None
+    Settings = None
 
 try:
     from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -112,19 +108,10 @@ try:
     LANGCHAIN_AVAILABLE = True
 except ImportError as e:
     LANGCHAIN_AVAILABLE = False
-    logging.warning(f"LangChain not available: {e}")
-    # Create mock LangChain classes
-    class RecursiveCharacterTextSplitter:
-        def __init__(self, *args, **kwargs):
-            pass
-    
-    class Chroma:
-        def __init__(self, *args, **kwargs):
-            pass
-    
-    class OpenAIEmbeddings:
-        def __init__(self, *args, **kwargs):
-            pass
+    logger.debug(f"LangChain not available: {e}")
+    RecursiveCharacterTextSplitter = None
+    Chroma = None
+    OpenAIEmbeddings = None
 
 class MemoryEngine:
     """
@@ -151,7 +138,7 @@ class MemoryEngine:
         self.audit_logger = AuditLogger(self.config)
         
         if self.config.enable_caching:
-            self.cache_manager = CacheManager(self.config.cache)
+            self.cache_manager = CacheManager(self.config.caching)
         else:
             self.cache_manager = None
         
@@ -177,7 +164,6 @@ class MemoryEngine:
     
     def _create_storage_directories(self):
         """Create required storage directories for tests and normal operation."""
-        import os
         from pathlib import Path
         
         # Define storage paths based on the storage configuration
@@ -209,6 +195,12 @@ class MemoryEngine:
         try:
             # Testing environment check
             if os.environ.get("TESTING", "0") == "1":
+                return
+            
+            # Check if required dependencies are available
+            if not CHROMADB_AVAILABLE or not LANGCHAIN_AVAILABLE:
+                logger.info("Vector store not available - missing ChromaDB or LangChain dependencies")
+                self.vector_store = None
                 return
             
             self.embeddings = OpenAIEmbeddings(
@@ -650,30 +642,6 @@ class MemoryEngine:
         
         return stats
     
-    def clear(self, user: str = "system"):
-        """Clear all data from the memory engine."""
-        logger.info(f"Clearing MemoryEngine data for user: {user}")
-        
-        # Clear documents
-        self.documents = {}
-        
-        # Clear vector store if available
-        if self.vector_store and hasattr(self.vector_store, 'delete_collection'):
-            try:
-                self.vector_store.delete_collection()
-            except Exception as e:
-                logger.warning(f"Failed to clear vector store: {e}")
-        # Clear cache
-        if self.cache_manager:
-            try:
-                self.cache_manager.clear()
-            except Exception as e:
-                logger.warning(f"Failed to clear cache: {e}")
-          # Re-initialize vector store
-        self._initialize_vector_store()
-        
-        logger.info("MemoryEngine cleared successfully")
-    
     def get_index_health(self) -> Dict[str, Any]:
         """Backward compatibility alias for index_health"""
         return self.index_health()
@@ -810,99 +778,6 @@ class MemoryEngine:
         except Exception as e:
             logger.error(f"Failed to clear memory system: {e}")
             return False
-    
-    def secure_delete(self, file_path: str, user: str = "system") -> bool:
-        """
-        Securely delete a document from the memory system.
-        
-        Args:
-            file_path: Path to document to delete
-            user: User making the request
-            
-        Returns:
-            True if successful, False otherwise
-        """
-        try:
-            # Security check
-            if not self.security_manager.check_access(user, file_path, 'delete'):
-                raise SecurityError(f"Access denied for user {user}")
-            
-            # Remove from documents tracking
-            if file_path in self.documents:
-                del self.documents[file_path]
-            
-            # Remove from vector store
-            if self.vector_store:
-                try:
-                    # Get all chunk IDs for this document
-                    doc_chunks = [f"{file_path}_{i}" for i in range(100)]  # Assume max 100 chunks
-                    self.vector_store.delete(ids=doc_chunks)
-                except Exception as e:
-                    logger.warning(f"Failed to delete from vector store: {e}")
-            
-            # Remove from storage
-            if self.storage_manager:
-                try:
-                    # Remove all chunks for this document
-                    for i in range(100):  # Assume max 100 chunks
-                        chunk_key = f"{file_path}_{i}"
-                        self.storage_manager.delete_data(chunk_key)
-                except Exception as e:
-                    logger.warning(f"Failed to delete from storage: {e}")
-            
-            # Securely delete the original file if it exists
-            if os.path.exists(file_path):
-                self.security_manager.secure_delete(file_path)
-            
-            # Audit log
-            self.audit_logger.log_data_operation(user, 'secure_delete', file_path)
-            
-            logger.info(f"Securely deleted document: {file_path}")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Failed to securely delete {file_path}: {e}")
-            return False
-    
-    def get_stats(self) -> Dict[str, Any]:
-        """
-        Get memory engine statistics.
-        
-        Returns:
-            Dictionary with various statistics
-        """
-        try:
-            stats = {
-                'total_documents': len(self.documents),
-                'encryption_enabled': self.security_manager.encryption_enabled,
-                'pii_detection_enabled': self.security_manager.pii_detection_enabled,
-                'access_control_enabled': self.security_manager.access_control_enabled,
-                'caching_enabled': self.cache_manager is not None,
-                'tiered_storage_enabled': self.storage_manager is not None,
-                'vector_store_available': self.vector_store is not None
-            }
-            
-            # Add cache stats if available
-            if self.cache_manager:
-                try:
-                    cache_stats = self.cache_manager.get_stats()
-                    stats.update(cache_stats)
-                except Exception as e:
-                    logger.warning(f"Failed to get cache stats: {e}")
-            
-            # Add storage stats if available
-            if self.storage_manager:
-                try:
-                    storage_stats = self.storage_manager.get_stats()
-                    stats.update(storage_stats)
-                except Exception as e:
-                    logger.warning(f"Failed to get storage stats: {e}")
-            
-            return stats
-            
-        except Exception as e:
-            logger.error(f"Failed to get stats: {e}")
-            return {'error': str(e)}
 
     @property
     def profiler(self):

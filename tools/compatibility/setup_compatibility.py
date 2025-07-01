@@ -5,7 +5,6 @@ when external libraries are not installed.
 """
 
 import sys
-import os
 from pathlib import Path
 
 def setup_compatibility_path():

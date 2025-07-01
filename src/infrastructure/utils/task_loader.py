@@ -6,7 +6,7 @@ try:
     import yaml
 except ImportError:
     pass
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional, List
 
 class TaskLoader:
     """Load and manage tasks."""
@@ -63,7 +63,7 @@ def load_task_metadata(task_id: str) -> Dict[str, Any]:
                         return yaml.safe_load(f) or {}
                     else:
                         return json.load(f) or {}
-            except Exception as e:
+            except Exception:
                 continue
     
     # Return default metadata if file not found
@@ -130,7 +130,7 @@ def update_task_state(task_id: str, new_state: str, metadata: Optional[Dict[str,
                         else:
                             json.dump(task_data, f, indent=2)
                     return True
-                except Exception as e:
+                except Exception:
                     continue
         
         # If no existing file found, create new one in tasks directory
@@ -142,7 +142,33 @@ def update_task_state(task_id: str, new_state: str, metadata: Optional[Dict[str,
         
         return True
         
-    except Exception as e:
+    except Exception:
         return False
 
-__all__ = ["TaskLoader", "load_task_metadata", "update_task_state"]
+def get_all_tasks() -> List[str]:
+    """Get all available task IDs from the tasks directory.
+    
+    Returns:
+        List of task IDs (e.g., ['BE-01', 'FE-02', 'TL-01'])
+    """
+    task_ids = []
+    search_directories = [
+        "tasks",
+        "src/core/tasks",
+        "src/core/tasks/backend", 
+        "src/core/tasks/frontend",
+        "src/core/tasks/general"
+    ]
+    
+    for directory in search_directories:
+        if os.path.exists(directory):
+            for file in os.listdir(directory):
+                if file.endswith('.yaml') or file.endswith('.json'):
+                    # Extract task ID from filename (e.g., 'BE-01.yaml' -> 'BE-01')
+                    task_id = os.path.splitext(file)[0]
+                    if task_id not in task_ids:
+                        task_ids.append(task_id)
+    
+    return sorted(task_ids)
+
+__all__ = ["TaskLoader", "load_task_metadata", "update_task_state", "get_all_tasks"]

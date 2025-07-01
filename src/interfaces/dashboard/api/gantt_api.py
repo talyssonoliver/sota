@@ -44,7 +44,6 @@ except ImportError as e:
             return {}
 
 import logging
-import sys
 
 # Create Blueprint
 gantt_bp = Blueprint('gantt', __name__, url_prefix='/api/gantt')
@@ -745,7 +744,7 @@ def generate_critical_path_recommendations(critical_tasks):
             recommendations.append({
                 'id': f"crit-{task['id']}",
                 'title': f"Optimize {task['name']}",
-                'description': f"Consider breaking down or parallelizing this critical task to reduce project duration.",
+                'description': "Consider breaking down or parallelizing this critical task to reduce project duration.",
                 'priority': 'high',
                 'category': 'timeline',
                 'impact': 'High',
