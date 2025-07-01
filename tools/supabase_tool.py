@@ -196,16 +196,16 @@ class SupabaseTool(ArtesanatoBaseTool):
                         'is_nullable') == "YES" else "NOT NULL"
 
                     # Add default value if present
-                    default = f" DEFAULT {
-                        column.get('column_default')}" if column.get('column_default') else ""
+                    default_val = column.get('column_default')
+                    default = f" DEFAULT {default_val}" if default_val else ""
 
                     # Add identity/serial info
                     identity = f" {column.get('identity_generation')}" if column.get(
                         'identity_generation') else ""
 
                     # Format the complete column definition
-                    column_def = f"{
-                        column.get('column_name')}: {data_type} {nullable}{default}{identity}"
+                    column_name = column.get('column_name')
+                    column_def = f"{column_name}: {data_type} {nullable}{default}{identity}"
                     tables[table_name].append(column_def)
 
                 # Extract foreign key constraints
@@ -279,9 +279,9 @@ class SupabaseTool(ArtesanatoBaseTool):
                 if hasattr(pk_response, 'data') and pk_response.data:
                     schema_text += "## Primary Keys\n\n"
                     for pk in pk_response.data:
-                        schema_text += f"- {
-                            pk.get('table_name')}: {
-                            pk.get('column_name')}\n"
+                        table = pk.get('table_name')
+                        column = pk.get('column_name')
+                        schema_text += f"- {table}: {column}\n"
 
                 return schema_text
             else:

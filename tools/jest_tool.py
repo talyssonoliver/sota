@@ -207,6 +207,14 @@ class JestTool(ArtesanatoBaseTool):
         # Check if component takes props by looking for a Props type/interface
         has_props = "Props" in component_code or "props" in component_code
 
+        additional_test = (
+            "test('renders with different props', () => {\n"
+            "    // Test component with various prop combinations\n"
+            f"    render(<{component_name} {{ /* different props */ }} />);\n"
+            "    // Add assertions for prop-specific behavior\n"
+            "  });" if has_props else ""
+        )
+
         test_code = f"""import React from 'react';
 import {{ render, screen }} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -230,7 +238,7 @@ describe('{component_name}', () => {{
     // expect(screen.getByText(/new content/i)).toBeInTheDocument();
   }});
 
-  {"test('renders with different props', () => {\n    // Test component with various prop combinations\n    render(<" + component_name + " { /* different props */ } />);\n    // Add assertions for prop-specific behavior\n  });" if has_props else ""}
+  {additional_test}
 }});
 """
         return test_code
@@ -392,9 +400,11 @@ describe('{util_name}', () => {{
                     data={
                         "component": component_name,
                         "test_files": test_files,
-                        "message": f"Found {
-                            len(test_files)} potential test locations for {
-                            component_name or 'the project'}."}))
+                        "message": (
+                            f"Found {len(test_files)} potential test locations for "
+                            f"{component_name or 'the project'}."
+                        )
+                    }))
         except Exception as e:
             return json.dumps(self.handle_error(e, "JestTool._list_tests"))
 
@@ -459,8 +469,10 @@ describe('{util_name}', () => {{
             return json.dumps(
                 self.format_response(
                     data={
-                        "message": f"Coverage data retrieved for {
-                            path or 'the entire project'}",
-                        "coverage": coverage_data}))
+                        "message": (
+                            f"Coverage data retrieved for {path or 'the entire project'}"
+                        ),
+                        "coverage": coverage_data,
+                    }))
         except Exception as e:
             return json.dumps(self.handle_error(e, "JestTool._get_coverage"))
