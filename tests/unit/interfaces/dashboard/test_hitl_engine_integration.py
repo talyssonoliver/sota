@@ -11,7 +11,8 @@ import yaml
 from datetime import datetime, timedelta
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
-from src.core.workflows.hitl_engine import HITLPolicyEngine, CheckpointStatus, RiskLevel
+from src.core.workflows.hitl_engine import HITLPolicyEngine
+from src.core.workflows.hitl.types import CheckpointStatus, RiskLevel
 
 class TestHITLEngineIntegration(unittest.IsolatedAsyncioTestCase):
     """Integration tests for HITL engine with existing components."""
@@ -78,7 +79,7 @@ class TestHITLEngineIntegration(unittest.IsolatedAsyncioTestCase):
     async def test_checkpoint_retry_mechanism(self):
         """Test checkpoint retry mechanism for failed reviews."""
         checkpoint = self.engine.create_checkpoint(task_id='BE-11', checkpoint_type='output_evaluation', task_type='backend', content={'code': 'Complex business logic'}, risk_factors=['business_logic', 'complex_logic'])
-        from src.core.workflows.hitl_engine import HITLReviewDecision
+        from src.core.workflows.hitl.models import HITLReviewDecision
         decision = HITLReviewDecision(checkpoint_id=checkpoint.checkpoint_id, decision='reject', reviewer_id='test_reviewer', comments='Needs improvement', reviewed_at=datetime.now())
         await self.engine.process_decision(decision)
         updated_checkpoint = self.engine.get_checkpoint(checkpoint.checkpoint_id)
@@ -102,7 +103,7 @@ class TestHITLEngineIntegration(unittest.IsolatedAsyncioTestCase):
         checkpoint2 = self.engine.create_checkpoint(task_id='BE-13', checkpoint_type='output_evaluation', task_type='backend', content={'code': 'API implementation'}, risk_factors=['api_endpoint', 'integration'])
         pending_for_task = self.engine.get_pending_checkpoints_for_task('BE-13')
         self.assertEqual(len(pending_for_task), 2)
-        from src.core.workflows.hitl_engine import HITLReviewDecision
+        from src.core.workflows.hitl.models import HITLReviewDecision
         decision1 = HITLReviewDecision(checkpoint_id=checkpoint1.checkpoint_id, decision='approve', reviewer_id='test_reviewer', comments='Good design', reviewed_at=datetime.now())
         await self.engine.process_decision(decision1)
         pending_for_task = self.engine.get_pending_checkpoints_for_task('BE-13')

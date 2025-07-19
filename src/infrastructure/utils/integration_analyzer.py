@@ -3,6 +3,9 @@ Integration Gap Detection - Step 5.3
 Identifies missing integration points or untested code paths.
 """
 
+import ast
+import logging
+from typing import Any, Dict, List, Optional
 
 try:
     from dataclasses import dataclass
@@ -16,24 +19,21 @@ try:
     from pathlib import Path
 except ImportError:
     pass
-try:
-    from typing import Any, Dict, List, Optional, Set, Tuple
-except ImportError:
     pass
-try:
-    import logging
-except ImportError:
-    pass
-    pass
+
+
 class GapSeverity(Enum):
     """Severity levels for integration gaps."""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
     CRITICAL = "critical"
 
+
 class GapType(Enum):
     """Types of integration gaps that can be detected."""
+
     MISSING_INTERFACE_TEST = "missing_interface_test"
     UNVALIDATED_DATA_FLOW = "unvalidated_data_flow"
     MISSING_ERROR_HANDLING = "missing_error_handling"
@@ -41,9 +41,11 @@ class GapType(Enum):
     MISSING_COMPONENT_INTERACTION = "missing_component_interaction"
     UNTESTED_BOUNDARY = "untested_boundary"
 
+
 @dataclass
 class IntegrationGap:
     """Represents an identified integration gap."""
+
     gap_type: GapType
     severity: GapSeverity
     description: str
@@ -52,6 +54,7 @@ class IntegrationGap:
     component1: Optional[str] = None
     component2: Optional[str] = None
     recommendation: Optional[str] = None
+
 
 class IntegrationAnalyzer:
     """Analyzes codebase for integration gaps and missing test coverage."""
@@ -109,15 +112,21 @@ class IntegrationAnalyzer:
     def _should_skip_file(self, file_path: Path) -> bool:
         """Check if file should be skipped during analysis."""
         skip_patterns = [
-            "__pycache__", ".git", ".venv", "node_modules",
-            "test_", "_test", ".test.", "conftest.py"
+            "__pycache__",
+            ".git",
+            ".venv",
+            "node_modules",
+            "test_",
+            "_test",
+            ".test.",
+            "conftest.py",
         ]
         return any(pattern in str(file_path) for pattern in skip_patterns)
 
     def _analyze_file_structure(self, file_path: Path) -> Dict[str, Any]:
         """Analyze the structure of a Python file."""
         try:
-            content = file_path.read_text(encoding='utf-8')
+            content = file_path.read_text(encoding="utf-8")
             tree = ast.parse(content)
 
             info = {
@@ -125,16 +134,19 @@ class IntegrationAnalyzer:
                 "functions": [],
                 "imports": [],
                 "external_calls": [],
-                "interfaces": []
+                "interfaces": [],
             }
 
             for node in ast.walk(tree):
                 if isinstance(node, ast.ClassDef):
                     class_info = {
-                        "name": node.name, "methods": [
-                            n.name for n in node.body if isinstance(
-                                n, ast.FunctionDef)], "line": node.lineno, "bases": [
-                            self._get_base_name(base) for base in node.bases]}
+                        "name": node.name,
+                        "methods": [
+                            n.name for n in node.body if isinstance(n, ast.FunctionDef)
+                        ],
+                        "line": node.lineno,
+                        "bases": [self._get_base_name(base) for base in node.bases],
+                    }
                     info["classes"].append(class_info)
 
                 elif isinstance(node, ast.FunctionDef) and node.col_offset == 0:
@@ -142,7 +154,7 @@ class IntegrationAnalyzer:
                         "name": node.name,
                         "args": [arg.arg for arg in node.args.args],
                         "line": node.lineno,
-                        "returns": self._get_return_annotation(node)
+                        "returns": self._get_return_annotation(node),
                     }
                     info["functions"].append(func_info)
 
@@ -157,10 +169,9 @@ class IntegrationAnalyzer:
                 elif isinstance(node, ast.Call):
                     call_name = self._get_call_name(node)
                     if call_name and "." in call_name:
-                        info["external_calls"].append({
-                            "call": call_name,
-                            "line": node.lineno
-                        })
+                        info["external_calls"].append(
+                            {"call": call_name, "line": node.lineno}
+                        )
 
             return info
 
@@ -190,8 +201,11 @@ class IntegrationAnalyzer:
         if isinstance(call_node, ast.Name):
             return call_node.id
         elif isinstance(call_node, ast.Attribute):
-            base = self._get_call_name(call_node.value) if hasattr(
-                call_node, 'value') else ""
+            base = (
+                self._get_call_name(call_node.value)
+                if hasattr(call_node, "value")
+                else ""
+            )
             return f"{base}.{call_node.attr}" if base else call_node.attr
         return ""
 
@@ -201,8 +215,7 @@ class IntegrationAnalyzer:
             self._check_component_interactions(file_path, component)
             self._check_interface_implementations(file_path, component)
 
-    def _check_component_interactions(
-            self, file_path: str, component: Dict[str, Any]):
+    def _check_component_interactions(self, file_path: str, component: Dict[str, Any]):
         """Check for missing tests of component interactions."""
         external_calls = component.get("external_calls", [])
 
@@ -218,17 +231,19 @@ class IntegrationAnalyzer:
                         description=f"Component has {
                             len(external_calls)} external calls but no integration tests",
                         file_path=file_path,
-                        recommendation="Create integration tests to verify component interactions"))
+                        recommendation="Create integration tests to verify component interactions",
+                    )
+                )
 
     def _check_interface_implementations(
-            self, file_path: str, component: Dict[str, Any]):
+        self, file_path: str, component: Dict[str, Any]
+    ):
         """Check for missing interface tests."""
         classes = component.get("classes", [])
 
         for class_info in classes:
             if class_info.get("bases"):  # Class implements interfaces/inherits
-                if not self._has_interface_tests(
-                        file_path, class_info["name"]):
+                if not self._has_interface_tests(file_path, class_info["name"]):
                     self.gaps.append(
                         IntegrationGap(
                             gap_type=GapType.MISSING_INTERFACE_TEST,
@@ -238,7 +253,9 @@ class IntegrationAnalyzer:
                             file_path=file_path,
                             line_number=class_info.get("line"),
                             component1=class_info["name"],
-                            recommendation="Add tests to verify interface contract compliance"))
+                            recommendation="Add tests to verify interface contract compliance",
+                        )
+                    )
 
     def _check_missing_tests(self):
         """Check for components without adequate test coverage."""
@@ -254,7 +271,9 @@ class IntegrationAnalyzer:
                             severity=GapSeverity.MEDIUM,
                             description=f"Component has {classes} classes and {functions} functions but no test file",
                             file_path=file_path,
-                            recommendation="Create comprehensive test file for this component"))
+                            recommendation="Create comprehensive test file for this component",
+                        )
+                    )
 
     def _analyze_data_flows(self):
         """Analyze data flows for validation gaps."""
@@ -265,12 +284,15 @@ class IntegrationAnalyzer:
                 # Look for functions that process data but might lack
                 # validation
                 if any(
-                    keyword in func["name"].lower() for keyword in [
+                    keyword in func["name"].lower()
+                    for keyword in [
                         "process",
                         "parse",
                         "handle",
                         "validate",
-                        "transform"]):
+                        "transform",
+                    ]
+                ):
 
                     if not self._has_validation_tests(file_path, func["name"]):
                         self.gaps.append(
@@ -281,42 +303,55 @@ class IntegrationAnalyzer:
                                     func['name']} processes data but lacks validation tests",
                                 file_path=file_path,
                                 line_number=func.get("line"),
-                                recommendation="Add tests for data validation and error cases"))
+                                recommendation="Add tests for data validation and error cases",
+                            )
+                        )
 
     def _check_api_coverage(self):
         """Check for incomplete API test coverage."""
         for file_path, component in self.components.items():
             # Look for API-like patterns
-            if any(keyword in file_path.lower()
-                   for keyword in ["api", "endpoint", "route", "handler"]):
+            if any(
+                keyword in file_path.lower()
+                for keyword in ["api", "endpoint", "route", "handler"]
+            ):
                 classes = component.get("classes", [])
                 functions = component.get("functions", [])
 
                 public_methods = 0
                 for class_info in classes:
-                    public_methods += len([m for m in class_info.get(
-                        "methods", []) if not m.startswith("_")])
+                    public_methods += len(
+                        [
+                            m
+                            for m in class_info.get("methods", [])
+                            if not m.startswith("_")
+                        ]
+                    )
 
                 public_functions = len(
-                    [f for f in functions if not f["name"].startswith("_")])
+                    [f for f in functions if not f["name"].startswith("_")]
+                )
                 total_public = public_methods + public_functions
 
                 if total_public > 0 and not self._has_comprehensive_api_tests(
-                        file_path):
+                    file_path
+                ):
                     self.gaps.append(
                         IntegrationGap(
                             gap_type=GapType.INCOMPLETE_API_COVERAGE,
                             severity=GapSeverity.HIGH,
                             description=f"API component has {total_public} public methods but incomplete test coverage",
                             file_path=file_path,
-                            recommendation="Create comprehensive API tests including error scenarios"))
+                            recommendation="Create comprehensive API tests including error scenarios",
+                        )
+                    )
 
     def _has_integration_tests(self, file_path: str) -> bool:
         """Check if component has integration tests."""
         test_patterns = [
             f"test_integration_{Path(file_path).stem}.py",
             f"integration_test_{Path(file_path).stem}.py",
-            f"test_{Path(file_path).stem}_integration.py"
+            f"test_{Path(file_path).stem}_integration.py",
         ]
 
         test_dirs = ["tests", "test", "tests/integration"]
@@ -338,7 +373,7 @@ class IntegrationAnalyzer:
 
         if test_file.exists():
             try:
-                content = test_file.read_text(encoding='utf-8')
+                content = test_file.read_text(encoding="utf-8")
                 return class_name.lower() in content.lower()
             except BaseException:
                 pass
@@ -348,11 +383,7 @@ class IntegrationAnalyzer:
     def _has_test_file(self, file_path: str) -> bool:
         """Check if component has any test file."""
         stem = Path(file_path).stem
-        test_patterns = [
-            f"test_{stem}.py",
-            f"{stem}_test.py",
-            f"test_{stem}_unit.py"
-        ]
+        test_patterns = [f"test_{stem}.py", f"{stem}_test.py", f"test_{stem}_unit.py"]
 
         test_dirs = ["tests", "test"]
 
@@ -372,12 +403,13 @@ class IntegrationAnalyzer:
 
         if test_file.exists():
             try:
-                content = test_file.read_text(encoding='utf-8')
+                content = test_file.read_text(encoding="utf-8")
                 # Look for test methods that might test validation
-                validation_keywords = ["validation",
-                                       "error", "invalid", "exception"]
-                return any(keyword in content.lower() and func_name.lower(
-                ) in content.lower() for keyword in validation_keywords)
+                validation_keywords = ["validation", "error", "invalid", "exception"]
+                return any(
+                    keyword in content.lower() and func_name.lower() in content.lower()
+                    for keyword in validation_keywords
+                )
             except BaseException:
                 pass
 
@@ -389,19 +421,24 @@ class IntegrationAnalyzer:
         test_patterns = [
             f"test_{stem}.py",
             f"test_{stem}_api.py",
-            f"api_test_{stem}.py"
+            f"api_test_{stem}.py",
         ]
 
         for pattern in test_patterns:
             test_file = self.project_root / "tests" / pattern
             if test_file.exists():
                 try:
-                    content = test_file.read_text(encoding='utf-8')
+                    content = test_file.read_text(encoding="utf-8")
                     # Look for comprehensive test indicators
-                    indicators = ["error", "exception",
-                                  "invalid", "edge", "boundary"]
-                    return sum(
-                        1 for indicator in indicators if indicator in content.lower()) >= 2
+                    indicators = ["error", "exception", "invalid", "edge", "boundary"]
+                    return (
+                        sum(
+                            1
+                            for indicator in indicators
+                            if indicator in content.lower()
+                        )
+                        >= 2
+                    )
                 except BaseException:
                     pass
 
@@ -419,17 +456,22 @@ class IntegrationAnalyzer:
                     "line_number": gap.line_number,
                     "component1": gap.component1,
                     "component2": gap.component2,
-                    "recommendation": gap.recommendation
+                    "recommendation": gap.recommendation,
                 }
-                for gap in self.gaps if gap.severity == severity
+                for gap in self.gaps
+                if gap.severity == severity
             ]
 
         return {
             "summary": {
                 "total_components": len(self.components),
                 "total_gaps": len(self.gaps),
-                "critical_gaps": len([g for g in self.gaps if g.severity == GapSeverity.CRITICAL]),
-                "high_priority_gaps": len([g for g in self.gaps if g.severity == GapSeverity.HIGH])
+                "critical_gaps": len(
+                    [g for g in self.gaps if g.severity == GapSeverity.CRITICAL]
+                ),
+                "high_priority_gaps": len(
+                    [g for g in self.gaps if g.severity == GapSeverity.HIGH]
+                ),
             },
             "gaps": [
                 {
@@ -440,7 +482,7 @@ class IntegrationAnalyzer:
                     "line_number": gap.line_number,
                     "component1": gap.component1,
                     "component2": gap.component2,
-                    "recommendation": gap.recommendation
+                    "recommendation": gap.recommendation,
                 }
                 for gap in self.gaps
             ],
@@ -450,20 +492,24 @@ class IntegrationAnalyzer:
                     "file_path": path,
                     "classes": len(info.get("classes", [])),
                     "functions": len(info.get("functions", [])),
-                    "external_calls": len(info.get("external_calls", []))
+                    "external_calls": len(info.get("external_calls", [])),
                 }
                 for path, info in self.components.items()
-            ]
+            ],
         }
+
 
 def detect_integration_gaps():
     """Stub: Detect integration gaps (expand with real logic)."""
     # Placeholder: In a real system, analyze test and code integration
     return [
-        {"file": "orchestration/qa_validation.py",
-            "gap": "No integration test for error handling"},
-        {"file": "agents/qa.py", "gap": "Missing test for edge case: empty input"}
+        {
+            "file": "orchestration/qa_validation.py",
+            "gap": "No integration test for error handling",
+        },
+        {"file": "agents/qa.py", "gap": "Missing test for edge case: empty input"},
     ]
+
 
 if __name__ == "__main__":
     gaps = detect_integration_gaps()

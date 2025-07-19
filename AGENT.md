@@ -16,7 +16,7 @@
 | Gate | Target |
 |------|--------|
 | **Test coverage** | ≥ 90% (line + branch) for both Python and TypeScript runtimes |
-| **Lint – Python** | `flake8`, `black`, `mypy --strict` → 0 errors/warnings |
+| **Lint – Python** | `ruff`, `black`, `mypy --strict` → 0 errors/warnings |
 | **Lint – TS/JS** | `eslint`, `prettier` → 0 errors |
 | **Security scan** | OWASP + Bandit → 0 high/medium vulnerabilities |
 | **Agent tests** | All 7 specialized agents pass integration tests |

@@ -2,7 +2,6 @@
 Test suite for QA Agent decisions and workflow integration.
 """
 import os
-import time
 import unittest
 import shutil
 try:
@@ -59,14 +58,14 @@ def teardown_module(module):
                     else:
                         os.remove(child_path)
                 except PermissionError:
-                    time.sleep(0.1)
+                    # Retry immediately without sleep - file should be available
                     try:
                         if os.path.isdir(child_path):
-                            shutil.rmtree(child_path)
+                            shutil.rmtree(child_path, ignore_errors=True)
                         else:
                             os.remove(child_path)
                     except PermissionError:
-                        pass
+                        pass  # Ignore if still locked
             os.rmdir(test_output_dir)
         except Exception as e:
             print(f'Failed to cleanup test_outputs directory: {e}')

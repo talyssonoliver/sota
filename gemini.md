@@ -23,7 +23,7 @@ All changes are gated by a strict CI pipeline. **No exceptions.**
 | Gate                | Requirement                                      | Command/Tool              |
 | ------------------- | ------------------------------------------------ | ------------------------- |
 | **Test Coverage**   | >= 90% (line and branch)                         | `pytest-cov` / `jest`     |
-| **Python Linting**  | 0 errors/warnings                                | `flake8`, `black`, `mypy --strict` |
+| **Python Linting**  | 0 errors/warnings                                | `ruff`, `black`, `mypy --strict` |
 | **TS/JS Linting**   | 0 errors                                         | `eslint`, `prettier`      |
 | **Security Scan**   | 0 high/medium vulnerabilities                    | `OWASP` + `Bandit`        |
 | **Agent Tests**     | All specialized agents pass integration tests.   | `pytest`                  |

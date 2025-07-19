@@ -3,40 +3,37 @@ Workflow Runner Script
 Main entry point for launching agent tasks through the LangGraph workflow.
 """
 
-import sys
 import json
+import sys
 from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Optional, Any
-
+from typing import List, Optional
 
 try:
     from datetime import datetime
 except ImportError:
     pass
 try:
-    from pathlib import Path
-except ImportError:
-    pass
-try:
-    from typing import Dict, List, Optional, Any
-except ImportError:
-    pass
-try:
     from src.core.workflows.execute_graph import run_task_graph
 except ImportError:
     pass
+
 try:
-    from src.core.workflows.execute_workflow import get_dependency_ordered_tasks
+    from .generate_prompt import generate_prompt
 except ImportError:
-    pass
+    def generate_prompt(task_id, agent_id, prompt_path=None):
+        return f"Generated prompt for {task_id} using {agent_id}"
+
 try:
-    from src.core.workflows.generate_prompt import generate_prompt
+    from src.infrastructure.utils.task_loader import get_dependency_ordered_tasks
 except ImportError:
-    pass
+    def get_dependency_ordered_tasks():
+        return []
+
 import argparse
 import os
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 
 def get_agent_for_task(task_id: str) -> str:
     """
@@ -63,11 +60,13 @@ def get_agent_for_task(task_id: str) -> str:
         # Default to coordinator for task delegation
         return "coordinator"
 
+
 def run_single_task(
-        task_id: str,
-        generate_only: bool = False,
-        dry_run: bool = False,
-        output_dir: Optional[str] = None) -> str:
+    task_id: str,
+    generate_only: bool = False,
+    dry_run: bool = False,
+    output_dir: Optional[str] = None,
+) -> str:
     """
     Run workflow for a single task.
 
@@ -105,11 +104,13 @@ def run_single_task(
 
     return result
 
+
 def run_task_sequence(
-        tasks: Optional[List[str]] = None,
-        generate_only: bool = False,
-        dry_run: bool = False,
-        output_base_dir: str = "outputs") -> None:
+    tasks: Optional[List[str]] = None,
+    generate_only: bool = False,
+    dry_run: bool = False,
+    output_base_dir: str = "outputs",
+) -> None:
     """
     Run a sequence of tasks in dependency order.
 
@@ -145,26 +146,24 @@ def run_task_sequence(
                 len(ordered_tasks)}] Processing task {task_id}: {
                 task.get(
                     'title',
-                    '')}")
+                    '')}"
+        )
 
         # Create output directory for this task
         output_dir = os.path.join(output_base_dir, timestamp, task_id)
 
         try:
-            result = run_single_task(
-                task_id, generate_only, dry_run, output_dir)
+            result = run_single_task(task_id, generate_only, dry_run, output_dir)
             results[task_id] = result
 
             print(f"Completed task {task_id}")
 
         except Exception as e:
-            print(
-                f"Error processing task {task_id}: {str(e)}", file=sys.stderr)
+            print(f"Error processing task {task_id}: {str(e)}", file=sys.stderr)
             # Continue with next task
 
     # Save summary of all results
-    summary_path = os.path.join(
-        output_base_dir, timestamp, "workflow_summary.json")
+    summary_path = os.path.join(output_base_dir, timestamp, "workflow_summary.json")
     os.makedirs(os.path.dirname(summary_path), exist_ok=True)
 
     with open(summary_path, "w") as f:
@@ -174,13 +173,14 @@ def run_task_sequence(
                 "tasks_executed": [t["id"] for t in ordered_tasks],
                 "generate_only": generate_only,
                 "dry_run": dry_run,
-                "results": {k: str(v) for k, v in results.items()}
+                "results": {k: str(v) for k, v in results.items()},
             },
             f,
-            indent=2
+            indent=2,
         )
 
     print(f"\nWorkflow execution complete. Summary saved to {summary_path}")
+
 
 def main() -> None:
     """Command-line interface for running agent workflows."""
@@ -189,45 +189,56 @@ def main() -> None:
     )
 
     parser.add_argument("--task", "-t", help="Task ID to execute (e.g. BE-07)")
+    parser.add_argument("--tasks", help="Comma-separated list of task IDs to execute")
     parser.add_argument(
-        "--tasks", help="Comma-separated list of task IDs to execute")
-    parser.add_argument("--all", "-a", action="store_true",
-                        help="Run all tasks in dependency order")
-    parser.add_argument("--generate-only", "-g", action="store_true",
-                        help="Only generate prompts without executing")
-    parser.add_argument("--dry-run", "-d", action="store_true",
-                        help="Print execution plan without running")
-    parser.add_argument("--output", "-o", default="outputs",
-                        help="Output directory")
+        "--all", "-a", action="store_true", help="Run all tasks in dependency order"
+    )
+    parser.add_argument(
+        "--generate-only",
+        "-g",
+        action="store_true",
+        help="Only generate prompts without executing",
+    )
+    parser.add_argument(
+        "--dry-run",
+        "-d",
+        action="store_true",
+        help="Print execution plan without running",
+    )
+    parser.add_argument("--output", "-o", default="outputs", help="Output directory")
 
     args = parser.parse_args()
 
     try:
         # Single task mode
         if args.task:
-            run_single_task(args.task, args.generate_only, args.dry_run,
-                            os.path.join(args.output, args.task))
+            run_single_task(
+                args.task,
+                args.generate_only,
+                args.dry_run,
+                os.path.join(args.output, args.task),
+            )
 
         # Multiple task mode
         elif args.tasks:
             task_list = args.tasks.split(",")
-            run_task_sequence(task_list, args.generate_only,
-                              args.dry_run, args.output)
+            run_task_sequence(task_list, args.generate_only, args.dry_run, args.output)
 
         # All tasks mode
         elif args.all:
-            run_task_sequence(None, args.generate_only,
-                              args.dry_run, args.output)
+            run_task_sequence(None, args.generate_only, args.dry_run, args.output)
 
         else:
             print(
                 "Error: No tasks specified. Use --task, --tasks, or --all",
-                file=sys.stderr)
+                file=sys.stderr,
+            )
             sys.exit(1)
 
     except Exception as e:
         print(f"Error running workflow: {str(e)}", file=sys.stderr)
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,159 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarqube-analysis:
+    name: SonarQube Analysis with Custom Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Shallow clones should be disabled for better relevancy of analysis
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run custom validation system
+      run: |
+        python src/infrastructure/tools/validation/validate.py --comprehensive --output validation-report.json
+        
+    - name: Generate test coverage
+      run: |
+        python -m pytest --cov=src --cov-report=xml:coverage.xml --cov-report=term-missing tests/
+        
+    - name: Run SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        
+    - name: SonarQube Quality Gate check
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      timeout-minutes: 5
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        
+    - name: Run integrated validation with SonarQube
+      if: always()
+      run: |
+        python src/infrastructure/tools/validation/validate.py --comprehensive --enable-sonarqube --output integrated-report.json
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        
+    - name: Upload validation reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: validation-reports
+        path: |
+          validation-report.json
+          integrated-report.json
+          coverage.xml
+        retention-days: 30
+        
+    - name: Comment PR with results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          
+          let comment = '## 🔍 Code Quality Analysis Results\n\n';
+          
+          // Read validation report if available
+          if (fs.existsSync('validation-report.json')) {
+            const report = JSON.parse(fs.readFileSync('validation-report.json', 'utf8'));
+            comment += `### Custom Validation System\n`;
+            comment += `- **Total Issues**: ${report.total_issues || 0}\n`;
+            comment += `- **Errors**: ${report.errors || 0}\n`;
+            comment += `- **Warnings**: ${report.warnings || 0}\n\n`;
+          }
+          
+          // Read integrated report if available
+          if (fs.existsSync('integrated-report.json')) {
+            const report = JSON.parse(fs.readFileSync('integrated-report.json', 'utf8'));
+            if (report.sonarqube_integration) {
+              comment += `### SonarQube Integration\n`;
+              comment += `- **Enabled**: ${report.sonarqube_integration.enabled ? '✅' : '❌'}\n`;
+              comment += `- **Issues Found**: ${report.sonarqube_integration.issues_count || 0}\n\n`;
+            }
+          }
+          
+          comment += '### Next Steps\n';
+          comment += '1. Review and address any critical issues\n';
+          comment += '2. Check the full reports in the artifacts\n';
+          comment += '3. Ensure quality gates pass before merging\n';
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+
+  security-scan:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+    needs: sonarqube-analysis
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: Install security tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install bandit safety
+        
+    - name: Run Bandit security scan
+      run: |
+        bandit -r src/ -f json -o bandit-report.json || true
+        
+    - name: Run Safety dependency scan
+      run: |
+        safety check --json --output safety-report.json || true
+        
+    - name: Run custom business logic protection
+      run: |
+        python -c "
+        from src.infrastructure.tools.validation.ai.business_logic_protector import BusinessLogicProtector
+        protector = BusinessLogicProtector()
+        protector.protect_business_logic()
+        report = protector.generate_protection_report()
+        import json
+        with open('business-logic-report.json', 'w') as f:
+            json.dump(report, f, indent=2)
+        "
+        
+    - name: Upload security reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          bandit-report.json
+          safety-report.json
+          business-logic-report.json
+        retention-days: 30

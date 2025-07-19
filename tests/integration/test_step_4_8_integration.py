@@ -13,7 +13,6 @@ Part of the optimized test pyramid reorganization:
 Quick integration test for Step 4.8 Real-time Execution Monitoring
 """
 import os
-import time
 from src.infrastructure.utils.execution_monitor import get_execution_monitor
 
 def test_step_4_8_integration():
@@ -25,7 +24,7 @@ def test_step_4_8_integration():
     task_id = 'TEST-INTEGRATION'
     print(f'\n📋 Starting test execution for task: {task_id}')
     execution_data = monitor.start_agent_execution(task_id, 'test_agent', {'context': 'integration test'})
-    time.sleep(0.2)
+    # Removed sleep - test should work without delay
     monitor.complete_agent_execution(execution_data, 'COMPLETED', {'result': 'integration test successful'})
     stats = monitor.get_execution_stats()
     print('\n📊 Execution Statistics:')

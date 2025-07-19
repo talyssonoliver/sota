@@ -8,15 +8,10 @@ calling non-existent methods.
 
 import pytest
 import unittest
-from unittest.mock import Mock, patch, MagicMock
 import tempfile
-import os
 import json
 from pathlib import Path
-from typing import Dict, Any, List
 from datetime import datetime, timedelta
-import time
-import requests
 
 # Add project root to path
 import sys
@@ -168,7 +163,6 @@ class TestExternalAPIIntegrationSimple(unittest.TestCase):
     def test_concurrent_integration_access(self):
         """Test concurrent access to integration objects."""
         import threading
-        import time
         
         configs = []
         integrations = []

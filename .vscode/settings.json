@@ -4,20 +4,19 @@
   "python.linting.ruffEnabled": true,
   "python.formatting.provider": "black",
   "editor.formatOnSave": true,
-  "python.testing.pytestEnabled": false,
-  "python.testing.pytestArgs": ["tests"],
-  "editor.codeActionsOnSave": {
-  "source.organizeImports": "explicit",
-  "source.fixAll": "explicit"
-  },
-  "python.testing.unittestArgs": [
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": [
+    "tests",
     "-v",
-    "-s",
-    ".",
-    "-p",
-    "test_*.py"
+    "--no-cov",
+    "--tb=short"
   ],
-  "python.testing.unittestEnabled": true,
+  "python.testing.cwd": "${workspaceFolder}",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
+  },
   
   // Pylance Performance Optimization Settings
   "python.analysis.typeCheckingMode": "basic",
@@ -38,7 +37,16 @@
   
   // Memory and performance limits
   "python.analysis.userFileIndexingLimit": 2000,
-  "python.analysis.extraPaths": ["./src"],
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}",
+    "${workspaceFolder}/src"
+  ],
+  "terminal.integrated.env.windows": {
+    "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src;${workspaceFolder}/tests"
+  },
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}:${workspaceFolder}/src:${workspaceFolder}/tests"
+  },
   
   // Exclude heavy directories from analysis
   "python.analysis.exclude": [
@@ -54,8 +62,8 @@
     "**/deployment/**",
     "**/backup/**",
     "**/htmlcov/**",
-    "**/data/**",
-    "**/storage/**"
+    "**/src/infrastructure/data/**",
+    "**/src/infrastructure/storage/**"
   ],
   
   // Reduce IntelliSense overhead
@@ -89,7 +97,8 @@
     "**/test_outputs/**": true,
     "**/outputs/**": true,
     "**/htmlcov/**": true,
-    "**/data/storage/**": true
+    "**/src/infrastructure/data/**": true,
+    "**/src/infrastructure/storage/**": true
   },
   
   // Search exclusions for better performance
@@ -103,7 +112,8 @@
     "**/test_outputs": true,
     "**/outputs": true,
     "**/htmlcov": true,
-    "**/data/storage": true,
+    "**/src/infrastructure/data": true,
+    "**/src/infrastructure/storage": true,
     "**/backup": true
   }
 }

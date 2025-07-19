@@ -7,15 +7,9 @@ simplified versions that focus on core functionality.
 
 import pytest
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock
 import tempfile
-import os
-import json
-import threading
-import time
 from pathlib import Path
-from typing import Dict, Any, List
-from datetime import datetime, timedelta
 
 # Add project root to path
 import sys

@@ -148,7 +148,7 @@ def pytest_configure(config_obj):
 
 def pytest_sessionstart(session):
     """Session start hook"""
-    print(f"\n🔧 Pytest Configuration:")
+    print("\n🔧 Pytest Configuration:")
     print(f"   CPU Cores: {config.cpu_count} (Physical: {config.physical_cpu_count})")
     print(f"   Memory: {config.memory_gb:.1f} GB")
     print(f"   CI Environment: {config.is_ci}")

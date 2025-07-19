@@ -11,7 +11,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-from scripts.generate_task_report import generate_end_of_day_report, _calculate_sprint_velocity, _analyze_tomorrow_preparation, _assess_sprint_health, _generate_visual_progress_summary, _create_enhanced_eod_report
+from src.infrastructure.scripts.generation.generate_task_report import generate_end_of_day_report, _calculate_sprint_velocity, _analyze_tomorrow_preparation, _assess_sprint_health, _generate_visual_progress_summary, _create_enhanced_eod_report
 
 class TestEnhancedEndOfDayReporting:
     """Test suite for enhanced end-of-day reporting functionality."""
@@ -43,9 +43,9 @@ class TestEnhancedEndOfDayReporting:
     def test_should_generate_enhanced_eod_report_when_given_valid_day(self, mock_progress_generator, tmp_path):
         """Test enhanced end-of-day report generation for valid day."""
         test_day = 2
-        with patch('scripts.generate_task_report.ProgressReportGenerator', return_value=mock_progress_generator):
-            with patch('scripts.generate_task_report.EndOfDayReportGenerator'):
-                with patch('scripts.generate_task_report.Path') as mock_path_class:
+        with patch('src.infrastructure.scripts.generation.generate_task_report.ProgressReportGenerator', return_value=mock_progress_generator):
+            with patch('src.infrastructure.scripts.generation.generate_task_report.EndOfDayReportGenerator'):
+                with patch('src.infrastructure.scripts.generation.generate_task_report.Path') as mock_path_class:
                     with patch('builtins.open', create=True) as mock_open:
                         mock_path_instance = Mock()
                         mock_path_instance.mkdir = Mock()
@@ -53,11 +53,11 @@ class TestEnhancedEndOfDayReporting:
                         mock_path_instance.__truediv__ = Mock(return_value='test_report.md')
                         mock_file = Mock()
                         mock_open.return_value.__enter__.return_value = mock_file
-                        with patch('scripts.generate_task_report._calculate_sprint_velocity', return_value={'current_velocity': 2.5, 'trend': 'increasing'}):
-                            with patch('scripts.generate_task_report._analyze_tomorrow_preparation', return_value={'total_planned': 3}):
-                                with patch('scripts.generate_task_report._assess_sprint_health', return_value={'overall_score': 80}):
-                                    with patch('scripts.generate_task_report._generate_visual_progress_summary', return_value='Visual Summary'):
-                                        with patch('scripts.generate_task_report._create_enhanced_eod_report', return_value='Enhanced Report'):
+                        with patch('src.infrastructure.scripts.generation.generate_task_report._calculate_sprint_velocity', return_value={'current_velocity': 2.5, 'trend': 'increasing'}):
+                            with patch('src.infrastructure.scripts.generation.generate_task_report._analyze_tomorrow_preparation', return_value={'total_planned': 3}):
+                                with patch('src.infrastructure.scripts.generation.generate_task_report._assess_sprint_health', return_value={'overall_score': 80}):
+                                    with patch('src.infrastructure.scripts.generation.generate_task_report._generate_visual_progress_summary', return_value='Visual Summary'):
+                                        with patch('src.infrastructure.scripts.generation.generate_task_report._create_enhanced_eod_report', return_value='Enhanced Report'):
                                             result = generate_end_of_day_report(test_day)
                                             assert result is True
                                             mock_progress_generator.generate_daily_report.assert_called_once()
@@ -161,7 +161,7 @@ class TestEnhancedEndOfDayReporting:
 class TestCLIIntegration:
     """Test suite for CLI integration and command-line interface."""
 
-    @patch('scripts.generate_task_report.generate_end_of_day_report')
+    @patch('src.infrastructure.scripts.generation.generate_task_report.generate_end_of_day_report')
     def test_should_call_eod_report_when_day_argument_provided(self, mock_eod_report):
         """Test CLI calls end-of-day report generation when --day is provided."""
         mock_eod_report.return_value = True

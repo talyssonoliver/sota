@@ -11,7 +11,8 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 sys.path.append(str(Path(__file__).parent.parent))
 from src.interfaces.dashboard.components.hitl_widgets import HITLPendingReviewsWidget, HITLApprovalActionsWidget, HITLMetricsWidget, HITLWorkflowStatusWidget, HITLDashboardManager
-from src.core.workflows.hitl_engine import HITLCheckpoint, CheckpointStatus, RiskLevel
+from src.core.workflows.hitl.models import HITLCheckpoint
+from src.core.workflows.hitl.types import CheckpointStatus, RiskLevel
 
 class TestHITLPendingReviewsWidget(unittest.TestCase):
     """Test pending reviews widget functionality."""

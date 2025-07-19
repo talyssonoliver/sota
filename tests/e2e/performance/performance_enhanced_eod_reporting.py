@@ -11,8 +11,8 @@ import pytest
 from pathlib import Path
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
-from scripts.generate_task_report import generate_end_of_day_report, _calculate_sprint_velocity, _analyze_tomorrow_preparation, _assess_sprint_health, _generate_visual_progress_summary
-from scripts.generate_progress_report import ProgressReportGenerator
+from src.infrastructure.scripts.generation.generate_task_report import generate_end_of_day_report, _calculate_sprint_velocity, _analyze_tomorrow_preparation, _assess_sprint_health, _generate_visual_progress_summary
+from src.infrastructure.scripts.generation.generate_progress_report import ProgressReportGenerator
 from src.core.workflows.daily_cycle import DailyCycleOrchestrator
 from datetime import date
 

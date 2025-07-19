@@ -11,26 +11,20 @@ Tests the complete HITL workflow, including:
 
 import pytest
 import unittest
-from unittest.mock import Mock, patch, MagicMock, call
+from unittest.mock import Mock, patch
 import tempfile
-import os
-import json
 import yaml
 from pathlib import Path
-from typing import Dict, Any, List
 from datetime import datetime, timedelta
-import asyncio
 import time
 
 # Add project root to path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from src.core.workflows.hitl_engine import (
-    HITLPolicyEngine, CheckpointStatus, RiskLevel, HITLReviewDecision
-)
+from src.core.workflows.hitl.policy_engine import HITLPolicyEngine
+from src.core.workflows.hitl.types import CheckpointStatus
 from src.infrastructure.utils.escalation_system import EscalationEngine
-from src.interfaces.dashboard.components.hitl_widgets import HITLApprovalActionsWidget
 from src.core.workflows.notification_handlers import NotificationHandler
 
 

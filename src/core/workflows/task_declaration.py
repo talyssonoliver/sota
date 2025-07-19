@@ -20,9 +20,10 @@ from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from src.infrastructure.memory import MemoryEngine, get_memory_instance
 from src.infrastructure.tools.context_tracker import track_context_usage
-from src.infrastructure.memory import get_memory_instance, MemoryEngine
-from src.infrastructure.utils.task_loader import (get_all_tasks, load_task_metadata)
+from src.infrastructure.utils.task_loader import (get_all_tasks,
+                                                  load_task_metadata)
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -30,13 +31,16 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Configure logging
 logger = logging.getLogger(__name__)
 
+
 class TaskPreparationStatus(str, Enum):
     """Status of task preparation process"""
+
     PENDING = "PENDING"
     CONTEXT_LOADED = "CONTEXT_LOADED"
     PROMPT_GENERATED = "PROMPT_GENERATED"
     READY_FOR_EXECUTION = "READY_FOR_EXECUTION"
     FAILED = "FAILED"
+
 
 @dataclass
 class TaskDeclaration:
@@ -44,6 +48,7 @@ class TaskDeclaration:
     Complete task declaration with all metadata and preparation status.
     This represents the fully prepared task ready for LangGraph execution.
     """
+
     # Core task metadata
     id: str
     title: str
@@ -79,49 +84,51 @@ class TaskDeclaration:
         return asdict(self)
 
     @classmethod
-    def from_metadata(cls, task_metadata: Dict[str, Any]) -> 'TaskDeclaration':
+    def from_metadata(cls, task_metadata: Dict[str, Any]) -> "TaskDeclaration":
         """Create TaskDeclaration from task metadata"""
         return cls(
-            id=task_metadata.get('id', ''),
-            title=task_metadata.get('title', ''),
-            description=task_metadata.get('description', ''),
-            owner=task_metadata.get('owner', ''),
-            state=task_metadata.get('state', 'CREATED'),
-            priority=task_metadata.get('priority', 'MEDIUM'),
-            estimation_hours=task_metadata.get('estimation_hours', 0),
-            depends_on=task_metadata.get('depends_on', []),
-            artefacts=task_metadata.get('artefacts', []),
-            context_topics=task_metadata.get('context_topics', []),
+            id=task_metadata.get("id", ""),
+            title=task_metadata.get("title", ""),
+            description=task_metadata.get("description", ""),
+            owner=task_metadata.get("owner", ""),
+            state=task_metadata.get("state", "CREATED"),
+            priority=task_metadata.get("priority", "MEDIUM"),
+            estimation_hours=task_metadata.get("estimation_hours", 0),
+            depends_on=task_metadata.get("depends_on", []),
+            artefacts=task_metadata.get("artefacts", []),
+            context_topics=task_metadata.get("context_topics", []),
             preparation_status=TaskPreparationStatus.PENDING,
-            declared_at=datetime.now().isoformat()
+            declared_at=datetime.now().isoformat(),
         )
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'TaskDeclaration':
+    def from_dict(cls, data: Dict[str, Any]) -> "TaskDeclaration":
         """Create TaskDeclaration from a dictionary (e.g., loaded from JSON)"""
         return cls(
-            id=data.get('id', ''),
-            title=data.get('title', ''),
-            description=data.get('description', ''),
-            owner=data.get('owner', ''),
-            state=data.get('state', 'CREATED'),
-            priority=data.get('priority', 'MEDIUM'),
-            estimation_hours=data.get('estimation_hours', 0),
-            depends_on=data.get('depends_on', []),
-            artefacts=data.get('artefacts', []),
-            context_topics=data.get('context_topics', []),
+            id=data.get("id", ""),
+            title=data.get("title", ""),
+            description=data.get("description", ""),
+            owner=data.get("owner", ""),
+            state=data.get("state", "CREATED"),
+            priority=data.get("priority", "MEDIUM"),
+            estimation_hours=data.get("estimation_hours", 0),
+            depends_on=data.get("depends_on", []),
+            artefacts=data.get("artefacts", []),
+            context_topics=data.get("context_topics", []),
             preparation_status=TaskPreparationStatus(
-                data.get('preparation_status', TaskPreparationStatus.PENDING)),
-            context_loaded=data.get('context_loaded', False),
-            prompt_generated=data.get('prompt_generated', False),
-            dependencies_satisfied=data.get('dependencies_satisfied', False),
-            context_content=data.get('context_content'),
-            generated_prompt=data.get('generated_prompt'),
-            agent_assignment=data.get('agent_assignment'),
-            execution_plan=data.get('execution_plan'),
-            declared_at=data.get('declared_at'),
-            prepared_by=data.get('prepared_by')
+                data.get("preparation_status", TaskPreparationStatus.PENDING)
+            ),
+            context_loaded=data.get("context_loaded", False),
+            prompt_generated=data.get("prompt_generated", False),
+            dependencies_satisfied=data.get("dependencies_satisfied", False),
+            context_content=data.get("context_content"),
+            generated_prompt=data.get("generated_prompt"),
+            agent_assignment=data.get("agent_assignment"),
+            execution_plan=data.get("execution_plan"),
+            declared_at=data.get("declared_at"),
+            prepared_by=data.get("prepared_by"),
         )
+
 
 class TaskDeclarationManager:
     """
@@ -149,12 +156,10 @@ class TaskDeclarationManager:
         logger.info(
             f"Task Declaration Manager initialized with {
                 len(
-                    self.declared_tasks)} existing declarations")
+                    self.declared_tasks)} existing declarations"
+        )
 
-    def declare_task(
-            self,
-            task_id: str,
-            force_reload: bool = False) -> TaskDeclaration:
+    def declare_task(self, task_id: str, force_reload: bool = False) -> TaskDeclaration:
         """
         Declare a task with full metadata registration.
 
@@ -174,7 +179,8 @@ class TaskDeclarationManager:
         # Check if already declared
         if task_id in self.declared_tasks and not force_reload:
             logger.info(
-                f"Task {task_id} already declared, returning existing declaration")
+                f"Task {task_id} already declared, returning existing declaration"
+            )
             return self.declared_tasks[task_id]
 
         # Load task metadata from YAML
@@ -238,11 +244,13 @@ class TaskDeclarationManager:
         self._create_execution_plan(declaration)
 
         # Update preparation status
-        if all([
-            declaration.context_loaded,
-            declaration.prompt_generated,
-            declaration.dependencies_satisfied
-        ]):
+        if all(
+            [
+                declaration.context_loaded,
+                declaration.prompt_generated,
+                declaration.dependencies_satisfied,
+            ]
+        ):
             declaration.preparation_status = TaskPreparationStatus.READY_FOR_EXECUTION
             logger.info(f"Task {task_id} is ready for execution")
         else:
@@ -256,25 +264,45 @@ class TaskDeclarationManager:
 
     def _validate_task_metadata(self, metadata: Dict[str, Any]) -> None:
         """Validate that task metadata contains required fields"""
-        required_fields = ['id', 'title', 'owner', 'state']
+        required_fields = ["id", "title", "owner", "state"]
 
         for field in required_fields:
             if field not in metadata:
                 raise ValueError(f"Missing required field: {field}")
 
         # Validate owner is a valid agent role
-        valid_owners = ['backend', 'frontend', 'technical',
-                        'qa', 'doc', 'coordinator', 'product', 'ux']
-        if metadata['owner'] not in valid_owners:
+        valid_owners = [
+            "backend",
+            "frontend",
+            "technical",
+            "qa",
+            "doc",
+            "coordinator",
+            "product",
+            "ux",
+        ]
+        if metadata["owner"] not in valid_owners:
             raise ValueError(
                 f"Invalid owner '{
-                    metadata['owner']}'. Must be one of: {valid_owners}")        # Validate state
-        valid_states = ['CREATED', 'PLANNED', 'IN_PROGRESS', 'QA_PENDING',
-                        'DOCUMENTATION', 'HUMAN_REVIEW', 'DONE', 'BLOCKED', 'FAILED', 'COMPLETED']
-        if metadata['state'] not in valid_states:
+                    metadata['owner']}'. Must be one of: {valid_owners}"
+            )  # Validate state
+        valid_states = [
+            "CREATED",
+            "PLANNED",
+            "IN_PROGRESS",
+            "QA_PENDING",
+            "DOCUMENTATION",
+            "HUMAN_REVIEW",
+            "DONE",
+            "BLOCKED",
+            "FAILED",
+            "COMPLETED",
+        ]
+        if metadata["state"] not in valid_states:
             raise ValueError(
                 f"Invalid state '{
-                    metadata['state']}'. Must be one of: {valid_states}")
+                    metadata['state']}'. Must be one of: {valid_states}"
+            )
 
     def _load_task_context(self, declaration: TaskDeclaration) -> None:
         """Load context for the task based on context_topics"""
@@ -289,14 +317,12 @@ class TaskDeclarationManager:
                     max_per_topic=3,
                     user="task_preparation",
                     task_id=declaration.id,
-                    agent_role=declaration.owner
+                    agent_role=declaration.owner,
                 )
 
                 # Get document details for tracking
                 documents = self.memory_engine.get_documents(
-                    declaration.context_topics,
-                    max_per_topic=3,
-                    user="task_preparation"
+                    declaration.context_topics, max_per_topic=3, user="task_preparation"
                 )
 
                 # Track context usage
@@ -308,8 +334,8 @@ class TaskDeclarationManager:
                     context_length=len(context_content),
                     additional_metadata={
                         "phase": "task_declaration",
-                        "preparation_step": "context_loading"
-                    }
+                        "preparation_step": "context_loading",
+                    },
                 )
 
                 declaration.context_content = context_content
@@ -320,18 +346,17 @@ class TaskDeclarationManager:
                         declaration.id}: {
                         len(
                             declaration.context_topics)} topics, {
-                        len(context_content)} characters")
+                        len(context_content)} characters"
+                )
             else:
                 # No context topics specified, provide basic context
                 declaration.context_content = f"# Task Context\nNo specific context topics defined for task {
                     declaration.id}"
                 declaration.context_loaded = True
-                logger.warning(
-                    f"No context topics specified for task {declaration.id}")
+                logger.warning(f"No context topics specified for task {declaration.id}")
 
         except Exception as e:
-            logger.error(
-                f"Error loading context for task {declaration.id}: {e}")
+            logger.error(f"Error loading context for task {declaration.id}: {e}")
             declaration.context_loaded = False
             declaration.preparation_status = TaskPreparationStatus.FAILED
 
@@ -350,14 +375,22 @@ class TaskDeclarationManager:
                 task_description=declaration.description,
                 task_priority=declaration.priority,
                 estimation_hours=declaration.estimation_hours,
-                dependencies=", ".join(
-                    declaration.depends_on) if declaration.depends_on else "None",
+                dependencies=(
+                    ", ".join(declaration.depends_on)
+                    if declaration.depends_on
+                    else "None"
+                ),
                 artefacts="\n".join(
-                    f"- {artifact}" for artifact in declaration.artefacts),
-                context_topics=", ".join(
-                    declaration.context_topics) if declaration.context_topics else "None",
+                    f"- {artifact}" for artifact in declaration.artefacts
+                ),
+                context_topics=(
+                    ", ".join(declaration.context_topics)
+                    if declaration.context_topics
+                    else "None"
+                ),
                 context_content=declaration.context_content or "No context available",
-                current_state=declaration.state)
+                current_state=declaration.state,
+            )
 
             declaration.generated_prompt = enriched_prompt
             declaration.prompt_generated = True
@@ -367,15 +400,13 @@ class TaskDeclarationManager:
             task_dir.mkdir(exist_ok=True)
 
             prompt_file = task_dir / f"prompt_{declaration.owner}.md"
-            with open(prompt_file, 'w', encoding='utf-8') as f:
+            with open(prompt_file, "w", encoding="utf-8") as f:
                 f.write(enriched_prompt)
 
-            logger.info(
-                f"Prompt generated and saved for task {declaration.id}")
+            logger.info(f"Prompt generated and saved for task {declaration.id}")
 
         except Exception as e:
-            logger.error(
-                f"Error generating prompt for task {declaration.id}: {e}")
+            logger.error(f"Error generating prompt for task {declaration.id}: {e}")
             declaration.prompt_generated = False
             declaration.preparation_status = TaskPreparationStatus.FAILED
 
@@ -412,7 +443,11 @@ Please execute this task according to your role as {agent_role}. Consider the pr
 
 ---
 *Generated by Task Declaration Manager at {timestamp}*
-""".replace('{agent_role}', agent_role).replace('{timestamp}', datetime.now().isoformat())
+""".replace(
+            "{agent_role}", agent_role
+        ).replace(
+            "{timestamp}", datetime.now().isoformat()
+        )
 
         return template
 
@@ -430,18 +465,21 @@ Please execute this task according to your role as {agent_role}. Consider the pr
         for dep_id in declaration.depends_on:
             try:
                 dep_metadata = load_task_metadata(dep_id)
-                dep_state = dep_metadata.get('state', 'CREATED')
+                dep_state = dep_metadata.get("state", "CREATED")
 
                 # Consider task satisfied if it's in an advanced state
                 # For demonstration purposes, allow PLANNED and higher states
                 satisfactory_states = {
-                    'PLANNED', 'IN_PROGRESS', 'QA_PENDING',
-                    'DOCUMENTATION', 'DONE', 'COMPLETED'
+                    "PLANNED",
+                    "IN_PROGRESS",
+                    "QA_PENDING",
+                    "DOCUMENTATION",
+                    "DONE",
+                    "COMPLETED",
                 }
 
                 if dep_state not in satisfactory_states:
-                    unsatisfied_dependencies.append(
-                        f"{dep_id} (state: {dep_state})")
+                    unsatisfied_dependencies.append(f"{dep_id} (state: {dep_state})")
 
             except FileNotFoundError:
                 unsatisfied_dependencies.append(f"{dep_id} (not found)")
@@ -452,11 +490,11 @@ Please execute this task according to your role as {agent_role}. Consider the pr
             declaration.dependencies_satisfied = False
             logger.warning(
                 f"Task {
-                    declaration.id} has unsatisfied dependencies: {unsatisfied_dependencies}")
+                    declaration.id} has unsatisfied dependencies: {unsatisfied_dependencies}"
+            )
         else:
             declaration.dependencies_satisfied = True
-            logger.info(
-                f"All dependencies satisfied for task {declaration.id}")
+            logger.info(f"All dependencies satisfied for task {declaration.id}")
 
     def _create_execution_plan(self, declaration: TaskDeclaration) -> None:
         """Create execution plan for LangGraph routing"""
@@ -465,32 +503,34 @@ Please execute this task according to your role as {agent_role}. Consider the pr
         try:
             # Determine agent assignment based on owner
             agent_mapping = {
-                'backend': 'backend_handler',
-                'frontend': 'frontend_handler',
-                'technical': 'technical_handler',
-                'qa': 'qa_handler',
-                'doc': 'documentation_handler',
-                'coordinator': 'coordinator_handler',
-                'product': 'coordinator_handler',  # Product tasks go through coordinator
-                'ux': 'coordinator_handler'  # UX tasks go through coordinator
+                "backend": "backend_handler",
+                "frontend": "frontend_handler",
+                "technical": "technical_handler",
+                "qa": "qa_handler",
+                "doc": "documentation_handler",
+                "coordinator": "coordinator_handler",
+                "product": "coordinator_handler",  # Product tasks go through coordinator
+                "ux": "coordinator_handler",  # UX tasks go through coordinator
             }
 
             declaration.agent_assignment = agent_mapping.get(
-                declaration.owner, 'coordinator_handler')
+                declaration.owner, "coordinator_handler"
+            )
 
             # Create execution plan
             execution_plan = {
-                'entry_point': declaration.agent_assignment,
-                'workflow_type': 'dynamic',
-                'expected_transitions': self._get_expected_transitions(declaration),
-                'timeout_minutes': declaration.estimation_hours * 60,
-                'retry_count': 3,
-                'artifacts_to_create': declaration.artefacts,
-                'success_criteria': {
-                    'artifacts_created': len(
-                        declaration.artefacts) > 0,
-                    'state_advanced': True,
-                    'no_errors': True}}
+                "entry_point": declaration.agent_assignment,
+                "workflow_type": "dynamic",
+                "expected_transitions": self._get_expected_transitions(declaration),
+                "timeout_minutes": declaration.estimation_hours * 60,
+                "retry_count": 3,
+                "artifacts_to_create": declaration.artefacts,
+                "success_criteria": {
+                    "artifacts_created": len(declaration.artefacts) > 0,
+                    "state_advanced": True,
+                    "no_errors": True,
+                },
+            }
 
             declaration.execution_plan = execution_plan
 
@@ -499,24 +539,25 @@ Please execute this task according to your role as {agent_role}. Consider the pr
         except Exception as e:
             logger.error(
                 f"Error creating execution plan for task {
-                    declaration.id}: {e}")
+                    declaration.id}: {e}"
+            )
             declaration.preparation_status = TaskPreparationStatus.FAILED
 
-    def _get_expected_transitions(
-            self, declaration: TaskDeclaration) -> List[str]:
+    def _get_expected_transitions(self, declaration: TaskDeclaration) -> List[str]:
         """Get expected state transitions for the task"""
         current_state = declaration.state
 
         # Define typical transition paths
         transition_paths = {
-            'CREATED': ['PLANNED'],
-            'PLANNED': ['IN_PROGRESS'],
-            'IN_PROGRESS': ['QA_PENDING'],
-            'QA_PENDING': ['DOCUMENTATION', 'BLOCKED'],
-            'DOCUMENTATION': ['DONE'],
-            'BLOCKED': ['PLANNED', 'IN_PROGRESS']}
+            "CREATED": ["PLANNED"],
+            "PLANNED": ["IN_PROGRESS"],
+            "IN_PROGRESS": ["QA_PENDING"],
+            "QA_PENDING": ["DOCUMENTATION", "BLOCKED"],
+            "DOCUMENTATION": ["DONE"],
+            "BLOCKED": ["PLANNED", "IN_PROGRESS"],
+        }
 
-        return transition_paths.get(current_state, ['DONE'])
+        return transition_paths.get(current_state, ["DONE"])
 
     def _save_declaration_metadata(self, declaration: TaskDeclaration) -> None:
         """Save task declaration metadata to file"""
@@ -525,17 +566,16 @@ Please execute this task according to your role as {agent_role}. Consider the pr
             task_dir.mkdir(exist_ok=True)
 
             declaration_file = task_dir / "task_declaration.json"
-            with open(declaration_file, 'w', encoding='utf-8') as f:
-                json.dump(declaration.to_dict(), f,
-                          indent=2, ensure_ascii=False)
+            with open(declaration_file, "w", encoding="utf-8") as f:
+                json.dump(declaration.to_dict(), f, indent=2, ensure_ascii=False)
 
-            logger.debug(
-                f"Declaration metadata saved for task {declaration.id}")
+            logger.debug(f"Declaration metadata saved for task {declaration.id}")
 
         except Exception as e:
             logger.error(
                 f"Error saving declaration metadata for task {
-                    declaration.id}: {e}")
+                    declaration.id}: {e}"
+            )
 
     def _load_existing_declarations(self) -> None:
         """
@@ -548,29 +588,34 @@ Please execute this task according to your role as {agent_role}. Consider the pr
                     declaration_file = task_dir / "task_declaration.json"
                     if declaration_file.exists():
                         try:
-                            with open(declaration_file, 'r', encoding='utf-8') as f:
+                            with open(declaration_file, "r", encoding="utf-8") as f:
                                 declaration_data = json.load(f)
 
                             # Convert dict back to TaskDeclaration object
-                            declaration = TaskDeclaration.from_dict(
-                                declaration_data)
+                            declaration = TaskDeclaration.from_dict(declaration_data)
                             self.declared_tasks[declaration.id] = declaration
 
                             logger.debug(
                                 f"Loaded existing declaration for task {
-                                    declaration.id}")
+                                    declaration.id}"
+                            )
 
                         except Exception as e:
                             logger.warning(
-                                f"Failed to load declaration from {declaration_file}: {e}")
+                                f"Failed to load declaration from {declaration_file}: {e}"
+                            )
 
         except Exception as e:
             logger.error(f"Error loading existing declarations: {e}")
 
     def get_tasks_ready_for_execution(self) -> List[TaskDeclaration]:
         """Get all tasks that are ready for execution"""
-        ready_tasks = [declaration for declaration in self.declared_tasks.values(
-        ) if declaration.preparation_status == TaskPreparationStatus.READY_FOR_EXECUTION]
+        ready_tasks = [
+            declaration
+            for declaration in self.declared_tasks.values()
+            if declaration.preparation_status
+            == TaskPreparationStatus.READY_FOR_EXECUTION
+        ]
 
         logger.info(f"Found {len(ready_tasks)} tasks ready for execution")
         return ready_tasks
@@ -593,8 +638,7 @@ Please execute this task according to your role as {agent_role}. Consider the pr
             except Exception as e:
                 logger.error(f"Failed to declare task {task_id}: {e}")
 
-        logger.info(
-            f"Declared {declared_count} out of {len(all_task_ids)} tasks")
+        logger.info(f"Declared {declared_count} out of {len(all_task_ids)} tasks")
         return self.declared_tasks
 
     def prepare_all_tasks(self) -> Dict[str, TaskDeclaration]:
@@ -609,13 +653,17 @@ Please execute this task according to your role as {agent_role}. Consider the pr
         for task_id in self.declared_tasks.keys():
             try:
                 self.prepare_task_for_execution(task_id)
-                if self.declared_tasks[task_id].preparation_status == TaskPreparationStatus.READY_FOR_EXECUTION:
+                if (
+                    self.declared_tasks[task_id].preparation_status
+                    == TaskPreparationStatus.READY_FOR_EXECUTION
+                ):
                     prepared_count += 1
             except Exception as e:
                 logger.error(f"Failed to prepare task {task_id}: {e}")
 
         logger.info(
-            f"Prepared {prepared_count} out of {len(self.declared_tasks)} tasks")
+            f"Prepared {prepared_count} out of {len(self.declared_tasks)} tasks"
+        )
         return self.declared_tasks
 
     def get_preparation_summary(self) -> Dict[str, Any]:
@@ -626,7 +674,7 @@ Please execute this task according to your role as {agent_role}. Consider the pr
                 "summary": "No tasks declared",
                 "status_breakdown": {},
                 "ready_for_execution": 0,
-                "failed_preparation": 0
+                "failed_preparation": 0,
             }
 
         status_counts = {}
@@ -635,40 +683,38 @@ Please execute this task according to your role as {agent_role}. Consider the pr
             status_counts[status] = status_counts.get(status, 0) + 1
 
         return {
-            "total_tasks": len(
-                self.declared_tasks),
+            "total_tasks": len(self.declared_tasks),
             "status_breakdown": status_counts,
             "ready_for_execution": status_counts.get(
-                TaskPreparationStatus.READY_FOR_EXECUTION,
-                0),
-            "failed_preparation": status_counts.get(
-                TaskPreparationStatus.FAILED,
-                0)}
+                TaskPreparationStatus.READY_FOR_EXECUTION, 0
+            ),
+            "failed_preparation": status_counts.get(TaskPreparationStatus.FAILED, 0),
+        }
+
 
 def main():
     """Command-line interface for task declaration and preparation"""
     parser = argparse.ArgumentParser(
-        description="Step 4.1 - Task Declaration & Preparation")
+        description="Step 4.1 - Task Declaration & Preparation"
+    )
     parser.add_argument(
         "command",
-        choices=[
-            "declare",
-            "prepare",
-            "summary",
-            "all"],
-        help="Command to execute")
+        choices=["declare", "prepare", "summary", "all"],
+        help="Command to execute",
+    )
     parser.add_argument("--task-id", "-t", help="Specific task ID to process")
-    parser.add_argument("--output-dir", "-o",
-                        help="Output directory for task preparations")
-    parser.add_argument("--verbose", "-v",
-                        action="store_true", help="Verbose output")
+    parser.add_argument(
+        "--output-dir", "-o", help="Output directory for task preparations"
+    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
 
     # Set up logging
     log_level = logging.DEBUG if args.verbose else logging.INFO
     logging.basicConfig(
-        level=log_level, format='%(asctime)s - %(levelname)s - %(message)s')
+        level=log_level, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
 
     # Initialize manager
     manager = TaskDeclarationManager()
@@ -691,18 +737,26 @@ def main():
                 print(
                     f"✅ Task {
                         args.task_id} prepared with status: {
-                        declaration.preparation_status}")
-                if declaration.preparation_status == TaskPreparationStatus.READY_FOR_EXECUTION:
+                        declaration.preparation_status}"
+                )
+                if (
+                    declaration.preparation_status
+                    == TaskPreparationStatus.READY_FOR_EXECUTION
+                ):
                     print("   Task is ready for LangGraph execution")
                 else:
                     print("   Task preparation failed or incomplete")
             else:
                 declarations = manager.prepare_all_tasks()
-                ready_count = sum(1 for d in declarations.values(
-                ) if d.preparation_status == TaskPreparationStatus.READY_FOR_EXECUTION)
+                ready_count = sum(
+                    1
+                    for d in declarations.values()
+                    if d.preparation_status == TaskPreparationStatus.READY_FOR_EXECUTION
+                )
                 print(
                     f"✅ Prepared {
-                        len(declarations)} tasks, {ready_count} ready for execution")
+                        len(declarations)} tasks, {ready_count} ready for execution"
+                )
 
         elif args.command == "summary":
             summary = manager.get_preparation_summary()
@@ -725,8 +779,11 @@ def main():
 
             # Prepare all tasks
             prepared = manager.prepare_all_tasks()
-            ready_count = sum(1 for d in prepared.values(
-            ) if d.preparation_status == TaskPreparationStatus.READY_FOR_EXECUTION)
+            ready_count = sum(
+                1
+                for d in prepared.values()
+                if d.preparation_status == TaskPreparationStatus.READY_FOR_EXECUTION
+            )
             print(f"⚙️  Prepared {len(prepared)} tasks")
             print(f"✅ {ready_count} tasks ready for LangGraph execution")
 
@@ -740,6 +797,7 @@ def main():
         logger.error(f"Error in task declaration workflow: {e}")
         print(f"❌ Error: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

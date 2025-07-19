@@ -11,7 +11,7 @@ You are a senior software engineer with expertise in Python, TypeScript, React, 
 
 ## Code Standards
 ### Required Before Each Commit
-- Run `npm run lint` for frontend code and `flake8`/`black` for Python
+- Run `npm run lint` for frontend code and `ruff`/`black` for Python
 - Ensure all components follow Next.js App Router patterns for frontend
 - Client components should be marked with 'use client' when using browser APIs
 - Ensure all tests pass by running test suites

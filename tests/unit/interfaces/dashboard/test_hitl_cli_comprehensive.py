@@ -257,11 +257,21 @@ class TestHITLCLIManager:
 
     def test_get_reviewer_stats(self):
         """Test getting reviewer statistics."""
-        # Note: get_reviewer_stats method doesn't exist in actual implementation
-        # This test would need to be implemented if the feature is added
-        # For now, we skip this test since the functionality isn't available
-        pytest = __import__('pytest')
-        pytest.skip("get_reviewer_stats method not implemented in HITLCLIManager")
+        mock_checkpoints = [
+            Mock(to_dict=lambda: {'reviewers': ['john.doe'], 'status': 'approved'}),
+            Mock(to_dict=lambda: {'reviewers': ['john.doe'], 'status': 'rejected'}),
+            Mock(to_dict=lambda: {'reviewers': ['john.doe', 'jane.smith'], 'status': 'pending'}),
+            Mock(to_dict=lambda: {'reviewers': ['jane.smith'], 'status': 'approved'})
+        ]
+        
+        with patch.object(self.cli_manager.hitl_engine, 'get_pending_checkpoints', return_value=mock_checkpoints):
+            result = self.cli_manager.get_reviewer_stats('john.doe', days=30)
+            assert result['reviewer'] == 'john.doe'
+            assert result['total_reviews'] == 3
+            assert result['approved'] == 1
+            assert result['rejected'] == 1
+            assert result['pending'] == 1
+            assert result['approval_rate'] == 1/3
 
     def test_export_checkpoint_data(self):
         """Test exporting checkpoint data."""
@@ -291,15 +301,55 @@ class TestHITLCLIManager:
 
     def test_import_checkpoint_data(self):
         """Test importing checkpoint data."""
-        # Note: import_checkpoint_data method doesn't exist in actual implementation
-        pytest = __import__('pytest')
-        pytest.skip("import_checkpoint_data method not implemented in HITLCLIManager")
+        import tempfile
+        import json
+        
+        # Create a temporary file with test data
+        test_data = {
+            'checkpoint_id': 'hitl_BE-07_abc12345',
+            'task_id': 'BE-07',
+            'status': 'approved'
+        }
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+            json.dump(test_data, f)
+            temp_file = f.name
+        
+        try:
+            result = self.cli_manager.import_checkpoint_data(temp_file)
+            assert result is True
+        finally:
+            import os
+            os.unlink(temp_file)
 
     def test_validate_checkpoint_integrity(self):
         """Test validating checkpoint data integrity."""
-        # Note: validate_checkpoint_integrity method doesn't exist in actual implementation
-        pytest = __import__('pytest')
-        pytest.skip("validate_checkpoint_integrity method not implemented in HITLCLIManager")
+        # Test with valid checkpoint
+        mock_checkpoint = Mock()
+        mock_checkpoint.task_id = 'BE-07'
+        mock_checkpoint.checkpoint_type = 'code_review'
+        mock_checkpoint.reviewers = ['john.doe']
+        mock_checkpoint.created_at = datetime.now()
+        mock_checkpoint.deadline = datetime.now() + timedelta(hours=4)
+        
+        with patch.object(self.cli_manager.hitl_engine, 'get_checkpoint', return_value=mock_checkpoint):
+            result = self.cli_manager.validate_checkpoint_integrity('hitl_BE-07_abc12345')
+            assert result['valid'] is True
+            assert result['checkpoint_id'] == 'hitl_BE-07_abc12345'
+            assert len(result['errors']) == 0
+        
+        # Test with invalid checkpoint (missing task_id)
+        mock_invalid_checkpoint = Mock()
+        mock_invalid_checkpoint.task_id = None
+        mock_invalid_checkpoint.checkpoint_type = 'code_review'
+        mock_invalid_checkpoint.reviewers = ['john.doe']
+        mock_invalid_checkpoint.created_at = datetime.now()
+        mock_invalid_checkpoint.deadline = datetime.now() + timedelta(hours=4)
+        
+        with patch.object(self.cli_manager.hitl_engine, 'get_checkpoint', return_value=mock_invalid_checkpoint):
+            result = self.cli_manager.validate_checkpoint_integrity('hitl_BE-07_abc12345')
+            assert result['valid'] is False
+            assert 'Missing task_id' in result['errors']
 
 class TestHITLCLICommands:
     """Test HITL CLI command-line interface."""

@@ -10,7 +10,7 @@ from pathlib import Path
 from datetime import date
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
-from scripts.generate_task_report import generate_end_of_day_report
+from src.infrastructure.scripts.generation.generate_task_report import generate_end_of_day_report
 from src.core.workflows.daily_cycle import DailyCycleOrchestrator
 
 @pytest.mark.asyncio

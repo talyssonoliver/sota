@@ -16,7 +16,7 @@ Usage:
 
     1. Import the main function:
        >>> from tools.context_visualizer import generate_context_coverage_report
-    
+
     2. Generate coverage report:
        >>> generate_context_coverage_report()
 
@@ -42,11 +42,11 @@ from typing import Any, Dict
 # Import from Step 3.7 context tracking
 try:
     from .context_tracker import analyze_context_usage, get_all_context_logs
-    from tools.context_tracker import analyze_context_usage, get_all_context_logs
 except ImportError:
     pass
 
 logger = logging.getLogger(__name__)
+
 
 def analyze_context_coverage() -> Dict[str, Any]:
     """
@@ -61,12 +61,13 @@ def analyze_context_coverage() -> Dict[str, Any]:
 
         if not all_logs:
             logger.warning(
-                "No context logs found. Run some tasks with context tracking first.")
+                "No context logs found. Run some tasks with context tracking first."
+            )
             return {
                 "error": "No context data available",
                 "tasks_analyzed": 0,
                 "topics": {},
-                "coverage_matrix": []
+                "coverage_matrix": [],
             }
 
         # Build coverage matrix: task_id -> topic -> usage_count
@@ -106,11 +107,10 @@ def analyze_context_coverage() -> Dict[str, Any]:
                 "task_id": task_id,
                 "agent_role": all_logs[task_id].get("agent_role", "unknown"),
                 "context_length": task_context_lengths.get(task_id, 0),
-                "topics": {}
+                "topics": {},
             }
             for topic in all_topics:
-                task_row["topics"][topic] = coverage_matrix[task_id].get(
-                    topic, 0)
+                task_row["topics"][topic] = coverage_matrix[task_id].get(topic, 0)
             coverage_data.append(task_row)
 
         return {
@@ -120,28 +120,32 @@ def analyze_context_coverage() -> Dict[str, Any]:
             "unique_topics": len(all_topics),
             "unique_documents": len(document_frequency),
             "coverage_matrix": coverage_data,
-            "topic_frequency": dict(
-                topic_frequency.most_common()),
-            "document_frequency": dict(
-                document_frequency.most_common(10)),
+            "topic_frequency": dict(topic_frequency.most_common()),
+            "document_frequency": dict(document_frequency.most_common(10)),
             "agent_frequency": dict(agent_frequency),
             "all_topics": all_topics,
             "summary_stats": {
                 "avg_topics_per_task": sum(
-                    len(
-                        log.get(
-                            "context_used",
-                            [])) for log in all_logs.values()) /
-                len(all_logs),
-                "avg_context_length": sum(
-                    task_context_lengths.values()) /
-                len(task_context_lengths) if task_context_lengths else 0,
-                "most_active_topic": topic_frequency.most_common(1)[0] if topic_frequency else (
-                    "none",
-                    0),
-                "most_active_agent": agent_frequency.most_common(1)[0] if agent_frequency else (
-                    "none",
-                    0)}}
+                    len(log.get("context_used", [])) for log in all_logs.values()
+                )
+                / len(all_logs),
+                "avg_context_length": (
+                    sum(task_context_lengths.values()) / len(task_context_lengths)
+                    if task_context_lengths
+                    else 0
+                ),
+                "most_active_topic": (
+                    topic_frequency.most_common(1)[0]
+                    if topic_frequency
+                    else ("none", 0)
+                ),
+                "most_active_agent": (
+                    agent_frequency.most_common(1)[0]
+                    if agent_frequency
+                    else ("none", 0)
+                ),
+            },
+        }
 
     except Exception as e:
         logger.error(f"Failed to analyze context coverage: {e}")
@@ -149,11 +153,13 @@ def analyze_context_coverage() -> Dict[str, Any]:
             "error": str(e),
             "tasks_analyzed": 0,
             "topics": {},
-            "coverage_matrix": []
+            "coverage_matrix": [],
         }
 
+
 def generate_csv_report(
-        coverage_data: Dict[str, Any], output_path: str = "reports/context-coverage.csv") -> bool:
+    coverage_data: Dict[str, Any], output_path: str = "reports/context-coverage.csv"
+) -> bool:
     """
     Generate CSV report of context usage patterns.
 
@@ -170,21 +176,18 @@ def generate_csv_report(
         report_file.parent.mkdir(parents=True, exist_ok=True)
 
         # Write CSV with topic usage frequency
-        with open(report_file, 'w', newline='', encoding='utf-8') as csvfile:
+        with open(report_file, "w", newline="", encoding="utf-8") as csvfile:
             writer = csv.writer(csvfile)
 
             # Write header
-            writer.writerow(
-                ['Topic', 'Usage Count', 'Percentage', 'Tasks Using'])
+            writer.writerow(["Topic", "Usage Count", "Percentage", "Tasks Using"])
 
             # Write topic frequency data
             topic_frequency = coverage_data.get("topic_frequency", {})
-            total_usage = sum(topic_frequency.values()
-                              ) if topic_frequency else 1
+            total_usage = sum(topic_frequency.values()) if topic_frequency else 1
 
             for topic, count in topic_frequency.items():
-                percentage = (count / total_usage) * \
-                    100 if total_usage > 0 else 0
+                percentage = (count / total_usage) * 100 if total_usage > 0 else 0
 
                 # Find tasks using this topic
                 tasks_using = []
@@ -192,38 +195,50 @@ def generate_csv_report(
                     if task_data.get("topics", {}).get(topic, 0) > 0:
                         tasks_using.append(task_data["task_id"])
 
-                writer.writerow([
-                    topic,
-                    count,
-                    f"{percentage:.1f}%",
-                    "; ".join(tasks_using)
-                ])
+                writer.writerow(
+                    [topic, count, f"{percentage:.1f}%", "; ".join(tasks_using)]
+                )
 
             # Add summary section
             writer.writerow([])  # Empty row
-            writer.writerow(['=== SUMMARY ==='])
+            writer.writerow(["=== SUMMARY ==="])
             writer.writerow(
-                ['Total Tasks Analyzed', coverage_data.get("tasks_analyzed", 0)])
+                ["Total Tasks Analyzed", coverage_data.get("tasks_analyzed", 0)]
+            )
+            writer.writerow(["Unique Topics", coverage_data.get("unique_topics", 0)])
             writer.writerow(
-                ['Unique Topics', coverage_data.get("unique_topics", 0)])
-            writer.writerow(
-                ['Unique Documents', coverage_data.get("unique_documents", 0)])
+                ["Unique Documents", coverage_data.get("unique_documents", 0)]
+            )
 
             summary_stats = coverage_data.get("summary_stats", {})
             writer.writerow(
-                ['Avg Topics per Task', f"{summary_stats.get('avg_topics_per_task', 0):.1f}"])
+                [
+                    "Avg Topics per Task",
+                    f"{summary_stats.get('avg_topics_per_task', 0):.1f}",
+                ]
+            )
             writer.writerow(
-                ['Avg Context Length', f"{summary_stats.get('avg_context_length', 0):.0f}"])
+                [
+                    "Avg Context Length",
+                    f"{summary_stats.get('avg_context_length', 0):.0f}",
+                ]
+            )
 
-            most_active_topic = summary_stats.get(
-                'most_active_topic', ('none', 0))
+            most_active_topic = summary_stats.get("most_active_topic", ("none", 0))
             writer.writerow(
-                ['Most Active Topic', f"{most_active_topic[0]} ({most_active_topic[1]} uses)"])
+                [
+                    "Most Active Topic",
+                    f"{most_active_topic[0]} ({most_active_topic[1]} uses)",
+                ]
+            )
 
-            most_active_agent = summary_stats.get(
-                'most_active_agent', ('none', 0))
+            most_active_agent = summary_stats.get("most_active_agent", ("none", 0))
             writer.writerow(
-                ['Most Active Agent', f"{most_active_agent[0]} ({most_active_agent[1]} tasks)"])
+                [
+                    "Most Active Agent",
+                    f"{most_active_agent[0]} ({most_active_agent[1]} tasks)",
+                ]
+            )
 
         logger.info(f"CSV context coverage report generated: {output_path}")
         return True
@@ -232,8 +247,10 @@ def generate_csv_report(
         logger.error(f"Failed to generate CSV report: {e}")
         return False
 
+
 def generate_html_report(
-        coverage_data: Dict[str, Any], output_path: str = "reports/context-coverage.html") -> bool:
+    coverage_data: Dict[str, Any], output_path: str = "reports/context-coverage.html"
+) -> bool:
     """
     Generate interactive HTML heatmap of context usage patterns.
 
@@ -252,7 +269,7 @@ def generate_html_report(
         # Generate HTML content
         html_content = generate_html_content(coverage_data)
 
-        with open(report_file, 'w', encoding='utf-8') as f:
+        with open(report_file, "w", encoding="utf-8") as f:
             f.write(html_content)
 
         logger.info(f"HTML context coverage report generated: {output_path}")
@@ -261,6 +278,7 @@ def generate_html_report(
     except Exception as e:
         logger.error(f"Failed to generate HTML report: {e}")
         return False
+
 
 def generate_html_content(coverage_data: Dict[str, Any]) -> str:
     """Generate HTML content for context coverage visualization."""
@@ -493,41 +511,31 @@ def generate_html_content(coverage_data: Dict[str, Any]) -> str:
 
     return html_template
 
+
 def generate_json_report(coverage_data: dict, output_path: str) -> bool:
     """Generate a JSON file with all stats and chart data for dynamic HTML reports."""
     try:
         # Prepare the JSON structure expected by the dynamic HTML
         json_data = {
             "generated_at": coverage_data.get(
-                "generated_at",
-                datetime.now().isoformat()),
+                "generated_at", datetime.now().isoformat()
+            ),
             "stats": {
-                "tasks_analyzed": coverage_data.get(
-                    "tasks_analyzed",
-                    0),
-                "unique_topics": coverage_data.get(
-                    "unique_topics",
-                    0),
-                "avg_topics_per_task": coverage_data.get(
-                    "summary_stats",
-                    {}).get(
-                    "avg_topics_per_task",
-                    0),
-                "avg_context_length": coverage_data.get(
-                    "summary_stats",
-                    {}).get(
-                    "avg_context_length",
-                    0),
+                "tasks_analyzed": coverage_data.get("tasks_analyzed", 0),
+                "unique_topics": coverage_data.get("unique_topics", 0),
+                "avg_topics_per_task": coverage_data.get("summary_stats", {}).get(
+                    "avg_topics_per_task", 0
+                ),
+                "avg_context_length": coverage_data.get("summary_stats", {}).get(
+                    "avg_context_length", 0
+                ),
             },
             "heatmapData": [],
             "taskLabels": [],
             "topicLabels": [],
-            "topicFrequency": {
-                "labels": [],
-                "values": []},
-            "agentDistribution": coverage_data.get(
-                "agent_frequency",
-                {})}
+            "topicFrequency": {"labels": [], "values": []},
+            "agentDistribution": coverage_data.get("agent_frequency", {}),
+        }
         # Heatmap data
         coverage_matrix = coverage_data.get("coverage_matrix", [])
         all_topics = coverage_data.get("all_topics", [])
@@ -543,7 +551,7 @@ def generate_json_report(coverage_data: dict, output_path: str) -> bool:
         json_data["topicFrequency"]["labels"] = list(topic_frequency.keys())
         json_data["topicFrequency"]["values"] = list(topic_frequency.values())
         # Write JSON file
-        with open(output_path, 'w', encoding='utf-8') as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             json.dump(json_data, f, indent=2)
         logger.info(f"JSON context coverage data generated: {output_path}")
         return True
@@ -551,25 +559,25 @@ def generate_json_report(coverage_data: dict, output_path: str) -> bool:
         logger.error(f"Failed to generate JSON report: {e}")
         return False
 
+
 def generate_context_coverage_report(
-        format: str = "both",
-        csv_path: str = "reports/context-coverage.csv",
-        html_path: str = "reports/context-coverage.html",
-        json_path: str = None) -> bool:
+    format: str = "both",
+    csv_path: str = "reports/context-coverage.csv",
+    html_path: str = "reports/context-coverage.html",
+    json_path: str = None,
+) -> bool:
     """
     Generate context coverage visualization reports.
     Now also generates a JSON file for dynamic HTML reports.
     """
     try:
-        logger.info(
-            f"Generating context coverage report(s) in {format} format...")
+        logger.info(f"Generating context coverage report(s) in {format} format...")
 
         # Analyze context coverage using Step 3.7 data
         coverage_data = analyze_context_coverage()
 
         if "error" in coverage_data:
-            logger.error(
-                f"Context coverage analysis failed: {coverage_data['error']}")
+            logger.error(f"Context coverage analysis failed: {coverage_data['error']}")
             return False
 
         success = True
@@ -591,7 +599,8 @@ def generate_context_coverage_report(
 
         if success:
             logger.info(
-                "✅ Step 3.9 context coverage visualization completed successfully!")
+                "✅ Step 3.9 context coverage visualization completed successfully!"
+            )
             print("\n📊 Context Coverage Analysis Summary:")
             print(f"   Tasks analyzed: {coverage_data['tasks_analyzed']}")
             print(f"   Unique topics: {coverage_data['unique_topics']}")
@@ -602,11 +611,13 @@ def generate_context_coverage_report(
                 f"   Avg topics per task: {
                     summary_stats.get(
                         'avg_topics_per_task',
-                        0):.1f}")
+                        0):.1f}"
+            )
             print(
                 f"   Most active topic: {
                     summary_stats.get(
-                        'most_active_topic', ('none', 0))[0]}")
+                        'most_active_topic', ('none', 0))[0]}"
+            )
 
             if format in ["csv", "both"]:
                 print(f"   📄 CSV report: {csv_path}")
@@ -620,41 +631,45 @@ def generate_context_coverage_report(
         logger.error(f"Failed to generate context coverage report: {e}")
         return False
 
+
 # CLI interface for Step 3.9 context coverage visualization
 if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Step 3.9 Context Coverage Visualization")
+        description="Step 3.9 Context Coverage Visualization"
+    )
     parser.add_argument(
         "--format",
-        choices=[
-            "csv",
-            "html",
-            "both"],
+        choices=["csv", "html", "both"],
         default="both",
-        help="Output format for the report")
-    parser.add_argument("--csv-path", default="reports/context-coverage.csv",
-                        help="Output path for CSV report")
-    parser.add_argument("--html-path", default="reports/context-coverage.html",
-                        help="Output path for HTML report")
-    parser.add_argument("--verbose", "-v", action="store_true",
-                        help="Enable verbose logging")
+        help="Output format for the report",
+    )
+    parser.add_argument(
+        "--csv-path",
+        default="reports/context-coverage.csv",
+        help="Output path for CSV report",
+    )
+    parser.add_argument(
+        "--html-path",
+        default="reports/context-coverage.html",
+        help="Output path for HTML report",
+    )
+    parser.add_argument(
+        "--verbose", "-v", action="store_true", help="Enable verbose logging"
+    )
 
     args = parser.parse_args()
 
     # Setup logging
     if args.verbose:
-        logging.basicConfig(level=logging.INFO,
-                            format='%(levelname)s: %(message)s')
+        logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
     print("🎯 Step 3.9: Visualise Context Coverage")
     print("=" * 50)
 
     success = generate_context_coverage_report(
-        format=args.format,
-        csv_path=args.csv_path,
-        html_path=args.html_path
+        format=args.format, csv_path=args.csv_path, html_path=args.html_path
     )
 
     if success:

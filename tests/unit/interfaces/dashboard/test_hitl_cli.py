@@ -12,7 +12,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.interfaces.cli.hitl_cli import HITLCLIManager
-from src.core.workflows.hitl_engine import CheckpointStatus, RiskLevel
+from src.core.workflows.hitl.types import CheckpointStatus, RiskLevel
 
 class TestHITLCLIManager(unittest.TestCase):
     """Test cases for HITLCLIManager."""

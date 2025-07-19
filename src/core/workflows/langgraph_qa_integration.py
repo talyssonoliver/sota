@@ -7,13 +7,12 @@ When a task reaches QA_PENDING state, it automatically triggers the QA Agent
 for automated validation.
 """
 
-import sys
 import json
 import logging
+import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional, Any
-
+from typing import Any, Dict
 
 try:
     from datetime import datetime
@@ -23,15 +22,19 @@ try:
     from pathlib import Path
 except ImportError:
     pass
-try:
-    from typing import Any, Dict, Optional
-except ImportError:
-    pass
-try:
-    from src.core.workflows.qa_execution import QAExecutionEngine
-except ImportError:
-    pass
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+try:
+    from .qa_execution import QAExecutionEngine
+except ImportError:
+    # Create placeholder if import fails
+    class QAExecutionEngine:
+        def __init__(self, outputs_dir: str = "outputs"):
+            self.outputs_dir = outputs_dir
+        
+        def execute_qa_validation(self, *args, **kwargs):
+            return {"status": "qa_unavailable", "message": "QAExecutionEngine not available"}
+
 
 class LangGraphQAIntegration:
     """Integration layer between LangGraph and QA execution system"""
@@ -41,7 +44,8 @@ class LangGraphQAIntegration:
         self.logger = logging.getLogger(__name__)
 
     def handle_qa_pending_state(
-            self, task_id: str, task_context: Dict[str, Any] = None) -> Dict[str, Any]:
+        self, task_id: str, task_context: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """
         Handle QA_PENDING state transition in LangGraph.
 
@@ -74,7 +78,7 @@ class LangGraphQAIntegration:
                 "next_state": next_state,
                 "qa_result": qa_result,
                 "timestamp": datetime.now().isoformat(),
-                "transition_reason": self._get_transition_reason(qa_result)
+                "transition_reason": self._get_transition_reason(qa_result),
             }
 
             # Log the result
@@ -95,10 +99,10 @@ class LangGraphQAIntegration:
                     "tests_failed": 0,
                     "coverage": 0.0,
                     "issues": [{"severity": "error", "message": str(e)}],
-                    "status": "ERROR"
+                    "status": "ERROR",
                 },
                 "timestamp": datetime.now().isoformat(),
-                "transition_reason": f"QA execution error: {str(e)}"
+                "transition_reason": f"QA execution error: {str(e)}",
             }
 
             return error_response
@@ -144,18 +148,16 @@ class LangGraphQAIntegration:
         else:
             return f"QA validation completed with status: {status}"
 
-    def _log_state_transition(self,
-                              task_id: str,
-                              state: str,
-                              context: Dict[str,
-                                            Any] = None) -> None:
+    def _log_state_transition(
+        self, task_id: str, state: str, context: Dict[str, Any] = None
+    ) -> None:
         """Log LangGraph state transition"""
         log_entry = {
             "timestamp": datetime.now().isoformat(),
             "task_id": task_id,
             "event": "state_transition",
             "state": state,
-            "context": context or {}
+            "context": context or {},
         }
 
         # Save to logs directory
@@ -163,14 +165,12 @@ class LangGraphQAIntegration:
         logs_dir.mkdir(parents=True, exist_ok=True)
 
         log_file = logs_dir / f"{task_id}_transitions.jsonl"
-        with open(log_file, 'a') as f:
-            f.write(json.dumps(log_entry) + '\n')
+        with open(log_file, "a") as f:
+            f.write(json.dumps(log_entry) + "\n")
 
-    def _log_qa_result(self,
-                       task_id: str,
-                       qa_result: Dict[str,
-                                       Any],
-                       next_state: str) -> None:
+    def _log_qa_result(
+        self, task_id: str, qa_result: Dict[str, Any], next_state: str
+    ) -> None:
         """Log QA result and state transition"""
         log_entry = {
             "timestamp": datetime.now().isoformat(),
@@ -181,7 +181,7 @@ class LangGraphQAIntegration:
             "tests_failed": qa_result.get("tests_failed"),
             "coverage": qa_result.get("coverage"),
             "issues_count": len(qa_result.get("issues", [])),
-            "next_state": next_state
+            "next_state": next_state,
         }
 
         # Save to logs directory
@@ -189,11 +189,11 @@ class LangGraphQAIntegration:
         logs_dir.mkdir(parents=True, exist_ok=True)
 
         log_file = logs_dir / f"{task_id}_qa_results.jsonl"
-        with open(log_file, 'a') as f:
-            f.write(json.dumps(log_entry) + '\n')
+        with open(log_file, "a") as f:
+            f.write(json.dumps(log_entry) + "\n")
 
-        print(
-            f"  📝 QA result logged: {qa_result.get('status')} -> {next_state}")
+        print(f"  📝 QA result logged: {qa_result.get('status')} -> {next_state}")
+
 
 def create_qa_node_handler() -> callable:
     """
@@ -220,12 +220,13 @@ def create_qa_node_handler() -> callable:
             **state,
             "qa_result": result["qa_result"],
             "next_state": result["next_state"],
-            "qa_timestamp": result["timestamp"]
+            "qa_timestamp": result["timestamp"],
         }
 
         return updated_state
 
     return qa_node_handler
+
 
 def create_qa_conditional_edge() -> callable:
     """
@@ -234,6 +235,7 @@ def create_qa_conditional_edge() -> callable:
     Returns:
         Callable that can be used as a LangGraph conditional edge
     """
+
     def qa_conditional_router(state: Dict[str, Any]) -> str:
         """Route to next state based on QA result"""
         qa_result = state.get("qa_result", {})
@@ -250,6 +252,7 @@ def create_qa_conditional_edge() -> callable:
 
     return qa_conditional_router
 
+
 if __name__ == "__main__":
     # Example usage and testing
     import argparse
@@ -257,8 +260,7 @@ if __name__ == "__main__":
     import logging
     import sys
 
-    parser = argparse.ArgumentParser(
-        description="Test LangGraph QA integration")
+    parser = argparse.ArgumentParser(description="Test LangGraph QA integration")
     parser.add_argument("task_id", help="Task ID to test (e.g., BE-07)")
 
     args = parser.parse_args()
@@ -273,7 +275,7 @@ if __name__ == "__main__":
     test_state = {
         "task_id": args.task_id,
         "agent": "backend",
-        "workflow_stage": "qa_validation"
+        "workflow_stage": "qa_validation",
     }
 
     # Execute QA pending state handler

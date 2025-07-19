@@ -3,7 +3,6 @@ Test to verify cleanup mechanisms work properly.
 This test creates temporary files and verifies they are cleaned up.
 """
 import os
-import pytest
 import tempfile
 import shutil
 import time

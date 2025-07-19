@@ -1,12 +1,5 @@
-"""Memory configuration."""
+"""Memory configuration module."""
 
-class MemoryConfig:
-    def __init__(self):
-        self.settings = {}
-    
-    def load(self, config_file):
-        return {"file": config_file, "status": "loaded"}
+from src.infrastructure.memory.config.memory_config import MemoryConfig
 
-if __name__ == "__main__":
-    config = MemoryConfig()
-    print(config.load("test.json"))
+__all__ = ["MemoryConfig"]

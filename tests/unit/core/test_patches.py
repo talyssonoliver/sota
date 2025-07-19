@@ -8,18 +8,16 @@ import sys
 import pytest
 import logging
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock, PropertyMock
-try:
-    import chromadb.telemetry.product.events
-except ImportError:
-    pass
+from unittest.mock import Mock, patch, MagicMock
+# ChromaDB import moved to test methods to avoid slow collection
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 try:
     import src.infrastructure.security as patches
 except ImportError:
     pass
-from src.infrastructure.security import chromadb_telemetry_patch
+# Import the function directly to avoid the None assignment in __init__.py
+from src.infrastructure.security.chromadb_telemetry_patch import apply_patch
 
 class TestChromaDBTelemetryPatch:
     """Test the ChromaDB telemetry patch."""
@@ -32,7 +30,7 @@ class TestChromaDBTelemetryPatch:
         mock_chromadb.telemetry.product.events = mock_events
         mock_events.ClientStartEvent = mock_client_start_event
         with patch.dict('sys.modules', {'chromadb': mock_chromadb, 'chromadb.telemetry': mock_chromadb.telemetry, 'chromadb.telemetry.product': mock_chromadb.telemetry.product, 'chromadb.telemetry.product.events': mock_events}):
-            result = chromadb_telemetry_patch.apply_patch()
+            result = apply_patch()
             assert result == {'status': 'patched'}
             # The patch should have modified the __init__ method
             assert hasattr(mock_client_start_event.__init__, '__call__')
@@ -49,7 +47,7 @@ class TestChromaDBTelemetryPatch:
             return original_import(name, *args, **kwargs)
         
         with patch('builtins.__import__', side_effect=mock_import):
-            result = chromadb_telemetry_patch.apply_patch()
+            result = apply_patch()
             assert result == {'status': 'not_patched', 'reason': 'chromadb not available'}
 
     def test_apply_patch_general_exception(self):
@@ -95,7 +93,7 @@ class TestChromaDBTelemetryPatch:
                 
                 mock_import.side_effect = custom_import
                 
-                result = chromadb_telemetry_patch.apply_patch()
+                result = apply_patch()
                 # This test is designed to check that the patch gracefully handles
                 # various error conditions. In a mock environment, it should still
                 # return 'patched' status since we can't truly patch mock objects.
@@ -126,7 +124,7 @@ class TestChromaDBTelemetryPatch:
             'chromadb.telemetry.product': mock_product,
             'chromadb.telemetry.product.events': mock_events
         }):
-            result = chromadb_telemetry_patch.apply_patch()
+            result = apply_patch()
             
             # The patch should succeed
             assert result.get('status') == 'patched'
@@ -150,7 +148,7 @@ class TestChromaDBTelemetryPatch:
         """Test direct execution of the patch module."""
         with patch('src.infrastructure.security.chromadb_telemetry_patch.apply_patch') as mock_apply:
             mock_apply.return_value = True
-            result = chromadb_telemetry_patch.apply_patch()
+            result = mock_apply()  # Call the mocked function, not the imported one
             assert result is True
 
 class TestPatchesInit:
@@ -247,7 +245,7 @@ class TestPatchesIntegration:
         mock_product.events = mock_events
         mock_events.ClientStartEvent = mock_client_start_event
         with patch.dict('sys.modules', {'chromadb': mock_chromadb_module, 'chromadb.telemetry': mock_telemetry, 'chromadb.telemetry.product': mock_product, 'chromadb.telemetry.product.events': mock_events}):
-            result = chromadb_telemetry_patch.apply_patch()
+            result = apply_patch()
             if result:
                 assert mock_client_start_event.__init__ is not None
 

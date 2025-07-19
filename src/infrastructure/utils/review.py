@@ -3,17 +3,19 @@ Review Utilities
 Contains functions for managing human review workflow.
 """
 
-
 try:
-    from datetime import datetime
     import json
     import os
+    from datetime import datetime
 except ImportError:
     pass
-REVIEW_DIR = os.path.join(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__))), "reviews")
-APPROVED_DIR = os.path.join(os.path.dirname(
-    os.path.dirname(os.path.abspath(__file__))), ".approved")
+REVIEW_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "reviews"
+)
+APPROVED_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".approved"
+)
+
 
 def save_to_review(filename: str, content: str) -> str:
     """
@@ -37,7 +39,7 @@ def save_to_review(filename: str, content: str) -> str:
         "timestamp": datetime.now().isoformat(),
         "filename": filename,
         "status": "PENDING",
-        "reviewer": None
+        "reviewer": None,
     }
 
     metadata_path = f"{filepath}.meta.json"
@@ -45,6 +47,7 @@ def save_to_review(filename: str, content: str) -> str:
         json.dump(metadata, f, indent=2)
 
     return filepath
+
 
 def is_review_approved(filename: str) -> bool:
     """
@@ -62,10 +65,8 @@ def is_review_approved(filename: str) -> bool:
 
     return os.path.exists(approval_flag)
 
-def approve_review(
-        filename: str,
-        reviewer: str = "human",
-        comments: str = "") -> bool:
+
+def approve_review(filename: str, reviewer: str = "human", comments: str = "") -> bool:
     """
     Marks a review as approved.
 
@@ -83,8 +84,7 @@ def approve_review(
         approval_flag = os.path.join(APPROVED_DIR, f"{filename}.approved")
 
         with open(approval_flag, "w") as f:
-            f.write(
-                f"Approved by {reviewer} at {datetime.now().isoformat()}\n")
+            f.write(f"Approved by {reviewer} at {datetime.now().isoformat()}\n")
             if comments:
                 f.write(f"Comments: {comments}\n")
 
@@ -110,10 +110,8 @@ def approve_review(
         print(f"Error approving review: {e}")
         return False
 
-def reject_review(
-        filename: str,
-        reviewer: str = "human",
-        reason: str = "") -> bool:
+
+def reject_review(filename: str, reviewer: str = "human", reason: str = "") -> bool:
     """
     Marks a review as rejected.
 
@@ -147,6 +145,7 @@ def reject_review(
     except Exception as e:
         print(f"Error rejecting review: {e}")
         return False
+
 
 def get_pending_reviews() -> list:
     """

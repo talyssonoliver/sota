@@ -10,7 +10,7 @@ __all__ = [
     "complete_task",
     "daily_cycle",
     "delegation",
-    "documentation_agent", 
+    "documentation_agent",
     "email_integration",
     "end_of_day_report",
     "enhanced_workflow",
@@ -42,5 +42,5 @@ __all__ = [
     "summarise_task",
     "task_declaration",
     "task_lifecycle",
-    "thread_safe_workflow"
+    "thread_safe_workflow",
 ]

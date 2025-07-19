@@ -1,16 +1,14 @@
 """Integration tests for the feedback system."""
 import os
 import sys
-import json
 import tempfile
 from datetime import datetime, timedelta
-from unittest.mock import Mock, patch, MagicMock
 import pytest
 
 # Add project root to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.infrastructure.utils.feedback_system import FeedbackSystem, FeedbackEntry, FeedbackCategory, FeedbackAnalytics
+from src.infrastructure.utils.feedback_system import FeedbackSystem, FeedbackEntry, FeedbackAnalytics
 
 
 class TestFeedbackSystem:

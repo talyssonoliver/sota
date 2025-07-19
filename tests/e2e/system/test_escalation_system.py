@@ -11,7 +11,6 @@ Part of the optimized test pyramid reorganization:
 - Improved mocking and isolation
 """
 import os
-import sys
 import tempfile
 import pytest
 import threading

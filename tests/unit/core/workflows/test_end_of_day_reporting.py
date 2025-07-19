@@ -11,8 +11,8 @@ from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
-from scripts.generate_task_report import main as generate_task_report_main
-from scripts.generate_task_report import generate_end_of_day_report
+from src.infrastructure.scripts.generation.generate_task_report import main as generate_task_report_main
+from src.infrastructure.scripts.generation.generate_task_report import generate_end_of_day_report
 
 class TestEndOfDayReporting(unittest.TestCase):
     """Test cases for enhanced end-of-day reporting functionality."""
@@ -31,7 +31,7 @@ class TestEndOfDayReporting(unittest.TestCase):
     def test_end_of_day_cli_argument_parsing(self):
         """Test CLI properly parses --end-of-day argument."""
         with patch('sys.argv', ['generate_task_report.py', '--end-of-day', '--day', '2']):
-            with patch('scripts.generate_task_report.generate_end_of_day_report') as mock_eod:
+            with patch('src.infrastructure.scripts.generation.generate_task_report.generate_end_of_day_report') as mock_eod:
                 mock_eod.return_value = True
                 with self.assertRaises(SystemExit) as cm:
                     generate_task_report_main()
@@ -41,8 +41,8 @@ class TestEndOfDayReporting(unittest.TestCase):
     def test_velocity_calculation_functionality(self):
         """Test sprint velocity calculation for end-of-day reports."""
         mock_metrics = {'task_metrics': [{'task_id': 'BE-01', 'completion_time': '2025-06-01T10:00:00Z', 'status': 'COMPLETED', 'agent_type': 'backend'}, {'task_id': 'BE-02', 'completion_time': '2025-06-01T14:00:00Z', 'status': 'COMPLETED', 'agent_type': 'backend'}, {'task_id': 'FE-01', 'completion_time': '2025-05-31T16:00:00Z', 'status': 'COMPLETED', 'agent_type': 'frontend'}]}
-        with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_generator:
-            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+        with patch('src.infrastructure.scripts.generation.generate_task_report.ProgressReportGenerator') as mock_generator:
+            with patch('src.infrastructure.scripts.generation.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
                 with patch('builtins.open', MagicMock()) as mock_open:
                     mock_instance = Mock()
                     mock_instance.metrics_calculator.calculate_all_metrics.return_value = mock_metrics
@@ -57,8 +57,8 @@ class TestEndOfDayReporting(unittest.TestCase):
 
     def test_tomorrow_preparation_features(self):
         """Test tomorrow's task preparation and priority setting."""
-        with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_generator:
-            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+        with patch('src.infrastructure.scripts.generation.generate_task_report.ProgressReportGenerator') as mock_generator:
+            with patch('src.infrastructure.scripts.generation.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
                 with patch('builtins.open', MagicMock()) as mock_open:
                     mock_instance = Mock()
                     mock_instance.metrics_calculator.calculate_all_metrics.return_value = {'task_metrics': []}
@@ -74,8 +74,8 @@ class TestEndOfDayReporting(unittest.TestCase):
     def test_sprint_health_indicators(self):
         """Test sprint health monitoring and indicators."""
         mock_sprint_metrics = {'completion_rate': 65.5, 'velocity_trend': 'increasing', 'blockers_count': 2, 'team_health': 'good'}
-        with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_generator:
-            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+        with patch('src.infrastructure.scripts.generation.generate_task_report.ProgressReportGenerator') as mock_generator:
+            with patch('src.infrastructure.scripts.generation.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
                 with patch('builtins.open', MagicMock()) as mock_open:
                     mock_instance = Mock()
                     mock_instance.metrics_calculator.calculate_sprint_metrics.return_value = mock_sprint_metrics
@@ -90,8 +90,8 @@ class TestEndOfDayReporting(unittest.TestCase):
 
     def test_visual_progress_summary_generation(self):
         """Test generation of visual progress summaries."""
-        with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_generator:
-            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+        with patch('src.infrastructure.scripts.generation.generate_task_report.ProgressReportGenerator') as mock_generator:
+            with patch('src.infrastructure.scripts.generation.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
                 with patch('builtins.open', (mock_open := MagicMock())):
                     mock_instance = Mock()
                     mock_instance.metrics_calculator.calculate_all_metrics.return_value = {'task_metrics': []}
@@ -106,9 +106,9 @@ class TestEndOfDayReporting(unittest.TestCase):
 
     def test_integration_with_existing_infrastructure(self):
         """Test seamless integration with existing reporting infrastructure."""
-        with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_prog_gen:
-            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
-                with patch('scripts.generate_task_report.DashboardUpdater') as mock_dashboard:
+        with patch('src.infrastructure.scripts.generation.generate_task_report.ProgressReportGenerator') as mock_prog_gen:
+            with patch('src.infrastructure.scripts.generation.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+                with patch('src.infrastructure.scripts.generation.generate_task_report.DashboardUpdater') as mock_dashboard:
                     with patch('builtins.open', MagicMock()) as mock_open:
                         mock_prog_instance = Mock()
                         mock_prog_instance.metrics_calculator.calculate_all_metrics.return_value = {'task_metrics': []}
@@ -126,15 +126,15 @@ class TestEndOfDayReporting(unittest.TestCase):
 
     def test_error_handling_for_end_of_day_reports(self):
         """Test error handling for end-of-day reports."""
-        with patch('scripts.generate_task_report.ProgressReportGenerator', side_effect=Exception('Test error')):
+        with patch('src.infrastructure.scripts.generation.generate_task_report.ProgressReportGenerator', side_effect=Exception('Test error')):
             result = generate_end_of_day_report(2)
             self.assertFalse(result)
 
     def test_end_of_day_report_content_validation(self):
         """Test that end-of-day reports contain required sections."""
         expected_sections = ['Sprint Velocity Analysis', "Tomorrow's Preparation", 'Sprint Health Status', 'Visual Progress Summary', 'Key Accomplishments', 'Plan Adjustments']
-        with patch('scripts.generate_task_report.ProgressReportGenerator') as mock_generator:
-            with patch('scripts.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
+        with patch('src.infrastructure.scripts.generation.generate_task_report.ProgressReportGenerator') as mock_generator:
+            with patch('src.infrastructure.scripts.generation.generate_task_report.EndOfDayReportGenerator') as mock_eod_gen:
                 with patch('builtins.open', (mock_open := MagicMock())) as mock_file:
                     mock_instance = Mock()
                     mock_instance.metrics_calculator.calculate_all_metrics.return_value = {'task_metrics': []}

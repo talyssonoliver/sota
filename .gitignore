@@ -65,6 +65,9 @@ yarn.lock
 # Coverage reports
 coverage/
 .nyc_output/
+.coverage
+.coverage.*
+*.coverage
 
 # Generated files that should not be committed
 tasks/tasks.json
@@ -74,6 +77,31 @@ tasks/tasks.json
 debug_*.py
 check_*.py
 validate_*.py
+
+# Analysis and cleanup artifacts
+cleanup_analysis_report.json
+file.md
+DUPLICATION_ANALYSIS.md
+FIX_CODE_QUALITY.md
+DEPENDENCY_MAP_SUMMARY.md
+pytest_output.txt
+fix_fstring_*.py
+test_imports.py
+test_fixed_imports.py
+
+# Test runners (keep only run_tests.py)
+enhanced_test_runner*.py
+
+# Documentation generated files
+docs/setup/complete-directory-structure.md
+
+# Prevent re-accumulation of cleaned files
+*.gif
+demo.*
+package-lock.json
+*.jsonl
+corrupted_*.json
+TEST-*.dat
 
 # HTML coverage reports
 htmlcov/

@@ -58,7 +58,7 @@ function Install-CodeQualityTools {
     Write-Info "Installing/updating code quality tools..."
     
     $tools = @(
-        "flake8",           # Linting
+        "ruff",             # Modern linting and formatting
         "black",            # Code formatting
         "isort",            # Import sorting
         "bandit",           # Security scanning
@@ -87,15 +87,15 @@ function Test-Linting {
     
     $projectFiles = Get-ProjectPythonFiles $Path
     
-    # Flake8 - Style and logic errors  
-    Write-Host "  [LINT] Checking code style (flake8)..." -NoNewline
+    # Ruff - Modern linting and style checking
+    Write-Host "  [LINT] Checking code style (ruff)..." -NoNewline
     try {
         if ($projectFiles.Count -gt 0) {
-            # Use flake8 with exclude patterns to avoid virtual environment issues
-            $flake8Result = flake8 $Path --exclude=".venv,venv,__pycache__,site-packages,.git,.pytest_cache" --count --statistics 2>&1
+            # Use ruff check with exclude patterns to avoid virtual environment issues
+            $ruffResult = ruff check $Path --exclude=".venv,venv,__pycache__,site-packages,.git,.pytest_cache" --statistics 2>&1
             
             # Count actual error lines, not characters
-            $errorLines = $flake8Result | Where-Object { 
+            $errorLines = $ruffResult | Where-Object { 
                 $_ -match "^\.\\" -and 
                 $_ -notlike "*\.venv\*" -and 
                 $_ -notlike "*\venv\*" -and 
@@ -123,7 +123,7 @@ function Test-Linting {
         }
     }
     catch {
-        Write-Warning " Flake8 not available"
+        Write-Warning " Ruff not available"
     }
     
     # PyLint - Comprehensive analysis (with timeout and proper file handling)
@@ -661,9 +661,9 @@ function Main {
         # Quick style check only (most fixes were style-related)
         Write-Host "  [POST-FIX] Checking remaining style issues..." -NoNewline
         try {
-            $flake8Result = flake8 $Path --exclude=".venv,venv,__pycache__,site-packages,.git,.pytest_cache" --count --statistics 2>&1
+            $ruffResult = ruff check $Path --exclude=".venv,venv,__pycache__,site-packages,.git,.pytest_cache" --statistics 2>&1
             
-            $errorLines = $flake8Result | Where-Object { 
+            $errorLines = $ruffResult | Where-Object { 
                 $_ -match "^\.\\" -and 
                 $_ -notlike "*\.venv\*" -and 
                 $_ -notlike "*\venv\*" -and 

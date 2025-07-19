@@ -3,59 +3,91 @@ Documentation Writer Agent for creating technical documentation.
 """
 
 import logging
-from typing import Dict, Any, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type
 
-from tools import memory
-
-try:
-    from crewai import Agent, Task
-except ImportError:
-    # Mock classes for testing
-    class Agent:
-        def __init__(self, *args, **kwargs):
-            self.role = kwargs.get('role', 'DocumentationWriter')
-            
-    class Task:
-        def __init__(self, *args, **kwargs):
-            pass
-
-try:
+if TYPE_CHECKING:
     from src.infrastructure.memory import MemoryEngine
-except ImportError:
-    MemoryEngine = None
 
 logger = logging.getLogger(__name__)
 
+# Lazy import globals - will be set to actual class or mock
+_agent_class = None
+_crewai_available = None
+
+
+def _get_agent_class() -> Type[Any]:
+    """Lazy import of CrewAI Agent class to avoid loading heavy dependencies on module import."""
+    global _agent_class, _crewai_available
+
+    if _crewai_available is None:
+        try:
+            from crewai import Agent
+
+            _agent_class = Agent
+            _crewai_available = True
+            logger.debug("CrewAI successfully imported")
+        except ImportError:
+            logger.warning("CrewAI not available, using mock class")
+
+            # Mock class for testing
+            class MockAgent:
+                def __init__(self, *args, **kwargs):
+                    self.role = kwargs.get("role", "DocumentationWriter")
+                    self.goal = kwargs.get("goal", "")
+                    self.backstory = kwargs.get("backstory", "")
+                    self.verbose = kwargs.get("verbose", True)
+                    self.allow_delegation = kwargs.get("allow_delegation", False)
+                    self.tools = kwargs.get("tools", [])
+
+            _agent_class = MockAgent
+            _crewai_available = False
+
+    return _agent_class  # type: ignore
+
+
 class DocumentationWriter:
     """Documentation Writer Agent agent."""
-    
-    def __init__(self, tools: Optional[List] = None, memory_engine: Optional[memory.engine] = None):
+
+    def __init__(
+        self,
+        tools: Optional[List] = None,
+        memory_engine: Optional["MemoryEngine"] = None,
+    ):
         """Initialize DocumentationWriter."""
         self.tools = tools or []
         self.memory_engine = memory_engine
-        
-        # Agent configuration
-        self.agent = Agent(
-            role="Documentation Writer",
-            goal="Documentation Writer Agent for creating technical documentation",
-            backstory="Expert documentationwriter with deep knowledge and expertise",
-            verbose=True,
-            allow_delegation=False,
-            tools=self.tools
-        )
-        
+        self._agent = None  # Lazy-loaded
+
+    @property
+    def agent(self) -> Any:
+        """Get the agent instance, loading CrewAI only when needed."""
+        if self._agent is None:
+            agent_class = _get_agent_class()
+
+            # Agent configuration
+            self._agent = agent_class(
+                role="Documentation Writer",
+                goal="Documentation Writer Agent for creating technical documentation",
+                backstory="Expert documentation writer with deep knowledge and expertise",
+                verbose=True,
+                allow_delegation=False,
+                tools=self.tools,
+            )
+        return self._agent
+
     def execute_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
         """Execute a task."""
         logger.info(f"Executing task: {task.get('id', 'unknown')}")
-        
+
         result = {
             "task_id": task.get("id", "unknown"),
             "status": "completed",
             "output": "DocumentationWriter task completed successfully",
-            "agent": "DocumentationWriter"
+            "agent": "DocumentationWriter",
         }
-        
+
         return result
+
 
 # Export the class
 __all__ = ["DocumentationWriter"]

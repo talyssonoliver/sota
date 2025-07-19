@@ -9,4 +9,4 @@ except ImportError:
     # Fallback if import fails
     pass
 
-__all__ = ['hitl_widgets']
+__all__ = ["hitl_widgets"]

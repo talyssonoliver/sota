@@ -23,26 +23,31 @@ try:
 except ImportError:
     pass
 try:
-    from typing import Any, Dict, List, Optional
     import json
-    import tarfile
     import shutil
+    import tarfile
     import threading
+    from typing import Any, Dict, List, Optional
 except ImportError:
     pass
+
+
 @dataclass
 class TaskLifecyclePolicy:
     """Define lifecycle policies for task management"""
-    hot_storage_days: int = 7      # Keep in active outputs for 7 days
-    warm_storage_days: int = 30    # Keep in compressed form for 30 days
-    cold_storage_days: int = 365   # Archive for 1 year
+
+    hot_storage_days: int = 7  # Keep in active outputs for 7 days
+    warm_storage_days: int = 30  # Keep in compressed form for 30 days
+    cold_storage_days: int = 365  # Archive for 1 year
     auto_cleanup_enabled: bool = True
-    compression_level: int = 6     # gzip compression level
-    max_hot_tasks: int = 1000      # Maximum tasks in hot storage
+    compression_level: int = 6  # gzip compression level
+    max_hot_tasks: int = 1000  # Maximum tasks in hot storage
+
 
 @dataclass
 class TaskArchiveMetadata:
     """Metadata for archived tasks"""
+
     task_id: str
     archived_at: str
     original_size_bytes: int
@@ -51,6 +56,7 @@ class TaskArchiveMetadata:
     retention_until: str
     qa_status: str
     completion_status: str
+
 
 class TaskLifecycleManager:
     """
@@ -63,10 +69,12 @@ class TaskLifecycleManager:
     4. PURGED: Deleted according to retention policy
     """
 
-    def __init__(self,
-                 outputs_dir: str = "outputs",
-                 archive_dir: str = "archives",
-                 policy: Optional[TaskLifecyclePolicy] = None):
+    def __init__(
+        self,
+        outputs_dir: str = "outputs",
+        archive_dir: str = "archives",
+        policy: Optional[TaskLifecyclePolicy] = None,
+    ):
         self.outputs_dir = Path(outputs_dir)
         self.archive_dir = Path(archive_dir)
         self.policy = policy or TaskLifecyclePolicy()
@@ -86,7 +94,7 @@ class TaskLifecycleManager:
         """Load archive metadata from disk"""
         if self.metadata_file.exists():
             try:
-                with open(self.metadata_file, 'r') as f:
+                with open(self.metadata_file, "r") as f:
                     data = json.load(f)
                 return {k: TaskArchiveMetadata(**v) for k, v in data.items()}
             except Exception as e:
@@ -98,7 +106,7 @@ class TaskLifecycleManager:
         """Save archive metadata to disk"""
         try:
             data = {k: asdict(v) for k, v in self.metadata.items()}
-            with open(self.metadata_file, 'w') as f:
+            with open(self.metadata_file, "w") as f:
                 json.dump(data, f, indent=2)
         except Exception as e:
             print(f"⚠️ Failed to save archive metadata: {e}")
@@ -131,7 +139,7 @@ class TaskLifecycleManager:
         status_file = self.outputs_dir / task_id / "status.json"
         if status_file.exists():
             try:
-                with open(status_file, 'r') as f:
+                with open(status_file, "r") as f:
                     status = json.load(f)
 
                 # Only archive completed tasks
@@ -160,7 +168,8 @@ class TaskLifecycleManager:
 
             # Calculate original size
             original_size = sum(
-                f.stat().st_size for f in task_dir.rglob("*") if f.is_file())
+                f.stat().st_size for f in task_dir.rglob("*") if f.is_file()
+            )
 
             # Create compressed archive
             archive_name = f"{task_id}_{
@@ -168,13 +177,17 @@ class TaskLifecycleManager:
             archive_path = self.warm_dir / archive_name
 
             try:
-                with tarfile.open(archive_path, "w:gz", compresslevel=self.policy.compression_level) as tar:
+                with tarfile.open(
+                    archive_path, "w:gz", compresslevel=self.policy.compression_level
+                ) as tar:
                     tar.add(task_dir, arcname=task_id)
 
                 compressed_size = archive_path.stat().st_size
 
                 # Create metadata
-                retention_until = datetime.now() + timedelta(days=self.policy.warm_storage_days)
+                retention_until = datetime.now() + timedelta(
+                    days=self.policy.warm_storage_days
+                )
 
                 # Get QA status
                 qa_status = "unknown"
@@ -199,7 +212,7 @@ class TaskLifecycleManager:
                     archive_location=str(archive_path),
                     retention_until=retention_until.isoformat(),
                     qa_status=qa_status,
-                    completion_status="complete"
+                    completion_status="complete",
                 )
 
                 # Save metadata
@@ -209,8 +222,10 @@ class TaskLifecycleManager:
                 # Remove original directory
                 shutil.rmtree(task_dir)
 
-                print(f"📦 Archived {task_id}: {original_size:,} → {compressed_size:,} bytes "
-                      f"({compressed_size / original_size * 100:.1f}% compression)")
+                print(
+                    f"📦 Archived {task_id}: {original_size:,} → {compressed_size:,} bytes "
+                    f"({compressed_size / original_size * 100:.1f}% compression)"
+                )
 
                 return metadata
 
@@ -252,7 +267,7 @@ class TaskLifecycleManager:
             "tasks_archived": 0,
             "tasks_moved_to_cold": 0,
             "tasks_purged": 0,
-            "bytes_freed": 0
+            "bytes_freed": 0,
         }
 
         if not self.policy.auto_cleanup_enabled:
@@ -286,8 +301,9 @@ class TaskLifecycleManager:
                     stats["tasks_purged"] += 1
 
         # 4. Enforce hot storage limits
-        hot_tasks = list(self.outputs_dir.iterdir()
-                         ) if self.outputs_dir.exists() else []
+        hot_tasks = (
+            list(self.outputs_dir.iterdir()) if self.outputs_dir.exists() else []
+        )
         if len(hot_tasks) > self.policy.max_hot_tasks:
             # Archive oldest tasks
             oldest_tasks = sorted(hot_tasks, key=lambda d: d.stat().st_mtime)
@@ -302,9 +318,8 @@ class TaskLifecycleManager:
         return stats
 
     def _move_to_cold_storage(
-            self,
-            task_id: str,
-            metadata: TaskArchiveMetadata) -> bool:
+        self, task_id: str, metadata: TaskArchiveMetadata
+    ) -> bool:
         """Move task from warm to cold storage"""
         try:
             warm_path = Path(metadata.archive_location)
@@ -352,7 +367,7 @@ class TaskLifecycleManager:
             "warm_storage": {"count": 0, "size_bytes": 0},
             "cold_storage": {"count": 0, "size_bytes": 0},
             "total_archived": len(self.metadata),
-            "compression_ratio": 0.0
+            "compression_ratio": 0.0,
         }
 
         # Hot storage stats
@@ -361,8 +376,9 @@ class TaskLifecycleManager:
             stats["hot_storage"]["count"] = len(hot_tasks)
             for task_dir in hot_tasks:
                 if task_dir.is_dir():
-                    size = sum(f.stat().st_size for f in task_dir.rglob(
-                        "*") if f.is_file())
+                    size = sum(
+                        f.stat().st_size for f in task_dir.rglob("*") if f.is_file()
+                    )
                     stats["hot_storage"]["size_bytes"] += size
 
         # Archive stats
@@ -402,12 +418,12 @@ class TaskLifecycleManager:
             "agent_id": agent_id,
             "completion_tracked_at": datetime.now().isoformat(),
             "ready_for_archival": False,
-            "archival_check_count": 0
+            "archival_check_count": 0,
         }
 
         if tracking_file.exists():
             try:
-                with open(tracking_file, 'r') as f:
+                with open(tracking_file, "r") as f:
                     existing_data = json.load(f)
                     tracking_data.update(existing_data)
             except Exception:
@@ -419,7 +435,7 @@ class TaskLifecycleManager:
         tracking_data["ready_for_archival"] = True
 
         try:
-            with open(tracking_file, 'w') as f:
+            with open(tracking_file, "w") as f:
                 json.dump(tracking_data, f, indent=2)
         except Exception as e:
             print(f"⚠️ Failed to save tracking data for {task_id}: {e}")
@@ -442,17 +458,23 @@ class TaskLifecycleManager:
                 "tasks_archived": 0,
                 "tasks_moved_to_cold": 0,
                 "tasks_purged": 0,
-                "bytes_freed": 0
+                "bytes_freed": 0,
             }
 
         print("🧹 Running automatic task cleanup...")
         stats = self.run_lifecycle_maintenance()
 
-        if stats["tasks_archived"] > 0 or stats["tasks_moved_to_cold"] > 0 or stats["tasks_purged"] > 0:
-            print(f"✅ Cleanup completed: {stats['tasks_archived']} archived, "
-                  f"{stats['tasks_moved_to_cold']} moved to cold, "
-                  f"{stats['tasks_purged']} purged, "
-                  f"{stats['bytes_freed']:,} bytes freed")
+        if (
+            stats["tasks_archived"] > 0
+            or stats["tasks_moved_to_cold"] > 0
+            or stats["tasks_purged"] > 0
+        ):
+            print(
+                f"✅ Cleanup completed: {stats['tasks_archived']} archived, "
+                f"{stats['tasks_moved_to_cold']} moved to cold, "
+                f"{stats['tasks_purged']} purged, "
+                f"{stats['bytes_freed']:,} bytes freed"
+            )
         else:
             print("✅ Cleanup completed: No tasks needed cleanup")
 
@@ -466,15 +488,15 @@ class TaskLifecycleManager:
         # Count current hot tasks
         hot_task_count = 0
         if self.outputs_dir.exists():
-            hot_task_count = len(
-                [d for d in self.outputs_dir.iterdir() if d.is_dir()])
+            hot_task_count = len([d for d in self.outputs_dir.iterdir() if d.is_dir()])
 
         # Trigger cleanup if we're approaching the limit
         trigger_threshold = int(self.policy.max_hot_tasks * 0.8)  # 80% of max
 
         if hot_task_count >= trigger_threshold:
             print(
-                f"🔄 Cleanup triggered: {hot_task_count} tasks >= {trigger_threshold} threshold")
+                f"🔄 Cleanup triggered: {hot_task_count} tasks >= {trigger_threshold} threshold"
+            )
             return True
 
         # Also check for tasks ready for archival
@@ -487,7 +509,7 @@ class TaskLifecycleManager:
                 tracking_file = task_dir / "lifecycle_tracking.json"
                 if tracking_file.exists():
                     try:
-                        with open(tracking_file, 'r') as f:
+                        with open(tracking_file, "r") as f:
                             tracking_data = json.load(f)
                             if tracking_data.get("ready_for_archival", False):
                                 ready_for_archival += 1
@@ -497,10 +519,12 @@ class TaskLifecycleManager:
         # Trigger if we have many tasks ready for archival
         if ready_for_archival >= 10:  # Arbitrary threshold
             print(
-                f"🔄 Cleanup triggered: {ready_for_archival} tasks ready for archival")
+                f"🔄 Cleanup triggered: {ready_for_archival} tasks ready for archival"
+            )
             return True
 
         return False
+
 
 def main():
     """Demo lifecycle management"""
@@ -518,13 +542,20 @@ def main():
     # Show storage stats
     storage_stats = manager.get_storage_statistics()
     print("\n💾 Storage Statistics:")
-    print(f"   Hot storage: {storage_stats['hot_storage']['count']} tasks, "
-          f"{storage_stats['hot_storage']['size_bytes']:,} bytes")
-    print(f"   Warm storage: {storage_stats['warm_storage']['count']} tasks, "
-          f"{storage_stats['warm_storage']['size_bytes']:,} bytes")
-    print(f"   Cold storage: {storage_stats['cold_storage']['count']} tasks, "
-          f"{storage_stats['cold_storage']['size_bytes']:,} bytes")
+    print(
+        f"   Hot storage: {storage_stats['hot_storage']['count']} tasks, "
+        f"{storage_stats['hot_storage']['size_bytes']:,} bytes"
+    )
+    print(
+        f"   Warm storage: {storage_stats['warm_storage']['count']} tasks, "
+        f"{storage_stats['warm_storage']['size_bytes']:,} bytes"
+    )
+    print(
+        f"   Cold storage: {storage_stats['cold_storage']['count']} tasks, "
+        f"{storage_stats['cold_storage']['size_bytes']:,} bytes"
+    )
     print(f"   Compression ratio: {storage_stats['compression_ratio']:.1%}")
+
 
 if __name__ == "__main__":
     main()

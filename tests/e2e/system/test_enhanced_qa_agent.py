@@ -171,9 +171,9 @@ class TestEnhancedQAAgent:
         results = {'quality_metrics': {'test_generation_success_rate': 85, 'integration_gap_count': 3, 'quality_score': 80}}
         validation = qa_agent.validate_quality_gates(results)
         assert 'overall_status' in validation
-        assert 'gates' in validation
+        assert 'gate_results' in validation
         assert 'summary' in validation
-        gates = validation['gates']
+        gates = validation['gate_results']
         assert 'coverage_gate' in gates
         assert 'integration_gate' in gates
         assert 'overall_quality_gate' in gates
@@ -188,9 +188,9 @@ class TestEnhancedQAAgent:
         results = {'quality_metrics': {'test_generation_success_rate': 60, 'integration_gap_count': 15, 'quality_score': 50}}
         validation = qa_agent.validate_quality_gates(results)
         assert validation['overall_status'] == 'FAILED'
-        assert not validation['gates']['coverage_gate']['passed']
-        assert not validation['gates']['integration_gate']['passed']
-        assert not validation['gates']['overall_quality_gate']['passed']
+        assert not validation['gate_results']['coverage_gate']['passed']
+        assert not validation['gate_results']['integration_gate']['passed']
+        assert not validation['gate_results']['overall_quality_gate']['passed']
 
 class TestQAWorkflowIntegration:
     """Integration tests for QA workflow."""

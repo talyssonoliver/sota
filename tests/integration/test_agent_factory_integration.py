@@ -10,21 +10,16 @@ Tests the complete agent creation and initialization workflow, including:
 
 import pytest
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import tempfile
-import os
-import json
 from pathlib import Path
-from typing import Dict, Any, List
 
 # Add project root to path
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from src.core.agents.factory import create_agent, AGENT_CONFIGS
-from src.core.workflows.execute_workflow import execute_task
 from src.infrastructure.memory import MemoryEngine
-from src.infrastructure.tools.tool_loader import load_tools_for_agent
 
 
 
@@ -150,7 +145,7 @@ class TestAgentFactoryIntegration(unittest.TestCase):
                 return [mock_tools["github_tool"], mock_tools["supabase_tool"]]
             return []
         
-        with patch('src.infrastructure.tools.tool_loader.load_tools_for_agent', side_effect=mock_load_tools):
+        with patch('src.infrastructure.tools.core.tool_loader.load_tools_for_agent', side_effect=mock_load_tools):
             with patch('src.core.agents.factory.MemoryEngine', return_value=self.mock_memory):
                 # Create agents with tools
                 tl_agent = create_agent("technical_lead", load_tools=True)
@@ -177,7 +172,6 @@ class TestAgentFactoryIntegration(unittest.TestCase):
     def test_concurrent_agent_creation(self):
         """Test thread safety of concurrent agent creation."""
         import threading
-        import time
         
         agents_created = []
         errors = []

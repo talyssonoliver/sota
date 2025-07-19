@@ -25,18 +25,23 @@ try:
     from typing import Any, Dict, List, Optional
 except ImportError:
     pass
+
+
 @dataclass
 class TaskArtifact:
     """Represents a task artifact"""
+
     name: str
     path: str
     type: str  # code, documentation, config, test, etc.
     size_bytes: int
     description: str
 
+
 @dataclass
 class TaskSummary:
     """Task completion summary"""
+
     task_id: str
     title: str
     description: str
@@ -46,9 +51,11 @@ class TaskSummary:
     completion_date: str
     duration_hours: Optional[float]
 
+
 @dataclass
 class QASummary:
     """QA results summary"""
+
     overall_status: str
     tests_passed: int
     tests_failed: int
@@ -56,9 +63,11 @@ class QASummary:
     critical_issues: int
     recommendations_count: int
 
+
 @dataclass
 class DocumentationReport:
     """Complete documentation report"""
+
     task_summary: TaskSummary
     artifacts: List[TaskArtifact]
     qa_summary: QASummary
@@ -68,6 +77,7 @@ class DocumentationReport:
     references: List[Dict[str, str]]
     generated_at: str
     version: str = "1.0.0"
+
 
 class DocumentationAgent:
     """Automated documentation generation system"""
@@ -117,7 +127,7 @@ class DocumentationAgent:
             technical_details=technical_details,
             next_steps=next_steps,
             references=references,
-            generated_at=datetime.now().isoformat()
+            generated_at=datetime.now().isoformat(),
         )
 
         # Save documentation
@@ -151,8 +161,7 @@ class DocumentationAgent:
 
         if start_date:
             try:
-                start_dt = datetime.fromisoformat(
-                    start_date.replace('Z', '+00:00'))
+                start_dt = datetime.fromisoformat(start_date.replace("Z", "+00:00"))
                 completion_dt = datetime.now()
                 duration = completion_dt - start_dt
                 duration_hours = duration.total_seconds() / 3600
@@ -162,13 +171,12 @@ class DocumentationAgent:
         return TaskSummary(
             task_id=task_id,
             title=task_data.get("title", f"Task {task_id}"),
-            description=task_data.get(
-                "description", "No description available"),
+            description=task_data.get("description", "No description available"),
             owner=task_data.get("owner", "unknown"),
             status=status_data.get("status", "COMPLETED"),
             start_date=start_date,
             completion_date=completion_date,
-            duration_hours=duration_hours
+            duration_hours=duration_hours,
         )
 
     def _collect_artifacts(self, task_id: str) -> List[TaskArtifact]:
@@ -183,28 +191,14 @@ class DocumentationAgent:
                 "code/**/*.ts",
                 "code/**/*.js",
                 "code/**/*.tsx",
-                "code/**/*.jsx"],
-            "documentation": [
-                "*.md",
-                "docs/**/*.md"],
-            "configuration": [
-                "*.yaml",
-                "*.yml",
-                "*.json",
-                "*.toml",
-                "config/**/*"],
-            "tests": [
-                "test/**/*",
-                "tests/**/*",
-                "**/*test*",
-                "**/*spec*"],
-            "output": [
-                "output_*.md",
-                "prompt_*.md"],
-            "reports": [
-                "qa_*.json",
-                "qa_*.md",
-                "status.json"]}
+                "code/**/*.jsx",
+            ],
+            "documentation": ["*.md", "docs/**/*.md"],
+            "configuration": ["*.yaml", "*.yml", "*.json", "*.toml", "config/**/*"],
+            "tests": ["test/**/*", "tests/**/*", "**/*test*", "**/*spec*"],
+            "output": ["output_*.md", "prompt_*.md"],
+            "reports": ["qa_*.json", "qa_*.md", "status.json"],
+        }
 
         for artifact_type, patterns in artifact_patterns.items():
             for pattern in patterns:
@@ -214,8 +208,7 @@ class DocumentationAgent:
                             stat = file_path.stat()
                             # Use safe path calculation
                             try:
-                                relative_path = str(
-                                    file_path.relative_to(task_dir))
+                                relative_path = str(file_path.relative_to(task_dir))
                             except ValueError:
                                 # If relative_to fails, use name only
                                 relative_path = file_path.name
@@ -227,11 +220,14 @@ class DocumentationAgent:
                                     type=artifact_type,
                                     size_bytes=stat.st_size,
                                     description=self._generate_artifact_description(
-                                        file_path,
-                                        artifact_type)))
+                                        file_path, artifact_type
+                                    ),
+                                )
+                            )
                         except Exception as e:
                             print(
-                                f"Warning: Could not process artifact {file_path}: {e}")
+                                f"Warning: Could not process artifact {file_path}: {e}"
+                            )
 
         return sorted(artifacts, key=lambda x: (x.type, x.name))
 
@@ -248,7 +244,7 @@ class DocumentationAgent:
                 tests_failed=0,
                 coverage_percentage=0.0,
                 critical_issues=0,
-                recommendations_count=0
+                recommendations_count=0,
             )
 
         try:
@@ -257,11 +253,18 @@ class DocumentationAgent:
 
             # Count critical issues
             critical_issues = 0
-            for issue_list in [qa_data.get("linting_issues", []),
-                               qa_data.get("security_issues", []),
-                               qa_data.get("type_check_issues", [])]:
-                critical_issues += len([issue for issue in issue_list
-                                        if issue.get("severity") in ["error", "critical"]])
+            for issue_list in [
+                qa_data.get("linting_issues", []),
+                qa_data.get("security_issues", []),
+                qa_data.get("type_check_issues", []),
+            ]:
+                critical_issues += len(
+                    [
+                        issue
+                        for issue in issue_list
+                        if issue.get("severity") in ["error", "critical"]
+                    ]
+                )
 
             return QASummary(
                 overall_status=qa_data.get("overall_status", "UNKNOWN"),
@@ -269,7 +272,7 @@ class DocumentationAgent:
                 tests_failed=qa_data.get("tests_failed", 0),
                 coverage_percentage=qa_data.get("coverage_percentage", 0.0),
                 critical_issues=critical_issues,
-                recommendations_count=len(qa_data.get("recommendations", []))
+                recommendations_count=len(qa_data.get("recommendations", [])),
             )
 
         except Exception as e:
@@ -280,7 +283,7 @@ class DocumentationAgent:
                 tests_failed=0,
                 coverage_percentage=0.0,
                 critical_issues=1,
-                recommendations_count=1
+                recommendations_count=1,
             )
 
     def _generate_implementation_notes(self, task_id: str) -> List[str]:
@@ -298,7 +301,8 @@ class DocumentationAgent:
                 # Extract key implementation points
                 if "implemented" in content.lower():
                     notes.append(
-                        f"Implementation details documented in {output_file.name}")
+                        f"Implementation details documented in {output_file.name}"
+                    )
 
                 if "service" in content.lower():
                     notes.append("Service layer implementation completed")
@@ -315,23 +319,22 @@ class DocumentationAgent:
         # Analyze code artifacts
         code_dir = task_dir / "code"
         if code_dir.exists():
-            code_files = list(code_dir.glob("**/*.ts")) + \
-                list(code_dir.glob("**/*.py"))
+            code_files = list(code_dir.glob("**/*.ts")) + list(code_dir.glob("**/*.py"))
             if code_files:
                 notes.append(f"Generated {len(code_files)} code files")
 
                 # Analyze file types
-                service_files = [
-                    f for f in code_files if "service" in f.name.lower()]
+                service_files = [f for f in code_files if "service" in f.name.lower()]
                 if service_files:
                     notes.append(
-                        f"Service layer: {', '.join([f.stem for f in service_files])}")
+                        f"Service layer: {', '.join([f.stem for f in service_files])}"
+                    )
 
-                model_files = [
-                    f for f in code_files if "model" in f.name.lower()]
+                model_files = [f for f in code_files if "model" in f.name.lower()]
                 if model_files:
                     notes.append(
-                        f"Data models: {', '.join([f.stem for f in model_files])}")
+                        f"Data models: {', '.join([f.stem for f in model_files])}"
+                    )
 
         if not notes:
             notes.append("Implementation completed with standard approach")
@@ -345,7 +348,7 @@ class DocumentationAgent:
             "technologies": [],
             "patterns": [],
             "dependencies": [],
-            "metrics": {}
+            "metrics": {},
         }
 
         # Analyze code for technologies and patterns
@@ -379,28 +382,25 @@ class DocumentationAgent:
         code_files = list(code_dir.glob("**/*")) if code_dir.exists() else []
         details["metrics"] = {
             "total_files": len([f for f in code_files if f.is_file()]),
-            "lines_of_code": self._count_lines_of_code(code_dir) if code_dir.exists() else 0,
-            "complexity_estimate": "Low" if len(code_files) < 5 else "Medium"
+            "lines_of_code": (
+                self._count_lines_of_code(code_dir) if code_dir.exists() else 0
+            ),
+            "complexity_estimate": "Low" if len(code_files) < 5 else "Medium",
         }
 
         return details
 
-    def _generate_next_steps(
-            self,
-            task_id: str,
-            qa_summary: QASummary) -> List[str]:
+    def _generate_next_steps(self, task_id: str, qa_summary: QASummary) -> List[str]:
         """Generate next steps based on task completion and QA results"""
         next_steps = []
 
         # Based on QA status
         if qa_summary.overall_status == "PASSED":
             next_steps.append("✅ Task ready for integration")
-            next_steps.append(
-                "Consider code review if required by team process")
+            next_steps.append("Consider code review if required by team process")
         elif qa_summary.overall_status == "PASSED_WITH_WARNINGS":
             next_steps.append("⚠️ Address warning items if time permits")
-            next_steps.append(
-                "Task can proceed to integration with noted warnings")
+            next_steps.append("Task can proceed to integration with noted warnings")
         elif qa_summary.overall_status == "FAILED":
             next_steps.append("❌ Fix critical issues identified in QA report")
             next_steps.append("Re-run QA validation after fixes")
@@ -412,8 +412,7 @@ class DocumentationAgent:
             next_steps.append("Consider adding more comprehensive tests")
 
         # Generic next steps
-        next_steps.append(
-            "Update project documentation if this affects architecture")
+        next_steps.append("Update project documentation if this affects architecture")
         next_steps.append("Notify dependent tasks that this task is complete")
 
         return next_steps
@@ -423,20 +422,24 @@ class DocumentationAgent:
         references = []
 
         # Task declaration reference
-        references.append({
-            "type": "task_declaration",
-            "title": f"Task Declaration - {task_id}",
-            "url": f"outputs/{task_id}/task_declaration.json"
-        })
+        references.append(
+            {
+                "type": "task_declaration",
+                "title": f"Task Declaration - {task_id}",
+                "url": f"outputs/{task_id}/task_declaration.json",
+            }
+        )
 
         # QA report reference
         qa_report_path = self.outputs_dir / task_id / "qa_report.json"
         if qa_report_path.exists():
-            references.append({
-                "type": "qa_report",
-                "title": f"QA Report - {task_id}",
-                "url": f"outputs/{task_id}/qa_report.json"
-            })
+            references.append(
+                {
+                    "type": "qa_report",
+                    "title": f"QA Report - {task_id}",
+                    "url": f"outputs/{task_id}/qa_report.json",
+                }
+            )
 
         # Agent outputs
         output_files = list((self.outputs_dir / task_id).glob("output_*.md"))
@@ -449,11 +452,13 @@ class DocumentationAgent:
                 # If relative_to fails, use relative path from outputs dir
                 relative_url = f"outputs/{task_id}/{output_file.name}"
 
-            references.append({
-                "type": "agent_output",
-                "title": f"{agent_name.title()} Agent Output",
-                "url": relative_url
-            })
+            references.append(
+                {
+                    "type": "agent_output",
+                    "title": f"{agent_name.title()} Agent Output",
+                    "url": relative_url,
+                }
+            )
 
         # Add GitHub PR references for this task
         pr_links = self._collect_github_pr_links(task_id)
@@ -468,10 +473,12 @@ class DocumentationAgent:
         try:
             # Import GitHub tool to fetch PR information
             from tools.github_tool import GitHubTool
+
             github_tool = GitHubTool()
 
             # Check if GitHub token is available
             import os
+
             if not os.getenv("GITHUB_TOKEN"):
                 print("Info: GITHUB_TOKEN not set, using manual PR link fallback")
                 raise Exception("GitHub token not available")
@@ -491,40 +498,49 @@ class DocumentationAgent:
                     task_id_lower = task_id.lower()
 
                     # Match PR if task ID appears in title, body, or branch
-                    if (task_id_lower in pr_title or
-                        task_id_lower in pr_body or
-                        task_id_lower in pr_branch or
+                    if (
+                        task_id_lower in pr_title
+                        or task_id_lower in pr_body
+                        or task_id_lower in pr_branch
+                        or
                         # Also check for common patterns like "be-07" matching
                         # "BE-07"
-                        task_id_lower.replace("-", "") in pr_title.replace("-", "") or
-                        task_id_lower.replace("-", "") in pr_body.replace("-", "") or
-                            task_id_lower.replace("-", "") in pr_branch.replace("-", "")):
+                        task_id_lower.replace("-", "") in pr_title.replace("-", "")
+                        or task_id_lower.replace("-", "") in pr_body.replace("-", "")
+                        or task_id_lower.replace("-", "") in pr_branch.replace("-", "")
+                    ):
 
-                        pr_links.append({
-                            "type": "pull_request",
-                            "title": f"PR #{pr.get('number')}: {pr.get('title')}",
-                            "url": pr.get("html_url", "#"),
-                            "status": pr.get("state", "unknown")
-                        })
+                        pr_links.append(
+                            {
+                                "type": "pull_request",
+                                "title": f"PR #{pr.get('number')}: {pr.get('title')}",
+                                "url": pr.get("html_url", "#"),
+                                "status": pr.get("state", "unknown"),
+                            }
+                        )
 
             # If no PRs found, add manual fallback
             if not pr_links:
-                pr_links.append({
-                    "type": "pull_request",
-                    "title": f"Pull Request for {task_id} (manual entry needed)",
-                    "url": f"https://github.com/artesanato-shop/artesanato-ecommerce/pulls?q={task_id}",
-                    "status": "pending"
-                })
+                pr_links.append(
+                    {
+                        "type": "pull_request",
+                        "title": f"Pull Request for {task_id} (manual entry needed)",
+                        "url": f"https://github.com/artesanato-shop/artesanato-ecommerce/pulls?q={task_id}",
+                        "status": "pending",
+                    }
+                )
 
         except Exception as e:
             print(f"Warning: Could not fetch GitHub PR links: {e}")
             # Add a placeholder for manual PR entry
-            pr_links.append({
-                "type": "pull_request",
-                "title": f"Pull Request for {task_id} (manual entry needed)",
-                "url": f"https://github.com/artesanato-shop/artesanato-ecommerce/pulls?q={task_id}",
-                "status": "pending"
-            })
+            pr_links.append(
+                {
+                    "type": "pull_request",
+                    "title": f"Pull Request for {task_id} (manual entry needed)",
+                    "url": f"https://github.com/artesanato-shop/artesanato-ecommerce/pulls?q={task_id}",
+                    "status": "pending",
+                }
+            )
 
         return pr_links
 
@@ -534,7 +550,7 @@ class DocumentationAgent:
 
         # Save JSON report
         json_path = self.docs_dir / f"{task_id}.json"
-        with open(json_path, 'w') as f:
+        with open(json_path, "w") as f:
             json.dump(asdict(doc_report), f, indent=2)
 
         # Save Markdown report
@@ -549,9 +565,8 @@ class DocumentationAgent:
         print(f"📄 Documentation saved to {md_path} and {task_md_path}")
 
     def _generate_markdown_report(
-            self,
-            doc_report: DocumentationReport,
-            output_path: Path) -> None:
+        self, doc_report: DocumentationReport, output_path: Path
+    ) -> None:
         """Generate comprehensive Markdown documentation report"""
         task = doc_report.task_summary
         qa = doc_report.qa_summary
@@ -562,7 +577,7 @@ class DocumentationAgent:
             "PASSED_WITH_WARNINGS": "⚠️",
             "FAILED": "❌",
             "NOT_RUN": "⏳",
-            "ERROR": "💥"
+            "ERROR": "💥",
         }
 
         qa_icon = status_icons.get(qa.overall_status, "❓")
@@ -622,7 +637,7 @@ class DocumentationAgent:
 *Generated by Documentation Agent*
 """
 
-        with open(output_path, 'w', encoding='utf-8') as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             f.write(markdown_content)
 
     def _format_list(self, items: List[str]) -> str:
@@ -660,7 +675,8 @@ class DocumentationAgent:
             for artifact in artifact_list:
                 size_str = self._format_file_size(artifact.size_bytes)
                 formatted.append(
-                    f"- **{artifact.name}** ({size_str}) - {artifact.description}")
+                    f"- **{artifact.name}** ({size_str}) - {artifact.description}"
+                )
 
         return "\n".join(formatted)
 
@@ -687,9 +703,8 @@ class DocumentationAgent:
             return f"{size_bytes / (1024 * 1024):.1f} MB"
 
     def _generate_artifact_description(
-            self,
-            file_path: Path,
-            artifact_type: str) -> str:
+        self, file_path: Path, artifact_type: str
+    ) -> str:
         """Generate description for an artifact"""
         descriptions = {
             "code": f"Source code file implementing {
@@ -702,7 +717,8 @@ class DocumentationAgent:
                 file_path.stem}",
             "output": "Agent output containing implementation details",
             "reports": f"Report file containing {
-                file_path.stem} results"}
+                file_path.stem} results",
+        }
 
         base_desc = descriptions.get(artifact_type, f"{artifact_type} file")
 
@@ -727,7 +743,7 @@ class DocumentationAgent:
         for file_path in code_dir.glob("**/*"):
             if file_path.is_file() and file_path.suffix in code_extensions:
                 try:
-                    with open(file_path, 'r', encoding='utf-8') as f:
+                    with open(file_path, "r", encoding="utf-8") as f:
                         lines = len([line for line in f if line.strip()])
                         total_lines += lines
                 except Exception:
@@ -735,15 +751,14 @@ class DocumentationAgent:
 
         return total_lines
 
+
 def main():
     """CLI interface for documentation generation"""
     import argparse
 
     parser = argparse.ArgumentParser(description="Documentation Agent")
-    parser.add_argument(
-        "task_id", help="Task ID to generate documentation for")
-    parser.add_argument("--verbose", "-v",
-                        action="store_true", help="Verbose output")
+    parser.add_argument("task_id", help="Task ID to generate documentation for")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
 
@@ -763,6 +778,7 @@ def main():
     except Exception as e:
         print(f"❌ Documentation generation failed: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

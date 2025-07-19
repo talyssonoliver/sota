@@ -8,13 +8,10 @@ configuration compatibility issues.
 
 import pytest
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import tempfile
-import os
 import json
 from pathlib import Path
-from typing import Dict, Any, List
-import time
 from datetime import datetime, timedelta
 
 # Add project root to path

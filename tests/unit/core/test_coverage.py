@@ -1,8 +1,10 @@
 """
-import json
 Test Coverage Reporter - Step 5.3
 Generates and summarizes test coverage for the AI Agent System.
 """
+
+import json
+
 try:
     pass
 except ImportError:

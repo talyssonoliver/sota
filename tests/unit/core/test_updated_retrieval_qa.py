@@ -13,8 +13,8 @@ class TestUpdatedRetrievalQA(unittest.TestCase):
     def test_get_answer_helper(self):
         """Test that the get_answer helper function works correctly"""
         # TODO: Update import path when retrieval_qa is migrated to src/
-        from src.infrastructure.tools.retrieval_qa import get_answer
-        with patch('src.infrastructure.tools.retrieval_qa.get_memory_instance') as mock_memory_getter:
+        from src.infrastructure.tools.core.retrieval_qa import get_answer
+        with patch('src.infrastructure.tools.core.retrieval_qa.get_memory_instance') as mock_memory_getter:
             mock_memory = MagicMock()
             mock_memory_getter.return_value = mock_memory
             mock_memory.retrieval_qa.return_value = 'The orders table has RLS rules that restrict users to only see their own orders.'
@@ -25,8 +25,8 @@ class TestUpdatedRetrievalQA(unittest.TestCase):
     def test_conversation_mode(self):
         """Test the conversation mode of the retrieval_qa method"""
         # TODO: Update import path when retrieval_qa is migrated to src/
-        from src.infrastructure.tools.retrieval_qa import get_answer
-        with patch('src.infrastructure.tools.retrieval_qa.get_memory_instance') as mock_memory_getter:
+        from src.infrastructure.tools.core.retrieval_qa import get_answer
+        with patch('src.infrastructure.tools.core.retrieval_qa.get_memory_instance') as mock_memory_getter:
             mock_memory = MagicMock()
             mock_memory_getter.return_value = mock_memory
             mock_memory.retrieval_qa.return_value = 'The orders table uses row-level security policies.'
@@ -37,8 +37,8 @@ class TestUpdatedRetrievalQA(unittest.TestCase):
     def test_metadata_filtering(self):
         """Test the metadata filtering capability of the retrieval_qa method"""
         # TODO: Update import path when retrieval_qa is migrated to src/
-        from src.infrastructure.tools.retrieval_qa import get_answer
-        with patch('src.infrastructure.tools.retrieval_qa.get_memory_instance') as mock_memory_getter:
+        from src.infrastructure.tools.core.retrieval_qa import get_answer
+        with patch('src.infrastructure.tools.core.retrieval_qa.get_memory_instance') as mock_memory_getter:
             mock_memory = MagicMock()
             mock_memory_getter.return_value = mock_memory
             mock_memory.retrieval_qa.return_value = 'Authentication is handled via JWT tokens.'

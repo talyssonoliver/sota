@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Dict
 
 # Import secure import manager
-from security.import_security import secure_import
+from src.infrastructure.security.import_security import secure_import
 
 # Securely load dotenv with proper fallback
 dotenv_module = secure_import('dotenv', lambda: None)
@@ -126,13 +126,16 @@ if not langchain_available:
 else:
     # Import the real agent initialization function
     try:
-        from langchain.agents import AgentType, initialize_agent
+        from langchain.agents import AgentType as LangChainAgentType, initialize_agent as langchain_initialize_agent
+        # Create an alias to match the compatibility layer
+        AgentType = LangChainAgentType
+        initialize_agent = langchain_initialize_agent
     except ImportError:
         logger.error("Could not import agent initialization functions")
         langchain_available = False
 
-from src.infrastructure.tools.echo_tool import EchoTool
-from src.infrastructure.tools.supabase_tool import SupabaseTool
+from src.infrastructure.tools.core.echo_tool import EchoTool
+from src.infrastructure.tools.external.supabase_tool import SupabaseTool
 
 # Load environment variables
 if callable(load_dotenv):
@@ -227,7 +230,7 @@ def run_supabase_tool_test() -> bool:
         result = agent.invoke(
             {"input": "Get the database schema summary for the Artesanato E-commerce project"})
         
-        success = result['output'] and len(result['output']) > 0
+        success = bool(result.get('output', '') and len(result.get('output', '')) > 0)
         if success:
             logger.info("✅ Supabase tool test passed")
             print("✅ Supabase tool test: PASSED")
@@ -253,7 +256,7 @@ def run_memory_test() -> bool:
         
         # Test memory engine functionality
         try:
-            from src.infrastructure.memory.engine import MemoryEngine
+            from src.infrastructure.memory.engines.memory_engine import MemoryEngine
             memory = MemoryEngine()
             
             # Test basic context retrieval
@@ -275,7 +278,7 @@ def run_memory_test() -> bool:
         except ImportError:
             # Fallback to legacy memory function if available
             try:
-                from src.infrastructure.memory.engine import get_memory_instance, get_context_by_keys
+                from src.infrastructure.memory.engines.memory_engine import get_memory_instance, get_context_by_keys
                 memory = get_memory_instance()
                 context = get_context_by_keys(["database", "schema"])
                 
@@ -308,15 +311,15 @@ def run_workflow_test() -> bool:
     try:
         logger.info("Running basic workflow test...")
         
-        from typing import Optional, TypedDict
+        from typing import Optional, TypedDict, Any
         try:
             from langgraph.graph import StateGraph
         except ImportError:
             logger.warning("LangGraph not available, using mock workflow")
             class StateGraph:
-                def __init__(self, state_schema=None):
+                def __init__(self, state_schema: Any = None) -> None:
                     self.state_schema = state_schema
-                def add_node(self, name, func):
+                def add_node(self, name: str, func: Any) -> None:
                     pass
                 def add_edge(self, from_node, to_node):
                     pass
@@ -363,9 +366,10 @@ def run_workflow_test() -> bool:
             "status": "TESTING"
         })
 
-        success = (result and 
-                  result.get("status") == "DONE" and 
-                  "processed successfully" in result.get("result", ""))
+        success = bool(result and 
+                      isinstance(result, dict) and
+                      result.get("status") == "DONE" and 
+                      "processed successfully" in str(result.get("result", "")))
         
         if success:
             logger.info("✅ Basic workflow test passed")

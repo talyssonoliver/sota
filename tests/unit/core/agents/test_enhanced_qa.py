@@ -1,7 +1,6 @@
 """
 Test suite for Enhanced QA Agent and related components.
 """
-import sys
 import json
 import tempfile
 import pytest

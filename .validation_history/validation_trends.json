@@ -1,0 +1,86 @@
+{
+  "trends": {
+    "success_rate": {
+      "current": 0.16666666666666666,
+      "trend": "stable",
+      "data_points": []
+    },
+    "average_time": {
+      "current": 59.55746022860209,
+      "trend": "stable",
+      "data_points": []
+    },
+    "issue_count": {
+      "current": 3680.3333333333335,
+      "trend": "stable",
+      "data_points": []
+    },
+    "phase_performance": {
+      "syntax": {
+        "average_time": 35.43601576487223,
+        "trend": "increasing"
+      },
+      "dependencies": {
+        "average_time": 0.0013256072998046875,
+        "trend": "decreasing"
+      },
+      "structure": {
+        "average_time": 8.558428605397543,
+        "trend": "decreasing"
+      },
+      "performance": {
+        "average_time": 13.467319170633951,
+        "trend": "decreasing"
+      },
+      "ai_patterns": {
+        "average_time": 1.196452260017395,
+        "trend": "decreasing"
+      }
+    },
+    "most_common_issues": [
+      {
+        "issue": "structure:IssueType.OTHER",
+        "frequency": 14094
+      },
+      {
+        "issue": "performance:IssueType.OTHER",
+        "frequency": 4830
+      },
+      {
+        "issue": "security:IssueType.OTHER",
+        "frequency": 2749
+      },
+      {
+        "issue": "documentation:IssueType.OTHER",
+        "frequency": 252
+      },
+      {
+        "issue": "ai_analysis:IssueType.OTHER",
+        "frequency": 73
+      },
+      {
+        "issue": "imports:IssueType.OTHER",
+        "frequency": 60
+      },
+      {
+        "issue": "coverage:IssueType.OTHER",
+        "frequency": 12
+      },
+      {
+        "issue": "syntax:IssueType.OTHER",
+        "frequency": 6
+      },
+      {
+        "issue": "dependencies:IssueType.OTHER",
+        "frequency": 6
+      }
+    ],
+    "improvement_suggestions": [
+      "Consider implementing more rigorous pre-commit hooks",
+      "Many code quality issues found - consider refactoring effort"
+    ]
+  },
+  "last_updated": "2025-07-19T08:17:29.033034",
+  "data_period": "last_30_days",
+  "total_records": 6
+}

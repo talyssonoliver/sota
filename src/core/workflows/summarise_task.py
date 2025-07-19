@@ -18,13 +18,13 @@ Usage:
     python orchestration/summarise_task.py --task-id BE-07 --output-dir custom_docs
 """
 
-import sys
 import json
 import logging
+import sys
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
@@ -32,18 +32,22 @@ sys.path.insert(0, str(project_root))
 # Set up logging
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class TaskArtifact:
     """Represents a code or documentation artifact from task completion."""
+
     path: str
     type: str  # 'code', 'test', 'doc', 'config'
     size_bytes: int
     language: Optional[str] = None
     description: Optional[str] = None
 
+
 @dataclass
 class AgentOutput:
     """Represents output from a specific agent."""
+
     agent_id: str
     timestamp: str
     status: str
@@ -51,9 +55,11 @@ class AgentOutput:
     files_modified: List[str]
     metadata: Dict[str, Any]
 
+
 @dataclass
 class QAResults:
     """Represents QA analysis results."""
+
     test_coverage: float
     tests_passed: int
     tests_failed: int
@@ -62,9 +68,11 @@ class QAResults:
     overall_status: str
     detailed_findings: List[Dict[str, Any]]
 
+
 @dataclass
 class TaskSummary:
     """Complete task completion summary."""
+
     task_id: str
     task_title: str
     completion_status: str
@@ -78,6 +86,7 @@ class TaskSummary:
     total_files_created: int
     total_files_modified: int
     total_code_lines: int
+
 
 class TaskSummarizer:
     """
@@ -133,33 +142,34 @@ class TaskSummarizer:
         qa_results = self._analyze_qa_results()
 
         # Determine completion status
-        completion_status = self._determine_completion_status(
-            agent_outputs, qa_results)
+        completion_status = self._determine_completion_status(agent_outputs, qa_results)
 
         # Generate next steps
         next_steps = self._generate_next_steps(completion_status, qa_results)
 
         # Calculate summary statistics
-        total_files_created = sum(len(output.files_generated)
-                                  for output in agent_outputs)
-        total_files_modified = sum(len(output.files_modified)
-                                   for output in agent_outputs)
+        total_files_created = sum(
+            len(output.files_generated) for output in agent_outputs
+        )
+        total_files_modified = sum(
+            len(output.files_modified) for output in agent_outputs
+        )
         total_code_lines = self._calculate_total_code_lines(artifacts)
 
         summary = TaskSummary(
             task_id=self.task_id,
-            task_title=task_metadata.get('title', f'Task {self.task_id}'),
+            task_title=task_metadata.get("title", f"Task {self.task_id}"),
             completion_status=completion_status,
-            start_date=task_metadata.get('start_date'),
+            start_date=task_metadata.get("start_date"),
             completion_date=datetime.now().isoformat(),
             agent_outputs=agent_outputs,
             artifacts=artifacts,
             qa_results=qa_results,
-            dependencies=task_metadata.get('dependencies', []),
+            dependencies=task_metadata.get("dependencies", []),
             next_steps=next_steps,
             total_files_created=total_files_created,
             total_files_modified=total_files_modified,
-            total_code_lines=total_code_lines
+            total_code_lines=total_code_lines,
         )
 
         logger.info(f"Task analysis completed. Status: {completion_status}")
@@ -170,12 +180,12 @@ class TaskSummarizer:
         try:
             assignments_file = self.context_store_dir / "agent_task_assignments.json"
             if assignments_file.exists():
-                with open(assignments_file, 'r', encoding='utf-8') as f:
+                with open(assignments_file, "r", encoding="utf-8") as f:
                     assignments = json.load(f)
 
                 # Find task in assignments
-                for task in assignments.get('tasks', []):
-                    if task.get('id') == self.task_id:
+                for task in assignments.get("tasks", []):
+                    if task.get("id") == self.task_id:
                         return task
 
             logger.warning(f"Task metadata not found for {self.task_id}")
@@ -195,26 +205,31 @@ class TaskSummarizer:
                 logger.warning(f"No status.json found for task {self.task_id}")
                 return agent_outputs
 
-            with open(status_file, 'r', encoding='utf-8') as f:
+            with open(status_file, "r", encoding="utf-8") as f:
                 status_data = json.load(f)
 
             # Process each agent output (format: {"agent_outputs":
             # {"agent_name": {...}}})
-            agent_outputs_dict = status_data.get('agent_outputs', {})
+            agent_outputs_dict = status_data.get("agent_outputs", {})
             # Extract files from code directory or registration files
             for agent_id, output_data in agent_outputs_dict.items():
                 files_generated = self._extract_generated_files(agent_id)
-                files_modified = [
-                    # For testing
-                    "existing_file.py"] if agent_id == "code_generator" else []
+                files_modified = (
+                    [
+                        # For testing
+                        "existing_file.py"
+                    ]
+                    if agent_id == "code_generator"
+                    else []
+                )
 
                 agent_output = AgentOutput(
                     agent_id=agent_id,
-                    timestamp=output_data.get('completion_time', ''),
-                    status=output_data.get('status', 'unknown'),
+                    timestamp=output_data.get("completion_time", ""),
+                    status=output_data.get("status", "unknown"),
                     files_generated=files_generated,
                     files_modified=files_modified,
-                    metadata=output_data.get('metadata', {})
+                    metadata=output_data.get("metadata", {}),
                 )
                 agent_outputs.append(agent_output)
 
@@ -232,8 +247,7 @@ class TaskSummarizer:
         try:
             code_dir = self.outputs_dir / "code"
             if not code_dir.exists():
-                logger.warning(
-                    f"No code directory found for task {self.task_id}")
+                logger.warning(f"No code directory found for task {self.task_id}")
                 return artifacts
 
             # Walk through code directory
@@ -250,7 +264,7 @@ class TaskSummarizer:
                         type=file_type,
                         size_bytes=file_path.stat().st_size,
                         language=language,
-                        description=f"{file_type.title()} file"
+                        description=f"{file_type.title()} file",
                     )
                     artifacts.append(artifact)
 
@@ -269,41 +283,37 @@ class TaskSummarizer:
                 logger.warning(f"No QA report found for task {self.task_id}")
                 return None
 
-            with open(qa_file, 'r', encoding='utf-8') as f:
+            with open(qa_file, "r", encoding="utf-8") as f:
                 qa_data = json.load(f)
 
             # Extract data from nested structure
-            analysis_summary = qa_data.get('analysis_summary', {})
-            test_coverage = qa_data.get('test_coverage', {})
+            analysis_summary = qa_data.get("analysis_summary", {})
+            test_coverage = qa_data.get("test_coverage", {})
 
             # Parse coverage percentage
-            coverage_str = test_coverage.get('estimated_coverage', '0%')
-            coverage_pct = float(coverage_str.rstrip('%')
-                                 ) if coverage_str else 0.0
+            coverage_str = test_coverage.get("estimated_coverage", "0%")
+            coverage_pct = float(coverage_str.rstrip("%")) if coverage_str else 0.0
 
             qa_results = QAResults(
                 test_coverage=coverage_pct,
-                tests_passed=qa_data.get(
-                    'tests_passed', 0),  # May not be present
-                tests_failed=qa_data.get(
-                    'tests_failed', 0),  # May not be present
-                critical_issues=analysis_summary.get('critical_issues', 0),
-                warnings=analysis_summary.get('warnings', 0),
-                overall_status=analysis_summary.get(
-                    'overall_status', 'unknown'),
-                detailed_findings=qa_data.get('detailed_findings', [])
+                tests_passed=qa_data.get("tests_passed", 0),  # May not be present
+                tests_failed=qa_data.get("tests_failed", 0),  # May not be present
+                critical_issues=analysis_summary.get("critical_issues", 0),
+                warnings=analysis_summary.get("warnings", 0),
+                overall_status=analysis_summary.get("overall_status", "unknown"),
+                detailed_findings=qa_data.get("detailed_findings", []),
             )
 
-            logger.info(
-                f"QA analysis completed. Status: {qa_results.overall_status}")
+            logger.info(f"QA analysis completed. Status: {qa_results.overall_status}")
             return qa_results
 
         except Exception as e:
             logger.error(f"Error analyzing QA results: {e}")
             return None
 
-    def _determine_completion_status(self, agent_outputs: List[AgentOutput],
-                                     qa_results: Optional[QAResults]) -> str:
+    def _determine_completion_status(
+        self, agent_outputs: List[AgentOutput], qa_results: Optional[QAResults]
+    ) -> str:
         """Determine overall task completion status."""
         if not agent_outputs:
             return "NO_OUTPUTS"
@@ -313,7 +323,10 @@ class TaskSummarizer:
 
         if all(status == "completed" for status in agent_statuses):
             if qa_results:
-                if qa_results.overall_status == "passed" and qa_results.critical_issues == 0:
+                if (
+                    qa_results.overall_status == "passed"
+                    and qa_results.critical_issues == 0
+                ):
                     return "COMPLETED_VERIFIED"
                 elif qa_results.critical_issues > 0:
                     return "COMPLETED_WITH_ISSUES"
@@ -328,50 +341,64 @@ class TaskSummarizer:
         else:
             return "UNKNOWN"
 
-    def _generate_next_steps(self, completion_status: str,
-                             qa_results: Optional[QAResults]) -> List[str]:
+    def _generate_next_steps(
+        self, completion_status: str, qa_results: Optional[QAResults]
+    ) -> List[str]:
         """Generate recommended next steps based on completion status."""
         next_steps = []
 
         if completion_status == "COMPLETED_VERIFIED":
-            next_steps.extend([
-                "Task completed successfully with verification",
-                "Ready for integration or deployment",
-                "Consider updating documentation"
-            ])
+            next_steps.extend(
+                [
+                    "Task completed successfully with verification",
+                    "Ready for integration or deployment",
+                    "Consider updating documentation",
+                ]
+            )
         elif completion_status == "COMPLETED_WITH_ISSUES":
-            next_steps.extend([
-                "Address critical issues identified in QA",
-                "Run additional testing",
-                "Review and fix failing tests"
-            ])
+            next_steps.extend(
+                [
+                    "Address critical issues identified in QA",
+                    "Run additional testing",
+                    "Review and fix failing tests",
+                ]
+            )
             if qa_results and qa_results.critical_issues > 0:
                 next_steps.append(
-                    f"Resolve {qa_results.critical_issues} critical issues")
+                    f"Resolve {qa_results.critical_issues} critical issues"
+                )
         elif completion_status == "COMPLETED_UNVERIFIED":
-            next_steps.extend([
-                "Run comprehensive QA testing",
-                "Verify all functionality works as expected",
-                "Add missing test coverage"
-            ])
+            next_steps.extend(
+                [
+                    "Run comprehensive QA testing",
+                    "Verify all functionality works as expected",
+                    "Add missing test coverage",
+                ]
+            )
         elif completion_status == "FAILED":
-            next_steps.extend([
-                "Review failure logs and error messages",
-                "Debug and fix identified issues",
-                "Re-run failed agent tasks"
-            ])
+            next_steps.extend(
+                [
+                    "Review failure logs and error messages",
+                    "Debug and fix identified issues",
+                    "Re-run failed agent tasks",
+                ]
+            )
         elif completion_status == "IN_PROGRESS":
-            next_steps.extend([
-                "Monitor ongoing agent tasks",
-                "Check for any blocked dependencies",
-                "Ensure all required resources are available"
-            ])
+            next_steps.extend(
+                [
+                    "Monitor ongoing agent tasks",
+                    "Check for any blocked dependencies",
+                    "Ensure all required resources are available",
+                ]
+            )
         else:
-            next_steps.extend([
-                "Review task status and agent outputs",
-                "Determine root cause of status issues",
-                "Re-initialize task if necessary"
-            ])
+            next_steps.extend(
+                [
+                    "Review task status and agent outputs",
+                    "Determine root cause of status issues",
+                    "Re-initialize task if necessary",
+                ]
+            )
         return next_steps
 
     def _determine_file_type(self, file_path: Path) -> str:
@@ -380,60 +407,73 @@ class TaskSummarizer:
         parent_dir = file_path.parent.name.lower()
 
         # Test files: check for test patterns first
-        if (file_name.startswith('test_') or file_name.endswith('_test.py') or
-                'test' in parent_dir or file_name == 'conftest.py'):
-            return 'test'
-        elif file_path.suffix in ['.md', '.txt', '.rst', '.html']:
-            return 'doc'
-        elif file_path.suffix in ['.json', '.yaml', '.yml', '.toml', '.ini', '.cfg']:
-            return 'config'
-        elif file_path.suffix in ['.py', '.js', '.ts', '.java', '.cpp', '.c', '.go', '.rs']:
-            return 'code'
+        if (
+            file_name.startswith("test_")
+            or file_name.endswith("_test.py")
+            or "test" in parent_dir
+            or file_name == "conftest.py"
+        ):
+            return "test"
+        elif file_path.suffix in [".md", ".txt", ".rst", ".html"]:
+            return "doc"
+        elif file_path.suffix in [".json", ".yaml", ".yml", ".toml", ".ini", ".cfg"]:
+            return "config"
+        elif file_path.suffix in [
+            ".py",
+            ".js",
+            ".ts",
+            ".java",
+            ".cpp",
+            ".c",
+            ".go",
+            ".rs",
+        ]:
+            return "code"
         else:
-            return 'other'
+            return "other"
 
     def _determine_language(self, file_path: Path) -> Optional[str]:
         """Determine programming language from file extension."""
         ext_to_lang = {
-            '.py': 'Python',
-            '.js': 'JavaScript',
-            '.ts': 'TypeScript',
-            '.java': 'Java',
-            '.cpp': 'C++',
-            '.c': 'C',
-            '.go': 'Go',
-            '.rs': 'Rust',
-            '.php': 'PHP',
-            '.rb': 'Ruby',
-            '.swift': 'Swift',
-            '.kt': 'Kotlin',
-            '.sql': 'SQL',
-            '.html': 'HTML',
-            '.css': 'CSS',
-            '.scss': 'SCSS',
-            '.yaml': 'YAML',
-            '.yml': 'YAML',
-            '.json': 'JSON',
-            '.xml': 'XML'
+            ".py": "Python",
+            ".js": "JavaScript",
+            ".ts": "TypeScript",
+            ".java": "Java",
+            ".cpp": "C++",
+            ".c": "C",
+            ".go": "Go",
+            ".rs": "Rust",
+            ".php": "PHP",
+            ".rb": "Ruby",
+            ".swift": "Swift",
+            ".kt": "Kotlin",
+            ".sql": "SQL",
+            ".html": "HTML",
+            ".css": "CSS",
+            ".scss": "SCSS",
+            ".yaml": "YAML",
+            ".yml": "YAML",
+            ".json": "JSON",
+            ".xml": "XML",
         }
         return ext_to_lang.get(file_path.suffix.lower())
 
-    def _calculate_total_code_lines(
-            self, artifacts: List[TaskArtifact]) -> int:
+    def _calculate_total_code_lines(self, artifacts: List[TaskArtifact]) -> int:
         """Calculate total lines of code across all code artifacts."""
         total_lines = 0
 
         for artifact in artifacts:
-            if artifact.type == 'code':
+            if artifact.type == "code":
                 try:
                     # Artifact path is relative to code directory
                     artifact_path = self.outputs_dir / "code" / artifact.path
                     if artifact_path.exists():
-                        with open(artifact_path, 'r', encoding='utf-8', errors='ignore') as f:
+                        with open(
+                            artifact_path, "r", encoding="utf-8", errors="ignore"
+                        ) as f:
                             total_lines += len(f.readlines())
                 except Exception as e:
-                    logger.warning(
-                        f"Could not count lines in {artifact.path}: {e}")
+                    logger.warning(f"Could not count lines in {artifact.path}: {e}")
 
         return total_lines
 
@@ -453,71 +493,65 @@ class TaskSummarizer:
         lines = []
 
         # Header
-        lines.extend([
-            f"# Task Completion Summary: {summary.task_id}",
-            "",
-            f"**Task Title:** {summary.task_title}",
-            f"**Completion Status:** {summary.completion_status}",
-            f"**Completion Date:** {summary.completion_date}",
-            ""
-        ])
+        lines.extend(
+            [
+                f"# Task Completion Summary: {summary.task_id}",
+                "",
+                f"**Task Title:** {summary.task_title}",
+                f"**Completion Status:** {summary.completion_status}",
+                f"**Completion Date:** {summary.completion_date}",
+                "",
+            ]
+        )
 
         if summary.start_date:
             lines.insert(-1, f"**Start Date:** {summary.start_date}")
 
         # Status Overview
-        lines.extend([
-            "## Status Overview",
-            "",
-            f"- **Overall Status:** {summary.completion_status}",
-            f"- **Files Created:** {summary.total_files_created}",
-            f"- **Files Modified:** {summary.total_files_modified}",
-            f"- **Total Code Lines:** {summary.total_code_lines:,}",
-            ""
-        ])
+        lines.extend(
+            [
+                "## Status Overview",
+                "",
+                f"- **Overall Status:** {summary.completion_status}",
+                f"- **Files Created:** {summary.total_files_created}",
+                f"- **Files Modified:** {summary.total_files_modified}",
+                f"- **Total Code Lines:** {summary.total_code_lines:,}",
+                "",
+            ]
+        )
 
         # Agent Outputs
         if summary.agent_outputs:
-            lines.extend([
-                "## Agent Execution Summary",
-                ""
-            ])
+            lines.extend(["## Agent Execution Summary", ""])
 
             for i, output in enumerate(summary.agent_outputs, 1):
-                lines.extend([
-                    f"### Agent {i}: {output.agent_id}",
-                    "",
-                    f"- **Status:** {output.status}",
-                    f"- **Timestamp:** {output.timestamp}",
-                    f"- **Files Generated:** {len(output.files_generated)}",
-                    f"- **Files Modified:** {len(output.files_modified)}",
-                    ""
-                ])
+                lines.extend(
+                    [
+                        f"### Agent {i}: {output.agent_id}",
+                        "",
+                        f"- **Status:** {output.status}",
+                        f"- **Timestamp:** {output.timestamp}",
+                        f"- **Files Generated:** {len(output.files_generated)}",
+                        f"- **Files Modified:** {len(output.files_modified)}",
+                        "",
+                    ]
+                )
 
                 if output.files_generated:
-                    lines.extend([
-                        "**Generated Files:**",
-                        ""
-                    ])
+                    lines.extend(["**Generated Files:**", ""])
                     for file_path in output.files_generated:
                         lines.append(f"- `{file_path}`")
                     lines.append("")
 
                 if output.files_modified:
-                    lines.extend([
-                        "**Modified Files:**",
-                        ""
-                    ])
+                    lines.extend(["**Modified Files:**", ""])
                     for file_path in output.files_modified:
                         lines.append(f"- `{file_path}`")
                     lines.append("")
 
         # Code Artifacts
         if summary.artifacts:
-            lines.extend([
-                "## Generated Artifacts",
-                ""
-            ])
+            lines.extend(["## Generated Artifacts", ""])
 
             # Group by type
             artifacts_by_type = {}
@@ -527,74 +561,71 @@ class TaskSummarizer:
                 artifacts_by_type[artifact.type].append(artifact)
 
             for artifact_type, artifacts in artifacts_by_type.items():
-                lines.extend([
-                    f"### {artifact_type.title()} Files ({len(artifacts)})",
-                    ""
-                ])
+                lines.extend(
+                    [f"### {artifact_type.title()} Files ({len(artifacts)})", ""]
+                )
 
                 for artifact in artifacts:
                     size_kb = artifact.size_bytes / 1024
-                    lang_info = f" ({
-                        artifact.language})" if artifact.language else ""
-                    lines.append(
-                        f"- `{artifact.path}`{lang_info} - {size_kb:.1f} KB")
+                    lang_info = (
+                        f" ({
+                        artifact.language})"
+                        if artifact.language
+                        else ""
+                    )
+                    lines.append(f"- `{artifact.path}`{lang_info} - {size_kb:.1f} KB")
 
                 lines.append("")
 
         # QA Results
         if summary.qa_results:
             qa = summary.qa_results
-            lines.extend([
-                "## Quality Assurance Results",
-                "",
-                f"- **Overall QA Status:** {qa.overall_status}",
-                f"- **Test Coverage:** {qa.test_coverage:.1f}%",
-                f"- **Tests Passed:** {qa.tests_passed}",
-                f"- **Tests Failed:** {qa.tests_failed}",
-                f"- **Critical Issues:** {qa.critical_issues}",
-                f"- **Warnings:** {qa.warnings}",
-                ""
-            ])
+            lines.extend(
+                [
+                    "## Quality Assurance Results",
+                    "",
+                    f"- **Overall QA Status:** {qa.overall_status}",
+                    f"- **Test Coverage:** {qa.test_coverage:.1f}%",
+                    f"- **Tests Passed:** {qa.tests_passed}",
+                    f"- **Tests Failed:** {qa.tests_failed}",
+                    f"- **Critical Issues:** {qa.critical_issues}",
+                    f"- **Warnings:** {qa.warnings}",
+                    "",
+                ]
+            )
 
             if qa.detailed_findings:
-                lines.extend([
-                    "### Detailed QA Findings",
-                    ""
-                ])
+                lines.extend(["### Detailed QA Findings", ""])
 
                 for finding in qa.detailed_findings:
-                    severity = finding.get('severity', 'unknown')
-                    message = finding.get('message', 'No message')
+                    severity = finding.get("severity", "unknown")
+                    message = finding.get("message", "No message")
                     lines.append(f"- **{severity.upper()}:** {message}")
 
                 lines.append("")
 
         # Dependencies
         if summary.dependencies:
-            lines.extend([
-                "## Task Dependencies",
-                ""
-            ])
+            lines.extend(["## Task Dependencies", ""])
             for dep in summary.dependencies:
                 lines.append(f"- {dep}")
             lines.append("")
 
         # Next Steps
         if summary.next_steps:
-            lines.extend([
-                "## Recommended Next Steps",
-                ""
-            ])
+            lines.extend(["## Recommended Next Steps", ""])
             for step in summary.next_steps:
                 lines.append(f"- {step}")
             lines.append("")
 
         # Footer
-        lines.extend([
-            "---",
-            "",
-            f"*Report generated by AI System Task Summarizer on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*"
-        ])
+        lines.extend(
+            [
+                "---",
+                "",
+                f"*Report generated by AI System Task Summarizer on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*",
+            ]
+        )
 
         return "\n".join(lines)
 
@@ -614,7 +645,7 @@ class TaskSummarizer:
         # Save to file
         report_file = self.completions_dir / f"{self.task_id}.md"
 
-        with open(report_file, 'w', encoding='utf-8') as f:
+        with open(report_file, "w", encoding="utf-8") as f:
             f.write(markdown_content)
 
         logger.info(f"Completion report saved to: {report_file}")
@@ -653,9 +684,8 @@ class TaskSummarizer:
                     # Simple heuristic: include all code files
                     # In a real implementation, this would be more
                     # sophisticated
-                    generated_files.append(
-                        str(file_path.relative_to(code_dir)))
-              # For testing purposes, return consistent results
+                    generated_files.append(str(file_path.relative_to(code_dir)))
+            # For testing purposes, return consistent results
             if agent_id == "code_generator":
                 return ["config.json", "main.py"]
             elif agent_id == "documentation_agent":
@@ -667,11 +697,12 @@ class TaskSummarizer:
             logger.error(f"Error extracting files for agent {agent_id}: {e}")
             return []
 
+
 def main():
     """CLI interface for task summarization."""
     import argparse
     import sys
-    
+
     parser = argparse.ArgumentParser(
         description="Generate automated task completion summaries",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -679,29 +710,23 @@ def main():
 Examples:
   python orchestration/summarise_task.py BE-07
   python orchestration/summarise_task.py --task-id BE-07 --output-dir custom_docs
-  python orchestration/summarise_task.py BE-07 --verbose        """
+  python orchestration/summarise_task.py BE-07 --verbose        """,
     )
 
     parser.add_argument(
-        "task_id_pos",
-        nargs="?",
-        help="Task ID to summarize (e.g., BE-07)"
+        "task_id_pos", nargs="?", help="Task ID to summarize (e.g., BE-07)"
     )
 
     parser.add_argument(
-        "--task-id",
-        help="Task ID to summarize (alternative to positional argument)"
+        "--task-id", help="Task ID to summarize (alternative to positional argument)"
     )
 
     parser.add_argument(
-        "--output-dir",
-        help="Custom output directory for completion reports"
+        "--output-dir", help="Custom output directory for completion reports"
     )
 
     parser.add_argument(
-        "--verbose", "-v",
-        action="store_true",
-        help="Enable verbose logging"
+        "--verbose", "-v", action="store_true", help="Enable verbose logging"
     )
 
     args = parser.parse_args()
@@ -714,6 +739,7 @@ Examples:
     # Configure logging
     if args.verbose:
         import logging
+
         logging.basicConfig(level=logging.INFO)
 
     try:
@@ -746,6 +772,7 @@ Examples:
     except Exception as e:
         print(f"❌ Error during task summarization: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

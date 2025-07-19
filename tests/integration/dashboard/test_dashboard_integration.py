@@ -26,8 +26,8 @@ import tempfile
 import unittest
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-from scripts.update_dashboard import DashboardUpdater
-from scripts.generate_progress_report import ProgressReportGenerator
+from src.infrastructure.scripts.monitoring.update_dashboard import DashboardUpdater
+from src.infrastructure.scripts.generation.generate_progress_report import ProgressReportGenerator
 from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
 
 class TestDashboardUpdater(unittest.TestCase):
@@ -91,8 +91,8 @@ def tearDown(self):
         self.assertEqual(chart_data['data']['datasets'][0]['data'], [3, 2, 4])
         self.assertEqual(chart_data['summary']['completion_rate'], 75.0)
 
-    @patch('scripts.update_dashboard.DashboardLogger')
-    @patch('scripts.update_dashboard.CompletionMetricsCalculator')
+    @patch('src.infrastructure.scripts.monitoring.update_dashboard.DashboardLogger')
+    @patch('src.infrastructure.scripts.monitoring.update_dashboard.CompletionMetricsCalculator')
     def test_charts_data_generation(self, mock_calculator, mock_logger):
         """Test complete charts data generation"""
         mock_metrics = {'team_metrics': {'total_tasks': 15, 'completed_tasks': 10, 'in_progress_tasks': 3, 'failed_tasks': 2, 'completion_rate': 66.7, 'qa_pass_rate': 85.0, 'average_coverage': 78.5}, 'progress_metrics': {'completion_trend': [['2025-05-27', 5]], 'coverage_trend': [['2025-05-27', 78.5]]}, 'task_metrics': [{'task_id': 'T1', 'qa_status': 'PASSED'}, {'task_id': 'T2', 'qa_status': 'FAILED'}]}
@@ -109,7 +109,7 @@ def tearDown(self):
         self.assertIn('progress_chart', charts_data)
         self.assertIn('generated_at', charts_data)
 
-    @patch('scripts.update_dashboard.CompletionMetricsCalculator')
+    @patch('src.infrastructure.scripts.monitoring.update_dashboard.CompletionMetricsCalculator')
     def test_dashboard_summary_update(self, mock_calculator):
         """Test dashboard summary update functionality"""
         mock_metrics = {'team_metrics': {'total_tasks': 20, 'completed_tasks': 15, 'completion_rate': 75.0, 'qa_pass_rate': 90.0, 'average_coverage': 85.0}, 'progress_metrics': {'daily_completions': {'2025-05-27': 3}, 'completion_trend': [['2025-05-27', 3]], 'coverage_trend': [['2025-05-27', 85.0]]}, 'task_metrics': [{'task_id': 'T1', 'status': 'COMPLETED'}, {'task_id': 'T2', 'status': 'IN_PROGRESS'}]}
@@ -209,7 +209,7 @@ class TestProgressReportGenerator(unittest.TestCase):
         self.assertIn('76.7%', insights)
         self.assertIn('75.0%', insights)
 
-    @patch('scripts.generate_progress_report.CompletionMetricsCalculator')
+    @patch('src.infrastructure.scripts.generation.generate_progress_report.CompletionMetricsCalculator')
     def test_daily_report_generation(self, mock_calculator):
         """Test daily report generation"""
         mock_metrics = {'team_metrics': {'completion_rate': 75.0, 'completed_tasks': 15, 'total_tasks': 20, 'qa_pass_rate': 90.0, 'average_coverage': 85.0}}
@@ -221,7 +221,7 @@ class TestProgressReportGenerator(unittest.TestCase):
         self.assertIn('75.0%', report)
         self.assertIn('15/20 tasks', report)
 
-    @patch('scripts.generate_progress_report.CompletionMetricsCalculator')
+    @patch('src.infrastructure.scripts.generation.generate_progress_report.CompletionMetricsCalculator')
     def test_summary_report_generation(self, mock_calculator):
         """Test summary report generation"""
         mock_metrics = {'total_tasks_analyzed': 25, 'team_metrics': {'completion_rate': 80.0, 'completed_tasks': 20, 'in_progress_tasks': 3, 'failed_tasks': 2, 'qa_pass_rate': 85.0, 'average_coverage': 78.5, 'average_completion_time': 65.0}, 'progress_metrics': {'completion_trend': [['2025-05-27', 5]], 'coverage_trend': [['2025-05-27', 78.5]]}, 'task_metrics': []}

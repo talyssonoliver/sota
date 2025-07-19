@@ -6,3 +6,121 @@ build-backend = "setuptools.build_meta"
 name = "sota"
 version = "0.1.0"
 description = "A Python package"
+
+[tool.ruff]
+# Same as flake8 max-line-length
+line-length = 88
+target-version = "py312"
+
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+select = ["E", "F", "W", "I"]
+ignore = ["E203", "W503"]
+
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    ".pytest_cache",
+]
+
+[tool.ruff.format]
+# Use single quotes for strings.
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.isort]
+known-first-party = ["src"]
+
+[tool.coverage.run]
+source = ["src"]
+branch = true
+parallel = true
+data_file = ".coverage"
+
+[tool.coverage.paths]
+source = [
+    "src/",
+    "*/site-packages/src/",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+# SonarQube integration configuration
+[tool.sonar]
+projectKey = "sota-ai-system"
+projectName = "SOTA Multi-Agent AI System"
+projectVersion = "0.1.0"
+sources = "src"
+tests = "tests"
+sourceEncoding = "UTF-8"
+
+# Python-specific settings for SonarQube
+python.version = "3.12"
+python.coverage.reportPaths = "coverage.xml"
+python.xunit.reportPath = "test-results.xml"
+
+# Quality gate integration with existing validation
+qualitygate.wait = true
+
+# Exclusions aligned with existing validation system
+exclusions = [
+    "**/__pycache__/**",
+    "**/venv/**",
+    "**/.venv/**",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.git/**",
+    "**/.pytest_cache/**",
+    "**/.mypy_cache/**",
+    "**/.ruff_cache/**",
+    "**/backup/**",
+    "**/test_outputs/**",
+    "**/outputs/**"
+]
+
+test.exclusions = [
+    "**/test_**",
+    "**/*_test.py",
+    "**/tests/**",
+    "**/conftest.py"
+]

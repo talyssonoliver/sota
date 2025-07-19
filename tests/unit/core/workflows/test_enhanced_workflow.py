@@ -12,7 +12,6 @@ import unittest
 import json
 from pathlib import Path
 from unittest.mock import patch
-import time
 # Ensure the project root is in the path
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
@@ -55,7 +54,7 @@ except ImportError:
             print(f"\n=== {title} ===")
 
 # Try to import required classes
-from src.infrastructure.tools.notifications import NotificationLevel
+from src.core.workflows.graph.notifications import NotificationLevel
 from src.core.workflows.enhanced_workflow import EnhancedWorkflowExecutor
 
 try:
@@ -158,7 +157,7 @@ class TestEnhancedWorkflow(unittest.TestCase):
         """Test notification system integration."""
         test_timer = Timer().start()
         FeedbackCollector.print_section('Notification Integration Test')
-        with patch('time.sleep'), patch('requests.post') as mock_post, patch('graph.notifications.SlackNotifier.send_notification') as mock_notify:
+        with patch('time.sleep'), patch('requests.post') as mock_post, patch('src.core.workflows.graph.notifications.SlackNotifier.send_notification') as mock_notify:
             mock_post.return_value.status_code = 200
             mock_notify.return_value = {'success': True}
             executor = EnhancedWorkflowExecutor(workflow_type='dynamic', notification_level=NotificationLevel.ERROR, output_dir=str(self.test_output_dir))
@@ -190,7 +189,7 @@ class TestEnhancedWorkflow(unittest.TestCase):
         monitor_thread = threading.Thread(target=run_monitor)
         monitor_thread.daemon = False
         monitor_thread.start()
-        time.sleep(1)
+        # Removed sleep - test should work without delay
         try:
             task_id = 'BE-07'
             result = executor.execute_task(task_id)
@@ -209,10 +208,10 @@ class TestEnhancedWorkflow(unittest.TestCase):
                         pass
             if monitor_thread and monitor_thread.is_alive():
                 try:
-                    monitor_thread.join(timeout=3)
+                    monitor_thread.join(timeout=1)  # Reduced timeout
                 except Exception:
                     pass
-        time.sleep(2)
+        # Removed sleep - test timer already tracks time
         test_timer.stop()
         self.test_results['tests_run'] += 1
         self.test_results['tests_passed'] += 1

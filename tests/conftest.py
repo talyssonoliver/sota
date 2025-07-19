@@ -103,9 +103,6 @@ def mock_expensive_operations():
             setattr(module, attr_name, original_func)
 import os
 import pytest
-import tempfile
-import shutil
-from pathlib import Path
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
@@ -209,3 +206,38 @@ def safe_file_manager():
         shutil.rmtree(temp_dir)
     except OSError:
         pass
+
+
+@pytest.fixture
+def test_env():
+    """Test environment configuration fixture"""
+    project_root = Path(__file__).parent.parent
+    return {
+        "testing": True,
+        "root_path": project_root,
+        "temp_dir": Path(tempfile.gettempdir()),
+        "project_name": "ai-system"
+    }
+
+
+@pytest.fixture
+def mock_config():
+    """Mock configuration fixture for testing"""
+    return {
+        "memory": {
+            "enabled": True,
+            "chunk_size": 1000,
+            "max_chunks": 100
+        },
+        "agents": {
+            "enabled": True,
+            "concurrent_limit": 5
+        },
+        "external_apis": {
+            "github": {"enabled": False},
+            "supabase": {"enabled": False},
+            "openai": {"enabled": False}
+        },
+        "testing": True,
+        "debug": True
+    }

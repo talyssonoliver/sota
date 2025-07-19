@@ -29,7 +29,9 @@ from unittest.mock import patch, MagicMock
 import tempfile
 import json
 sys.path.append(str(Path(__file__).parent.parent))
-from src.core.workflows.hitl_engine import HITLPolicyEngine, HITLCheckpoint, HITLReviewDecision, CheckpointStatus, RiskLevel
+from src.core.workflows.hitl_engine import HITLPolicyEngine
+from src.core.workflows.hitl.models import HITLCheckpoint, HITLReviewDecision
+from src.core.workflows.hitl.types import CheckpointStatus, RiskLevel
 from src.core.workflows.notification_handlers import DashboardNotificationHandler, EmailNotificationHandler, SlackNotificationHandler
 from src.core.workflows.hitl_task_metadata import HITLTaskMetadata, HITLCheckpointMetadata, HITLTaskMetadataManager
 from src.interfaces.dashboard.components.hitl_widgets import HITLPendingReviewsWidget, HITLApprovalActionsWidget, HITLMetricsWidget, HITLWorkflowStatusWidget, HITLDashboardManager

@@ -12,6 +12,9 @@ Part of the optimized test pyramid reorganization:
 Test script to verify the Progress Trend API integration.
 This script tests both the API server response format and simulates frontend behavior.
 """
+
+import requests
+
 try:
     from datetime import datetime
 except ImportError:

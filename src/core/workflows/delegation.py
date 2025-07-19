@@ -3,13 +3,14 @@ Agent Delegation for the AI Agent System
 Provides utilities for dynamically delegating tasks to appropriate agents.
 """
 
-
 import os
 from datetime import datetime
-
 from typing import Any, Dict, List, Optional
+
+from src.core.workflows.registry import (create_agent_instance,
+                                         get_agent_for_task)
 from src.infrastructure.memory import get_context_by_keys
-from src.core.workflows.registry import (create_agent_instance, get_agent_for_task)
+
 
 def delegate_task(
     task_id: str,
@@ -17,7 +18,7 @@ def delegate_task(
     agent_id: Optional[str] = None,
     context: Optional[str] = None,
     relevant_files: Optional[List[str]] = None,
-    memory_config: Optional[Dict[str, Any]] = None
+    memory_config: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Delegate a task to an agent.
@@ -52,12 +53,14 @@ def delegate_task(
 
     # Execute the task with the agent
     try:
-        result = agent.execute({
-            "task_id": task_id,
-            "task_description": task_description,
-            "context": context,
-            "file_references": file_references
-        })
+        result = agent.execute(
+            {
+                "task_id": task_id,
+                "task_description": task_description,
+                "context": context,
+                "file_references": file_references,
+            }
+        )
 
         # Add agent_id to the result if it's not already there
         if isinstance(result, dict) and "agent_id" not in result:
@@ -73,6 +76,7 @@ def delegate_task(
         # Propagate the exception for proper error handling
         raise
 
+
 def save_task_output(task_id: str, output: Any) -> str:
     """
     Save the output of a task to a file.
@@ -85,8 +89,7 @@ def save_task_output(task_id: str, output: Any) -> str:
         Path to the saved output file
     """
     # Create outputs directory if it doesn't exist
-    outputs_dir = os.path.join(os.path.dirname(
-        os.path.dirname(__file__)), 'outputs')
+    outputs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "outputs")
     os.makedirs(outputs_dir, exist_ok=True)
 
     # Format timestamp
@@ -97,10 +100,11 @@ def save_task_output(task_id: str, output: Any) -> str:
     file_path = os.path.join(outputs_dir, filename)
 
     # Write output to file
-    with open(file_path, 'w') as f:
+    with open(file_path, "w") as f:
         f.write(str(output))
 
     return file_path
+
 
 def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
     """
@@ -115,7 +119,9 @@ def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
         Relevant context as a string
     """
     try:
-        from tools.memory.engine import get_relevant_context as memory_get_context
+        from src.infrastructure.memory.engines.memory_engine import \
+            get_relevant_context as memory_get_context
+
         return memory_get_context(query, k=k, **kwargs)
     except ImportError:
         # Fallback if memory system is not available

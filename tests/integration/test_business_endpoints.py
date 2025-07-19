@@ -11,7 +11,6 @@ Part of the optimized test pyramid reorganization:
 
 Test business metric endpoints using unittest framework.
 """
-import sys
 import unittest
 import requests
 try:

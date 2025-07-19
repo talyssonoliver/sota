@@ -88,9 +88,14 @@ class TestPhase4FinalValidation(unittest.TestCase):
     def test_success_criteria_3_langgraph_workflow(self):
         """Validate: LangGraph workflow triggers correct agent sequence"""
         print('\n✓ Testing: LangGraph workflow triggers correct agent sequence')
-        execute_graph = self.orchestration_dir / 'execute_graph.py'
-        self.assertTrue(execute_graph.exists(), 'execute_graph.py should exist')
-        graph_files = [Path('graph/graph_builder.py'), Path('graph/handlers.py'), Path('src/core/workflows/states.py')]
+        # Updated paths for new clean architecture
+        execute_graph = Path('src/core/workflows/execute_graph.py')
+        self.assertTrue(execute_graph.exists(), 'execute_graph.py should exist in new location')
+        graph_files = [
+            Path('src/core/workflows/graph/graph_builder.py'), 
+            Path('src/core/workflows/graph/handlers.py'), 
+            Path('src/core/workflows/states.py')
+        ]
         for file in graph_files:
             self.assertTrue(file.exists(), f'{file} should exist')
             print(f'  - ✓ {file}')
@@ -98,10 +103,11 @@ class TestPhase4FinalValidation(unittest.TestCase):
     def test_success_criteria_4_agent_output_processing(self):
         """Validate: Agent output stored, parsed, and postprocessed"""
         print('\n✓ Testing: Agent output stored, parsed, and postprocessed')
-        register_output = self.orchestration_dir / 'register_output.py'
-        extract_code = self.orchestration_dir / 'extract_code.py'
-        self.assertTrue(register_output.exists(), 'register_output.py should exist')
-        self.assertTrue(extract_code.exists(), 'extract_code.py should exist')
+        # Updated paths for new clean architecture
+        register_output = Path('src/core/workflows/register_output.py')
+        extract_code = Path('src/core/workflows/extract_code.py')
+        self.assertTrue(register_output.exists(), 'register_output.py should exist in new location')
+        self.assertTrue(extract_code.exists(), 'extract_code.py should exist in new location')
         output_files = list(self.outputs_dir.glob('*/output_*.md'))
         status_files = list(self.outputs_dir.glob('*/status.json'))
         print(f'  - Found {len(output_files)} agent output files')

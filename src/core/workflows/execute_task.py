@@ -3,48 +3,47 @@ Task Execution Script for the AI Agent System
 Example script to demonstrate how to execute tasks using the agent registry.
 """
 
-import sys
+import argparse
 import json
 import logging
-import argparse
+import sys
 from datetime import datetime
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict
 
 try:
-    from typing import Any, Dict, List, Optional
+    from src.infrastructure.prompts.utils import extract_context_sources
 except ImportError:
     pass
 try:
-    from prompts.utils import extract_context_sources
-except ImportError:
-    pass
-try:
-    from tools.memory.engine import MemoryEngine
+    from src.infrastructure.memory.engines.memory_engine import MemoryEngine
+
     def get_memory_instance():
         return MemoryEngine()
+
+except ImportError:
+
     def get_memory_instance():
         return None
-except ImportError:
-    pass
-from src.infrastructure.utils.task_loader import load_task_metadata, update_task_state
-from src.infrastructure.utils.input_validation import (
-    validate_task_id, validate_file_path, validate_string_content,
-    validate_command_args, ValidationError
-)
+
 
 from src.core.workflows.delegation import delegate_task
 from src.core.workflows.inject_context import context_injector
+from src.infrastructure.utils.input_validation import (ValidationError,
+                                                       validate_command_args,
+                                                       validate_file_path,
+                                                       validate_string_content,
+                                                       validate_task_id)
+from src.infrastructure.utils.task_loader import (load_task_metadata,
+                                                  update_task_state)
 
 memory = None
+
 
 def initialize_memory():
     """Initialize memory system - placeholder for now"""
     global memory
-    try:
-        from tools.memory.engine import MemoryEngine
-        memory = MemoryEngine()
-    except ImportError:
-        memory = None
+    memory = get_memory_instance()
+
 
 def load_task_from_file(task_file: str) -> Dict[str, Any]:
     """
@@ -58,9 +57,10 @@ def load_task_from_file(task_file: str) -> Dict[str, Any]:
     """
     # Validate file path
     validated_path = validate_file_path(task_file, must_exist=True)
-    
-    with open(validated_path, 'r') as f:
+
+    with open(validated_path, "r") as f:
         return json.load(f)
+
 
 def execute_task_with_context(task_id: str, agent_role: str = None):
     """Execute task with memory-enhanced context"""
@@ -69,19 +69,17 @@ def execute_task_with_context(task_id: str, agent_role: str = None):
         task_id = validate_task_id(task_id)
         if agent_role:
             agent_role = validate_string_content(agent_role, max_length=50)
-        
+
         # Determine agent role from task if not provided
         if not agent_role:
             task_metadata = load_task_metadata(task_id)
             agent_role = task_metadata.get("owner", "coordinator")
 
         # Prepare agent with context
-        agent = context_injector.prepare_agent_with_context(
-            task_id, agent_role)
+        agent = context_injector.prepare_agent_with_context(task_id, agent_role)
 
         # Log context usage
-        logging.info(
-            f"Executing task {task_id} with {agent_role} agent and MCP context")
+        logging.info(f"Executing task {task_id} with {agent_role} agent")
 
         # Execute task (integrate with existing execution logic)
         result = agent.execute(task_id)
@@ -95,10 +93,11 @@ def execute_task_with_context(task_id: str, agent_role: str = None):
         logging.error(f"Failed to execute task {task_id} with context: {e}")
         raise
 
+
 def log_context_usage(task_id: str, agent_role: str, context: str):
     """Log context usage for analysis and optimization. Handles mocks gracefully for tests."""
     try:
-        if hasattr(context, 'split') or isinstance(context, (str, list)):
+        if hasattr(context, "split") or isinstance(context, (str, list)):
             context_length = len(context)
             context_sources = extract_context_sources(context)
         else:
@@ -111,65 +110,77 @@ def log_context_usage(task_id: str, agent_role: str, context: str):
     task_id_str = str(task_id)
     # Remove characters not allowed in filenames (e.g., <, >, :, ", /, \, |,
     # ?, *)
-try:
-    import re
-except ImportError:
-    pass
-    task_id_str = re.sub(r'[<>:"/\\|?*]', '_', task_id_str)
+    try:
+        import re
+
+        task_id_str = re.sub(r'[<>:"/\\|?*]', "_", task_id_str)
+    except ImportError:
+        # Fallback: replace common problematic characters manually
+        for char in '<>:"/\\|?*':
+            task_id_str = task_id_str.replace(char, "_")
+
     usage_log = {
         "task_id": task_id_str,
         "agent_role": agent_role,
         "context_length": context_length,
         "context_sources": context_sources,
-        "timestamp": datetime.now().isoformat()
+        "timestamp": datetime.now().isoformat(),
     }
 
     # Save to context usage log
     from config.build_paths import LOGS_DIR
+
     context_logs_dir = LOGS_DIR / "context_usage"
     context_logs_dir.mkdir(parents=True, exist_ok=True)
     with open(context_logs_dir / f"{task_id_str}_context.json", "w") as f:
         json.dump(usage_log, f, indent=2)
 
+
 def main():
     """Execute a task based on command-line arguments."""
     parser = argparse.ArgumentParser(
-        description="Execute a task with the appropriate agent")
+        description="Execute a task with the appropriate agent"
+    )
 
     # Task specification options (mutually exclusive)
     task_group = parser.add_mutually_exclusive_group(required=True)
-    task_group.add_argument("--task", "-t", type=str,
-                            help="Task ID (e.g., BE-07, TL-03)")
-    task_group.add_argument("--file", "-f", type=str,
-                            help="Path to task definition JSON file")
+    task_group.add_argument(
+        "--task", "-t", type=str, help="Task ID (e.g., BE-07, TL-03)"
+    )
+    task_group.add_argument(
+        "--file", "-f", type=str, help="Path to task definition JSON file"
+    )
 
     # Optional arguments
     parser.add_argument(
         "--description",
         "-d",
         type=str,
-        help="Task description (optional if task ID is provided and YAML exists)")
-    parser.add_argument("--agent", "-a", type=str,
-                        help="Explicitly specify agent to use")
+        help="Task description (optional if task ID provided and YAML exists)",
+    )
+    parser.add_argument(
+        "--agent", "-a", type=str, help="Explicitly specify agent to use"
+    )
     parser.add_argument("--context", "-c", type=str, help="Additional context")
     parser.add_argument("--output", "-o", type=str, help="Output file path")
-    parser.add_argument("--verbose", "-v",
-                        action="store_true", help="Verbose output")
+    parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     parser.add_argument(
         "--update-state",
         "-s",
         type=str,
-        help="Update task state after execution (e.g., IN_PROGRESS, QA_PENDING)")
+        help="Update task state after execution (e.g., IN_PROGRESS)",
+    )
 
     args = parser.parse_args()
-    
+
     # Validate command line arguments
-    try: args = validate_command_args(args)
+    try:
+        args = validate_command_args(args)
     except ValidationError as e:
         print(f" Invalid arguments: {e}")
-        sys.exit(1)    # Initialize memory engine
+        sys.exit(1)  # Initialize memory engine
     initialize_memory()
-    
+
     try:
         # Load task from file if specified
         if args.file:
@@ -185,17 +196,16 @@ def main():
                 # Try to load task metadata from YAML
                 task_id = args.task
                 task_metadata = load_task_metadata(task_id)
-                description = args.description or task_metadata.get('description')
-                context_topics = task_metadata.get('context_topics', [])
-                relevant_files = task_metadata.get('artefacts', [])
-                agent_id = args.agent or task_metadata.get('owner')
+                description = args.description or task_metadata.get("description")
+                context_topics = task_metadata.get("context_topics", [])
+                relevant_files = task_metadata.get("artefacts", [])
+                agent_id = args.agent or task_metadata.get("owner")
 
                 if args.verbose:
                     print(f"Loaded task metadata for {task_id} from YAML")
                     print(f"Title: {task_metadata.get('title')}")
                     print(f"Status: {task_metadata.get('state')}")
-                    print(
-                        f"Dependencies: {task_metadata.get('depends_on', [])}")
+                    print(f"Dependencies: {task_metadata.get('depends_on', [])}")
 
             except FileNotFoundError:
                 # Fall back to command-line args
@@ -214,7 +224,8 @@ def main():
         # Validate required fields
         if not description:
             print(
-                "Error: Task description is required either from YAML metadata or command line")
+                "Error: Task description is required either from YAML metadata or command line"
+            )
             parser.print_help()
             sys.exit(1)
 
@@ -222,7 +233,8 @@ def main():
         if args.verbose:
             print(
                 f"Executing task {task_id} with {
-                    agent_id or 'auto-detected'} agent...")
+                    agent_id or 'auto-detected'} agent..."
+            )
             print(f"Description: {description}")
 
         result = delegate_task(
@@ -230,7 +242,7 @@ def main():
             task_description=description,
             agent_id=agent_id,
             context=context,
-            relevant_files=relevant_files
+            relevant_files=relevant_files,
         )
 
         # Update task state if requested
@@ -261,8 +273,10 @@ def main():
         print(f"Error executing task: {e}")
         if args.verbose:
             import traceback
+
             traceback.print_exc()
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

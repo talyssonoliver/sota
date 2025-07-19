@@ -10,7 +10,7 @@ Usage:
 
     1. Import the functions you need:
        >>> from tools.context_tracker import track_context_usage, get_context_log
-    
+
     2. Track context usage for a task:
        >>> track_context_usage(
        ...     task_id="BE-07",
@@ -31,13 +31,14 @@ from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 
+
 def track_context_usage(
     task_id: str,
     context_topics: List[str] = None,
     documents_used: List[Dict[str, Any]] = None,
     agent_role: str = "unknown",
     context_length: int = 0,
-    additional_metadata: Dict[str, Any] = None
+    additional_metadata: Dict[str, Any] = None,
 ) -> bool:
     """
     Track context usage for a specific task execution.
@@ -66,7 +67,8 @@ def track_context_usage(
             "agent_role": agent_role,
             "context_length": context_length,
             "documents_retrieved": len(documents_used) if documents_used else 0,
-            "document_sources": []}
+            "document_sources": [],
+        }
 
         # Extract document source information
         if documents_used:
@@ -77,7 +79,7 @@ def track_context_usage(
                     "topic": metadata.get("topic", "unknown"),
                     "query_used": metadata.get("query_used", ""),
                     "retrieved_at": metadata.get("retrieved_at", ""),
-                    "content_length": len(doc.get("page_content", ""))
+                    "content_length": len(doc.get("page_content", "")),
                 }
                 context_log["document_sources"].append(source_info)
 
@@ -88,20 +90,21 @@ def track_context_usage(
         # Save to the context log file as specified in Step 3.7
         log_file = output_dir / "context_log.json"
 
-        with open(log_file, 'w', encoding='utf-8') as f:
+        with open(log_file, "w", encoding="utf-8") as f:
             json.dump(context_log, f, indent=2, ensure_ascii=False)
 
+        topic_count = len(context_topics or [])
+        doc_count = len(documents_used or [])
         logger.info(
-            f"Context usage tracked for task {task_id}: {
-                len(
-                    context_topics or [])} topics, {
-                len(
-                    documents_used or [])} documents")
+            f"Context usage tracked for task {task_id}: "
+            f"{topic_count} topics, {doc_count} documents"
+        )
         return True
 
     except Exception as e:
         logger.error(f"Failed to track context usage for task {task_id}: {e}")
         return False
+
 
 def get_context_log(task_id: str) -> Optional[Dict[str, Any]]:
     """
@@ -120,12 +123,13 @@ def get_context_log(task_id: str) -> Optional[Dict[str, Any]]:
             logger.warning(f"Context log not found for task {task_id}")
             return None
 
-        with open(log_file, 'r', encoding='utf-8') as f:
+        with open(log_file, "r", encoding="utf-8") as f:
             return json.load(f)
 
     except Exception as e:
         logger.error(f"Failed to retrieve context log for task {task_id}: {e}")
         return None
+
 
 def get_all_context_logs() -> Dict[str, Dict[str, Any]]:
     """
@@ -151,6 +155,7 @@ def get_all_context_logs() -> Dict[str, Dict[str, Any]]:
         logger.error(f"Failed to retrieve all context logs: {e}")
 
     return logs
+
 
 def analyze_context_usage(task_ids: List[str] = None) -> Dict[str, Any]:
     """
@@ -196,18 +201,17 @@ def analyze_context_usage(task_ids: List[str] = None) -> Dict[str, Any]:
         "document_usage_frequency": document_usage,
         "agent_usage_frequency": agent_usage,
         "most_used_topics": sorted(
-            topic_usage.items(),
-            key=lambda x: x[1],
-            reverse=True)[
-            :5],
+            topic_usage.items(), key=lambda x: x[1], reverse=True
+        )[:5],
         "most_used_documents": sorted(
-            document_usage.items(),
-            key=lambda x: x[1],
-            reverse=True)[
-            :5]}
+            document_usage.items(), key=lambda x: x[1], reverse=True
+        )[:5],
+    }
+
 
 def export_context_usage_report(
-        output_path: str = "reports/context_usage_report.json") -> bool:
+    output_path: str = "reports/context_usage_report.json",
+) -> bool:
     """
     Export a comprehensive context usage report.
 
@@ -230,10 +234,10 @@ def export_context_usage_report(
             "generated_at": datetime.now().isoformat(),
             "step_3_7_implementation": "Context Tracking per Task",
             "summary": analysis,
-            "detailed_logs": all_logs
+            "detailed_logs": all_logs,
         }
 
-        with open(report_file, 'w', encoding='utf-8') as f:
+        with open(report_file, "w", encoding="utf-8") as f:
             json.dump(report, f, indent=2, ensure_ascii=False)
 
         logger.info(f"Context usage report exported to {output_path}")
@@ -243,12 +247,13 @@ def export_context_usage_report(
         logger.error(f"Failed to export context usage report: {e}")
         return False
 
+
 def track_context_from_memory_engine(
     task_id: str,
     context_topics: List[str],
     documents: List[Dict[str, Any]],
     agent_role: str = "system",
-    max_tokens: int = 2000
+    max_tokens: int = 2000,
 ) -> bool:
     """
     Helper function to track context usage directly from memory engine operations.
@@ -275,7 +280,9 @@ def track_context_from_memory_engine(
         "estimated_tokens": total_length // 4,  # Rough token estimation
         "within_budget": (total_length // 4) <= max_tokens,
         "step_3_5_integration": True,
-        "step_3_6_integration": any(doc.get("metadata", {}).get("chunk_id") is not None for doc in documents)
+        "step_3_6_integration": any(
+            doc.get("metadata", {}).get("chunk_id") is not None for doc in documents
+        ),
     }
 
     return track_context_usage(
@@ -284,27 +291,26 @@ def track_context_from_memory_engine(
         documents_used=documents,
         agent_role=agent_role,
         context_length=total_length,
-        additional_metadata=additional_metadata
+        additional_metadata=additional_metadata,
     )
+
 
 # CLI interface for Step 3.7 context tracking
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Step 3.7 Context Tracking CLI")
+    parser = argparse.ArgumentParser(description="Step 3.7 Context Tracking CLI")
     parser.add_argument(
         "command",
-        choices=[
-            "analyze",
-            "export",
-            "list"],
-        help="Command to execute")
+        choices=["analyze", "export", "list"],
+        help="Command to execute",
+    )
     parser.add_argument("--task-id", help="Specific task ID to analyze")
     parser.add_argument(
         "--output",
         default="reports/context_usage_report.json",
-        help="Output file for export")
+        help="Output file for export",
+    )
 
     args = parser.parse_args()
 

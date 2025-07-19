@@ -34,6 +34,6 @@
     "memory_engine": "ChromaDB with AES-256 encryption",
     "patterns": ["Clean Architecture", "DDD", "Hexagonal Architecture"],
     "testing": "TDD with pytest, 90%+ coverage requirement",
-    "quality_gates": ["mypy --strict", "black", "flake8", "bandit"]
+    "quality_gates": ["mypy --strict", "black", "ruff", "bandit"]
   }
 }

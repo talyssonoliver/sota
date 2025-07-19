@@ -18,9 +18,11 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List
 
+
 @dataclass
 class StorageMetrics:
     """Track storage performance metrics"""
+
     total_tasks: int = 0
     avg_lookup_time_ms: float = 0.0
     cache_hit_rate: float = 0.0
@@ -30,6 +32,7 @@ class StorageMetrics:
     def __post_init__(self):
         if self.files_per_directory is None:
             self.files_per_directory = {}
+
 
 class ScalableTaskStorage:
     """
@@ -58,7 +61,7 @@ class ScalableTaskStorage:
         - TASK-567 → outputs/T/A/TASK-567
         """
         # Use first few characters for hierarchy
-        hierarchy_chars = list(task_id.replace("-", "")[:self.depth])
+        hierarchy_chars = list(task_id.replace("-", "")[: self.depth])
 
         # Ensure we have enough characters
         while len(hierarchy_chars) < self.depth:
@@ -78,8 +81,9 @@ class ScalableTaskStorage:
         with self.lock:
             # Check cache first
             if task_id in self.cache:
-                self.metrics.cache_hit_rate = (
-                    self.metrics.cache_hit_rate * 0.9) + (1.0 * 0.1)
+                self.metrics.cache_hit_rate = (self.metrics.cache_hit_rate * 0.9) + (
+                    1.0 * 0.1
+                )
                 return self.cache[task_id]
 
             # Cache miss
@@ -95,7 +99,8 @@ class ScalableTaskStorage:
             # Update metrics
             lookup_time = (datetime.now() - start_time).total_seconds() * 1000
             self.metrics.avg_lookup_time_ms = (
-                self.metrics.avg_lookup_time_ms * 0.9) + (lookup_time * 0.1)
+                self.metrics.avg_lookup_time_ms * 0.9
+            ) + (lookup_time * 0.1)
             self.metrics.total_tasks = len(self.cache)
 
             return task_dir
@@ -168,10 +173,9 @@ class ScalableTaskStorage:
             for key in keys_to_remove:
                 del self.cache[key]
 
+
 # Performance monitoring utilities
-def benchmark_storage_performance(
-        storage: ScalableTaskStorage,
-        num_tasks: int = 1000):
+def benchmark_storage_performance(storage: ScalableTaskStorage, num_tasks: int = 1000):
     """Benchmark storage performance with simulated tasks"""
     print(f"🔍 Benchmarking storage with {num_tasks} tasks...")
 
@@ -203,13 +207,15 @@ def benchmark_storage_performance(
         f"   Directory creation: {
             creation_time:.2f}s ({
             num_tasks /
-            creation_time:.0f} tasks/sec)")
+            creation_time:.0f} tasks/sec)"
+    )
     print(f"   Random access (100x): {access_time:.3f}s")
     print(f"   Full listing: {listing_time:.3f}s ({len(all_tasks)} tasks)")
     print(f"   Cache hit rate: {metrics.cache_hit_rate:.1%}")
     print(f"   Avg lookup time: {metrics.avg_lookup_time_ms:.2f}ms")
 
     return metrics
+
 
 if __name__ == "__main__":
     # Demo scalable storage

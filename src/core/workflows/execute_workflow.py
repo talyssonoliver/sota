@@ -3,13 +3,12 @@ Task Execution with LangGraph Workflow
 Runs a task through the agent workflow using the dynamically constructed LangGraph.
 """
 
-import sys
 import json
 import logging
+import sys
+import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any
-
 
 try:
     from datetime import datetime
@@ -20,43 +19,40 @@ try:
 except ImportError:
     pass
 try:
-    from typing import Any, Dict, List, Optional, Set
-except ImportError:
-    pass
-try:
     from pythonjsonlogger import jsonlogger
-    import logging
-    jsonlogger = None
 except ImportError:
-    pass
+    jsonlogger = None
 
 try:
-    from graph.graph_builder import (build_advanced_workflow_graph,
+    from src.core.workflows.graph.graph_builder import (build_advanced_workflow_graph,
                                      build_dynamic_workflow_graph,
                                      build_state_workflow_graph,
                                      build_workflow_graph)
+
     GRAPH_IMPORTS_AVAILABLE = True
 except ImportError as e:
     print(f"Warning: Graph imports failed: {e}")
     GRAPH_IMPORTS_AVAILABLE = False
     # Define fallback functions
     from unittest.mock import MagicMock
-    
+
     def build_advanced_workflow_graph(*args, **kwargs):
         return MagicMock()
-    
+
     def build_dynamic_workflow_graph(*args, **kwargs):
         return MagicMock()
-    
+
     def build_state_workflow_graph(*args, **kwargs):
         return MagicMock()
-    
+
     def build_workflow_graph(*args, **kwargs):
         return MagicMock()
 
-from src.core.workflows.plan_execution_manager import PlanExecutionManager
+
 import argparse
 import os
+
+from src.core.workflows.plan_execution_manager import PlanExecutionManager
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -66,20 +62,22 @@ logger = logging.getLogger("execute_workflow")
 handler = logging.StreamHandler()
 if jsonlogger:
     formatter = jsonlogger.JsonFormatter(
-        '%(asctime)s %(levelname)s %(name)s %(message)s %(agent_role)s %(task_id)s %(event)s')
+        "%(asctime)s %(levelname)s %(name)s %(message)s %(agent_role)s %(task_id)s %(event)s"
+    )
 else:
-    formatter = logging.Formatter(
-        '%(asctime)s %(levelname)s %(name)s %(message)s')
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
 handler.setFormatter(formatter)
 logger.handlers = [handler]
 logger.setLevel(logging.INFO)
 
+
 def execute_task(
-        task_id,
-        input_message=None,
-        workflow_type="standard",
-        output_dir=None,
-        use_coordinator_planning=True):
+    task_id,
+    input_message=None,
+    workflow_type="standard",
+    output_dir=None,
+    use_coordinator_planning=True,
+):
     """
     Execute a task through the agent workflow.
 
@@ -102,33 +100,40 @@ def execute_task(
 
     # Build the workflow based on the specified type
     if workflow_type == "dynamic":
-        logger.info("Building dynamic workflow", extra={
-                    "task_id": task_id, "event": "build_workflow"})
+        logger.info(
+            "Building dynamic workflow",
+            extra={"task_id": task_id, "event": "build_workflow"},
+        )
         workflow = build_dynamic_workflow_graph(task_id)
     elif workflow_type == "state":
-        logger.info("Building state-based workflow",
-                    extra={"task_id": task_id, "event": "build_workflow"})
+        logger.info(
+            "Building state-based workflow",
+            extra={"task_id": task_id, "event": "build_workflow"},
+        )
         workflow = build_state_workflow_graph()
     elif workflow_type == "advanced":
-        logger.info("Building advanced workflow", extra={
-                    "task_id": task_id, "event": "build_workflow"})
+        logger.info(
+            "Building advanced workflow",
+            extra={"task_id": task_id, "event": "build_workflow"},
+        )
         workflow = build_advanced_workflow_graph()
     else:
-        logger.info("Building standard workflow", extra={
-                    "task_id": task_id, "event": "build_workflow"})
+        logger.info(
+            "Building standard workflow",
+            extra={"task_id": task_id, "event": "build_workflow"},
+        )
         workflow = build_workflow_graph()
 
     # Execute the workflow
-    logger.info("Executing workflow", extra={
-                "task_id": task_id, "event": "execute"})
-    
+    logger.info("Executing workflow", extra={"task_id": task_id, "event": "execute"})
+
     if use_coordinator_planning:
         # Try to use JSON-based planning with PlanExecutionManager
         try:
             # Initial call to get coordinator's plan
             coordinator_output_state = workflow.invoke(initial_state)
             raw_plan_output = coordinator_output_state.get("output", "")
-            
+
             # Attempt to parse as JSON plan
             try:
                 if isinstance(raw_plan_output, str):
@@ -138,19 +143,25 @@ def execute_task(
                 else:
                     parsed_plan = raw_plan_output
 
-                if isinstance(parsed_plan, list) and all("id" in task for task in parsed_plan):
+                if isinstance(parsed_plan, list) and all(
+                    "id" in task for task in parsed_plan
+                ):
                     # We have a structured plan from the coordinator!
-                    logger.info("Coordinator returned a structured plan. Starting PlanExecutionManager.")
-                    manager = PlanExecutionManager(task_id, initial_state.get("message"), workflow)
+                    logger.info(
+                        "Coordinator returned a structured plan. Starting PlanExecutionManager."
+                    )
+                    manager = PlanExecutionManager(
+                        task_id, initial_state.get("message"), workflow
+                    )
                     manager.plan = parsed_plan
-                    
+
                     # Initialize statuses
                     for task in manager.plan:
                         if task["id"] not in manager.part_status:
                             manager.part_status[task["id"]] = "pending"
-                    
+
                     result = manager.run_plan()
-                    
+
                     # Save the result if output directory is specified
                     if output_dir:
                         output_path = Path(output_dir) / task_id
@@ -160,22 +171,33 @@ def execute_task(
                         with open(output_path / "plan_execution_result.json", "w") as f:
                             json.dump(result, f, indent=2, default=str)
 
-                        logger.info("Plan execution results saved", extra={
-                                    "task_id": task_id, "event": "save_plan_result"})
-                    
+                        logger.info(
+                            "Plan execution results saved",
+                            extra={
+                                "task_id": task_id,
+                                "event": "save_plan_result",
+                            },
+                        )
+
                     return result
                 else:
                     # Not a structured plan, proceed with standard execution
-                    logger.info("Coordinator did not return a structured plan. Proceeding with standard execution.")
+                    logger.info(
+                        "Coordinator did not return a structured plan. Proceeding with standard execution."
+                    )
                     result = coordinator_output_state
-                    
+
             except (json.JSONDecodeError, TypeError) as e:
                 # Coordinator output not valid JSON, proceed with standard execution
-                logger.info(f"Coordinator output not a structured plan (Error: {e}). Proceeding with standard execution.")
+                logger.info(
+                    f"Coordinator output not a structured plan (Error: {e}). Proceeding with standard execution."
+                )
                 result = coordinator_output_state
-                
+
         except Exception as e:
-            logger.error(f"Error in coordinator planning mode: {e}. Falling back to standard execution.")
+            logger.error(
+                f"Error in coordinator planning mode: {e}. Falling back to standard execution."
+            )
             result = workflow.invoke(initial_state)
     else:
         # Standard execution without coordinator planning
@@ -190,12 +212,13 @@ def execute_task(
         with open(output_path / "workflow_result.json", "w") as f:
             json.dump(result, f, indent=2, default=str)
 
-        logger.info("Results saved", extra={
-                    "task_id": task_id, "event": "save_result"})
+        logger.info("Results saved", extra={"task_id": task_id, "event": "save_result"})
 
     return result
 
     pass  # Use fallback/mock implementation
+
+
 def load_all_tasks():
     """
     Load all tasks from the agent_task_assignments.json file.
@@ -206,13 +229,14 @@ def load_all_tasks():
     tasks_file = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
         "context-store",
-        "agent_task_assignments.json"
+        "agent_task_assignments.json",
     )
 
-    with open(tasks_file, 'r') as f:
+    with open(tasks_file, "r") as f:
         all_tasks = json.load(f)
 
     return all_tasks
+
 
 def get_all_tasks_flattened():
     """
@@ -233,6 +257,7 @@ def get_all_tasks_flattened():
 
     return flattened_tasks
 
+
 def get_dependency_ordered_tasks():
     """
     Get all tasks ordered by dependencies (topological sort).
@@ -246,8 +271,7 @@ def get_dependency_ordered_tasks():
     task_map = {task["id"]: task for task in all_tasks}
 
     # Build dependency graph
-    graph = {task["id"]: set(task.get("dependencies", []))
-             for task in all_tasks}
+    graph = {task["id"]: set(task.get("dependencies", [])) for task in all_tasks}
 
     # Topological sort
     ordered_tasks = []
@@ -277,11 +301,10 @@ def get_dependency_ordered_tasks():
 
     return ordered_tasks
 
+
 def execute_all_tasks(
-        workflow_type="standard",
-        output_dir=None,
-        by_agent=None,
-        day=None):
+    workflow_type="standard", output_dir=None, by_agent=None, day=None
+):
     """
     Execute all tasks from the agent_task_assignments.json file.
 
@@ -321,14 +344,16 @@ def execute_all_tasks(
             extra={
                 "task_id": task_id,
                 "agent_role": agent_role,
-                "event": "start_task"})
+                "event": "start_task",
+            },
+        )
 
         try:
             result = execute_task(
                 task_id,
                 input_message=f"Execute task {task_id}: {task_title}",
                 workflow_type=workflow_type,
-                output_dir=output_dir
+                output_dir=output_dir,
             )
 
             # Add task info to result
@@ -343,7 +368,7 @@ def execute_all_tasks(
                     "task_title": task_title,
                     "agent_role": agent_role,
                     "result": str(result),
-                    "status": "COMPLETED"
+                    "status": "COMPLETED",
                 }
 
             results.append(result)
@@ -353,7 +378,9 @@ def execute_all_tasks(
                 extra={
                     "task_id": task_id,
                     "agent_role": agent_role,
-                    "event": "task_completed"})
+                    "event": "task_completed",
+                },
+            )
 
             # Small delay to avoid overwhelming the system
             time.sleep(1)
@@ -364,14 +391,18 @@ def execute_all_tasks(
                 extra={
                     "task_id": task_id,
                     "agent_role": agent_role,
-                    "event": "error"})
-            results.append({
-                "task_id": task_id,
-                "task_title": task_title,
-                "agent_role": agent_role,
-                "status": "ERROR",
-                "error": str(e)
-            })
+                    "event": "error",
+                },
+            )
+            results.append(
+                {
+                    "task_id": task_id,
+                    "task_title": task_title,
+                    "agent_role": agent_role,
+                    "status": "ERROR",
+                    "error": str(e),
+                }
+            )
 
     # Save summary if output directory is specified
     if output_dir:
@@ -379,42 +410,43 @@ def execute_all_tasks(
         with open(summary_path, "w") as f:
             json.dump(results, f, indent=2, default=str)
 
-        logger.info("Execution summary saved",
-                    extra={"event": "summary_saved"})
+        logger.info("Execution summary saved", extra={"event": "summary_saved"})
 
     return results
+
 
 def main():
     """Command-line interface for executing tasks through the agent workflow."""
     parser = argparse.ArgumentParser(
-        description="Execute tasks through the agent workflow")
+        description="Execute tasks through the agent workflow"
+    )
 
     # Task execution mode: single task or all tasks
     mode_group = parser.add_mutually_exclusive_group(required=True)
+    mode_group.add_argument("--task", "-t", help="Single task identifier (e.g. BE-07)")
     mode_group.add_argument(
-        "--task", "-t", help="Single task identifier (e.g. BE-07)")
+        "--all", "-a", action="store_true", help="Execute all tasks"
+    )
     mode_group.add_argument(
-        "--all", "-a", action="store_true", help="Execute all tasks")
+        "--agent", "-g", help="Execute all tasks for a specific agent role"
+    )
     mode_group.add_argument(
-        "--agent", "-g", help="Execute all tasks for a specific agent role")
-    mode_group.add_argument("--day", "-y", type=int,
-                            help="Execute all tasks for a specific day")
+        "--day", "-y", type=int, help="Execute all tasks for a specific day"
+    )
 
     # Additional options
     parser.add_argument(
         "--message",
         "-m",
-        help="Input message for the task (for single task mode)")
+        help="Input message for the task (for single task mode)",
+    )
     parser.add_argument(
         "--workflow",
         "-w",
-        choices=[
-            "standard",
-            "dynamic",
-            "state",
-            "advanced"],
+        choices=["standard", "dynamic", "state", "advanced"],
         default="standard",
-        help="Workflow type to use")
+        help="Workflow type to use",
+    )
     parser.add_argument("--output", "-o", help="Directory to save outputs")
 
     args = parser.parse_args()
@@ -424,8 +456,7 @@ def main():
         output_dir = args.output or os.path.join("outputs", args.task)
     else:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_dir = args.output or os.path.join(
-            "outputs", f"batch_{timestamp}")
+        output_dir = args.output or os.path.join("outputs", f"batch_{timestamp}")
 
     # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
@@ -437,34 +468,37 @@ def main():
                 args.task,
                 input_message=args.message,
                 workflow_type=args.workflow,
-                output_dir=output_dir
+                output_dir=output_dir,
             )
 
             # Print the result
-            logger.info("Workflow execution completed", extra={
-                        "task_id": args.task, "event": "workflow_completed"})
+            logger.info(
+                "Workflow execution completed",
+                extra={"task_id": args.task, "event": "workflow_completed"},
+            )
             print("\nWorkflow execution completed:")
             print(f"Final status: {result.get('status', 'Unknown')}")
             if "result" in result:
                 print(f"Result: {result['result']}")
 
             print(
-                f"\nFull result saved to {output_dir}/{args.task}/workflow_result.json")
+                f"\nFull result saved to {output_dir}/{args.task}/workflow_result.json"
+            )
 
         elif args.all:
             # All tasks mode
             results = execute_all_tasks(
-                workflow_type=args.workflow,
-                output_dir=output_dir
+                workflow_type=args.workflow, output_dir=output_dir
             )
 
             # Print summary
-            logger.info("All tasks execution summary", extra={
-                        "event": "all_tasks_completed"})
+            logger.info(
+                "All tasks execution summary",
+                extra={"event": "all_tasks_completed"},
+            )
             print("\nAll tasks execution summary:")
             print(f"Total tasks executed: {len(results)}")
-            successful = sum(1 for r in results if r.get(
-                "status") == "COMPLETED")
+            successful = sum(1 for r in results if r.get("status") == "COMPLETED")
             print(f"Successfully completed: {successful}")
             print(f"Failed: {len(results) - successful}")
 
@@ -473,7 +507,7 @@ def main():
             results = execute_all_tasks(
                 workflow_type=args.workflow,
                 output_dir=output_dir,
-                by_agent=args.agent
+                by_agent=args.agent,
             )
 
             # Print summary
@@ -481,11 +515,12 @@ def main():
                 "Execution summary for agent",
                 extra={
                     "agent_role": args.agent,
-                    "event": "agent_tasks_completed"})
+                    "event": "agent_tasks_completed",
+                },
+            )
             print(f"\nExecution summary for agent {args.agent}:")
             print(f"Total tasks executed: {len(results)}")
-            successful = sum(1 for r in results if r.get(
-                "status") == "COMPLETED")
+            successful = sum(1 for r in results if r.get("status") == "COMPLETED")
             print(f"Successfully completed: {successful}")
             print(f"Failed: {len(results) - successful}")
 
@@ -494,16 +529,17 @@ def main():
             results = execute_all_tasks(
                 workflow_type=args.workflow,
                 output_dir=output_dir,
-                day=args.day
+                day=args.day,
             )
 
             # Print summary
-            logger.info("Execution summary for day", extra={
-                        "event": "day_tasks_completed"})
+            logger.info(
+                "Execution summary for day",
+                extra={"event": "day_tasks_completed"},
+            )
             print(f"\nExecution summary for day {args.day}:")
             print(f"Total tasks executed: {len(results)}")
-            successful = sum(1 for r in results if r.get(
-                "status") == "COMPLETED")
+            successful = sum(1 for r in results if r.get("status") == "COMPLETED")
             print(f"Successfully completed: {successful}")
             print(f"Failed: {len(results) - successful}")
 
@@ -511,6 +547,7 @@ def main():
         logger.error(f"Error: {e}", extra={"event": "fatal_error"})
         print(f"Error: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

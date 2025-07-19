@@ -5,15 +5,19 @@ Migration script to convert tasks from the centralized JSON file to individual Y
 
 
 try:
-    from pathlib import Path
     import json
     import os
     import sys
+    from pathlib import Path
+
+    import yaml
 except ImportError:
     pass
+
+
 def migrate_tasks(
-        source_file="context-store/agent_task_assignments.json",
-        target_dir="tasks"):
+    source_file="context-store/agent_task_assignments.json", target_dir="tasks"
+):
     """
     Migrate tasks from a centralized JSON file to individual YAML files.
 
@@ -44,7 +48,7 @@ def migrate_tasks(
             "backend_engineer": "backend",
             "frontend_engineer": "frontend",
             "ux_designer": "ux",
-            "qa_tester": "qa"
+            "qa_tester": "qa",
         }
 
         # Default owner if role not in the map
@@ -76,26 +80,43 @@ def migrate_tasks(
                 "state": "PLANNED",  # Default state
                 "priority": "MEDIUM",  # Default priority
                 "estimation_hours": 2,  # Default estimation
-                "description": task.get("description", f"Task {task_id}: {task.get('title', '')}"),
-                "artefacts": task.get("artefacts", [])
+                "description": task.get(
+                    "description", f"Task {task_id}: {task.get('title', '')}"
+                ),
+                "artefacts": task.get("artefacts", []),
             }
 
             # Add context topics based on role
             if owner == "backend":
                 yaml_data["context_topics"] = [
-                    "db-schema", "service-pattern", "supabase-setup"]
+                    "db-schema",
+                    "service-pattern",
+                    "supabase-setup",
+                ]
             elif owner == "frontend":
                 yaml_data["context_topics"] = [
-                    "design-system", "component-patterns", "ui-standards"]
+                    "design-system",
+                    "component-patterns",
+                    "ui-standards",
+                ]
             elif owner == "technical":
                 yaml_data["context_topics"] = [
-                    "infrastructure", "ci-cd", "tech-standards"]
+                    "infrastructure",
+                    "ci-cd",
+                    "tech-standards",
+                ]
             elif owner == "qa":
                 yaml_data["context_topics"] = [
-                    "test-patterns", "quality-standards", "testing-strategy"]
+                    "test-patterns",
+                    "quality-standards",
+                    "testing-strategy",
+                ]
             elif owner == "doc":
                 yaml_data["context_topics"] = [
-                    "documentation-standards", "project-overview", "api-references"]
+                    "documentation-standards",
+                    "project-overview",
+                    "api-references",
+                ]
             else:
                 yaml_data["context_topics"] = ["project-overview"]
 
@@ -103,10 +124,8 @@ def migrate_tasks(
             try:
                 with open(file_path, "w", encoding="utf-8") as f:
                     yaml.safe_dump(
-                        yaml_data,
-                        f,
-                        default_flow_style=False,
-                        sort_keys=False)
+                        yaml_data, f, default_flow_style=False, sort_keys=False
+                    )
                 print(f"  Created {task_id}")
                 created += 1
             except Exception as e:
@@ -115,13 +134,18 @@ def migrate_tasks(
 
     # Print summary
     print(
-        f"\nMigration complete: {created} created, {skipped} skipped, {errors} errors")
+        f"\nMigration complete: {created} created, {skipped} skipped, {errors} errors"
+    )
     print(f"Tasks are now available in the {target_dir}/ directory")
+
 
 if __name__ == "__main__":
     # Get source and target paths from command line arguments if provided
-    source = sys.argv[1] if len(
-        sys.argv) > 1 else "context-store/agent_task_assignments.json"
+    source = (
+        sys.argv[1]
+        if len(sys.argv) > 1
+        else "context-store/agent_task_assignments.json"
+    )
     target = sys.argv[2] if len(sys.argv) > 2 else "tasks"
 
     # Run migration
