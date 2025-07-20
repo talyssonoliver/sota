@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-07-19 14:34:22",
+  "timestamp": "2025-07-20 10:15:57",
   "iso_25010_compliance": {
     "overall": 100.0,
     "by_category": {
@@ -22,8 +22,8 @@
     "encryption_usage": 0.24271844660194172
   },
   "maintainability_metrics": {
-    "average_complexity": 2.7221963161576124,
-    "duplication_percentage": 48.453523282510155,
+    "average_complexity": 2.721963161576125,
+    "duplication_percentage": 48.43516260880832,
     "documentation_coverage": 86.73010837959292
   },
   "performance_profiles": [
@@ -327,11 +327,6 @@
       "category": "nfr"
     },
     {
-      "metric": "Test coverage should be at least 80% (Actual",
-      "severity": "error",
-      "category": "nfr"
-    },
-    {
       "metric": "API design consistency should be at least 95% (Actual",
       "severity": "warning",
       "category": "nfr"
@@ -348,7 +343,7 @@
     }
   ],
   "recommendations": [
-    "\ud83d\udccb 9 NFR violations found:",
+    "\ud83d\udccb 8 NFR violations found:",
     "  compatibility: 1 issues"
   ]
 }

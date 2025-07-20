@@ -1,28 +1,28 @@
 {
-  "timestamp": "2025-07-19 14:33:33",
+  "timestamp": "2025-07-20 10:15:57",
   "overall_status": "FAILED",
   "quality_gates_passed": 3,
   "quality_gates_failed": 3,
   "quality_gates_warning": 2,
   "metrics": {
-    "coverage_percentage": 30.427965997893242,
-    "avg_cyclomatic_complexity": 2.925489271398255,
+    "coverage_percentage": 0.0,
+    "avg_cyclomatic_complexity": 2.925253477953313,
     "max_cyclomatic_complexity": 34,
-    "duplication_percentage": 48.20795824554683,
+    "duplication_percentage": 48.189178183908595,
     "maintainability_index": 0,
     "issues": {
       "bugs": 0,
       "vulnerabilities": 16,
-      "code_smells": 166,
+      "code_smells": 141,
       "security_hotspots": 212
     },
     "lines_of_code": {
-      "total": 106679,
-      "code": 83536,
+      "total": 106637,
+      "code": 83498,
       "comments": 5644,
-      "blank": 17499
+      "blank": 17495
     },
-    "code_smells_per_kloc": 1.9871672093468686,
+    "code_smells_per_kloc": 1.6886632015138086,
     "critical_bugs": 0,
     "vulnerabilities": 16,
     "security_hotspots": 212
@@ -30,23 +30,23 @@
   "technical_debt": {
     "bugs": 0.0,
     "vulnerabilities": 32.0,
-    "code_smells": 41.5,
+    "code_smells": 35.25,
     "security_hotspots": 159.0,
-    "total_hours": 232.5,
-    "total_days": 29.0625
+    "total_hours": 226.25,
+    "total_days": 28.28125
   },
   "gate_results": [
     {
       "name": "test_coverage",
       "metric": "coverage_percentage",
       "expected_value": 80.0,
-      "actual_value": 30.427965997893242,
+      "actual_value": 0.0,
       "operator": ">=",
       "status": "FAILED",
       "severity": "error",
       "category": "reliability",
-      "deviation": 49.57203400210676,
-      "message": "\u274c Test coverage must be at least 80% (Failed: 30.427965997893242 >= 80.0)",
+      "deviation": 80.0,
+      "message": "\u274c Test coverage must be at least 80% (Failed: 0.0 >= 80.0)",
       "remediation_effort_minutes": 120
     },
     {
@@ -66,13 +66,13 @@
       "name": "code_duplication",
       "metric": "duplication_percentage",
       "expected_value": 3.0,
-      "actual_value": 48.20795824554683,
+      "actual_value": 48.189178183908595,
       "operator": "<=",
       "status": "FAILED",
       "severity": "error",
       "category": "maintainability",
-      "deviation": 45.20795824554683,
-      "message": "\u274c Code duplication must be below 3% (Failed: 48.20795824554683 <= 3.0)",
+      "deviation": 45.189178183908595,
+      "message": "\u274c Code duplication must be below 3% (Failed: 48.189178183908595 <= 3.0)",
       "remediation_effort_minutes": 30
     },
     {
@@ -92,12 +92,12 @@
       "name": "cyclomatic_complexity",
       "metric": "avg_cyclomatic_complexity",
       "expected_value": 10.0,
-      "actual_value": 2.925489271398255,
+      "actual_value": 2.925253477953313,
       "operator": "<=",
       "status": "PASSED",
       "severity": "warning",
       "category": "maintainability",
-      "deviation": 7.074510728601744,
+      "deviation": 7.074746522046687,
       "message": "\u2705 Average cyclomatic complexity should be below 10",
       "remediation_effort_minutes": 45
     },
@@ -131,12 +131,12 @@
       "name": "code_smells_density",
       "metric": "code_smells_per_kloc",
       "expected_value": 10.0,
-      "actual_value": 1.9871672093468686,
+      "actual_value": 1.6886632015138086,
       "operator": "<=",
       "status": "PASSED",
       "severity": "warning",
       "category": "maintainability",
-      "deviation": 8.012832790653132,
+      "deviation": 8.311336798486192,
       "message": "\u2705 Code smells density should be below 10 per KLOC",
       "remediation_effort_minutes": 15
     }

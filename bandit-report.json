@@ -1,6 +1,6 @@
 {
   "errors": [],
-  "generated_at": "2025-07-19T13:33:53Z",
+  "generated_at": "2025-07-20T09:12:08Z",
   "metrics": {
     "_totals": {
       "CONFIDENCE.HIGH": 224,
@@ -11,7 +11,7 @@
       "SEVERITY.LOW": 212,
       "SEVERITY.MEDIUM": 9,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 62432,
+      "loc": 62403,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -115,7 +115,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 173,
+      "loc": 172,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -154,7 +154,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 738,
+      "loc": 736,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -492,7 +492,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 210,
+      "loc": 206,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -505,7 +505,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 414,
+      "loc": 405,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -843,7 +843,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 504,
+      "loc": 496,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -1038,7 +1038,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 64,
+      "loc": 63,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -2507,7 +2507,7 @@
       "SEVERITY.LOW": 8,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 718,
+      "loc": 716,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -2611,7 +2611,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 254,
+      "loc": 252,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -6260,7 +6260,7 @@
       "test_name": "try_except_pass"
     },
     {
-      "code": "411                         \n412             except Exception:\n413                 # Skip files that can't be read\n414                 pass\n415             \n",
+      "code": "409                         \n410             except Exception:\n411                 # Skip files that can't be read\n412                 pass\n413             \n",
       "col_offset": 12,
       "end_col_offset": 20,
       "filename": "src/infrastructure\\tools\\validation\\core\\dependency_validator.py",
@@ -6271,18 +6271,18 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Try, Except, Pass detected.",
-      "line_number": 412,
+      "line_number": 410,
       "line_range": [
-        412,
-        413,
-        414
+        410,
+        411,
+        412
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
       "test_id": "B110",
       "test_name": "try_except_pass"
     },
     {
-      "code": "605 \n606             except Exception:\n607                 continue\n608 \n",
+      "code": "603 \n604             except Exception:\n605                 continue\n606 \n",
       "col_offset": 12,
       "end_col_offset": 24,
       "filename": "src/infrastructure\\tools\\validation\\core\\dependency_validator.py",
@@ -6293,17 +6293,17 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Try, Except, Continue detected.",
-      "line_number": 606,
+      "line_number": 604,
       "line_range": [
-        606,
-        607
+        604,
+        605
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b112_try_except_continue.html",
       "test_id": "B112",
       "test_name": "try_except_continue"
     },
     {
-      "code": "622                             usage_files.append(str(file_path))\n623                 except Exception:\n624                     continue\n625 \n",
+      "code": "620                             usage_files.append(str(file_path))\n621                 except Exception:\n622                     continue\n623 \n",
       "col_offset": 16,
       "end_col_offset": 28,
       "filename": "src/infrastructure\\tools\\validation\\core\\dependency_validator.py",
@@ -6314,17 +6314,17 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Try, Except, Continue detected.",
-      "line_number": 623,
+      "line_number": 621,
       "line_range": [
-        623,
-        624
+        621,
+        622
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b112_try_except_continue.html",
       "test_id": "B112",
       "test_name": "try_except_continue"
     },
     {
-      "code": "642                             usage_files.append(str(file_path))\n643                 except Exception:\n644                     continue\n645 \n",
+      "code": "640                             usage_files.append(str(file_path))\n641                 except Exception:\n642                     continue\n643 \n",
       "col_offset": 16,
       "end_col_offset": 28,
       "filename": "src/infrastructure\\tools\\validation\\core\\dependency_validator.py",
@@ -6335,17 +6335,17 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Try, Except, Continue detected.",
-      "line_number": 643,
+      "line_number": 641,
       "line_range": [
-        643,
-        644
+        641,
+        642
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b112_try_except_continue.html",
       "test_id": "B112",
       "test_name": "try_except_continue"
     },
     {
-      "code": "659                             usage_files.append(str(file_path))\n660                 except Exception:\n661                     continue\n662 \n",
+      "code": "657                             usage_files.append(str(file_path))\n658                 except Exception:\n659                     continue\n660 \n",
       "col_offset": 16,
       "end_col_offset": 28,
       "filename": "src/infrastructure\\tools\\validation\\core\\dependency_validator.py",
@@ -6356,17 +6356,17 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Try, Except, Continue detected.",
-      "line_number": 660,
+      "line_number": 658,
       "line_range": [
-        660,
-        661
+        658,
+        659
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b112_try_except_continue.html",
       "test_id": "B112",
       "test_name": "try_except_continue"
     },
     {
-      "code": "682                             usage_files.append(str(file_path))\n683                 except Exception:\n684                     continue\n685 \n",
+      "code": "680                             usage_files.append(str(file_path))\n681                 except Exception:\n682                     continue\n683 \n",
       "col_offset": 16,
       "end_col_offset": 28,
       "filename": "src/infrastructure\\tools\\validation\\core\\dependency_validator.py",
@@ -6377,17 +6377,17 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Try, Except, Continue detected.",
-      "line_number": 683,
+      "line_number": 681,
       "line_range": [
-        683,
-        684
+        681,
+        682
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b112_try_except_continue.html",
       "test_id": "B112",
       "test_name": "try_except_continue"
     },
     {
-      "code": "711 \n712         except Exception:\n713             pass\n714 \n",
+      "code": "709 \n710         except Exception:\n711             pass\n712 \n",
       "col_offset": 8,
       "end_col_offset": 16,
       "filename": "src/infrastructure\\tools\\validation\\core\\dependency_validator.py",
@@ -6398,10 +6398,10 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Try, Except, Pass detected.",
-      "line_number": 712,
+      "line_number": 710,
       "line_range": [
-        712,
-        713
+        710,
+        711
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
       "test_id": "B110",

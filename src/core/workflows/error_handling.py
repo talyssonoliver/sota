@@ -7,7 +7,7 @@ try:
     import time
     from datetime import datetime, timedelta
 except ImportError:
-    import time
+    pass
 try:
     from enum import Enum
 except ImportError:

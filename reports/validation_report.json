@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-07-19 14:34:22",
+  "timestamp": "2025-07-20 10:15:57",
   "validation_system": "Validation Pipeline v3.0",
   "summary": {
     "overall_success": false,
     "can_merge": false,
-    "total_duration": 79.25850486755371,
+    "total_duration": 486.6148428916931,
     "phases_completed": 5,
-    "total_issues": 6080,
-    "critical_issues": 18,
-    "warnings": 5145,
-    "info_issues": 917,
+    "total_issues": 6066,
+    "critical_issues": 26,
+    "warnings": 5124,
+    "info_issues": 916,
     "build_decision": {
       "allow_merge": false,
       "require_review": false,
@@ -23,7 +23,7 @@
   "phase_results": {
     "preparation": {
       "success": true,
-      "duration": 0.040264129638671875,
+      "duration": 0.03735089302062988,
       "issues_found": 0,
       "critical_issues": 0,
       "warnings": 0,
@@ -42,8 +42,8 @@
     },
     "static_analysis": {
       "success": true,
-      "duration": 27.15437602996826,
-      "issues_found": 1628,
+      "duration": 55.729270458221436,
+      "issues_found": 1640,
       "critical_issues": 0,
       "warnings": 0,
       "info": 0,
@@ -68,17 +68,17 @@
         "issues_by_category": {
           "syntax": 0,
           "dependencies": 72,
-          "structure": 207,
-          "performance": 820,
-          "ai_analysis": 0,
+          "structure": 208,
+          "performance": 823,
+          "ai_analysis": 10,
           "business_logic": 0
         }
       }
     },
     "quality_gates": {
       "success": false,
-      "duration": 2.966008424758911,
-      "issues_found": 1631,
+      "duration": 144.8104908466339,
+      "issues_found": 1643,
       "critical_issues": 0,
       "warnings": 0,
       "info": 0,
@@ -99,10 +99,10 @@
         "technical_debt": {
           "bugs": 0.0,
           "vulnerabilities": 32.0,
-          "code_smells": 41.5,
+          "code_smells": 35.25,
           "security_hotspots": 159.0,
-          "total_hours": 232.5,
-          "total_days": 29.0625
+          "total_hours": 226.25,
+          "total_days": 28.28125
         },
         "iso_25010_compliance": {
           "functionality": {
@@ -152,8 +152,8 @@
     },
     "security_scan": {
       "success": true,
-      "duration": 36.10299611091614,
-      "issues_found": 6071,
+      "duration": 110.4197518825531,
+      "issues_found": 6058,
       "critical_issues": 0,
       "warnings": 0,
       "info": 0,
@@ -193,7 +193,7 @@
           },
           "ruff": {
             "returncode": 1,
-            "issues_found": 166
+            "issues_found": 141
           },
           "bandit": {
             "returncode": 1,
@@ -204,8 +204,8 @@
     },
     "nfr_validation": {
       "success": true,
-      "duration": 12.979459524154663,
-      "issues_found": 6080,
+      "duration": 39.347261905670166,
+      "issues_found": 6066,
       "critical_issues": 0,
       "warnings": 0,
       "info": 0,
@@ -233,8 +233,8 @@
           "encryption_usage": 0.24271844660194172
         },
         "maintainability_metrics": {
-          "average_complexity": 2.7221963161576124,
-          "duplication_percentage": 48.453523282510155,
+          "average_complexity": 2.721963161576125,
+          "duplication_percentage": 48.43516260880832,
           "documentation_coverage": 86.73010837959292
         },
         "performance_profiles": [
@@ -538,11 +538,6 @@
             "category": "nfr"
           },
           {
-            "metric": "Test coverage should be at least 80% (Actual",
-            "severity": "error",
-            "category": "nfr"
-          },
-          {
             "metric": "API design consistency should be at least 95% (Actual",
             "severity": "warning",
             "category": "nfr"
@@ -562,22 +557,23 @@
     }
   },
   "issues_by_category": {
-    "imports": 507,
+    "imports": 505,
     "dependencies": 72,
-    "structure": 207,
+    "structure": 208,
     "documentation": 258,
     "coverage": 1,
-    "performance": 820,
+    "performance": 823,
+    "ai_analysis": 10,
     "quality_gates": 3,
-    "code_quality": 165,
+    "code_quality": 140,
     "security": 3881,
     "complexity": 157,
-    "nfr": 9
+    "nfr": 8
   },
   "issues_by_severity": {
-    "info": 917,
-    "warning": 5145,
-    "error": 18
+    "info": 916,
+    "warning": 5124,
+    "error": 26
   },
   "compliance_assessment": {
     "overall_compliance_percentage": 20.0,
@@ -626,7 +622,7 @@
     "  - vulnerabilities",
     "\ud83d\udcd0 COMPLIANCE: 20.0% compliance with software engineering principles"
   ],
-  "total_issues": 6080,
+  "total_issues": 6066,
   "top_issues_summary": [
     {
       "issue": "security:other",
@@ -636,13 +632,13 @@
     },
     {
       "issue": "performance:other",
-      "count": 820,
+      "count": 823,
       "severity": "warning",
       "message": "Function 'analyze_import_chain' is too long (66 lines)"
     },
     {
       "issue": "imports:other",
-      "count": 507,
+      "count": 505,
       "severity": "info",
       "message": "Optional dependency detected: 'typing' (handled gracefully)"
     },
@@ -654,15 +650,9 @@
     },
     {
       "issue": "structure:other",
-      "count": 207,
+      "count": 208,
       "severity": "warning",
-      "message": "Empty directory: archives\\cold"
-    },
-    {
-      "issue": "code_quality:other",
-      "count": 165,
-      "severity": "warning",
-      "message": "Ruff: Module level import not at top of file"
+      "message": "Empty directory: .sota_backups"
     },
     {
       "issue": "complexity:other",
@@ -671,22 +661,28 @@
       "message": "Function 'analyze_import_chain' is too long (67 lines)"
     },
     {
+      "issue": "code_quality:other",
+      "count": 140,
+      "severity": "warning",
+      "message": "Ruff: Module level import not at top of file"
+    },
+    {
       "issue": "dependencies:other",
       "count": 72,
       "severity": "info",
-      "message": "Development tool in main requirements: pytest-mock"
+      "message": "Development tool in main requirements: pytest-asyncio"
+    },
+    {
+      "issue": "ai_analysis:other",
+      "count": 10,
+      "severity": "info",
+      "message": "Mixed naming conventions in functions: 287 snake_case, 2 camelCase"
     },
     {
       "issue": "nfr:other",
-      "count": 9,
+      "count": 8,
       "severity": "error",
       "message": "NFR violation: All protected endpoints must have authentication (Actual: 25.00 percentage)"
-    },
-    {
-      "issue": "quality_gates:other",
-      "count": 3,
-      "severity": "error",
-      "message": "Quality Gate Failed: \u274c Test coverage must be at least 80% (Failed: 30.427965997893242 >= 80.0)"
     }
   ],
   "issues_grouped": [
@@ -749,7 +745,7 @@
       "message_pattern": "Function 'analyze_import_chain' is too long (66 lines)",
       "fix_suggestion": "Consider splitting function (current: 66, max: 50)",
       "auto_fixable": false,
-      "count": 820,
+      "count": 823,
       "sample_occurrences": [
         {
           "file": "C:\\taly\\ai-system\\detailed_import_analysis.py",
@@ -789,10 +785,10 @@
         },
         {
           "file": "C:\\taly\\ai-system\\scripts\\cleanup_hitl_storage.py",
-          "line": 114
+          "line": 113
         }
       ],
-      "total_occurrences": 820
+      "total_occurrences": 823
     },
     {
       "category": "imports",
@@ -801,7 +797,7 @@
       "message_pattern": "Optional dependency detected: 'typing' (handled gracefully)",
       "fix_suggestion": "",
       "auto_fixable": false,
-      "count": 507,
+      "count": 505,
       "sample_occurrences": [
         {
           "file": "C:\\taly\\ai-system\\main.py",
@@ -844,7 +840,7 @@
           "line": 0
         }
       ],
-      "total_occurrences": 507
+      "total_occurrences": 505
     },
     {
       "category": "documentation",
@@ -902,11 +898,15 @@
       "category": "structure",
       "type": "other",
       "severity": "warning",
-      "message_pattern": "Empty directory: archives\\cold",
+      "message_pattern": "Empty directory: .sota_backups",
       "fix_suggestion": "Remove empty directory or add placeholder file",
       "auto_fixable": true,
-      "count": 207,
+      "count": 208,
       "sample_occurrences": [
+        {
+          "file": "C:\\taly\\ai-system\\.sota_backups",
+          "line": 0
+        },
         {
           "file": "C:\\taly\\ai-system\\archives\\cold",
           "line": 0
@@ -942,13 +942,61 @@
         {
           "file": "C:\\taly\\ai-system\\reports\\qa",
           "line": 0
-        },
-        {
-          "file": "C:\\taly\\ai-system\\src\\infrastructure\\.approved",
-          "line": 0
         }
       ],
-      "total_occurrences": 207
+      "total_occurrences": 208
+    },
+    {
+      "category": "complexity",
+      "type": "other",
+      "severity": "warning",
+      "message_pattern": "Function 'analyze_import_chain' is too long (67 lines)",
+      "fix_suggestion": "Break down function into smaller, more manageable pieces",
+      "auto_fixable": false,
+      "count": 157,
+      "sample_occurrences": [
+        {
+          "file": "C:\\taly\\ai-system\\detailed_import_analysis.py",
+          "line": 42
+        },
+        {
+          "file": "C:\\taly\\ai-system\\main.py",
+          "line": 248
+        },
+        {
+          "file": "C:\\taly\\ai-system\\optimize_validation_performance.py",
+          "line": 9
+        },
+        {
+          "file": "C:\\taly\\ai-system\\scripts\\setup_sonarqube_integration.py",
+          "line": 16
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\core\\agents\\qa.py",
+          "line": 325
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\core\\domain\\business_rules.py",
+          "line": 324
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\core\\services\\checkpoint_service.py",
+          "line": 48
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\core\\services\\workflow_service.py",
+          "line": 53
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\core\\workflows\\automation_health_check.py",
+          "line": 29
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\core\\workflows\\complete_task.py",
+          "line": 118
+        }
+      ],
+      "total_occurrences": 157
     },
     {
       "category": "code_quality",
@@ -957,7 +1005,7 @@
       "message_pattern": "Ruff: Module level import not at top of file",
       "fix_suggestion": "Fix E402 violation",
       "auto_fixable": true,
-      "count": 165,
+      "count": 140,
       "sample_occurrences": [
         {
           "file": "C:\\taly\\ai-system\\src\\core\\workflows\\graph\\graph_builder.py",
@@ -1000,66 +1048,14 @@
           "line": 5
         }
       ],
-      "total_occurrences": 165
-    },
-    {
-      "category": "complexity",
-      "type": "other",
-      "severity": "warning",
-      "message_pattern": "Function 'analyze_import_chain' is too long (67 lines)",
-      "fix_suggestion": "Break down function into smaller, more manageable pieces",
-      "auto_fixable": false,
-      "count": 157,
-      "sample_occurrences": [
-        {
-          "file": "C:\\taly\\ai-system\\detailed_import_analysis.py",
-          "line": 42
-        },
-        {
-          "file": "C:\\taly\\ai-system\\main.py",
-          "line": 248
-        },
-        {
-          "file": "C:\\taly\\ai-system\\optimize_validation_performance.py",
-          "line": 9
-        },
-        {
-          "file": "C:\\taly\\ai-system\\scripts\\setup_sonarqube_integration.py",
-          "line": 16
-        },
-        {
-          "file": "C:\\taly\\ai-system\\src\\core\\agents\\qa.py",
-          "line": 328
-        },
-        {
-          "file": "C:\\taly\\ai-system\\src\\core\\domain\\business_rules.py",
-          "line": 324
-        },
-        {
-          "file": "C:\\taly\\ai-system\\src\\core\\services\\checkpoint_service.py",
-          "line": 48
-        },
-        {
-          "file": "C:\\taly\\ai-system\\src\\core\\services\\workflow_service.py",
-          "line": 53
-        },
-        {
-          "file": "C:\\taly\\ai-system\\src\\core\\workflows\\automation_health_check.py",
-          "line": 29
-        },
-        {
-          "file": "C:\\taly\\ai-system\\src\\core\\workflows\\complete_task.py",
-          "line": 118
-        }
-      ],
-      "total_occurrences": 157
+      "total_occurrences": 140
     },
     {
       "category": "dependencies",
       "type": "other",
       "severity": "info",
-      "message_pattern": "Development tool in main requirements: pytest-mock",
-      "fix_suggestion": "Consider moving pytest-mock to dev requirements",
+      "message_pattern": "Development tool in main requirements: pytest-asyncio",
+      "fix_suggestion": "Consider moving pytest-asyncio to dev requirements",
       "auto_fixable": false,
       "count": 72,
       "sample_occurrences": [
@@ -1107,18 +1103,66 @@
       "total_occurrences": 72
     },
     {
+      "category": "ai_analysis",
+      "type": "other",
+      "severity": "info",
+      "message_pattern": "Mixed naming conventions in functions: 287 snake_case, 2 camelCase",
+      "fix_suggestion": "Consider using consistent naming convention for functions",
+      "auto_fixable": false,
+      "count": 10,
+      "sample_occurrences": [
+        {
+          "file": "multiple_files",
+          "line": 0
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\ai\\pattern_detector.py",
+          "line": 139
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\ai\\pattern_detector.py",
+          "line": 546
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\ai\\pattern_detector.py",
+          "line": 852
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\ai\\pattern_detector.py",
+          "line": 140
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\ai\\pattern_detector.py",
+          "line": 547
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\ai\\pattern_detector.py",
+          "line": 853
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\ai\\pattern_detector.py",
+          "line": 141
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\ai\\pattern_detector.py",
+          "line": 548
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\ai\\pattern_detector.py",
+          "line": 854
+        }
+      ],
+      "total_occurrences": 10
+    },
+    {
       "category": "nfr",
       "type": "other",
       "severity": "error",
       "message_pattern": "NFR violation: All protected endpoints must have authentication (Actual: 25.00 percentage)",
       "fix_suggestion": "Improve authentication_coverage to meet threshold of 100.0 percentage",
       "auto_fixable": false,
-      "count": 9,
+      "count": 8,
       "sample_occurrences": [
-        {
-          "file": "system",
-          "line": 0
-        },
         {
           "file": "system",
           "line": 0
@@ -1152,13 +1196,13 @@
           "line": 0
         }
       ],
-      "total_occurrences": 9
+      "total_occurrences": 8
     },
     {
       "category": "quality_gates",
       "type": "other",
       "severity": "error",
-      "message_pattern": "Quality Gate Failed: \u274c Test coverage must be at least 80% (Failed: 30.427965997893242 >= 80.0)",
+      "message_pattern": "Quality Gate Failed: \u274c Test coverage must be at least 80% (Failed: 0.0 >= 80.0)",
       "fix_suggestion": "Fix test_coverage to meet threshold",
       "auto_fixable": false,
       "count": 3,

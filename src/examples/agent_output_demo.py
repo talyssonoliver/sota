@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 """
-import sys
 Step 4.4 — Register Agent Output Demo
 
 Demonstrates the complete agent output registration workflow
 with real examples and validation.
 """
-
 
 import os
 import sys

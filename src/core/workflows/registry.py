@@ -52,7 +52,7 @@ def create_technical_lead_agent(*args, **kwargs):
 
 def create_backend_engineer_agent(*args, **kwargs):
     """Create backend engineer agent."""
-    return {"type": "backend_engineer", "args": args, "kwargs": kwargs}
+    return {"type": "backend", "args": args, "kwargs": kwargs}
 
 
 def create_coordinator_agent(*args, **kwargs):
@@ -72,7 +72,7 @@ def create_documentation_agent(*args, **kwargs):
 
 def create_frontend_engineer_agent(*args, **kwargs):
     """Create frontend engineer agent."""
-    return {"type": "frontend_engineer", "args": args, "kwargs": kwargs}
+    return {"type": "frontend", "args": args, "kwargs": kwargs}
 
 
 __all__ = [

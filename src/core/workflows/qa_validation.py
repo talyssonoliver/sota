@@ -118,8 +118,7 @@ class QAValidationEngine:
             self._save_qa_results(qa_result)
 
             print(
-                f"✅ QA validation completed for {task_id}: {
-                    qa_result.overall_status}"
+                f"✅ QA validation completed for {task_id}: {qa_result.overall_status}"
             )
             return qa_result
 
@@ -177,8 +176,7 @@ class QAValidationEngine:
             )
             if additional_tests:
                 qa_result.recommendations.append(
-                    f"Generated {
-                        len(additional_tests)} additional tests to fill coverage gaps"
+                    f"Generated {len(additional_tests)} additional tests to fill coverage gaps"
                 )
 
         return qa_result
@@ -210,9 +208,7 @@ class QAValidationEngine:
                 # Add detailed coverage information to recommendations
                 if qa_result.coverage_percentage < self.config.min_coverage:
                     qa_result.recommendations.append(
-                        f"Coverage ({
-                            qa_result.coverage_percentage:.1f}%) below threshold ({
-                            self.config.min_coverage}%)"
+                        f"Coverage ({qa_result.coverage_percentage:.1f}%) below threshold ({self.config.min_coverage}%)"
                     )
 
                 # Add specific gap recommendations
@@ -240,16 +236,14 @@ class QAValidationEngine:
                 coverage_data = self._calculate_mock_coverage(task_id)
                 qa_result.coverage_percentage = coverage_data["overall"]
                 print(
-                    f"    📊 Using mock coverage: {
-                        qa_result.coverage_percentage:.1f}%"
+                    f"    📊 Using mock coverage: {qa_result.coverage_percentage:.1f}%"
                 )
         else:
             # Use mock coverage calculation
             coverage_data = self._calculate_mock_coverage(task_id)
             qa_result.coverage_percentage = coverage_data["overall"]
             print(
-                f"    📊 Using mock coverage: {
-                    qa_result.coverage_percentage:.1f}%"
+                f"    📊 Using mock coverage: {qa_result.coverage_percentage:.1f}%"
             )
 
         return qa_result
@@ -684,9 +678,7 @@ def main():
             print(f"Status: {qa_result.overall_status}")
             print(f"Coverage: {qa_result.coverage_percentage:.1f}%")
             print(
-                f"Tests: {
-                    qa_result.tests_passed} passed, {
-                    qa_result.tests_failed} failed"
+                f"Tests: {qa_result.tests_passed} passed, {qa_result.tests_failed} failed"
             )
             print(f"Recommendations: {len(qa_result.recommendations)}")
 

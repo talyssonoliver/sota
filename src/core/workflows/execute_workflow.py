@@ -11,14 +11,6 @@ from datetime import datetime
 from pathlib import Path
 
 try:
-    from datetime import datetime
-except ImportError:
-    pass
-try:
-    from pathlib import Path
-except ImportError:
-    pass
-try:
     from pythonjsonlogger import jsonlogger
 except ImportError:
     jsonlogger = None
@@ -215,8 +207,6 @@ def execute_task(
         logger.info("Results saved", extra={"task_id": task_id, "event": "save_result"})
 
     return result
-
-    pass  # Use fallback/mock implementation
 
 
 def load_all_tasks():
