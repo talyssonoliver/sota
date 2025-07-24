@@ -74,6 +74,50 @@ class QATestFramework:
         return f"Test Report: {passed}/{total} tests passed"
 
 
+class QATestGenerator:
+    """Generate QA tests for enhanced testing."""
+    
+    def __init__(self, language: CodeLanguage = CodeLanguage.PYTHON):
+        """Initialize QA test generator."""
+        self.language = language
+        self.test_cases: List[QATestCase] = []
+        
+    def generate_test_cases(self, module_path: str, test_types: Optional[List[str]] = None) -> List[QATestCase]:
+        """Generate test cases for a module."""
+        if test_types is None:
+            test_types = ["unit", "integration", "functional"]
+            
+        module_name = Path(module_path).stem
+        generated_cases = []
+        
+        for test_type in test_types:
+            test_case = QATestCase(
+                name=f"test_{module_name}_{test_type}",
+                description=f"{test_type.title()} test for {module_name}",
+                test_type=test_type
+            )
+            generated_cases.append(test_case)
+            
+        self.test_cases.extend(generated_cases)
+        return generated_cases
+        
+    def generate_coverage_tests(self, source_files: List[str]) -> List[QATestCase]:
+        """Generate coverage-focused test cases."""
+        coverage_tests = []
+        
+        for source_file in source_files:
+            file_name = Path(source_file).stem
+            test_case = QATestCase(
+                name=f"test_{file_name}_coverage",
+                description=f"Coverage test for {file_name}",
+                test_type="coverage"
+            )
+            coverage_tests.append(test_case)
+            
+        self.test_cases.extend(coverage_tests)
+        return coverage_tests
+
+
 class TestGenerator:
     """Generate test cases for infrastructure components."""
 
@@ -127,4 +171,4 @@ def create_test_fixture(name: str, data: Any) -> Dict[str, Any]:
     }
 
 
-__all__ = ["TestGenerator", "generate_component_test", "create_test_fixture", "CodeLanguage", "QATestCase", "QATestFramework"]
+__all__ = ["TestGenerator", "generate_component_test", "create_test_fixture", "CodeLanguage", "QATestCase", "QATestFramework", "QATestGenerator"]
