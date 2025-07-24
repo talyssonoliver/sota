@@ -1,0 +1,102 @@
+name: Architecture Compliance Check
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  architecture-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    
+    - name: Architecture Compliance Check
+      run: |
+        echo "🏗️ Checking architecture compliance..."
+        
+        # Check for deprecated import patterns
+        VIOLATIONS=false
+        
+        echo "Checking for deprecated import patterns..."
+        if grep -r "from orchestration\." src/ tests/ --include="*.py" 2>/dev/null; then
+          echo "❌ Found deprecated 'from orchestration.' imports"
+          echo "💡 Use: from src.core.workflows."
+          VIOLATIONS=true
+        fi
+        
+        if grep -r "from tools\." src/ tests/ --include="*.py" 2>/dev/null | grep -v "from tools.memory."; then
+          echo "❌ Found deprecated 'from tools.' imports"
+          echo "💡 Use: from src.infrastructure.tools."
+          VIOLATIONS=true
+        fi
+        
+        if grep -r "from memory\." src/ tests/ --include="*.py" 2>/dev/null; then
+          echo "❌ Found deprecated 'from memory.' imports"
+          echo "💡 Use: from src.infrastructure.memory."
+          VIOLATIONS=true
+        fi
+        
+        # Check for files in deprecated directories
+        echo "Checking for files in deprecated directories..."
+        DEPRECATED_DIRS="orchestration tools/memory handlers memory-bank patches"
+        for dir in $DEPRECATED_DIRS; do
+          if [ -d "$dir" ] && [ -n "$(find $dir -name "*.py" 2>/dev/null)" ]; then
+            echo "❌ Found Python files in deprecated directory: $dir"
+            find $dir -name "*.py"
+            echo "💡 Move files to /src/ structure"
+            VIOLATIONS=true
+          fi
+        done
+        
+        # Check src/ structure compliance
+        echo "Validating /src/ structure..."
+        if [ ! -d "src/core" ]; then
+          echo "❌ Missing src/core/ directory"
+          VIOLATIONS=true
+        fi
+        
+        if [ ! -d "src/infrastructure" ]; then
+          echo "❌ Missing src/infrastructure/ directory"
+          VIOLATIONS=true
+        fi
+        
+        if [ ! -d "src/interfaces" ]; then
+          echo "❌ Missing src/interfaces/ directory"
+          VIOLATIONS=true
+        fi
+        
+        # Summary
+        if [ "$VIOLATIONS" = true ]; then
+          echo ""
+          echo "❌ Architecture compliance check FAILED"
+          echo "📚 See docs/ARCHITECTURE.md for guidance"
+          echo "📝 Check CLAUDE.md for correct import patterns"
+          exit 1
+        else
+          echo ""
+          echo "✅ Architecture compliance check PASSED"
+          echo "🎉 All files follow the clean /src/ architecture"
+        fi
+    
+    - name: Test Collection Check
+      run: |
+        echo "🧪 Verifying all tests can be collected..."
+        python -m pip install pytest
+        
+        # Check if tests can be collected successfully
+        if python -m pytest --collect-only --tb=short > /dev/null 2>&1; then
+          echo "✅ All tests collect successfully"
+          python -m pytest --collect-only --tb=short | tail -3
+        else
+          echo "❌ Test collection failed"
+          python -m pytest --collect-only --tb=short
+          exit 1
+        fi

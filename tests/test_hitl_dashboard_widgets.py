@@ -14,11 +14,11 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-from dashboard.hitl_widgets import (
+from src.interfaces.dashboard.hitl_widgets import (
     HITLPendingReviewsWidget, HITLApprovalActionsWidget,
     HITLMetricsWidget, HITLWorkflowStatusWidget, HITLDashboardManager
 )
-from orchestration.hitl_engine import HITLCheckpoint, CheckpointStatus, RiskLevel
+from src.infrastructure.hitl.hitl_engine import HITLCheckpoint, CheckpointStatus, RiskLevel
 
 
 class TestHITLPendingReviewsWidget(unittest.TestCase):

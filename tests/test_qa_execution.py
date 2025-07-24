@@ -15,8 +15,8 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
-from orchestration.langgraph_qa_integration import LangGraphQAIntegration
-from orchestration.qa_execution import QAExecutionEngine, execute_qa_validation
+from src.core.workflows.langgraph_qa_integration import LangGraphQAIntegration
+from src.core.workflows.qa_execution import QAExecutionEngine, execute_qa_validation
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))

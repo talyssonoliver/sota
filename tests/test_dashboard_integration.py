@@ -23,9 +23,9 @@ import os
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from scripts.update_dashboard import DashboardUpdater
-from scripts.generate_progress_report import ProgressReportGenerator
-from utils.completion_metrics import CompletionMetricsCalculator
+from src.infrastructure.scripts.monitoring.update_dashboard import DashboardUpdater
+from src.infrastructure.scripts.generation.generate_progress_report import ProgressReportGenerator
+from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
 
 
 class TestDashboardUpdater(unittest.TestCase):

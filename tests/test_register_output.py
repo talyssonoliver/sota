@@ -16,7 +16,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from orchestration.register_output import (AgentOutputRegistration,
+from src.core.workflows.register_output import (AgentOutputRegistration,
                                            AgentOutputRegistry)
 
 # Add parent directory to path for imports

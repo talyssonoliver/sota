@@ -63,7 +63,7 @@ def ensure_check_recursion_method(executor_instance):
                     MagicMock):
                 from datetime import datetime
 
-                from orchestration.states import TaskStatus
+                from src.core.workflows.states import TaskStatus
                 result = {
                     "task_id": "BE-07",
                     "status": TaskStatus.BLOCKED,  # Recursion limit reached

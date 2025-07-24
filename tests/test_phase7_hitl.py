@@ -28,22 +28,22 @@ import yaml
 import sys
 sys.path.append(str(Path(__file__).parent.parent))
 
-from orchestration.hitl_engine import (
+from src.infrastructure.hitl.hitl_engine import (
     HITLPolicyEngine, HITLCheckpoint, HITLReviewDecision,
     CheckpointStatus, RiskLevel, HITLAuditEntry
 )
-from orchestration.notification_handlers import (
+from src.core.workflows.notification_handlers import (
     NotificationHandler, DashboardNotificationHandler, 
     EmailNotificationHandler, SlackNotificationHandler
 )
-from orchestration.hitl_task_metadata import (
+from src.core.workflows.hitl_task_metadata import (
     HITLTaskMetadata, HITLCheckpointMetadata, HITLTaskMetadataManager
 )
-from dashboard.hitl_widgets import (
+from src.interfaces.dashboard.hitl_widgets import (
     HITLPendingReviewsWidget, HITLApprovalActionsWidget,
     HITLMetricsWidget, HITLWorkflowStatusWidget, HITLDashboardManager
 )
-from api.hitl_routes import create_hitl_blueprint
+from src.interfaces.api.hitl_routes import create_hitl_blueprint
 from flask import Flask
 
 

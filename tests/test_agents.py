@@ -16,10 +16,10 @@ from langchain_core.tools import BaseTool
 # Add import from langchain_core
 from langchain_core.tools import BaseTool as CoreBaseTool
 
-from agents import (create_backend_engineer_agent, create_coordinator_agent,
+from src.core.workflows.registry import (create_backend_engineer_agent, create_coordinator_agent,
                     create_documentation_agent, create_frontend_engineer_agent,
                     create_qa_agent, create_technical_lead_agent)
-from orchestration.registry import get_agent_config, get_agent_for_task
+from src.core.workflows.registry import get_agent_config, get_agent_for_task
 # Import test environment setup FIRST before any other imports
 # This sets the TESTING environment variable and mocks prompt loading
 from tests.test_environment import *
@@ -72,35 +72,19 @@ class TestAgentInstantiation(unittest.TestCase):
                 tool_name, f"Mock {tool_name} description")
             self.tool_mocks[tool_name] = mock_tool
 
-    @patch('agents.coordinator.ChatOpenAI')
-    @patch('agents.coordinator.get_context_by_keys')
-    @patch('agents.coordinator.Agent')
-    def test_coordinator_agent_creation(
-            self,
-            mock_agent_class,
-            mock_get_context,
-            mock_chat_openai):
+    def test_coordinator_agent_creation(self):
         """Test creation of the coordinator agent."""
-        mock_chat_instance = MagicMock()
-        mock_chat_openai.return_value = mock_chat_instance
-        mock_get_context.return_value = {}
-
-        # Create a mock agent instance that will be returned by the Agent
-        # constructor
-        mock_agent_instance = MagicMock()
-        mock_agent_instance.role = "Project Manager"
-        mock_agent_class.return_value = mock_agent_instance
-
-        agent = create_coordinator_agent(
-            llm_model="gpt-3.5-turbo-16k", custom_tools=[])
+        agent = create_coordinator_agent()
         self.assertIsNotNone(agent)
-        self.assertEqual(agent.role, "Project Manager")
+        # Test that it's a Coordinator instance
+        from src.core.agents.coordinator import Coordinator
+        self.assertIsInstance(agent, Coordinator)
 
-    @patch('agents.technical.ChatOpenAI')
-    @patch('agents.technical.get_context_by_keys')
-    @patch('agents.technical.VercelTool')
-    @patch('agents.technical.GitHubTool')
-    @patch('agents.technical.os')
+    @patch('src.core.agents.technical.ChatOpenAI')
+    @patch('src.core.agents.technical.get_context_by_keys')
+    @patch('src.core.agents.technical.VercelTool')
+    @patch('src.core.agents.technical.GitHubTool')
+    @patch('src.core.agents.technical.os')
     def test_technical_lead_agent_creation(
             self,
             mock_os,
@@ -134,11 +118,11 @@ class TestAgentInstantiation(unittest.TestCase):
         agent = create_technical_lead_agent(custom_tools=[])
         self.assertIsNotNone(agent)
 
-    @patch('agents.backend.ChatOpenAI')
-    @patch('agents.backend.get_context_by_keys')
-    @patch('agents.backend.SupabaseTool')
-    @patch('agents.backend.GitHubTool')
-    @patch('agents.backend.os')
+    @patch('src.core.agents.backend.ChatOpenAI')
+    @patch('src.core.agents.backend.get_context_by_keys')
+    @patch('src.core.agents.backend.SupabaseTool')
+    @patch('src.core.agents.backend.GitHubTool')
+    @patch('src.core.agents.backend.os')
     def test_backend_engineer_agent_creation(
             self,
             mock_os,
@@ -156,11 +140,11 @@ class TestAgentInstantiation(unittest.TestCase):
         agent = create_backend_engineer_agent(custom_tools=[])
         self.assertIsNotNone(agent)
 
-    @patch('agents.frontend.ChatOpenAI')
-    @patch('agents.frontend.get_context_by_keys')
-    @patch('agents.frontend.TailwindTool')
-    @patch('agents.frontend.GitHubTool')
-    @patch('agents.frontend.os')
+    @patch('src.core.agents.frontend.ChatOpenAI')
+    @patch('src.core.agents.frontend.get_context_by_keys')
+    @patch('src.core.agents.frontend.TailwindTool')
+    @patch('src.core.agents.frontend.GitHubTool')
+    @patch('src.core.agents.frontend.os')
     def test_frontend_engineer_agent_creation(
             self,
             mock_os,
@@ -178,11 +162,11 @@ class TestAgentInstantiation(unittest.TestCase):
         agent = create_frontend_engineer_agent(custom_tools=[])
         self.assertIsNotNone(agent)
 
-    @patch('agents.doc.ChatOpenAI')
-    @patch('agents.doc.get_context_by_keys')
-    @patch('agents.doc.MarkdownTool')
-    @patch('agents.doc.GitHubTool')
-    @patch('agents.doc.os')
+    @patch('src.core.agents.doc.ChatOpenAI')
+    @patch('src.core.agents.doc.get_context_by_keys')
+    @patch('src.core.agents.doc.MarkdownTool')
+    @patch('src.core.agents.doc.GitHubTool')
+    @patch('src.core.agents.doc.os')
     def test_documentation_agent_creation(
             self,
             mock_os,
@@ -200,12 +184,12 @@ class TestAgentInstantiation(unittest.TestCase):
         agent = create_documentation_agent(custom_tools=[])
         self.assertIsNotNone(agent)
 
-    @patch('agents.qa.ChatOpenAI')
-    @patch('agents.qa.get_context_by_keys')
-    @patch('agents.qa.JestTool')
-    @patch('agents.qa.CypressTool')
-    @patch('agents.qa.CoverageTool')
-    @patch('agents.qa.os')
+    @patch('src.core.agents.qa.ChatOpenAI')
+    @patch('src.core.agents.qa.get_context_by_keys')
+    @patch('src.core.agents.qa.JestTool')
+    @patch('src.core.agents.qa.CypressTool')
+    @patch('src.core.agents.qa.CoverageTool')
+    @patch('src.core.agents.qa.os')
     def test_qa_agent_creation(
             self,
             mock_os,
@@ -224,11 +208,11 @@ class TestAgentInstantiation(unittest.TestCase):
         agent = create_qa_agent(custom_tools=[])
         self.assertIsNotNone(agent)
 
-    @patch('agents.backend.ChatOpenAI')
-    @patch('agents.backend.get_context_by_keys')
-    @patch('agents.backend.SupabaseTool')
-    @patch('agents.backend.GitHubTool')
-    @patch('agents.backend.os')
+    @patch('src.core.agents.backend.ChatOpenAI')
+    @patch('src.core.agents.backend.get_context_by_keys')
+    @patch('src.core.agents.backend.SupabaseTool')
+    @patch('src.core.agents.backend.GitHubTool')
+    @patch('src.core.agents.backend.os')
     def test_custom_tools_integration(
             self,
             mock_os,
@@ -255,10 +239,10 @@ class TestAgentInstantiation(unittest.TestCase):
         memory_config = {"type": "redis", "ttl": 3600}
 
         # Mock the Agent class directly where it's imported in frontend.py
-        with patch('agents.frontend.Agent') as mock_agent_class, \
-                patch('agents.frontend.ChatOpenAI') as mock_chat_openai, \
-                patch('agents.frontend.get_context_by_keys') as mock_get_context, \
-                patch('agents.frontend.os') as mock_os:
+        with patch('src.core.agents.frontend.Agent') as mock_agent_class, \
+                patch('src.core.agents.frontend.ChatOpenAI') as mock_chat_openai, \
+                patch('src.core.agents.frontend.get_context_by_keys') as mock_get_context, \
+                patch('src.core.agents.frontend.os') as mock_os:
 
             # Set up the mock environment
             mock_agent_instance = MagicMock()
@@ -268,7 +252,7 @@ class TestAgentInstantiation(unittest.TestCase):
             mock_os.environ.get.return_value = "1"  # Set TESTING=1
 
             # Import the module after patching
-            from agents.frontend import create_frontend_engineer_agent
+            from src.core.agents.frontend import create_frontend_engineer_agent
 
             # Create the agent with memory config
             agent = create_frontend_engineer_agent(
@@ -286,11 +270,11 @@ class TestAgentInstantiation(unittest.TestCase):
 class TestAgentFunctionality(unittest.TestCase):
     """Test agent functional capabilities."""
 
-    @patch('agents.technical.ChatOpenAI')
-    @patch('agents.technical.get_context_by_keys')
-    @patch('agents.technical.VercelTool')
-    @patch('agents.technical.GitHubTool')
-    @patch('agents.technical.os')
+    @patch('src.core.agents.technical.ChatOpenAI')
+    @patch('src.core.agents.technical.get_context_by_keys')
+    @patch('src.core.agents.technical.VercelTool')
+    @patch('src.core.agents.technical.GitHubTool')
+    @patch('src.core.agents.technical.os')
     def test_agent_run_method(
             self,
             mock_os,
@@ -327,7 +311,7 @@ class TestAgentFunctionality(unittest.TestCase):
         # Just verify the agent was created successfully
         self.assertIsNotNone(agent)
 
-    @patch('orchestration.registry.create_agent_instance')
+    @patch('src.core.workflows.registry.create_agent_instance')
     def test_agent_for_task_lookup(self, mock_create_agent_instance):
         """Test that we can get the correct agent for a task ID."""
         # Set up mock return values
@@ -352,11 +336,11 @@ class TestAgentFunctionality(unittest.TestCase):
 class TestAgentToolIntegration(unittest.TestCase):
     """Test integration between agents and their tools."""
 
-    @patch('agents.backend.ChatOpenAI')
-    @patch('agents.backend.get_context_by_keys')
-    @patch('agents.backend.SupabaseTool')
-    @patch('agents.backend.GitHubTool')
-    @patch('agents.backend.os')
+    @patch('src.core.agents.backend.ChatOpenAI')
+    @patch('src.core.agents.backend.get_context_by_keys')
+    @patch('src.core.agents.backend.SupabaseTool')
+    @patch('src.core.agents.backend.GitHubTool')
+    @patch('src.core.agents.backend.os')
     def test_backend_agent_tool_initialization(
             self,
             mock_os,
@@ -373,12 +357,12 @@ class TestAgentToolIntegration(unittest.TestCase):
         agent = create_backend_engineer_agent()
         self.assertIsNotNone(agent)
 
-    @patch('agents.qa.ChatOpenAI')
-    @patch('agents.qa.get_context_by_keys')
-    @patch('agents.qa.JestTool')
-    @patch('agents.qa.CypressTool')
-    @patch('agents.qa.CoverageTool')
-    @patch('agents.qa.os')
+    @patch('src.core.agents.qa.ChatOpenAI')
+    @patch('src.core.agents.qa.get_context_by_keys')
+    @patch('src.core.agents.qa.JestTool')
+    @patch('src.core.agents.qa.CypressTool')
+    @patch('src.core.agents.qa.CoverageTool')
+    @patch('src.core.agents.qa.os')
     def test_qa_agent_tool_initialization(
             self,
             mock_os,

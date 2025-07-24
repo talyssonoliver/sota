@@ -1,0 +1,82 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/mnt/c/taly/ai-system"],
+      "env": {
+        "FILESYSTEM_ROOT": "/mnt/c/taly/ai-system"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${PERSONAL_ACCESS_TOKEN}"
+      }
+    }
+  },
+  "aiSystemIntegration": {
+    "memoryEngine": {
+      "enabled": true,
+      "configPath": "src/infrastructure/memory/config/memory_config.py",
+      "contextDomains": [
+        "backend_engineering",
+        "frontend_development", 
+        "qa_testing",
+        "technical_architecture",
+        "product_management",
+        "ux_design"
+      ]
+    },
+    "workflowEngine": {
+      "enabled": true,
+      "taskDirectory": "src/core/tasks",
+      "workflowDirectory": "src/core/workflows",
+      "outputDirectory": "outputs"
+    },
+    "agentSystem": {
+      "enabled": true,
+      "factoryPath": "src/core/agents/factory.py",
+      "configPath": "config/agents.yaml",
+      "toolsPath": "src/infrastructure/tools"
+    },
+    "monitoring": {
+      "enabled": true,
+      "logsDirectory": "logs",
+      "dashboardPort": 5000,
+      "metricsEnabled": true
+    }
+  },
+  "developmentSettings": {
+    "autoFormat": true,
+    "runTestsOnSave": false,
+    "lintOnSave": true,
+    "typeCheckOnSave": false,
+    "securityScanOnCommit": true,
+    "generateDocumentation": true
+  },
+  "integrations": {
+    "vscode": {
+      "enabled": true,
+      "settingsPath": ".vscode/settings.json"
+    },
+    "docker": {
+      "enabled": true,
+      "composeFile": "docker-compose.dev.yml"
+    },
+    "kubernetes": {
+      "enabled": false,
+      "namespace": "ai-system-dev"
+    }
+  },
+  "security": {
+    "allowedCommands": [
+      "python", "python3", "pip", "pytest", "git", "make", "npm", "docker"
+    ],
+    "restrictedPaths": [
+      "/etc", "/var", "/usr", "/bin", "/sbin"
+    ],
+    "enableAuditLog": true,
+    "auditLogPath": "logs/mcp-audit.log"
+  }
+}

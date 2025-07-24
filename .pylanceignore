@@ -1,0 +1,75 @@
+# Pylance ignore file for performance optimization
+# This excludes heavy directories from Pylance analysis
+
+# Build and distribution directories
+build/
+dist/
+deployment/
+backup/
+
+# Cache and temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs and outputs
+logs/
+test_logs/
+test_outputs/
+outputs/
+reports/
+*.log
+
+# Data directories (often large)
+data/storage/
+data/context/
+storage/
+
+# Development tools
+.git/
+.vscode/
+node_modules/
+
+# Test artifacts
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE files
+.idea/
+.spyderproject
+.spyproject
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation builds
+docs/_build/
+docs/build/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Large data files
+*.h5
+*.hdf5
+*.pkl
+*.pickle
+*.parquet

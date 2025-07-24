@@ -16,7 +16,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from orchestration.extract_code import CodeExtractionResult, CodeExtractor
+from src.core.workflows.extract_code import CodeExtractionResult, CodeExtractor
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

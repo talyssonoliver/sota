@@ -1,0 +1,25 @@
+{
+  "total_files": 5,
+  "dependencies": {
+    "tests/utils/__init__.py": [],
+    "src/infrastructure/memory/__init__.py": [],
+    "main.py": [],
+    "src/infrastructure/memory/security/__init__.py": [],
+    "src/infrastructure/security/__init__.py": []
+  },
+  "reverse_dependencies": {},
+  "parallel_batches": [
+    {
+      "type": "parallel",
+      "files": [
+        "tests/utils/__init__.py",
+        "src/infrastructure/memory/__init__.py",
+        "main.py",
+        "src/infrastructure/memory/security/__init__.py",
+        "src/infrastructure/security/__init__.py"
+      ],
+      "description": "Independent files (no internal dependencies)"
+    }
+  ],
+  "conflict_risk": false
+}

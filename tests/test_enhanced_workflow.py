@@ -14,9 +14,9 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-from graph.notifications import NotificationLevel
-from orchestration.enhanced_workflow import EnhancedWorkflowExecutor
-from orchestration.states import TaskStatus
+from src.core.graph.notifications import NotificationLevel
+from src.core.workflows.enhanced_workflow import EnhancedWorkflowExecutor
+from src.core.workflows.states import TaskStatus
 from tests.test_utils import TestFeedback, Timer
 
 # Add parent directory to path to allow imports

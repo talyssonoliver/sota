@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch, MagicMock
 from pathlib import Path
 
 # Test imports for the feedback system (to be implemented)
-from utils.feedback_system import (
+from src.infrastructure.utils.feedback_system import (
     FeedbackSystem,
     FeedbackStorage,
     FeedbackAnalytics,
@@ -541,7 +541,7 @@ class TestFeedbackSystemCLI:
     
     def test_cli_feedback_summary(self):
         """Test CLI command for feedback summary"""
-        from cli.feedback_cli import FeedbackCLI
+        from src.interfaces.cli.feedback_cli import FeedbackCLI
         
         cli = FeedbackCLI()
         
@@ -558,7 +558,7 @@ class TestFeedbackSystemCLI:
     
     def test_cli_analytics_report(self):
         """Test CLI command for analytics report"""
-        from cli.feedback_cli import FeedbackCLI
+        from src.interfaces.cli.feedback_cli import FeedbackCLI
         
         cli = FeedbackCLI()
         
@@ -574,7 +574,7 @@ class TestFeedbackSystemCLI:
     
     def test_cli_export_data(self):
         """Test CLI command for data export"""
-        from cli.feedback_cli import FeedbackCLI
+        from src.interfaces.cli.feedback_cli import FeedbackCLI
         
         cli = FeedbackCLI()
         

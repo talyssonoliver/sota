@@ -18,8 +18,8 @@ import sys
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from scripts.generate_task_report import main as generate_task_report_main
-from scripts.generate_task_report import generate_end_of_day_report
+from src.infrastructure.scripts.generation.generate_task_report import main as generate_task_report_main
+from src.infrastructure.scripts.generation.generate_task_report import generate_end_of_day_report
 
 
 class TestEndOfDayReporting(unittest.TestCase):

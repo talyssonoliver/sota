@@ -8,7 +8,7 @@ import json
 from datetime import datetime, timedelta
 from unittest.mock import patch, Mock
 
-from agents.human_agents import (
+from src.core.agents.human_agents import (
     HumanReviewerAgent,
     WorkloadTracker,
     ReviewAssignment,
@@ -577,7 +577,7 @@ class TestHITLIntegration:
     
     def test_hitl_checkpoint_integration(self):
         """Test integration with HITL checkpoint system"""
-        from orchestration.hitl_engine import HITLPolicyEngine, HITLCheckpoint
+        from src.infrastructure.hitl.hitl_engine import HITLPolicyEngine, HITLCheckpoint
         
         registry = HumanAgentRegistry()
         

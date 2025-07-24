@@ -18,10 +18,10 @@ from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-from orchestration.generate_prompt import (generate_prompt, get_task_context,
+from src.core.workflows.generate_prompt import (generate_prompt, get_task_context,
                                            main)
 from prompts.utils import format_prompt_with_context, load_prompt_template
-from utils.task_loader import load_task_metadata
+from src.infrastructure.utils.task_loader import load_task_metadata
 
 # Add project root to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -290,7 +290,7 @@ class TestStep42CLI:
             # This would normally call main(), but we'll test argument parsing
             import argparse
 
-            from orchestration.generate_prompt import main
+            from src.core.workflows.generate_prompt import main
 
             # Mock sys.exit to prevent actual exit
             with patch('sys.exit'):

@@ -17,8 +17,8 @@ import sys
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-from api.hitl_routes import create_hitl_blueprint
-from orchestration.hitl_engine import HITLPolicyEngine, HITLCheckpoint, CheckpointStatus, RiskLevel
+from src.interfaces.api.hitl_routes import create_hitl_blueprint
+from src.infrastructure.hitl.hitl_engine import HITLPolicyEngine, HITLCheckpoint, CheckpointStatus, RiskLevel
 
 
 class TestHITLAPIRoutes(unittest.TestCase):

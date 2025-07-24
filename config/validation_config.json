@@ -1,0 +1,183 @@
+{
+  "coverage_threshold": 80,
+  "complexity_threshold": 15,
+  "max_function_lines": 75,
+  "max_file_lines": 800,
+  "naming_conventions": {
+    "files": "^[a-z][a-z0-9_]*\\.py$",
+    "classes": "^[A-Z][a-zA-Z0-9]*$",
+    "functions": "^[a-z][a-z0-9_]*$",
+    "constants": "^[A-Z][A-Z0-9_]*$"
+  },
+  "forbidden_patterns": [
+    "TODO.*URGENT",
+    "FIXME.*ASAP",
+    "HACK.*REMOVE",
+    "XXX.*BROKEN",
+    "TEMP.*DELETE",
+    "DEBUG.*REMOVE"
+  ],
+  "secret_patterns": [
+    "(?i)api[_-]?key[_-]?[=:]\\s*[\"']?[a-z0-9]{20,}[\"']?",
+    "(?i)secret[_-]?key[_-]?[=:]\\s*[\"']?[a-z0-9]{20,}[\"']?",
+    "(?i)password[_-]?[=:]\\s*[\"']?[a-z0-9]{8,}[\"']?",
+    "(?i)token[_-]?[=:]\\s*[\"']?[a-z0-9]{20,}[\"']?",
+    "(?i)auth[_-]?token[_-]?[=:]\\s*[\"']?[a-z0-9]{20,}[\"']?",
+    "(?i)access[_-]?token[_-]?[=:]\\s*[\"']?[a-z0-9]{20,}[\"']?",
+    "-----BEGIN (RSA |)PRIVATE KEY-----",
+    "-----BEGIN CERTIFICATE-----"
+  ],
+  "excluded_dirs": [
+    "__pycache__",
+    ".git",
+    ".pytest_cache",
+    "htmlcov",
+    "build",
+    "dist",
+    ".mypy_cache",
+    ".tox",
+    "venv",
+    "env",
+    "node_modules",
+    ".next",
+    ".nuxt",
+    "backup",
+    ".vscode",
+    ".idea",
+    "reports"
+  ],
+  "performance_thresholds": {
+    "max_import_time": 2.0,
+    "max_function_time": 0.5
+  },
+  "architectural_rules": {
+    "layers": {
+      "core": "src/core",
+      "infrastructure": "src/infrastructure",
+      "utils": "src/utils",
+      "interfaces": "src/interfaces",
+      "integrations": "src/integrations"
+    },
+    "allowed_imports": {
+      "core": [
+        "utils"
+      ],
+      "infrastructure": [
+        "core",
+        "utils"
+      ],
+      "interfaces": [
+        "core",
+        "infrastructure",
+        "utils"
+      ],
+      "integrations": [
+        "core",
+        "infrastructure",
+        "utils"
+      ],
+      "utils": []
+    },
+    "forbidden_imports": {
+      "infrastructure": [
+        "interfaces",
+        "integrations"
+      ],
+      "utils": [
+        "core",
+        "infrastructure",
+        "interfaces",
+        "integrations"
+      ]
+    },
+    "layer_restrictions": {
+      "circular_imports": false,
+      "deep_nesting": 5,
+      "cross_layer_direct_access": false
+    }
+  },
+  "security_settings": {
+    "scan_all_files": true,
+    "ignore_test_files": false,
+    "entropy_threshold": 4.5
+  },
+  "auto_fix_settings": {
+    "enabled_fixes": [
+      "CODE_FORMATTING",
+      "IMPORT_SORTING",
+      "EMPTY_DIRECTORY",
+      "FORBIDDEN_PATTERN",
+      "UNUSED_IMPORT"
+    ],
+    "backup_before_fix": true,
+    "max_fixes_per_file": 10
+  },
+  "import_validation": {
+    "deprecated_patterns": [
+      "from langgraph.graph import Graph",
+      "from langgraph import Graph",
+      "from tools.memory",
+      "from prompts.utils",
+      "import tools.memory",
+      "import prompts.utils"
+    ],
+    "required_prefix_patterns": [
+      "from src.",
+      "import src."
+    ],
+    "allow_relative_imports": false,
+    "max_import_depth": 5
+  },
+  "enterprise_quality_gates": {
+    "max_errors_per_1000_lines": 5,
+    "max_warnings_per_1000_lines": 50,
+    "min_code_coverage": 80,
+    "min_code_coverage_new_code": 80,
+    "max_cyclomatic_complexity": 15,
+    "max_cognitive_complexity": 20,
+    "max_technical_debt_ratio": 5.0,
+    "max_code_duplication": 3.0,
+    "security_vulnerability_threshold": "MEDIUM",
+    "max_critical_bugs": 0,
+    "max_blocker_bugs": 0,
+    "reliability_rating": "A",
+    "security_rating": "A",
+    "maintainability_rating": "B"
+  },
+  "ai_enhanced_features": {
+    "duplicate_detection_threshold": 0.85,
+    "smart_caching_enabled": true,
+    "incremental_analysis": true,
+    "performance_optimization": true,
+    "trend_analysis": true
+  },
+  "tool_management": {
+    "auto_install_tools": true,
+    "verify_tool_versions": true,
+    "required_tools": [
+      "black",
+      "ruff",
+      "mypy",
+      "bandit"
+    ],
+    "optional_tools": [
+      "sonar-scanner"
+    ],
+    "installation_timeout": 300
+  },
+  "sonarqube_quality_gates": {
+    "coverage_on_new_code": 80.0,
+    "method_cognitive_complexity": 20,
+    "method_cyclomatic_complexity": 25,
+    "duplicated_lines_density": 3.0,
+    "new_code_smells": 25,
+    "security_hotspots_reviewed": 100.0,
+    "clean_as_you_code": true
+  },
+  "security": {
+    "encryption_enabled": true,
+    "pii_detection_enabled": true,
+    "access_control_enabled": true,
+    "audit_logging_enabled": true
+  }
+}

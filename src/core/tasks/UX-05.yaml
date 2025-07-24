@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-05
+title: Create High-Fidelity Prototype for Authentication Flows
+owner: ux
+depends_on:
+  - BE-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-05: Create High-Fidelity Prototype for Authentication Flows"
+artefacts:
+  - docs/design/authentication-spec.md
+  - designs/login-desktop.pdf
+  - designs/register-desktop.pdf
+context_topics:
+  - project-overview

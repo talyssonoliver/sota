@@ -16,8 +16,8 @@ import sys
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from cli.hitl_cli import HITLCLIManager
-from orchestration.hitl_engine import CheckpointStatus, RiskLevel
+from src.interfaces.cli.hitl_cli import HITLCLIManager
+from src.infrastructure.hitl.hitl_engine import CheckpointStatus, RiskLevel
 
 
 class TestHITLCLIManager(unittest.TestCase):
@@ -367,7 +367,7 @@ class TestHITLCLICommands(unittest.TestCase):
         mock_manager.list_pending_checkpoints.return_value = []
         mock_manager_class.return_value = mock_manager
         
-        from cli.hitl_cli import cmd_list_checkpoints
+        from src.interfaces.cli.hitl_cli import cmd_list_checkpoints
         
         args = Mock()
         args.task_id = None
@@ -396,7 +396,7 @@ class TestHITLCLICommands(unittest.TestCase):
         mock_manager.list_pending_checkpoints.return_value = mock_checkpoints
         mock_manager_class.return_value = mock_manager
         
-        from cli.hitl_cli import cmd_list_checkpoints
+        from src.interfaces.cli.hitl_cli import cmd_list_checkpoints
         
         args = Mock()
         args.task_id = None
@@ -433,7 +433,7 @@ class TestHITLCLICommands(unittest.TestCase):
         mock_manager.show_checkpoint_details.return_value = mock_details
         mock_manager_class.return_value = mock_manager
         
-        from cli.hitl_cli import cmd_show_checkpoint
+        from src.interfaces.cli.hitl_cli import cmd_show_checkpoint
         
         args = Mock()
         args.checkpoint_id = "hitl_BE-07_abc123"
@@ -456,7 +456,7 @@ class TestHITLCLICommands(unittest.TestCase):
         mock_manager.show_checkpoint_details.return_value = None
         mock_manager_class.return_value = mock_manager
         
-        from cli.hitl_cli import cmd_show_checkpoint
+        from src.interfaces.cli.hitl_cli import cmd_show_checkpoint
         
         args = Mock()
         args.checkpoint_id = "nonexistent"
@@ -484,7 +484,7 @@ class TestHITLCLICommands(unittest.TestCase):
         
         mock_input.return_value = "y"
         
-        from cli.hitl_cli import cmd_approve_checkpoint
+        from src.interfaces.cli.hitl_cli import cmd_approve_checkpoint
         
         args = Mock()
         args.checkpoint_id = "hitl_BE-07_abc123"
@@ -517,7 +517,7 @@ class TestHITLCLICommands(unittest.TestCase):
         
         mock_input.return_value = "n"
         
-        from cli.hitl_cli import cmd_approve_checkpoint
+        from src.interfaces.cli.hitl_cli import cmd_approve_checkpoint
         
         args = Mock()
         args.checkpoint_id = "hitl_BE-07_abc123"

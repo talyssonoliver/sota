@@ -13,8 +13,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from orchestration.execute_graph import build_task_state, main, run_task_graph
-from orchestration.states import TaskStatus
+from src.core.workflows.execute_graph import build_task_state, main, run_task_graph
+from src.core.workflows.states import TaskStatus
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

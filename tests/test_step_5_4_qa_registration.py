@@ -18,7 +18,7 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import patch
 
-from orchestration.register_output import AgentOutputRegistry
+from src.core.workflows.register_output import AgentOutputRegistry
 
 # Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

@@ -6,7 +6,7 @@ Quick integration test for Step 4.8 Real-time Execution Monitoring
 import os
 import time
 
-from utils.execution_monitor import ExecutionMonitor, get_execution_monitor
+from src.infrastructure.utils.execution_monitor import ExecutionMonitor, get_execution_monitor
 
 
 def test_step_4_8_integration():

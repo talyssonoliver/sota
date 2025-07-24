@@ -19,7 +19,7 @@ import sys
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from scripts.generate_task_report import (
+from src.infrastructure.scripts.generation.generate_task_report import (
     generate_end_of_day_report,
     generate_daily_report, 
     generate_task_specific_report,

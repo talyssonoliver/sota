@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent))
 
-from orchestration.daily_cycle import DailyCycleOrchestrator
+from src.core.workflows.daily_cycle import DailyCycleOrchestrator
 
 try:
     orchestrator = DailyCycleOrchestrator()

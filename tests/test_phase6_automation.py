@@ -28,16 +28,16 @@ import time
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
-from orchestration.generate_briefing import BriefingGenerator
-from orchestration.end_of_day_report import EndOfDayReportGenerator
-from orchestration.daily_cycle import DailyCycleOrchestrator
+from src.core.workflows.generate_briefing import BriefingGenerator
+from src.core.workflows.end_of_day_report import EndOfDayReportGenerator
+from src.core.workflows.daily_cycle import DailyCycleOrchestrator
 try:
-    from dashboard.unified_api_server import UnifiedDashboardAPI as DashboardAPI
+    from src.interfaces.dashboard.api.unified_api_server import UnifiedDashboardAPI as DashboardAPI
 except ImportError:
     # Fallback to existing API server for compatibility
-    from dashboard.unified_api_server import DashboardAPI
-from utils.completion_metrics import CompletionMetricsCalculator
-from orchestration.email_integration import EmailIntegration
+    from src.interfaces.dashboard.api.unified_api_server import DashboardAPI
+from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
+from src.core.workflows.email_integration import EmailIntegration
 
 
 class TestBriefingGenerator(unittest.TestCase):

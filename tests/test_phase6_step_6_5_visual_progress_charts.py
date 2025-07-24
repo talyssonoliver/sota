@@ -20,8 +20,8 @@ from unittest.mock import Mock, patch, MagicMock
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
-from dashboard.unified_api_server import UnifiedDashboardAPI as DashboardAPI
-from utils.completion_metrics import CompletionMetricsCalculator
+from src.interfaces.dashboard.api.unified_api_server import UnifiedDashboardAPI as DashboardAPI
+from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
 
 
 class TestPhase6Step65VisualProgressCharts(unittest.TestCase):

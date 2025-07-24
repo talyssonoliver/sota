@@ -1,0 +1,37 @@
+# syntax=docker/dockerfile:1
+FROM python:3.9-slim as base
+
+# Install system dependencies in a single layer
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash sota
+WORKDIR /app
+
+# Install Python dependencies (cached layer)
+FROM base as dependencies
+COPY requirements.txt requirements-dev.txt* ./
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip setuptools wheel && \
+    pip install -r requirements.txt && \
+    pip install watchdog pdoc debugpy
+
+# Development stage with source code
+FROM dependencies as development
+USER sota
+COPY --chown=sota:sota . /app
+
+# Expose ports
+EXPOSE 8000 5678 8888
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Development command with hot reload
+CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "main.py", "--dev"]

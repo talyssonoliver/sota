@@ -46,7 +46,7 @@ class TestMemoryConfig(unittest.TestCase):
         # Patch the Agent constructor to use our mock
         with patch('crewai.Agent', side_effect=MemoryAwareAgentMock):
             # Import after patching so import uses our patched version
-            from agents.frontend import create_frontend_engineer_agent
+            from src.core.agents.frontend import create_frontend_engineer_agent
 
             # Create the agent with memory config
             agent = create_frontend_engineer_agent(

@@ -13,11 +13,11 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
-from orchestration.task_declaration import (TaskDeclaration,
+from src.core.workflows.task_declaration import (TaskDeclaration,
                                             TaskDeclarationManager,
                                             TaskPreparationStatus)
 from tools.memory.engine import MemoryEngine
-from utils.task_loader import load_task_metadata
+from src.infrastructure.utils.task_loader import load_task_metadata
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -316,11 +316,11 @@ class TestTaskDeclarationCLI:
 
 def test_module_imports():
     """Test that all required modules can be imported"""
-    from orchestration.task_declaration import (TaskDeclaration,
+    from src.core.workflows.task_declaration import (TaskDeclaration,
                                                 TaskDeclarationManager,
                                                 TaskPreparationStatus)
     from tools.memory.engine import MemoryEngine
-    from utils.task_loader import load_task_metadata
+    from src.infrastructure.utils.task_loader import load_task_metadata
 
     # Basic import test
     assert TaskDeclarationManager is not None

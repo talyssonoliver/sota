@@ -16,8 +16,8 @@ import sys
 
 sys.path.append(str(Path(__file__).parent.parent))
 
-from orchestration.hitl_engine import HITLPolicyEngine, HITLCheckpoint, CheckpointStatus, RiskLevel
-from orchestration.states import TaskStatus
+from src.infrastructure.hitl.hitl_engine import HITLPolicyEngine, HITLCheckpoint, CheckpointStatus, RiskLevel
+from src.core.workflows.states import TaskStatus
 
 
 class TestHITLEngineIntegration(unittest.IsolatedAsyncioTestCase):
@@ -301,7 +301,7 @@ class TestHITLEngineIntegration(unittest.IsolatedAsyncioTestCase):
         )
         
         # Simulate rejection
-        from orchestration.hitl_engine import HITLReviewDecision
+        from src.infrastructure.hitl.hitl_engine import HITLReviewDecision
         decision = HITLReviewDecision(
             checkpoint_id=checkpoint.checkpoint_id,
             decision="reject",
@@ -377,7 +377,7 @@ class TestHITLEngineIntegration(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(pending_for_task), 2)
         
         # Approve first checkpoint
-        from orchestration.hitl_engine import HITLReviewDecision
+        from src.infrastructure.hitl.hitl_engine import HITLReviewDecision
         decision1 = HITLReviewDecision(
             checkpoint_id=checkpoint1.checkpoint_id,
             decision="approve",

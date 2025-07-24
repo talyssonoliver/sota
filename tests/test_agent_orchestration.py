@@ -11,8 +11,8 @@ import unittest
 from datetime import datetime
 from unittest.mock import MagicMock, call, patch
 
-from orchestration.delegation import delegate_task, save_task_output
-from orchestration.registry import (AGENT_REGISTRY, create_agent_instance,
+from src.core.workflows.delegation import delegate_task, save_task_output
+from src.core.workflows.registry import (AGENT_REGISTRY, create_agent_instance,
                                     get_agent_config, get_agent_for_task)
 from tests.test_utils import TestFeedback, Timer
 
@@ -27,7 +27,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 class TestAgentRegistry(unittest.TestCase):
     """Test the agent registry system."""
 
-    @patch('orchestration.registry.load_agent_config')
+    @patch('src.core.workflows.registry.load_agent_config')
     def test_agent_registry_completeness(self, mock_load_config):
         """Test that all expected agents are in the registry."""
         # Provide mock config that matches the AGENT_REGISTRY keys in
@@ -54,7 +54,7 @@ class TestAgentRegistry(unittest.TestCase):
             self.assertIn(role, AGENT_REGISTRY,
                           f"Agent role '{role}' should be in registry")
 
-    @patch('orchestration.registry.load_agent_config')
+    @patch('src.core.workflows.registry.load_agent_config')
     def test_task_prefix_mapping(self, mock_load_config):
         """Test that task prefixes are correctly mapped to agent constructors."""
         # Provide mock config
@@ -80,7 +80,7 @@ class TestAgentRegistry(unittest.TestCase):
             self.assertIn(prefix, AGENT_REGISTRY,
                           f"Task prefix '{prefix}' should be in registry")
 
-    @patch('orchestration.registry.load_agent_config')
+    @patch('src.core.workflows.registry.load_agent_config')
     def test_agent_config_loading(self, mock_load_config):
         """Test loading agent configuration."""
         mock_load_config.return_value = {
@@ -104,7 +104,7 @@ class TestAgentRegistry(unittest.TestCase):
 class TestAgentDelegation(unittest.TestCase):
     """Test the agent delegation system."""
 
-    @patch('orchestration.delegation.get_relevant_context')
+    @patch('src.core.workflows.delegation.get_relevant_context')
     def test_delegate_task(self, mock_get_context):
         """Test delegating a task to an agent."""
         # Set up mocks
@@ -117,7 +117,7 @@ class TestAgentDelegation(unittest.TestCase):
         mock_get_context.return_value = "Relevant context for the task"
 
         # Test delegating with explicit agent ID
-        with patch('orchestration.delegation.create_agent_instance') as mock_create_agent:
+        with patch('src.core.workflows.delegation.create_agent_instance') as mock_create_agent:
             mock_create_agent.return_value = mock_agent
 
             result = delegate_task(
@@ -132,7 +132,7 @@ class TestAgentDelegation(unittest.TestCase):
             self.assertEqual(result["agent_id"], "backend_engineer")
 
         # Test delegating with task ID prefix
-        with patch('orchestration.delegation.get_agent_for_task') as mock_get_agent:
+        with patch('src.core.workflows.delegation.get_agent_for_task') as mock_get_agent:
             # Create a new mock agent with correct return value
             task_prefix_mock_agent = MagicMock()
             task_prefix_mock_agent.execute.return_value = {
@@ -181,7 +181,7 @@ class TestAgentOrchestration(unittest.TestCase):
         """Test the flow of delegating tasks to different agents."""
         # Create function-specific patches to avoid interfering with other
         # tests
-        with patch('orchestration.delegation.delegate_task') as mock_delegate_task:
+        with patch('src.core.workflows.delegation.delegate_task') as mock_delegate_task:
             # Set up mock return values for different task types
             mock_delegate_task.side_effect = [
                 {"task_id": "BE-01", "agent_id": "backend",
@@ -240,12 +240,12 @@ class TestAgentOrchestration(unittest.TestCase):
 
         # Use the patch decorator to replace the module-level function
         # completely
-        with patch('orchestration.delegation.delegate_task',
+        with patch('src.core.workflows.delegation.delegate_task',
                    mock_delegate_that_raises):
 
             # This should now raise the exception from our mock function
             with self.assertRaises(Exception) as context:
-                from orchestration.delegation import delegate_task
+                from src.core.workflows.delegation import delegate_task
                 delegate_task(
                     task_id="BE-01",
                     task_description="Implement failing task"

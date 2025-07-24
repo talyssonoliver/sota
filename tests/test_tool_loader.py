@@ -11,7 +11,7 @@ from datetime import datetime
 
 import yaml
 
-from orchestration.registry import get_agent_config
+from src.core.workflows.registry import get_agent_config
 from tests.test_utils import TestFeedback, Timer
 from tools.tool_loader import (get_tools_for_agent, instantiate_tool,
                                load_all_tools, load_tool_config)

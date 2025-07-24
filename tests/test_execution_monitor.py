@@ -16,7 +16,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from utils.execution_monitor import (CrewAIExecutionHook, DashboardLogger,
+from src.infrastructure.utils.execution_monitor import (CrewAIExecutionHook, DashboardLogger,
                                      ExecutionMonitor, LangGraphExecutionHook,
                                      create_crewai_hook, create_langgraph_hook,
                                      get_dashboard_logger,

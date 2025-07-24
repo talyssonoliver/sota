@@ -1,0 +1,209 @@
+{
+  "timestamp": "2025-07-23 21:13:51",
+  "overall_status": "FAILED",
+  "quality_gates_passed": 3,
+  "quality_gates_failed": 3,
+  "quality_gates_warning": 2,
+  "metrics": {
+    "coverage_percentage": 0.0,
+    "avg_cyclomatic_complexity": 2.927149321266968,
+    "max_cyclomatic_complexity": 34,
+    "duplication_percentage": 50.773087270802044,
+    "maintainability_index": 0,
+    "issues": {
+      "bugs": 0,
+      "vulnerabilities": 14,
+      "code_smells": 41,
+      "security_hotspots": 219
+    },
+    "lines_of_code": {
+      "total": 117546,
+      "code": 92551,
+      "comments": 5911,
+      "blank": 19084
+    },
+    "code_smells_per_kloc": 0.44299899514862073,
+    "critical_bugs": 0,
+    "vulnerabilities": 14,
+    "security_hotspots": 219
+  },
+  "technical_debt": {
+    "bugs": 0.0,
+    "vulnerabilities": 28.0,
+    "code_smells": 10.25,
+    "security_hotspots": 164.25,
+    "total_hours": 202.5,
+    "total_days": 25.3125
+  },
+  "gate_results": [
+    {
+      "name": "test_coverage",
+      "metric": "coverage_percentage",
+      "expected_value": 80.0,
+      "actual_value": 0.0,
+      "operator": ">=",
+      "status": "FAILED",
+      "severity": "error",
+      "category": "reliability",
+      "deviation": 80.0,
+      "message": "\u274c Test coverage must be at least 80% (Failed: 0.0 >= 80.0)",
+      "remediation_effort_minutes": 120
+    },
+    {
+      "name": "critical_bugs",
+      "metric": "critical_bugs",
+      "expected_value": 0.0,
+      "actual_value": 0,
+      "operator": "==",
+      "status": "PASSED",
+      "severity": "error",
+      "category": "reliability",
+      "deviation": 0.0,
+      "message": "\u2705 Zero critical bugs allowed",
+      "remediation_effort_minutes": 60
+    },
+    {
+      "name": "code_duplication",
+      "metric": "duplication_percentage",
+      "expected_value": 3.0,
+      "actual_value": 50.773087270802044,
+      "operator": "<=",
+      "status": "FAILED",
+      "severity": "error",
+      "category": "maintainability",
+      "deviation": 47.773087270802044,
+      "message": "\u274c Code duplication must be below 3% (Failed: 50.773087270802044 <= 3.0)",
+      "remediation_effort_minutes": 30
+    },
+    {
+      "name": "vulnerabilities",
+      "metric": "vulnerabilities",
+      "expected_value": 0.0,
+      "actual_value": 14,
+      "operator": "==",
+      "status": "FAILED",
+      "severity": "error",
+      "category": "security",
+      "deviation": 14.0,
+      "message": "\u274c No new vulnerabilities allowed (Failed: 14 == 0.0)",
+      "remediation_effort_minutes": 120
+    },
+    {
+      "name": "cyclomatic_complexity",
+      "metric": "avg_cyclomatic_complexity",
+      "expected_value": 10.0,
+      "actual_value": 2.927149321266968,
+      "operator": "<=",
+      "status": "PASSED",
+      "severity": "warning",
+      "category": "maintainability",
+      "deviation": 7.072850678733031,
+      "message": "\u2705 Average cyclomatic complexity should be below 10",
+      "remediation_effort_minutes": 45
+    },
+    {
+      "name": "maintainability_index",
+      "metric": "maintainability_index",
+      "expected_value": 65.0,
+      "actual_value": 0,
+      "operator": ">=",
+      "status": "WARNING",
+      "severity": "warning",
+      "category": "maintainability",
+      "deviation": 65.0,
+      "message": "\u26a0\ufe0f Maintainability index should be above 65 (Warning: 0 >= 65.0)",
+      "remediation_effort_minutes": 90
+    },
+    {
+      "name": "security_hotspots",
+      "metric": "security_hotspots",
+      "expected_value": 5.0,
+      "actual_value": 219,
+      "operator": "<=",
+      "status": "WARNING",
+      "severity": "warning",
+      "category": "security",
+      "deviation": 214.0,
+      "message": "\u26a0\ufe0f Security hotspots should be reviewed (Warning: 219 <= 5.0)",
+      "remediation_effort_minutes": 45
+    },
+    {
+      "name": "code_smells_density",
+      "metric": "code_smells_per_kloc",
+      "expected_value": 10.0,
+      "actual_value": 0.44299899514862073,
+      "operator": "<=",
+      "status": "PASSED",
+      "severity": "warning",
+      "category": "maintainability",
+      "deviation": 9.55700100485138,
+      "message": "\u2705 Code smells density should be below 10 per KLOC",
+      "remediation_effort_minutes": 15
+    }
+  ],
+  "recommendations": [
+    "\ud83d\udea8 Critical issues found that must be fixed before merge:",
+    "  - Test coverage must be at least 80%",
+    "  - Code duplication must be below 3%",
+    "  - No new vulnerabilities allowed",
+    "\u26a0\ufe0f Warning issues that should be addressed:",
+    "  - Maintainability index should be above 65",
+    "  - Security hotspots should be reviewed",
+    "\ud83d\udcdd Increase test coverage by adding unit tests for uncovered code",
+    "\ud83d\udd04 Refactor duplicated code into reusable functions or modules",
+    "\ud83d\udd12 Address security vulnerabilities immediately"
+  ],
+  "iso_25010_compliance": {
+    "functionality": {
+      "score": 0,
+      "status": "NOT_EVALUATED",
+      "evaluated_metrics": 0,
+      "passed_metrics": 0
+    },
+    "reliability": {
+      "score": 50.0,
+      "status": "NON_COMPLIANT",
+      "evaluated_metrics": 2,
+      "passed_metrics": 1
+    },
+    "performance_efficiency": {
+      "score": 0,
+      "status": "NOT_EVALUATED",
+      "evaluated_metrics": 0,
+      "passed_metrics": 0
+    },
+    "usability": {
+      "score": 0,
+      "status": "NOT_EVALUATED",
+      "evaluated_metrics": 0,
+      "passed_metrics": 0
+    },
+    "security": {
+      "score": 0.0,
+      "status": "NON_COMPLIANT",
+      "evaluated_metrics": 2,
+      "passed_metrics": 0
+    },
+    "maintainability": {
+      "score": 50.0,
+      "status": "NON_COMPLIANT",
+      "evaluated_metrics": 4,
+      "passed_metrics": 2
+    },
+    "portability": {
+      "score": 0,
+      "status": "NOT_EVALUATED",
+      "evaluated_metrics": 0,
+      "passed_metrics": 0
+    }
+  },
+  "build_decision": {
+    "allow_merge": false,
+    "require_review": false,
+    "blocking_issues": [
+      "test_coverage",
+      "code_duplication",
+      "vulnerabilities"
+    ]
+  }
+}

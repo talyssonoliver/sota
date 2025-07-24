@@ -1,1 +1,15 @@
-{}
+{
+  "TEST-02": {
+    "tier": "hot",
+    "size_bytes": 313,
+    "created_at": "2025-07-24T00:19:55.485264",
+    "last_accessed": "2025-07-24T00:19:55.508653",
+    "access_count": 2,
+    "file_path": "build\\storage\\hot\\TEST-02.dat",
+    "safe_key": "TEST-02",
+    "metadata": {
+      "data_type": "workflow_output",
+      "task_id": "TEST-02"
+    }
+  }
+}

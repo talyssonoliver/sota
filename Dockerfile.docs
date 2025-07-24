@@ -1,0 +1,5 @@
+FROM python:3.9-slim
+WORKDIR /docs
+COPY . /docs
+RUN pip install pdoc
+CMD ["pdoc", "--http", "0.0.0.0", "--port", "9000", "agents"]

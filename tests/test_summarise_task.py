@@ -16,7 +16,7 @@ from unittest.mock import Mock, mock_open, patch
 
 import pytest
 
-from orchestration.summarise_task import (AgentOutput, QAResults, TaskArtifact,
+from src.core.workflows.summarise_task import (AgentOutput, QAResults, TaskArtifact,
                                           TaskSummarizer, TaskSummary)
 
 # Add project root to path for imports
@@ -527,7 +527,7 @@ class TestCLIInterface:
         )
         mock_summarizer_class.return_value = mock_summarizer
 
-        from orchestration.summarise_task import main
+        from src.core.workflows.summarise_task import main
 
         # Should not raise exception
         main()
@@ -552,7 +552,7 @@ class TestCLIInterface:
         )
         mock_summarizer_class.return_value = mock_summarizer
 
-        from orchestration.summarise_task import main
+        from src.core.workflows.summarise_task import main
 
         # Should not raise exception
         main()

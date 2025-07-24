@@ -13,7 +13,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from utils.test_generator import (CodeLanguage, QATestCase, QATestFramework,
+from src.infrastructure.utils.test_generator import (CodeLanguage, QATestCase, QATestFramework,
                                    QATestGenerator, QATestSuite)
 
 # Add the project root to the path

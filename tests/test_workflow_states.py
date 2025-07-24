@@ -10,11 +10,11 @@ import unittest
 from typing import Any, Dict
 from unittest.mock import MagicMock, patch
 
-from graph.handlers import (backend_handler, coordinator_handler,
+from src.core.graph.handlers import (backend_handler, coordinator_handler,
                             documentation_handler, frontend_handler,
                             qa_handler, technical_handler)
-from handlers.qa_handler import qa_agent
-from orchestration.states import (TaskStatus, get_next_status,
+from src.core.handlers.qa_handler import qa_agent
+from src.core.workflows.states import (TaskStatus, get_next_status,
                                   get_valid_transitions, is_terminal_status)
 from tests.test_utils import TestFeedback, Timer
 

@@ -7,7 +7,7 @@ import os
 import pytest
 import yaml
 
-from utils.task_loader import load_task_metadata, update_task_state
+from src.infrastructure.utils.task_loader import load_task_metadata, update_task_state
 
 
 def test_update_task_status_sets_done(tmp_path):

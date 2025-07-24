@@ -13,9 +13,9 @@ from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 
-from agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
-from utils.coverage_analyzer import CoverageAnalyzer
-from utils.test_generator import (QATestCase, QATestFramework, QATestGenerator,
+from src.core.agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
+from src.infrastructure.utils.coverage_analyzer import CoverageAnalyzer
+from src.infrastructure.utils.test_generator import (QATestCase, QATestFramework, QATestGenerator,
                                   QATestSuite)
 
 # Add the project root to the path

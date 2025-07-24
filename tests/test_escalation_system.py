@@ -15,7 +15,7 @@ from typing import Dict, List, Optional
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from utils.escalation_system import (
+from src.infrastructure.utils.escalation_system import (
     EscalationLevel,
     EscalationRule,
     EscalationEvent,
@@ -528,21 +528,21 @@ class TestEscalationCLI:
     
     def test_cli_list_escalations(self):
         """Test CLI listing active escalations"""
-        from cli.escalation_cli import list_active_escalations
+        from src.interfaces.cli.escalation_cli import list_active_escalations
         
         result = list_active_escalations()
         assert "escalations" in result
         
     def test_cli_escalation_status(self):
         """Test CLI escalation status command"""
-        from cli.escalation_cli import get_escalation_status
+        from src.interfaces.cli.escalation_cli import get_escalation_status
         
         status = get_escalation_status("BE-555")
         assert "task_id" in status
         
     def test_cli_manual_escalation(self):
         """Test CLI manual escalation trigger"""
-        from cli.escalation_cli import trigger_manual_escalation
+        from src.interfaces.cli.escalation_cli import trigger_manual_escalation
         
         result = trigger_manual_escalation(
             task_id="FE-666",

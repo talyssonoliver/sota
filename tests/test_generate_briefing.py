@@ -20,7 +20,7 @@ import logging
 # Add parent directory to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
-from orchestration.generate_briefing import BriefingGenerator
+from src.core.workflows.generate_briefing import BriefingGenerator
 
 
 class TestBriefingGeneratorStep62(unittest.TestCase):

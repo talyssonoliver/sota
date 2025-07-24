@@ -7,14 +7,14 @@ import shutil
 import unittest
 from unittest.mock import MagicMock, patch
 
-from orchestration.states import TaskStatus
+from src.core.workflows.states import TaskStatus
 
 # Test the QA agent's default behavior in the workflow
 
 
 class TestQAAgentDecisions(unittest.TestCase):
     def test_qa_agent_default_behavior(self):
-        from handlers.qa_handler import qa_agent
+        from src.core.handlers.qa_handler import qa_agent
 
         # Simulate a state as would be passed in the workflow
         state = {
@@ -32,7 +32,7 @@ class TestQAAgentDecisions(unittest.TestCase):
         self.assertIn("QA Report", result["output"])
 
     def test_qa_agent_preserves_input_state(self):
-        from handlers.qa_handler import qa_agent
+        from src.core.handlers.qa_handler import qa_agent
 
         # Simulate a state with extra fields
         state = {
@@ -52,7 +52,7 @@ class TestQAAgentDecisions(unittest.TestCase):
 class TestQAAgentMockIntegration(unittest.TestCase):
     @patch("handlers.qa_handler.save_to_review")
     def test_qa_agent_in_workflow(self, mock_save_to_review):
-        from handlers.qa_handler import qa_agent
+        from src.core.handlers.qa_handler import qa_agent
         state = {
             "task_id": "BE-09",
             "status": TaskStatus.QA_PENDING,

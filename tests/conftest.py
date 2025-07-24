@@ -23,7 +23,8 @@ def fast_test_environment(tmp_path, monkeypatch):
     with patch('langsmith.client.Client') as mock_langsmith, \
             patch('requests.post') as mock_slack, \
             patch('httpx.post') as mock_httpx, \
-            patch('chromadb.Client') as mock_chromadb:
+            patch('chromadb.Client') as mock_chromadb, \
+            patch('langchain_openai.ChatOpenAI') as mock_openai:
 
         # Configure external service mocks
         mock_langsmith.return_value.multipart_ingest.return_value = {
@@ -31,6 +32,7 @@ def fast_test_environment(tmp_path, monkeypatch):
         mock_slack.return_value.status_code = 200
         mock_httpx.return_value.status_code = 200
         mock_chromadb.return_value.get_or_create_collection.return_value = MagicMock()
+        mock_openai.return_value = MagicMock()
 
         # 2. Environment Isolation (Phase 2: Structure)
         monkeypatch.setenv("TEST_MODE", "true")
@@ -44,6 +46,7 @@ def fast_test_environment(tmp_path, monkeypatch):
         monkeypatch.setenv("SLACK_WEBHOOK_URL",
                            "http://mock-slack.com/webhook")
         monkeypatch.setenv("LANGSMITH_API_KEY", "mock-key")
+        monkeypatch.setenv("OPENAI_API_KEY", "mock-openai-key")
         monkeypatch.setenv("ANONYMIZED_TELEMETRY", "False")
 
         # 3. Create Required Test Directories (Phase 2: Structure)

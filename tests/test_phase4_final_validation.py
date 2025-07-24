@@ -180,10 +180,10 @@ class TestPhase4FinalValidation(unittest.TestCase):
 
         # Test that core modules can be imported
         try:
-            from orchestration.extract_code import CodeExtractor
-            from orchestration.register_output import AgentOutputRegistry
-            from orchestration.summarise_task import TaskSummarizer
-            from orchestration.task_declaration import TaskDeclarationManager
+            from src.core.workflows.extract_code import CodeExtractor
+            from src.core.workflows.register_output import AgentOutputRegistry
+            from src.core.workflows.summarise_task import TaskSummarizer
+            from src.core.workflows.task_declaration import TaskDeclarationManager
             print("  - ✓ All core modules importable")
         except ImportError as e:
             self.fail(f"Failed to import core modules: {e}")

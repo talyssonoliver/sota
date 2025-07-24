@@ -13,9 +13,9 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import MagicMock, mock_open, patch
 
-from graph.notifications import NotificationLevel
-from orchestration.enhanced_workflow import EnhancedWorkflowExecutor
-from orchestration.states import TaskStatus
+from src.core.graph.notifications import NotificationLevel
+from src.core.workflows.enhanced_workflow import EnhancedWorkflowExecutor
+from src.core.workflows.states import TaskStatus
 from tests.test_utils import TestFeedback, Timer
 from tests.test_workflow_helpers import ensure_check_recursion_method
 

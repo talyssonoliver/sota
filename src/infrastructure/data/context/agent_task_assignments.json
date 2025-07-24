@@ -1,0 +1,651 @@
+{
+  "technical_lead": [
+    {
+      "id": "TL-01",
+      "title": "Verify GitHub Repository and Branch Structure",
+      "day": 1,
+      "dependencies": [],
+      "artefacts": ["docs/setup/github-repository-setup.md"]
+    },
+    {
+      "id": "TL-02",
+      "title": "Configure Branch Protection Rules",
+      "day": 1,
+      "dependencies": ["TL-01"],
+      "artefacts": ["docs/setup/branch-protection.md"]
+    },
+    {
+      "id": "TL-03",
+      "title": "Update PR and Issue Templates",
+      "day": 1,
+      "dependencies": ["TL-01"],
+      "artefacts": [".github/PULL_REQUEST_TEMPLATE.md", "docs/templates/bug_report.md", "docs/templates/feature_request.md", "docs/setup/contribution-guidelines.md"]
+    },
+    {
+      "id": "TL-04",
+      "title": "Verify Next.js Project Structure",
+      "day": 1,
+      "dependencies": ["TL-01"],
+      "artefacts": ["docs/setup/project-structure.md"]
+    },
+    {
+      "id": "TL-05",
+      "title": "Enhance ESLint, Prettier, and Husky Configuration",
+      "day": 1,
+      "dependencies": ["TL-04"],
+      "artefacts": [".eslintrc.js", ".prettierrc.js", ".husky/pre-commit", "docs/setup/code-quality.md"]
+    },
+    {
+      "id": "TL-06",
+      "title": "Validate Directory Structure",
+      "day": 1,
+      "dependencies": ["TL-04"],
+      "artefacts": ["docs/setup/directory-structure.md"]
+    },
+    {
+      "id": "TL-07",
+      "title": "Configure Vercel Project and Environments",
+      "day": 2,
+      "dependencies": ["TL-01"],
+      "artefacts": ["docs/setup/vercel-configuration.md", "vercel.json"]
+    },
+    {
+      "id": "TL-08",
+      "title": "Set Up CI/CD Workflows",
+      "day": 2,
+      "dependencies": ["TL-01", "TL-07"],
+      "artefacts": [".github/workflows/ci.yml", ".github/workflows/deploy.yml", "docs/setup/ci-cd.md"]
+    },
+    {
+      "id": "TL-09",
+      "title": "Verify Supabase Project and Schema",
+      "day": 1,
+      "dependencies": [],
+      "artefacts": ["docs/setup/supabase-setup.md", "lib/supabase/schema.sql"]
+    },
+    {
+      "id": "TL-10",
+      "title": "Verify RLS Policies for Supabase",
+      "day": 2,
+      "dependencies": ["TL-09"],
+      "artefacts": ["docs/setup/supabase-rls.md"]
+    },
+    {
+      "id": "TL-11",
+      "title": "Verify Stripe Test Account and Integration",
+      "day": 1,
+      "dependencies": [],
+      "artefacts": ["lib/stripe/client.ts", "docs/setup/stripe-integration.md"]
+    },
+    {
+      "id": "TL-12",
+      "title": "Verify Cloudinary Configuration",
+      "day": 1,
+      "dependencies": [],
+      "artefacts": ["docs/setup/cloudinary-configuration.md"]
+    },
+    {
+      "id": "TL-13",
+      "title": "Distribute Environment Variables",
+      "day": 1,
+      "dependencies": ["TL-09", "TL-11", "TL-12"],
+      "artefacts": [".env.example", "docs/setup/environment-variables.md"]
+    },
+    {
+      "id": "TL-14",
+      "title": "Verify Sentry Configuration",
+      "day": 3,
+      "dependencies": ["TL-04"],
+      "artefacts": ["sentry.client.config.js", "docs/setup/sentry-configuration.md"]
+    },
+    {
+      "id": "TL-15",
+      "title": "Enhance Authentication Boilerplate",
+      "day": 3,
+      "dependencies": ["TL-09"],
+      "artefacts": ["lib/supabase/auth.js", "app/(auth)/login/page.tsx", "app/(auth)/register/page.tsx", "docs/setup/authentication.md"]
+    },
+    {
+      "id": "TL-16",
+      "title": "Expand API Routes Structure",
+      "day": 3,
+      "dependencies": ["TL-04", "TL-09"],
+      "artefacts": ["app/api/cart/route.ts", "app/api/checkout/route.ts", "app/api/orders/route.ts", "docs/setup/api-routes.md"]
+    },
+    {
+      "id": "TL-17",
+      "title": "Document Architecture and Technical Decisions",
+      "day": 3,
+      "dependencies": [],
+      "artefacts": ["docs/technical-architecture.md", "README.md"]
+    },
+    {
+      "id": "TL-18",
+      "title": "Create Type Definitions for Data Models",
+      "day": 3,
+      "dependencies": ["TL-09"],
+      "artefacts": ["lib/types/product.d.ts", "lib/types/cart.d.ts", "docs/setup/type-definitions.md"]
+    },
+    {
+      "id": "TL-19",
+      "title": "Add Security Headers Configuration",
+      "day": 3,
+      "dependencies": ["TL-04"],
+      "artefacts": ["next.config.js", "docs/security/headers-configuration.md"]
+    },
+    {
+      "id": "TL-20",
+      "title": "Set Up Core Contexts and Providers",
+      "day": 3,
+      "dependencies": ["TL-15"],
+      "artefacts": ["components/context/CartContext.tsx", "docs/setup/contexts-and-providers.md"]
+    },
+    {
+      "id": "TL-21",
+      "title": "Enhance Data Fetching Utilities",
+      "day": 3,
+      "dependencies": ["TL-16"],
+      "artefacts": ["lib/utils/api.js", "hooks/useFetch.ts", "docs/setup/data-fetching.md"]
+    },
+    {
+      "id": "TL-22",
+      "title": "Configure Testing Environment",
+      "day": 4,
+      "dependencies": ["TL-04"],
+      "artefacts": ["jest.config.js", "jest.setup.js", "docs/testing/jest-setup.md"]
+    },
+    {
+      "id": "TL-23",
+      "title": "Create Sample Test Cases",
+      "day": 4,
+      "dependencies": ["TL-22"],
+      "artefacts": ["tests/unit/components/ProductCard.test.tsx", "docs/testing/sample-tests.md"]
+    },
+    {
+      "id": "TL-24",
+      "title": "Set Up Base Project GitHub Wiki",
+      "day": 4,
+      "dependencies": ["TL-01"],
+      "artefacts": ["docs/onboarding/wiki-setup.md"]
+    },
+    {
+      "id": "TL-25",
+      "title": "Update Development Environment Guide",
+      "day": 4,
+      "dependencies": [],
+      "artefacts": ["README.md", "docs/setup/development-guide.md"]
+    },
+    {
+      "id": "TL-26",
+      "title": "Prepare Technical Demo for Team",
+      "day": 4,
+      "dependencies": [],
+      "artefacts": ["docs/onboarding/technical-demo.md"]
+    },
+    {
+      "id": "TL-27",
+      "title": "Conduct Technical Onboarding Session",
+      "day": 5,
+      "dependencies": ["TL-26"],
+      "artefacts": ["docs/onboarding/technical-onboarding.md"]
+    },
+    {
+      "id": "TL-28",
+      "title": "Review Backend Engineer Initial Setup",
+      "day": 5,
+      "dependencies": ["BE-01", "BE-02", "BE-03"],
+      "artefacts": ["docs/reviews/backend-setup-review.md"]
+    },
+    {
+      "id": "TL-29",
+      "title": "Review Frontend Engineer Initial Setup",
+      "day": 5,
+      "dependencies": ["FE-01", "FE-02", "FE-03"],
+      "artefacts": ["docs/reviews/frontend-setup-review.md"]
+    },
+    {
+      "id": "TL-30",
+      "title": "Participate in Final Alignment Meeting",
+      "day": 5,
+      "dependencies": ["PM-06"],
+      "artefacts": []
+    }
+  ],
+  "product_manager": [
+    {
+      "id": "PM-01",
+      "title": "Finalise and Document MVP Product Backlog",
+      "day": 1,
+      "dependencies": [],
+      "artefacts": ["docs/product/backlog.md"]
+    },
+    {
+      "id": "PM-02",
+      "title": "Create Visual Product Roadmap for 3 Months",
+      "day": 2,
+      "dependencies": ["PM-01"],
+      "artefacts": ["docs/product/roadmap.md", "docs/product/roadmap-visual.png"]
+    },
+    {
+      "id": "PM-03",
+      "title": "Develop Communication Plan for Stakeholders",
+      "day": 1,
+      "dependencies": [],
+      "artefacts": ["docs/product/communication-plan.md"]
+    },
+    {
+      "id": "PM-04",
+      "title": "Align User Stories with Technical Architecture",
+      "day": 3,
+      "dependencies": ["TL-01", "PM-01"],
+      "artefacts": ["docs/product/backlog.md"]
+    },
+    {
+      "id": "PM-05",
+      "title": "Set Up GitHub Projects Board",
+      "day": 2,
+      "dependencies": ["TL-01"],
+      "artefacts": ["docs/sprint/board-setup.md"]
+    },
+    {
+      "id": "PM-06",
+      "title": "Schedule and Conduct Final Alignment Meeting",
+      "day": 5,
+      "dependencies": [],
+      "artefacts": ["docs/sprint/pre-sprint0-alignment.md"]
+    },
+    {
+      "id": "PM-07",
+      "title": "Establish Sprint 0 Goals and Success Metrics",
+      "day": 3,
+      "dependencies": ["PM-01", "PM-02"],
+      "artefacts": ["docs/sprint/sprint0-goals.md"]
+    },
+    {
+      "id": "PM-08",
+      "title": "Confirm External Dependencies and Risks",
+      "day": 4,
+      "dependencies": [],
+      "artefacts": ["docs/sprint/risk-register.md"]
+    },
+    {
+      "id": "PM-09",
+      "title": "Prepare Stakeholder Kick-off Presentation",
+      "day": 4,
+      "dependencies": ["PM-01", "PM-02", "PM-03"],
+      "artefacts": ["docs/product/stakeholder-presentation.md", "stakeholder-kickoff.pptx"]
+    },
+    {
+      "id": "PM-10",
+      "title": "Create Sprint 0 Daily Check-in Schedule",
+      "day": 1,
+      "dependencies": [],
+      "artefacts": ["docs/sprint/daily-checkin-schedule.md"]
+    },
+    {
+      "id": "PM-11",
+      "title": "Develop User Persona Documentation",
+      "day": 4,
+      "dependencies": [],
+      "artefacts": ["docs/product/user-personas.md"]
+    },
+    {
+      "id": "PM-12",
+      "title": "Map Customer Journey for Core Flows",
+      "day": 4,
+      "dependencies": ["PM-11"],
+      "artefacts": ["docs/product/customer-journeys.md"]
+    },
+    {
+      "id": "LC-01",
+      "title": "Conduct Initial Legal and GDPR Compliance Check",
+      "day": 5,
+      "dependencies": [],
+      "artefacts": ["docs/security/gdpr-compliance-checklist.md"]
+    }
+  ],
+  "backend_engineer": [
+    {
+      "id": "BE-01",
+      "title": "Validate Supabase Setup",
+      "day": 2,
+      "dependencies": ["TL-09", "TL-01"],
+      "artefacts": ["docs/setup/supabase-connection.md"]
+    },
+    {
+      "id": "BE-02",
+      "title": "Generate and Insert Seed Data",
+      "day": 2,
+      "dependencies": ["BE-01"],
+      "artefacts": ["lib/seed/seed-data.ts", "docs/setup/supabase-seed.md"]
+    },
+    {
+      "id": "BE-03",
+      "title": "Expand Integration Testing for Supabase",
+      "day": 4,
+      "dependencies": ["BE-01", "TL-01"],
+      "artefacts": ["tests/integration/lib/supabase.test.ts", "docs/testing/supabase-integration.md"]
+    },
+    {
+      "id": "BE-04",
+      "title": "Validate Local Environment with APIs",
+      "day": 3,
+      "dependencies": ["TL-01", "TL-13"],
+      "artefacts": ["docs/testing/api-validation.md"]
+    },
+    {
+      "id": "BE-05",
+      "title": "Coordinate with Frontend Developer on Integration Points",
+      "day": 3,
+      "dependencies": ["FE-05", "TL-01"],
+      "artefacts": ["types/api.ts", "docs/integration/api-integration.md"]
+    },
+    {
+      "id": "BE-06",
+      "title": "Participate in Final Alignment Meeting",
+      "day": 5,
+      "dependencies": ["PM-06"],
+      "artefacts": []
+    },
+    {
+      "id": "BE-07",
+      "title": "Implement Missing Service Functions",
+      "day": 3,
+      "dependencies": ["BE-01", "BE-04"],
+      "artefacts": ["lib/services/customerService.ts", "lib/services/orderService.ts", "tests/unit/services/"]
+    },
+    {
+      "id": "BE-08",
+      "title": "Implement Error Handling Middleware",
+      "day": 3,
+      "dependencies": ["TL-01"],
+      "artefacts": ["lib/middleware/errorHandler.ts", "tests/unit/middleware.test.ts", "docs/setup/error-handling.md"]
+    },
+    {
+      "id": "BE-09",
+      "title": "Create API Documentation",
+      "day": 4,
+      "dependencies": ["BE-04", "BE-07"],
+      "artefacts": ["openapi.yaml", "docs/api/api-documentation.md"]
+    },
+    {
+      "id": "BE-10",
+      "title": "Update Database Migration Scripts",
+      "day": 3,
+      "dependencies": ["BE-01"],
+      "artefacts": ["supabase/migrations/", "docs/setup/database-migrations.md"]
+    },
+    {
+      "id": "BE-11",
+      "title": "Implement Rate Limiting for APIs",
+      "day": 3,
+      "dependencies": ["BE-04"],
+      "artefacts": ["lib/utils/rate-limit.ts", "docs/security/rate-limiting.md"]
+    },
+    {
+      "id": "BE-12",
+      "title": "Test Stripe Integration",
+      "day": 3,
+      "dependencies": ["TL-13"],
+      "artefacts": ["docs/setup/stripe-integration.md"]
+    },
+    {
+      "id": "BE-13",
+      "title": "Test Cloudinary Integration",
+      "day": 3,
+      "dependencies": ["TL-13"],
+      "artefacts": ["docs/setup/cloudinary-tests.md"]
+    },
+    {
+      "id": "BE-14",
+      "title": "Implement Authentication Middleware",
+      "day": 4,
+      "dependencies": ["BE-01", "BE-08"],
+      "artefacts": ["lib/middleware/authMiddleware.ts", "docs/security/auth-middleware.md"]
+    }
+  ],
+  "frontend_engineer": [
+    {
+      "id": "FE-01",
+      "title": "Validate Local Environment Setup",
+      "day": 2,
+      "dependencies": ["TL-01", "TL-13"],
+      "artefacts": ["docs/setup/frontend-environment.md"]
+    },
+    {
+      "id": "FE-02",
+      "title": "Implement Core UI Components",
+      "day": 3,
+      "dependencies": ["FE-01", "TL-01"],
+      "artefacts": ["components/ui/Button.tsx", "components/ui/Card.tsx", "components/ui/ProductCard.tsx", "tests/unit/ui.test.tsx", "docs/components/ui.md"]
+    },
+    {
+      "id": "FE-03",
+      "title": "Review and Integrate Design Handoff",
+      "day": 4,
+      "dependencies": ["UX-13"],
+      "artefacts": ["docs/integration/design-handoff-review.md"]
+    },
+    {
+      "id": "FE-04",
+      "title": "Establish TypeScript Integration with Backend",
+      "day": 4,
+      "dependencies": ["BE-05", "TL-01"],
+      "artefacts": ["types/api.ts", "lib/utils/api.ts", "docs/integration/types-integration.md"]
+    },
+    {
+      "id": "FE-05",
+      "title": "Coordinate with Backend Developer on API Integration",
+      "day": 3,
+      "dependencies": ["BE-05", "BE-04"],
+      "artefacts": ["types/api.ts", "docs/integration/frontend-backend.md"]
+    },
+    {
+      "id": "FE-06",
+      "title": "Participate in Final Alignment Meeting",
+      "day": 5,
+      "dependencies": ["PM-06"],
+      "artefacts": []
+    }
+  ],
+  "ux_designer": [
+    {
+      "id": "UX-01",
+      "title": "Refine High-Fidelity Prototype for Homepage",
+      "day": 1,
+      "dependencies": [],
+      "artefacts": ["docs/design/homepage-spec.md", "designs/homepage-desktop.pdf"]
+    },
+    {
+      "id": "UX-02",
+      "title": "Create High-Fidelity Prototype for Product Listing",
+      "day": 2,
+      "dependencies": ["BE-01"],
+      "artefacts": ["docs/design/product-listing-spec.md", "designs/product-listing-desktop.pdf"]
+    },
+    {
+      "id": "UX-03",
+      "title": "Create High-Fidelity Prototype for Product Detail",
+      "day": 2,
+      "dependencies": ["BE-01"],
+      "artefacts": ["docs/design/product-detail-spec.md", "designs/product-detail-desktop.pdf"]
+    },
+    {
+      "id": "UX-04",
+      "title": "Create High-Fidelity Prototype for Cart & Checkout",
+      "day": 3,
+      "dependencies": ["BE-05"],
+      "artefacts": ["docs/design/cart-checkout-spec.md", "designs/cart-desktop.pdf", "designs/checkout-desktop.pdf"]
+    },
+    {
+      "id": "UX-05",
+      "title": "Create High-Fidelity Prototype for Authentication Flows",
+      "day": 3,
+      "dependencies": ["BE-01"],
+      "artefacts": ["docs/design/authentication-spec.md", "designs/login-desktop.pdf", "designs/register-desktop.pdf"]
+    },
+    {
+      "id": "UX-06",
+      "title": "Refine Design System",
+      "day": 1,
+      "dependencies": [],
+      "artefacts": ["docs/design/design-system.md", "design-tokens/colors.json", "design-tokens/typography.json"]
+    },
+    {
+      "id": "UX-07",
+      "title": "Create Component Library",
+      "day": 3,
+      "dependencies": ["UX-06"],
+      "artefacts": ["docs/design/component-library.md", "designs/components/*.pdf"]
+    },
+    {
+      "id": "UX-08",
+      "title": "Design Animation & Interaction Specifications",
+      "day": 3,
+      "dependencies": ["UX-06", "UX-07"],
+      "artefacts": ["docs/design/interaction-specifications.md", "designs/interaction-specifications.pdf"]
+    },
+    {
+      "id": "UX-09",
+      "title": "Create Skeleton Loading States",
+      "day": 3,
+      "dependencies": ["UX-01", "UX-02", "UX-03", "UX-04", "UX-05"],
+      "artefacts": ["docs/design/skeleton-loading.md", "designs/skeleton-states.pdf"]
+    },
+    {
+      "id": "UX-10",
+      "title": "Design Toast Notification System",
+      "day": 3,
+      "dependencies": ["UX-06", "UX-07"],
+      "artefacts": ["docs/design/toast-notifications.md", "designs/toast-notifications.pdf"]
+    },
+    {
+      "id": "UX-11",
+      "title": "Create User Flow Diagrams",
+      "day": 1,
+      "dependencies": [],
+      "artefacts": ["docs/design/user-flows.md", "designs/user-journey-maps.pdf"]
+    },
+    {
+      "id": "UX-12",
+      "title": "Design Mobile-Specific Gesture Interactions",
+      "day": 3,
+      "dependencies": ["UX-01", "UX-02", "UX-03", "UX-04", "UX-05"],
+      "artefacts": ["docs/design/mobile-gestures.md", "designs/mobile-gestures.pdf"]
+    },
+    {
+      "id": "UX-13",
+      "title": "Prepare Design Handoff Documentation",
+      "day": 4,
+      "dependencies": ["UX-01", "UX-02", "UX-03", "UX-04", "UX-05", "UX-06", "UX-07", "UX-08", "UX-09", "UX-10", "UX-11", "UX-12"],
+      "artefacts": ["docs/design/design-handoff-guide.md"]
+    },
+    {
+      "id": "UX-14",
+      "title": "Export Design Tokens for Developer Integration",
+      "day": 4,
+      "dependencies": ["UX-06", "FE-01"],
+      "artefacts": ["design-tokens/colors.json", "design-tokens/typography.json", "docs/design/design-tokens.md"]
+    },
+    {
+      "id": "UX-15",
+      "title": "Create Responsive Breakpoint Documentation",
+      "day": 3,
+      "dependencies": ["UX-01", "UX-02", "UX-03", "UX-04", "UX-05"],
+      "artefacts": ["docs/design/responsive-behaviour.md"]
+    },
+    {
+      "id": "UX-16",
+      "title": "Draft Usability Testing Plan",
+      "day": 4,
+      "dependencies": ["UX-01", "UX-02", "UX-03", "UX-04", "UX-05"],
+      "artefacts": ["docs/design/usability-test-plan.md"]
+    },
+    {
+      "id": "UX-17",
+      "title": "Create Icon Set for E-commerce",
+      "day": 3,
+      "dependencies": ["UX-06"],
+      "artefacts": ["public/icons/product-icons.svg", "public/icons/navigation-icons.svg", "docs/design/icon-set.md"]
+    },
+    {
+      "id": "UX-18",
+      "title": "Design Brazilian Artisanal Brand Elements",
+      "day": 3,
+      "dependencies": ["UX-06"],
+      "artefacts": ["docs/design/brand-elements.md", "designs/artisanal-badges.pdf"]
+    },
+    {
+      "id": "UX-19",
+      "title": "Create Accessibility Guidelines Document",
+      "day": 4,
+      "dependencies": ["UX-06", "UX-07"],
+      "artefacts": ["docs/design/accessibility-guidelines.md"]
+    },
+    {
+      "id": "UX-21",
+      "title": "Coordinate with Backend Developer on Data Requirements",
+      "day": 3,
+      "dependencies": ["BE-05", "UX-01", "UX-02", "UX-03", "UX-04", "UX-05"],
+      "artefacts": ["docs/design/data-requirements.md"]
+    },
+    {
+      "id": "UX-21b",
+      "title": "Coordinate with Frontend Developer on Component Implementation",
+      "day": 4,
+      "dependencies": ["FE-03", "UX-07", "UX-08"],
+      "artefacts": ["docs/design/component-implementation.md"]
+    },
+    {
+      "id": "UX-22",
+      "title": "Establish Image Guidelines for Product Photography",
+      "day": 4,
+      "dependencies": ["UX-06"],
+      "artefacts": ["docs/design/product-photography-guidelines.md", "public/images/"]
+    },
+    {
+      "id": "UX-23",
+      "title": "Create Error State Designs",
+      "day": 3,
+      "dependencies": ["UX-06", "UX-07"],
+      "artefacts": ["docs/design/error-states.md", "designs/error-states.pdf"]
+    },
+    {
+      "id": "UX-24",
+      "title": "Review Analytics Requirements with PM",
+      "day": 4,
+      "dependencies": ["PM-01"],
+      "artefacts": ["docs/design/analytics-requirements.md"]
+    },
+    {
+      "id": "UX-25",
+      "title": "Participate in Final Alignment Meeting",
+      "day": 5,
+      "dependencies": ["PM-06"],
+      "artefacts": []
+    }
+  ],
+  "qa_tester": [
+    {
+      "id": "QA-01",
+      "title": "Draft QA Testing Plan",
+      "day": 2,
+      "dependencies": [],
+      "artefacts": ["docs/testing/testing-strategy.md"]
+    },
+    {
+      "id": "QA-02",
+      "title": "Set Up Testing Environment",
+      "day": 3,
+      "dependencies": ["TL-01", "BE-04"],
+      "artefacts": ["jest.config.js", "tests/e2e/cypress.config.ts", "docs/testing/setup.md"]
+    },
+    {
+      "id": "QA-03",
+      "title": "Participate in Final Alignment Meeting",
+      "day": 5,
+      "dependencies": ["PM-06"],
+      "artefacts": []
+    }
+  ]
+}

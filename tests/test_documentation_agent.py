@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from orchestration.documentation_agent import (DocumentationAgent,
+from src.core.workflows.documentation_agent import (DocumentationAgent,
                                                DocumentationReport, QASummary,
                                                TaskArtifact, TaskSummary)
 
@@ -90,7 +90,7 @@ def test_documentation_agent_cli():
     """Test the CLI interface of the documentation agent."""
     # This would be an integration test that actually runs the CLI
     # For now, we'll test that the main function exists and can be imported
-    from orchestration.documentation_agent import main
+    from src.core.workflows.documentation_agent import main
     assert callable(main)
 
 

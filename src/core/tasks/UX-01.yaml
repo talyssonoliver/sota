@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-01
+title: Refine High-Fidelity Prototype for Homepage
+owner: ux
+depends_on: []
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-01: Refine High-Fidelity Prototype for Homepage"
+artefacts:
+  - docs/design/homepage-spec.md
+  - designs/homepage-desktop.pdf
+context_topics:
+  - project-overview

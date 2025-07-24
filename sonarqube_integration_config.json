@@ -1,0 +1,24 @@
+{
+  "sonarqube_integration": {
+    "project_key": "Sota-ai",
+    "host_url": "http://localhost:9000",
+    "scanner_path": null,
+    "coverage_enabled": true,
+    "quality_gate_enabled": true
+  },
+  "integration_settings": {
+    "combine_reports": true,
+    "severity_mapping": {
+      "BLOCKER": "error",
+      "CRITICAL": "error",
+      "MAJOR": "warning",
+      "MINOR": "info",
+      "INFO": "info"
+    },
+    "exclude_patterns": [
+      "**/tests/**",
+      "**/__pycache__/**",
+      "**/venv/**"
+    ]
+  }
+}
