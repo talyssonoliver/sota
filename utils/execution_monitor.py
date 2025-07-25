@@ -3,23 +3,16 @@ Real-time execution monitoring system for agent workflows.
 Implements Step 4.8 requirements for logging each agent execution.
 """
 
-import base64
 import csv
 import functools
-import hashlib
 import json
 import logging
-import os
-import secrets
-import stat
-import subprocess
 import threading
 import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import psutil
 
 try:
     from pythonjsonlogger import jsonlogger
@@ -80,7 +73,7 @@ class DashboardLogger:
         try:
             with open(self.live_data_file, 'w', encoding='utf-8') as f:
                 json.dump(live_data, f, indent=2)
-        except Exception as e:
+        except Exception:
             # Silent failure to prevent monitoring from breaking workflow
             pass
 
@@ -115,7 +108,7 @@ class DashboardLogger:
             # Save updated status
             with open(self.status_file, 'w', encoding='utf-8') as f:
                 json.dump(status_data, f, indent=2)
-        except Exception as e:
+        except Exception:
             # Silent failure to prevent monitoring from breaking workflow
             pass
 
@@ -144,7 +137,7 @@ class DashboardLogger:
                 dashboard_data['summary_stats'] = monitor.get_execution_stats()
             except:
                 dashboard_data['summary_stats'] = {}
-        except Exception as e:
+        except Exception:
             # Return default data if anything fails
             pass
 
@@ -416,7 +409,7 @@ class ExecutionMonitor:
 
             # Print dashboard-style summary (suppress errors)
             try:
-                print(f"\n🎯 Agent Execution Summary:")
+                print("\n🎯 Agent Execution Summary:")
                 print(f"   Task: {task_id}")
                 print(f"   Agent: {agent}")
                 print(f"   Status: {status}")

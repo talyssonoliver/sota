@@ -1,15 +1,15 @@
 {
-  "timestamp": "2025-07-23 21:14:41",
+  "timestamp": "2025-07-24 20:15:15",
   "validation_system": "Validation Pipeline v3.0",
   "summary": {
     "overall_success": false,
     "can_merge": false,
-    "total_duration": 144.31685400009155,
+    "total_duration": 666.8435218334198,
     "phases_completed": 5,
-    "total_issues": 5890,
-    "critical_issues": 7,
-    "warnings": 5227,
-    "info_issues": 656,
+    "total_issues": 10188,
+    "critical_issues": 17,
+    "warnings": 9097,
+    "info_issues": 1074,
     "build_decision": {
       "allow_merge": false,
       "require_review": false,
@@ -23,7 +23,7 @@
   "phase_results": {
     "preparation": {
       "success": true,
-      "duration": 2.0511300563812256,
+      "duration": 0.37004971504211426,
       "issues_found": 0,
       "critical_issues": 0,
       "warnings": 0,
@@ -31,55 +31,54 @@
       "details": {
         "success": true,
         "environment": {
-          "python_files": 456,
-          "test_files": 181,
+          "python_files": 696,
+          "test_files": 269,
           "has_requirements": true,
           "has_pyproject": true,
           "has_tests_dir": true
         },
-        "files_collected": 456
+        "files_collected": 696
       }
     },
     "static_analysis": {
-      "success": true,
-      "duration": 80.89113593101501,
-      "issues_found": 1679,
+      "success": false,
+      "duration": 234.8055157661438,
+      "issues_found": 2432,
       "critical_issues": 0,
       "warnings": 0,
       "info": 0,
       "details": {
-        "parallel_results": {
-          "syntax_validation": {
-            "success": true,
-            "error": null
-          },
-          "ai_pattern_detection": {
-            "success": true,
-            "error": null
-          },
-          "business_logic_protection": {
-            "success": true,
-            "error": null
-          },
-          "structure_validation": {
-            "success": true,
-            "error": null
-          },
-          "performance_validation": {
-            "success": true,
-            "error": null
-          },
-          "dependency_validation": {
-            "success": true,
-            "error": null
-          }
+        "success": false,
+        "validators_run": [
+          "syntax",
+          "dependencies",
+          "structure",
+          "performance",
+          "ai_patterns",
+          "business_logic"
+        ],
+        "results": {
+          "syntax": false,
+          "dependencies": true,
+          "structure": true,
+          "performance": true,
+          "ai_patterns": true,
+          "business_logic": true
+        },
+        "issues_by_category": {
+          "syntax": 1,
+          "dependencies": 10,
+          "structure": 317,
+          "performance": 1531,
+          "ai_analysis": 2,
+          "business_logic": 0
         }
       }
     },
     "quality_gates": {
       "success": false,
-      "duration": 11.340588092803955,
-      "issues_found": 1682,
+      "duration": 159.63455367088318,
+      "issues_found": 2435,
       "critical_issues": 0,
       "warnings": 0,
       "info": 0,
@@ -100,10 +99,10 @@
         "technical_debt": {
           "bugs": 0.0,
           "vulnerabilities": 28.0,
-          "code_smells": 10.25,
+          "code_smells": 12.0,
           "security_hotspots": 164.25,
-          "total_hours": 202.5,
-          "total_days": 25.3125
+          "total_hours": 204.25,
+          "total_days": 25.53125
         },
         "iso_25010_compliance": {
           "functionality": {
@@ -153,8 +152,8 @@
     },
     "security_scan": {
       "success": true,
-      "duration": 19.350268840789795,
-      "issues_found": 5882,
+      "duration": 137.08951139450073,
+      "issues_found": 10180,
       "critical_issues": 0,
       "warnings": 0,
       "info": 0,
@@ -168,28 +167,45 @@
         },
         "pep8_compliance": {
           "compliance_percentage": 100.0,
-          "files_compliant": 456,
-          "total_files": 456,
+          "files_compliant": 696,
+          "total_files": 696,
           "total_violations": 0,
           "status": "COMPLIANT"
         },
         "security_vulnerabilities": {
-          "total_vulnerabilities": 3809,
+          "total_vulnerabilities": 7099,
           "by_owasp_category": {
-            "A02:2021-Cryptographic Failures": 810,
-            "A08:2021-Software and Data Integrity Failures": 1925,
-            "A01:2021-Broken Access Control": 1027,
-            "A09:2021-Security Logging and Monitoring Failures": 45,
-            "A05:2021-Security Misconfiguration": 2
+            "A02:2021-Cryptographic Failures": 1601,
+            "A01:2021-Broken Access Control": 1492,
+            "A08:2021-Software and Data Integrity Failures": 3691,
+            "A09:2021-Security Logging and Monitoring Failures": 76,
+            "A05:2021-Security Misconfiguration": 3
           }
         },
-        "external_tools": {}
+        "external_tools": {
+          "mypy": {
+            "returncode": 2,
+            "issues_found": 0
+          },
+          "black": {
+            "returncode": 123,
+            "issues_found": 0
+          },
+          "ruff": {
+            "returncode": 1,
+            "issues_found": 48
+          },
+          "bandit": {
+            "returncode": 1,
+            "issues_found": 236
+          }
+        }
       }
     },
     "nfr_validation": {
       "success": true,
-      "duration": 30.655767679214478,
-      "issues_found": 5890,
+      "duration": 48.72317385673523,
+      "issues_found": 10188,
       "critical_issues": 0,
       "warnings": 0,
       "info": 0,
@@ -212,19 +228,19 @@
           "status": "COMPLIANT"
         },
         "security_metrics": {
-          "authentication_coverage": 22.727272727272727,
-          "input_validation_coverage": 8.981380065717415,
-          "encryption_usage": 0.21443888491779842
+          "authentication_coverage": 9.803921568627452,
+          "input_validation_coverage": 8.734939759036145,
+          "encryption_usage": 0.16736401673640167
         },
         "maintainability_metrics": {
-          "average_complexity": 2.722135183527305,
-          "duplication_percentage": 50.96323732890563,
-          "documentation_coverage": 86.42225031605562
+          "average_complexity": 2.723592458677686,
+          "duplication_percentage": 69.29572082760662,
+          "documentation_coverage": 89.2666270783848
         },
         "performance_profiles": [
           {
             "function": "analyze_file_dependencies",
-            "file": "/mnt/c/taly/ai-system/dependency_analyzer.py",
+            "file": "C:\\taly\\ai-system\\dependency_analyzer.py",
             "execution_time_ms": 14.0,
             "memory_mb": 7.0,
             "cpu_percent": 28.0,
@@ -232,419 +248,155 @@
           },
           {
             "function": "create_parallel_groups",
-            "file": "/mnt/c/taly/ai-system/dependency_analyzer.py",
+            "file": "C:\\taly\\ai-system\\dependency_analyzer.py",
             "execution_time_ms": 5.0,
-            "memory_mb": 2.5,
+            "memory_mb": 4.1012109375,
             "cpu_percent": 10.0,
             "complexity": 5.0
           },
           {
             "function": "main",
-            "file": "/mnt/c/taly/ai-system/dependency_analyzer.py",
+            "file": "C:\\taly\\ai-system\\dependency_analyzer.py",
             "execution_time_ms": 5.0,
-            "memory_mb": 2.5,
+            "memory_mb": 4.1012109375,
             "cpu_percent": 10.0,
             "complexity": 5.0
           },
           {
+            "function": "fix_imports_in_file",
+            "file": "C:\\taly\\ai-system\\fix_legacy_imports.py",
+            "execution_time_ms": 5.0,
+            "memory_mb": 4.1012109375,
+            "cpu_percent": 10.0,
+            "complexity": 5.0
+          },
+          {
+            "function": "find_test_files_with_import_errors",
+            "file": "C:\\taly\\ai-system\\fix_legacy_imports.py",
+            "execution_time_ms": 2.0,
+            "memory_mb": 4.1012109375,
+            "cpu_percent": 4.0,
+            "complexity": 2.0
+          },
+          {
+            "function": "main",
+            "file": "C:\\taly\\ai-system\\fix_legacy_imports.py",
+            "execution_time_ms": 4.0,
+            "memory_mb": 4.1012109375,
+            "cpu_percent": 8.0,
+            "complexity": 4.0
+          },
+          {
             "function": "run_simple_agent_test",
-            "file": "/mnt/c/taly/ai-system/main.py",
+            "file": "C:\\taly\\ai-system\\main.py",
             "execution_time_ms": 3.0,
-            "memory_mb": 1.9837109375,
+            "memory_mb": 4.1012109375,
             "cpu_percent": 6.0,
             "complexity": 3.0
           },
           {
             "function": "run_supabase_tool_test",
-            "file": "/mnt/c/taly/ai-system/main.py",
+            "file": "C:\\taly\\ai-system\\main.py",
             "execution_time_ms": 3.5,
-            "memory_mb": 1.9837109375,
+            "memory_mb": 4.1012109375,
             "cpu_percent": 7.0,
             "complexity": 3.5
           },
           {
             "function": "run_memory_test",
-            "file": "/mnt/c/taly/ai-system/main.py",
+            "file": "C:\\taly\\ai-system\\main.py",
             "execution_time_ms": 7.0,
-            "memory_mb": 3.5,
+            "memory_mb": 4.1012109375,
             "cpu_percent": 14.0,
             "complexity": 7.0
           },
           {
             "function": "run_workflow_test",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 4.500000000000001,
-            "memory_mb": 2.25,
-            "cpu_percent": 9.0,
-            "complexity": 4.5
+            "file": "C:\\taly\\ai-system\\main.py",
+            "execution_time_ms": 3.5,
+            "memory_mb": 4.1012109375,
+            "cpu_percent": 7.0,
+            "complexity": 3.5
           },
           {
             "function": "run_comprehensive_tests",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 5.0,
-            "memory_mb": 2.5,
-            "cpu_percent": 10.0,
-            "complexity": 5.0
+            "file": "C:\\taly\\ai-system\\main.py",
+            "execution_time_ms": 4.0,
+            "memory_mb": 4.1012109375,
+            "cpu_percent": 8.0,
+            "complexity": 4.0
           },
           {
             "function": "run_validation_suite",
-            "file": "/mnt/c/taly/ai-system/main.py",
+            "file": "C:\\taly\\ai-system\\main.py",
             "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
+            "memory_mb": 4.1012109375,
             "cpu_percent": 2.0,
             "complexity": 1.0
           },
           {
             "function": "print_summary",
-            "file": "/mnt/c/taly/ai-system/main.py",
+            "file": "C:\\taly\\ai-system\\main.py",
             "execution_time_ms": 5.0,
-            "memory_mb": 2.5,
+            "memory_mb": 4.1012109375,
             "cpu_percent": 10.0,
             "complexity": 5.0
           },
           {
             "function": "main",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 5.0,
-            "memory_mb": 2.5,
-            "cpu_percent": 10.0,
-            "complexity": 5.0
-          },
-          {
-            "function": "load_dotenv",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "initialize_agent",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "create_sql_agent",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "__init__",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "from_function",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "__init__",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "test_handler",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "invoke",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "__init__",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "add_node",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "add_edge",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "set_entry_point",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "set_finish_point",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "compile",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "invoke",
-            "file": "/mnt/c/taly/ai-system/main.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "ensure_build_directories",
-            "file": "/mnt/c/taly/ai-system/config/build_paths.py",
-            "execution_time_ms": 2.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 4.0,
-            "complexity": 2.0
-          },
-          {
-            "function": "get_config_manager",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 2.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 4.0,
-            "complexity": 2.0
-          },
-          {
-            "function": "load_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_agents_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_tools_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_critical_path_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_qa_thresholds_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_hitl_policies_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "__init__",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "_validate_config_files",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
+            "file": "C:\\taly\\ai-system\\main.py",
             "execution_time_ms": 4.0,
-            "memory_mb": 2.0,
+            "memory_mb": 4.1012109375,
             "cpu_percent": 8.0,
             "complexity": 4.0
           },
           {
-            "function": "load_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 7.5,
-            "memory_mb": 3.75,
-            "cpu_percent": 15.0,
-            "complexity": 7.5
-          },
-          {
-            "function": "get_agents_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
+            "function": "test_handler",
+            "file": "C:\\taly\\ai-system\\main.py",
             "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
+            "memory_mb": 4.1012109375,
             "cpu_percent": 2.0,
             "complexity": 1.0
           },
           {
-            "function": "get_tools_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_critical_path_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_qa_thresholds_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_validation_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_hitl_policies_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_daily_cycle_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_auto_generated_graph_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_task_schema",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_gemini_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_webhook_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_prometheus_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "get_agent_generator_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 1.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 2.0,
-            "complexity": 1.0
-          },
-          {
-            "function": "reload_config",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 3.0,
-            "memory_mb": 1.9837109375,
-            "cpu_percent": 6.0,
-            "complexity": 3.0
-          },
-          {
-            "function": "get_all_configs",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
+            "function": "test_claude_embeddings",
+            "file": "C:\\taly\\ai-system\\test_claude_integration.py",
             "execution_time_ms": 2.0,
-            "memory_mb": 1.9837109375,
+            "memory_mb": 4.1012109375,
             "cpu_percent": 4.0,
             "complexity": 2.0
           },
           {
-            "function": "validate_configuration_integrity",
-            "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-            "execution_time_ms": 8.0,
-            "memory_mb": 4.0,
-            "cpu_percent": 16.0,
-            "complexity": 8.0
+            "function": "test_claude_chat_simple",
+            "file": "C:\\taly\\ai-system\\test_claude_integration.py",
+            "execution_time_ms": 2.5,
+            "memory_mb": 4.1012109375,
+            "cpu_percent": 5.0,
+            "complexity": 2.5
+          },
+          {
+            "function": "test_feature_flags",
+            "file": "C:\\taly\\ai-system\\test_claude_integration.py",
+            "execution_time_ms": 2.0,
+            "memory_mb": 4.1012109375,
+            "cpu_percent": 4.0,
+            "complexity": 2.0
+          },
+          {
+            "function": "test_memory_integration",
+            "file": "C:\\taly\\ai-system\\test_claude_integration.py",
+            "execution_time_ms": 2.0,
+            "memory_mb": 4.1012109375,
+            "cpu_percent": 4.0,
+            "complexity": 2.0
+          },
+          {
+            "function": "main",
+            "file": "C:\\taly\\ai-system\\test_claude_integration.py",
+            "execution_time_ms": 4.0,
+            "memory_mb": 4.1012109375,
+            "cpu_percent": 8.0,
+            "complexity": 4.0
           }
         ],
         "nfr_violations": [
@@ -693,22 +445,23 @@
     }
   },
   "issues_by_category": {
-    "imports": 461,
-    "dependencies": 70,
-    "structure": 213,
-    "documentation": 231,
-    "coverage": 1,
-    "performance": 868,
-    "ai_analysis": 45,
+    "imports": 550,
+    "syntax": 1,
+    "dependencies": 10,
+    "structure": 317,
+    "documentation": 270,
+    "performance": 1531,
+    "ai_analysis": 2,
     "quality_gates": 3,
-    "security": 3809,
-    "complexity": 181,
+    "code_quality": 48,
+    "security": 7099,
+    "complexity": 349,
     "nfr": 8
   },
   "issues_by_severity": {
-    "info": 656,
-    "warning": 5227,
-    "error": 7
+    "info": 1074,
+    "error": 17,
+    "warning": 9097
   },
   "compliance_assessment": {
     "overall_compliance_percentage": 20.0,
@@ -739,7 +492,7 @@
         "compliance": false
       },
       "Maintainability": {
-        "code_smells_detected": 1,
+        "code_smells_detected": 0,
         "compliance": true
       },
       "Process Automation": {
@@ -757,61 +510,61 @@
     "  - vulnerabilities",
     "\ud83d\udcd0 COMPLIANCE: 20.0% compliance with software engineering principles"
   ],
-  "total_issues": 5890,
+  "total_issues": 10188,
   "top_issues_summary": [
     {
       "issue": "security:other",
-      "count": 3809,
-      "severity": "warning",
-      "message": "Weak Cryptographic Algorithm: Use of weak or deprecated cryptographic algorithms"
+      "count": 7099,
+      "severity": "info",
+      "message": "Bandit: Consider possible security implications associated with the subprocess module."
     },
     {
       "issue": "performance:other",
-      "count": 868,
+      "count": 1531,
       "severity": "warning",
       "message": "Function 'analyze_file_dependencies' has high complexity (16)"
     },
     {
       "issue": "imports:other",
-      "count": 461,
+      "count": 550,
       "severity": "info",
-      "message": "Optional dependency detected: 'typing' (handled gracefully)"
-    },
-    {
-      "issue": "documentation:other",
-      "count": 231,
-      "severity": "warning",
-      "message": "Missing docstring for 'main'"
-    },
-    {
-      "issue": "structure:other",
-      "count": 213,
-      "severity": "warning",
-      "message": "Empty directory: .sota_backups"
+      "message": "Optional dependency detected: 'src.infrastructure.integrations.claude' (handled gracefully)"
     },
     {
       "issue": "complexity:other",
-      "count": 181,
+      "count": 349,
       "severity": "warning",
       "message": "Function 'run_memory_test' is too long (56 lines)"
     },
     {
-      "issue": "dependencies:other",
-      "count": 70,
-      "severity": "info",
-      "message": "Development tool in main requirements: flake8"
+      "issue": "structure:other",
+      "count": 317,
+      "severity": "warning",
+      "message": "Empty directory: .git\\refs\\remotes\\origin\\codex"
     },
     {
-      "issue": "ai_analysis:other",
-      "count": 45,
+      "issue": "documentation:other",
+      "count": 270,
       "severity": "warning",
-      "message": "Duplicate code block detected (hash match)"
+      "message": "Missing docstring for 'main'"
+    },
+    {
+      "issue": "code_quality:other",
+      "count": 48,
+      "severity": "warning",
+      "message": "Ruff: Local variable `framework_str` is assigned to but never used"
+    },
+    {
+      "issue": "dependencies:other",
+      "count": 10,
+      "severity": "info",
+      "message": "Development tool in main requirements: jupyterlab"
     },
     {
       "issue": "nfr:other",
       "count": 8,
       "severity": "error",
-      "message": "NFR violation: All protected endpoints must have authentication (Actual: 22.73 percentage)"
+      "message": "NFR violation: All protected endpoints must have authentication (Actual: 9.80 percentage)"
     },
     {
       "issue": "quality_gates:other",
@@ -824,54 +577,54 @@
     {
       "category": "security",
       "type": "other",
-      "severity": "warning",
-      "message_pattern": "Weak Cryptographic Algorithm: Use of weak or deprecated cryptographic algorithms",
-      "fix_suggestion": "Use strong cryptographic algorithms like SHA-256 or AES",
+      "severity": "info",
+      "message_pattern": "Bandit: Consider possible security implications associated with the subprocess module.",
+      "fix_suggestion": "Address B404 vulnerability",
       "auto_fixable": false,
-      "count": 3809,
+      "count": 7099,
       "sample_occurrences": [
         {
-          "file": "/mnt/c/taly/ai-system/dependency_analyzer.py",
-          "line": 72
+          "file": "src/core\\workflows\\daily_cycle.py",
+          "line": 45
         },
         {
-          "file": "/mnt/c/taly/ai-system/dependency_analyzer.py",
-          "line": 82
+          "file": "src/core\\workflows\\daily_cycle.py",
+          "line": 406
         },
         {
-          "file": "/mnt/c/taly/ai-system/dependency_analyzer.py",
-          "line": 112
+          "file": "src/core\\workflows\\documentation_agent.py",
+          "line": 372
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 10
+          "file": "src/core\\workflows\\documentation_agent.py",
+          "line": 716
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 99
+          "file": "src/core\\workflows\\enhanced_workflow.py",
+          "line": 288
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 101
+          "file": "src/core\\workflows\\extract_code.py",
+          "line": 13
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 105
+          "file": "src/core\\workflows\\extract_code.py",
+          "line": 276
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 106
+          "file": "src/core\\workflows\\extract_code.py",
+          "line": 276
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 115
+          "file": "src/core\\workflows\\extract_code.py",
+          "line": 288
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 116
+          "file": "src/core\\workflows\\extract_code.py",
+          "line": 288
         }
       ],
-      "total_occurrences": 3809
+      "total_occurrences": 7099
     },
     {
       "category": "performance",
@@ -880,206 +633,102 @@
       "message_pattern": "Function 'analyze_file_dependencies' has high complexity (16)",
       "fix_suggestion": "Consider breaking down function into smaller pieces (current: 16, max: 10)",
       "auto_fixable": false,
-      "count": 868,
+      "count": 1531,
       "sample_occurrences": [
         {
-          "file": "/mnt/c/taly/ai-system/dependency_analyzer.py",
+          "file": "C:\\taly\\ai-system\\dependency_analyzer.py",
           "line": 7
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 249
+          "file": "C:\\taly\\ai-system\\main.py",
+          "line": 164
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 306
+          "file": "C:\\taly\\ai-system\\main.py",
+          "line": 222
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 494
+          "file": "C:\\taly\\ai-system\\main.py",
+          "line": 388
         },
         {
-          "file": "/mnt/c/taly/ai-system/fix_tracking/phase1/add_input_validation.py",
-          "line": 8
+          "file": "C:\\taly\\ai-system\\agents\\backend.py",
+          "line": 73
         },
         {
-          "file": "/mnt/c/taly/ai-system/fix_tracking/phase1/add_input_validation.py",
-          "line": 80
+          "file": "C:\\taly\\ai-system\\agents\\backend.py",
+          "line": 73
         },
         {
-          "file": "/mnt/c/taly/ai-system/fix_tracking/phase1/batch_add_validation_hitl.py",
-          "line": 7
+          "file": "C:\\taly\\ai-system\\agents\\coordinator.py",
+          "line": 50
         },
         {
-          "file": "/mnt/c/taly/ai-system/fix_tracking/phase1/check_input_validation_coverage.py",
-          "line": 92
+          "file": "C:\\taly\\ai-system\\agents\\doc.py",
+          "line": 57
         },
         {
-          "file": "/mnt/c/taly/ai-system/fix_tracking/phase1/check_input_validation_coverage.py",
-          "line": 92
+          "file": "C:\\taly\\ai-system\\agents\\doc.py",
+          "line": 57
         },
         {
-          "file": "/mnt/c/taly/ai-system/fix_tracking/phase1/check_input_validation_coverage.py",
-          "line": 147
+          "file": "C:\\taly\\ai-system\\agents\\factory.py",
+          "line": 26
         }
       ],
-      "total_occurrences": 868
+      "total_occurrences": 1531
     },
     {
       "category": "imports",
       "type": "other",
       "severity": "info",
-      "message_pattern": "Optional dependency detected: 'typing' (handled gracefully)",
+      "message_pattern": "Optional dependency detected: 'src.infrastructure.integrations.claude' (handled gracefully)",
       "fix_suggestion": "",
       "auto_fixable": false,
-      "count": 461,
+      "count": 550,
       "sample_occurrences": [
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
+          "file": "C:\\taly\\ai-system\\test_claude_integration.py",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
+          "file": "C:\\taly\\ai-system\\test_claude_integration.py",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
+          "file": "C:\\taly\\ai-system\\test_claude_integration.py",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
+          "file": "C:\\taly\\ai-system\\test_claude_integration.py",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
+          "file": "C:\\taly\\ai-system\\test_claude_integration.py",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/config/build_paths.py",
+          "file": "C:\\taly\\ai-system\\test_claude_integration.py",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/scripts/setup_sonarqube_integration.py",
+          "file": "C:\\taly\\ai-system\\main.py",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/src/core/agents/backend.py",
+          "file": "C:\\taly\\ai-system\\main.py",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/src/core/agents/coordinator.py",
+          "file": "C:\\taly\\ai-system\\main.py",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/src/core/agents/doc.py",
+          "file": "C:\\taly\\ai-system\\main.py",
           "line": 0
         }
       ],
-      "total_occurrences": 461
-    },
-    {
-      "category": "documentation",
-      "type": "other",
-      "severity": "warning",
-      "message_pattern": "Missing docstring for 'main'",
-      "fix_suggestion": "Add docstring to document the purpose of 'main'",
-      "auto_fixable": false,
-      "count": 231,
-      "sample_occurrences": [
-        {
-          "file": "/mnt/c/taly/ai-system/dependency_analyzer.py",
-          "line": 87
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 98
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 108
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 114
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 105
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 121
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 339
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 349
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 122
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 320
-        }
-      ],
-      "total_occurrences": 231
-    },
-    {
-      "category": "structure",
-      "type": "other",
-      "severity": "warning",
-      "message_pattern": "Empty directory: .sota_backups",
-      "fix_suggestion": "Remove empty directory or add placeholder file",
-      "auto_fixable": true,
-      "count": 213,
-      "sample_occurrences": [
-        {
-          "file": "/mnt/c/taly/ai-system/.sota_backups",
-          "line": 0
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/.validation_history",
-          "line": 0
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/archives/cold",
-          "line": 0
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/build/dashboard/notifications",
-          "line": 0
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/build/storage/cold",
-          "line": 0
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/build/storage/hitl",
-          "line": 0
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/build/storage/warm",
-          "line": 0
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/build/test_outputs",
-          "line": 0
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/docs/sprint/daily_reports",
-          "line": 0
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/fix_tracking/phase2",
-          "line": 0
-        }
-      ],
-      "total_occurrences": 213
+      "total_occurrences": 550
     },
     {
       "category": "complexity",
@@ -1088,160 +737,264 @@
       "message_pattern": "Function 'run_memory_test' is too long (56 lines)",
       "fix_suggestion": "Break down function into smaller, more manageable pieces",
       "auto_fixable": false,
-      "count": 181,
+      "count": 349,
       "sample_occurrences": [
         {
-          "file": "/mnt/c/taly/ai-system/main.py",
-          "line": 249
+          "file": "C:\\taly\\ai-system\\main.py",
+          "line": 164
         },
         {
-          "file": "/mnt/c/taly/ai-system/fix_tracking/phase1/add_input_validation.py",
-          "line": 8
+          "file": "C:\\taly\\ai-system\\agents\\backend.py",
+          "line": 73
         },
         {
-          "file": "/mnt/c/taly/ai-system/fix_tracking/phase1/batch_add_validation_hitl.py",
-          "line": 7
+          "file": "C:\\taly\\ai-system\\agents\\coordinator.py",
+          "line": 50
         },
         {
-          "file": "/mnt/c/taly/ai-system/fix_tracking/phase1/check_input_validation_coverage.py",
-          "line": 92
+          "file": "C:\\taly\\ai-system\\agents\\doc.py",
+          "line": 57
         },
         {
-          "file": "/mnt/c/taly/ai-system/fix_tracking/phase1/enable_encryption_system.py",
-          "line": 27
+          "file": "C:\\taly\\ai-system\\agents\\factory.py",
+          "line": 26
         },
         {
-          "file": "/mnt/c/taly/ai-system/scripts/adaptive_test_runner.py",
-          "line": 130
+          "file": "C:\\taly\\ai-system\\agents\\frontend.py",
+          "line": 56
         },
         {
-          "file": "/mnt/c/taly/ai-system/scripts/setup_sonarqube_integration.py",
-          "line": 16
+          "file": "C:\\taly\\ai-system\\agents\\qa.py",
+          "line": 138
         },
         {
-          "file": "/mnt/c/taly/ai-system/src/core/agents/qa.py",
-          "line": 419
+          "file": "C:\\taly\\ai-system\\agents\\technical.py",
+          "line": 69
         },
         {
-          "file": "/mnt/c/taly/ai-system/src/core/domain/business_rules.py",
-          "line": 324
+          "file": "C:\\taly\\ai-system\\agents\\__init__.py",
+          "line": 84
         },
         {
-          "file": "/mnt/c/taly/ai-system/src/core/services/checkpoint_service.py",
-          "line": 48
+          "file": "C:\\taly\\ai-system\\analytics\\analyse_feedback.py",
+          "line": 42
         }
       ],
-      "total_occurrences": 181
+      "total_occurrences": 349
+    },
+    {
+      "category": "structure",
+      "type": "other",
+      "severity": "warning",
+      "message_pattern": "Empty directory: .git\\refs\\remotes\\origin\\codex",
+      "fix_suggestion": "Remove empty directory or add placeholder file",
+      "auto_fixable": true,
+      "count": 317,
+      "sample_occurrences": [
+        {
+          "file": "C:\\taly\\ai-system\\.git\\refs\\remotes\\origin\\codex",
+          "line": 0
+        },
+        {
+          "file": "C:\\taly\\ai-system\\.sota_backups",
+          "line": 0
+        },
+        {
+          "file": "C:\\taly\\ai-system\\.validation_history",
+          "line": 0
+        },
+        {
+          "file": "C:\\taly\\ai-system\\archives\\cold",
+          "line": 0
+        },
+        {
+          "file": "C:\\taly\\ai-system\\build\\storage\\cold",
+          "line": 0
+        },
+        {
+          "file": "C:\\taly\\ai-system\\build\\storage\\warm",
+          "line": 0
+        },
+        {
+          "file": "C:\\taly\\ai-system\\build\\test_outputs",
+          "line": 0
+        },
+        {
+          "file": "C:\\taly\\ai-system\\data\\storage\\cold\\context",
+          "line": 0
+        },
+        {
+          "file": "C:\\taly\\ai-system\\data\\storage\\hot\\context",
+          "line": 0
+        },
+        {
+          "file": "C:\\taly\\ai-system\\data\\storage\\warm\\context",
+          "line": 0
+        }
+      ],
+      "total_occurrences": 317
+    },
+    {
+      "category": "documentation",
+      "type": "other",
+      "severity": "warning",
+      "message_pattern": "Missing docstring for 'main'",
+      "fix_suggestion": "Add docstring to document the purpose of 'main'",
+      "auto_fixable": false,
+      "count": 270,
+      "sample_occurrences": [
+        {
+          "file": "C:\\taly\\ai-system\\dependency_analyzer.py",
+          "line": 87
+        },
+        {
+          "file": "C:\\taly\\ai-system\\main.py",
+          "line": 235
+        },
+        {
+          "file": "C:\\taly\\ai-system\\main.py",
+          "line": 245
+        },
+        {
+          "file": "C:\\taly\\ai-system\\agents\\backend.py",
+          "line": 29
+        },
+        {
+          "file": "C:\\taly\\ai-system\\agents\\backend.py",
+          "line": 34
+        },
+        {
+          "file": "C:\\taly\\ai-system\\agents\\backend.py",
+          "line": 193
+        },
+        {
+          "file": "C:\\taly\\ai-system\\agents\\coordinator.py",
+          "line": 209
+        },
+        {
+          "file": "C:\\taly\\ai-system\\agents\\doc.py",
+          "line": 179
+        },
+        {
+          "file": "C:\\taly\\ai-system\\agents\\frontend.py",
+          "line": 178
+        },
+        {
+          "file": "C:\\taly\\ai-system\\agents\\qa.py",
+          "line": 30
+        }
+      ],
+      "total_occurrences": 270
+    },
+    {
+      "category": "code_quality",
+      "type": "other",
+      "severity": "warning",
+      "message_pattern": "Ruff: Local variable `framework_str` is assigned to but never used",
+      "fix_suggestion": "Fix F841 violation",
+      "auto_fixable": true,
+      "count": 48,
+      "sample_occurrences": [
+        {
+          "file": "C:\\taly\\ai-system\\src\\core\\agents\\qa.py",
+          "line": 648
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\memory\\engines\\memory_engine.py",
+          "line": 314
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\scripts\\testing\\validate_mock_fixes.py",
+          "line": 9
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\scripts\\testing\\validate_mock_fixes.py",
+          "line": 62
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\scripts\\testing\\validate_mock_fixes.py",
+          "line": 69
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\scripts\\testing\\validation\\validate_canvas_height_fix.py",
+          "line": 33
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\scripts\\testing\\validation\\validate_canvas_height_fix.py",
+          "line": 48
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\scripts\\testing\\validation\\validate_canvas_height_fix.py",
+          "line": 113
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\scripts\\testing\\validation\\validate_canvas_height_fix.py",
+          "line": 153
+        },
+        {
+          "file": "C:\\taly\\ai-system\\src\\infrastructure\\scripts\\testing\\validation\\validate_canvas_height_fix.py",
+          "line": 159
+        }
+      ],
+      "total_occurrences": 48
     },
     {
       "category": "dependencies",
       "type": "other",
       "severity": "info",
-      "message_pattern": "Development tool in main requirements: flake8",
-      "fix_suggestion": "Consider moving flake8 to dev requirements",
+      "message_pattern": "Development tool in main requirements: jupyterlab",
+      "fix_suggestion": "Consider moving jupyterlab to dev requirements",
       "auto_fixable": false,
-      "count": 70,
+      "count": 10,
       "sample_occurrences": [
         {
-          "file": "/mnt/c/taly/ai-system/requirements.txt",
+          "file": "C:\\taly\\ai-system\\requirements.txt",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/requirements.txt",
+          "file": "C:\\taly\\ai-system\\requirements.txt",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/requirements.txt",
+          "file": "C:\\taly\\ai-system\\requirements.txt",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/requirements.txt",
+          "file": "C:\\taly\\ai-system\\requirements.txt",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/requirements.txt",
+          "file": "C:\\taly\\ai-system\\requirements.txt",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/requirements.txt",
+          "file": "C:\\taly\\ai-system\\requirements.txt",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/requirements.txt",
+          "file": "C:\\taly\\ai-system\\requirements.txt",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/requirements.txt",
+          "file": "C:\\taly\\ai-system\\requirements.txt",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/requirements.txt",
+          "file": "C:\\taly\\ai-system\\requirements.txt",
           "line": 0
         },
         {
-          "file": "/mnt/c/taly/ai-system/requirements.txt",
+          "file": "C:\\taly\\ai-system\\requirements.txt",
           "line": 0
         }
       ],
-      "total_occurrences": 70
-    },
-    {
-      "category": "ai_analysis",
-      "type": "other",
-      "severity": "warning",
-      "message_pattern": "Duplicate code block detected (hash match)",
-      "fix_suggestion": "Consider extracting duplicate code into a shared function. Similar code found in /mnt/c/taly/ai-system/src/core/workflows/complete_task.py:664",
-      "auto_fixable": false,
-      "count": 45,
-      "sample_occurrences": [
-        {
-          "file": "/mnt/c/taly/ai-system/src/core/workflows/documentation_agent.py",
-          "line": 663
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/src/core/workflows/hitl/policy_engine.py",
-          "line": 48
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/src/core/workflows/hitl/policy_engine.py",
-          "line": 67
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/src/core/workflows/hitl/policy_engine.py",
-          "line": 131
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/src/infrastructure/tools/resilient_workflow.py",
-          "line": 181
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/src/interfaces/dashboard/components/hitl_kanban_demo.py",
-          "line": 39
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/tests/e2e/system/test_prompt_generation.py",
-          "line": 14
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/tests/fixtures/mocks/__init__.py",
-          "line": 14
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/tests/unit/core/test_agents.py",
-          "line": 14
-        },
-        {
-          "file": "/mnt/c/taly/ai-system/tests/unit/core/test_enhanced_test_generator.py",
-          "line": 14
-        }
-      ],
-      "total_occurrences": 45
+      "total_occurrences": 10
     },
     {
       "category": "nfr",
       "type": "other",
       "severity": "error",
-      "message_pattern": "NFR violation: All protected endpoints must have authentication (Actual: 22.73 percentage)",
+      "message_pattern": "NFR violation: All protected endpoints must have authentication (Actual: 9.80 percentage)",
       "fix_suggestion": "Improve authentication_coverage to meet threshold of 100.0 percentage",
       "auto_fixable": false,
       "count": 8,
@@ -1306,17 +1059,37 @@
       "total_occurrences": 3
     },
     {
-      "category": "coverage",
+      "category": "ai_analysis",
       "type": "other",
       "severity": "warning",
-      "message_pattern": "Test coverage appears low: 66.1% (threshold: 85%)",
-      "fix_suggestion": "Add more test files to improve coverage",
+      "message_pattern": "Duplicate code block detected (hash match)",
+      "fix_suggestion": "Consider extracting duplicate code into a shared function. Similar code found in C:\\taly\\ai-system\\dashboard\\hitl_kanban_board.py:40",
+      "auto_fixable": false,
+      "count": 2,
+      "sample_occurrences": [
+        {
+          "file": "C:\\taly\\ai-system\\dashboard\\hitl_kanban_demo.py",
+          "line": 25
+        },
+        {
+          "file": "C:\\taly\\ai-system\\dashboard\\hitl_widgets.py",
+          "line": 197
+        }
+      ],
+      "total_occurrences": 2
+    },
+    {
+      "category": "syntax",
+      "type": "other",
+      "severity": "error",
+      "message_pattern": "Syntax error: unterminated f-string literal (detected at line 43) (<unknown>, line 43)",
+      "fix_suggestion": "",
       "auto_fixable": false,
       "count": 1,
       "sample_occurrences": [
         {
-          "file": "/mnt/c/taly/ai-system",
-          "line": 0
+          "file": "C:\\taly\\ai-system\\patches\\__init__.py",
+          "line": 43
         }
       ],
       "total_occurrences": 1

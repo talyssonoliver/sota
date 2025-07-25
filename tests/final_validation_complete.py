@@ -4,8 +4,6 @@ Final Comprehensive Dashboard Validation - Phase 6 Complete
 """
 
 import requests
-import json
-import time
 from datetime import datetime
 
 def validate_all_endpoints():

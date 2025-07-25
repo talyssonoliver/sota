@@ -3,7 +3,6 @@
 Script to add schema directives to all task YAML files.
 """
 
-import os
 import sys
 from pathlib import Path
 

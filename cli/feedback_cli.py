@@ -4,7 +4,6 @@ Provides command-line access to feedback operations.
 """
 
 import argparse
-import json
 import sys
 from pathlib import Path
 from typing import Dict, Any
@@ -54,7 +53,7 @@ class FeedbackCLI:
             if result:
                 print(f"✅ Data exported to {output_path}")
             else:
-                print(f"❌ Failed to export data")
+                print("❌ Failed to export data")
             return result
         except Exception as e:
             logger.error(f"Error exporting data: {str(e)}")
@@ -89,7 +88,7 @@ class FeedbackCLI:
             
             while True:
                 try:
-                    score_input = input(f"Score (1-10) or 'skip': ").strip()
+                    score_input = input("Score (1-10) or 'skip': ").strip()
                     if score_input.lower() == 'skip':
                         break
                     
@@ -155,7 +154,7 @@ class FeedbackCLI:
         # Capture feedback
         try:
             feedback_id = self.system.capture_feedback(task_id, reviewer, feedback_data)
-            print(f"\n✅ Feedback captured successfully!")
+            print("\n✅ Feedback captured successfully!")
             print(f"📝 Feedback ID: {feedback_id}")
             return feedback_id
         except Exception as e:

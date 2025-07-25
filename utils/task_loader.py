@@ -5,9 +5,8 @@ Provides functions for loading and managing task metadata from YAML files.
 
 import json
 import logging
-import os
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List
 
 import yaml
 

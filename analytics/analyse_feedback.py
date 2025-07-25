@@ -21,17 +21,15 @@ Outputs:
 import argparse
 import json
 import logging
-import os
 import sys
 from collections import Counter, defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
-import yaml
 
-# Add parent directory to path to allow imports
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Use centralized path management - add project root to path
+sys.path.append(str(Path(__file__).parent.parent))
 
 from utils.feedback_system import FeedbackSystem
 
@@ -680,7 +678,7 @@ def main():
         print("="*50)
     
     # Print summary of key findings
-    print(f"\n📊 Analysis Summary:")
+    print("\n📊 Analysis Summary:")
     if "feedback_count" in analysis:
         print(f"   • Analyzed {analysis['feedback_count']} feedback entries")
     if "recurring_edits" in analysis:

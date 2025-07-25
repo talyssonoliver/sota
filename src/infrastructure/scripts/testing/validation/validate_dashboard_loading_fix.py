@@ -178,7 +178,7 @@ def test_complete_dashboard_loading():
     with open("c:\\taly\\ai-system\\dashboard_loading_fix_validation.json", "w") as f:
         json.dump(validation_data, f, indent=2)
     
-    print(f"\n💾 Results saved to: dashboard_loading_fix_validation.json")
+    print("\n💾 Results saved to: dashboard_loading_fix_validation.json")
     
     return overall_pass
 

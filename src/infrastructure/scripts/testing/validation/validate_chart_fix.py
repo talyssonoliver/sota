@@ -26,7 +26,6 @@ try:
 except ImportError:
     pass
 import json
-import logging
 import time
 
 import requests
@@ -257,18 +256,18 @@ class DashboardStabilityValidator:
                     "analysis": analysis
                 }, f, indent=2)
                 
-            print(f"\n📊 Validation Results:")
+            print("\n📊 Validation Results:")
             print(f"Status: {analysis['status']}")
             print(f"Max Canvas Height: {analysis['metrics'].get('max_canvas_height', 0)}px")
             print(f"Console Errors: {analysis['metrics'].get('console_errors', 0)}")
             print(f"Memory Growth: {analysis['metrics'].get('memory_growth_mb', 0):.1f}MB")
             
             if analysis["issues"]:
-                print(f"\n⚠️ Issues Found:")
+                print("\n⚠️ Issues Found:")
                 for issue in analysis["issues"]:
                     print(f"  - {issue}")
             else:
-                print(f"\n✅ No critical issues detected!")
+                print("\n✅ No critical issues detected!")
                 
             print(f"\n📄 Detailed results saved to: {results_file}")
             

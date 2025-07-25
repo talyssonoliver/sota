@@ -7,28 +7,25 @@ Daily Cycle Automation Orchestrator - Phase 6 Step 6.1
     Integrates with existing Phase 5 infrastructure for seamless automation.
 """
 
-try:
-    import asyncio
-except ImportError:
-    pass
 import json
 import logging
 import os
 import sys
-
-try:
-    import schedule
-except ImportError:
-    pass
 from datetime import datetime
 from pathlib import Path
 from time import time
 from typing import Any, Dict, List, Optional
 
-try:
-    from config.build_paths import LOGS_DIR
-except ImportError:
-    LOGS_DIR = "logs"
+# Use centralized import utilities to eliminate duplication
+from src.infrastructure.utils.import_utils import conditional_import, safe_import
+
+# Conditionally import optional dependencies
+asyncio = safe_import('asyncio')
+schedule = safe_import('schedule')
+subprocess = safe_import('subprocess')
+
+# Import build paths with fallback
+LOGS_DIR = conditional_import('config.build_paths', 'LOGS_DIR', 'logs')
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -41,10 +38,6 @@ from src.infrastructure.utils.execution_monitor import ExecutionMonitor
 from src.infrastructure.utils.input_validation import (ValidationError,
                                                        validate_file_path)
 
-try:
-    import subprocess
-except ImportError:
-    pass
 
 
 class DailyCycleOrchestrator:

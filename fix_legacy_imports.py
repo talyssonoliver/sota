@@ -3,7 +3,6 @@
 Script to fix legacy import paths in test files
 """
 
-import os
 import re
 from pathlib import Path
 
@@ -44,6 +43,21 @@ SPECIAL_MAPPINGS = {
     'from scripts.generate_task_report import': 'from src.infrastructure.scripts.generation.generate_task_report import',
     'from dashboard.unified_api_server import': 'from src.interfaces.dashboard.api.unified_api_server import',
     'from orchestration.hitl_engine import': 'from src.infrastructure.hitl.hitl_engine import',
+    'scripts.generate_task_report': 'src.infrastructure.scripts.generation.generate_task_report',
+    'scripts.generate_progress_report': 'src.infrastructure.scripts.generation.generate_progress_report',
+    'scripts.update_dashboard': 'src.infrastructure.scripts.monitoring.update_dashboard',
+    'orchestration.generate_prompt': 'src.core.workflows.generate_prompt',
+    'orchestration.task_declaration': 'src.core.workflows.task_declaration',
+    'orchestration.execute_graph': 'src.core.workflows.execute_graph',
+    'orchestration.qa_execution': 'src.core.workflows.qa_execution',
+    'orchestration.langgraph_qa_integration': 'src.core.workflows.langgraph_qa_integration',
+    'orchestration.generate_briefing': 'src.core.workflows.generate_briefing',
+    'utils.escalation_system': 'src.infrastructure.utils.escalation_system',
+    'utils.feedback_system': 'src.infrastructure.utils.feedback_system',
+    'utils.completion_metrics': 'src.infrastructure.utils.completion_metrics',
+    'utils.test_generator': 'src.infrastructure.utils.test_generator',
+    'dashboard.unified_api_server': 'src.interfaces.dashboard.api.unified_api_server',
+    'handlers.qa_handler': 'src.core.handlers.qa_handler',
 }
 
 def fix_imports_in_file(file_path):

@@ -8,7 +8,7 @@ the src/ architecture migration.
 
 # Comprehensive mocks added
 import sys
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock
 
 
 # Mock external dependencies
@@ -53,7 +53,6 @@ try:
 except ImportError:
     pass
 
-import os
 
 
 class ImportValidator:
@@ -301,7 +300,7 @@ class ImportValidator:
         print("=" * 80)
         print()
         
-        print(f"File Statistics:")
+        print("File Statistics:")
         print(f"  Total files: {stats['total_files']}")
         print(f"  Syntax valid: {stats['syntax_valid']} ({stats['syntax_valid']/stats['total_files']*100:.1f}%)")
         print(f"  Imports valid: {stats['imports_valid']} ({stats['imports_valid']/stats['total_files']*100:.1f}%)")
@@ -649,7 +648,7 @@ def analyze_cross_directory_dependencies():
                                 dependencies[directory].add(other_dir)
                                 break
                                 
-            except Exception as e:
+            except Exception:
                 continue
     
     # Report dependencies

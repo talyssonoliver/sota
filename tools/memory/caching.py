@@ -5,13 +5,12 @@ Multi-tiered caching implementation with LRU in-memory and disk persistence
 
 import json
 import logging
-import os
 import threading
 import time
 from collections import OrderedDict
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 
 from .config import CacheConfig
 from .exceptions import CacheError

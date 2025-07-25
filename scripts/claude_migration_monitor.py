@@ -11,7 +11,7 @@ import time
 import logging
 import json
 from datetime import datetime, timedelta
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Any
 from dataclasses import dataclass
 import asyncio
 
@@ -67,7 +67,7 @@ class ClaudeMigrationMonitor:
         
         try:
             # Import Claude integration
-            from src.infrastructure.integrations.claude import ClaudeEmbeddings, ClaudeChatModel
+            from src.infrastructure.integrations.claude import ClaudeEmbeddings
             from src.infrastructure.integrations.claude.feature_flags import should_use_claude_chat
             
             # Test embeddings
@@ -122,7 +122,6 @@ class ClaudeMigrationMonitor:
         try:
             from src.infrastructure.integrations.claude.feature_flags import (
                 MigrationFeatureFlags, 
-                MigrationComponent,
                 should_use_claude_embeddings,
                 should_use_claude_chat
             )
@@ -171,7 +170,7 @@ class ClaudeMigrationMonitor:
             from src.infrastructure.integrations.claude.feature_flags import should_use_claude_embeddings
             
             # Test memory engine initialization
-            memory = MemoryEngine()
+            MemoryEngine()
             claude_enabled = should_use_claude_embeddings()
             
             response_time = (time.time() - start_time) * 1000

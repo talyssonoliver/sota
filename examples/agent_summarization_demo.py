@@ -11,14 +11,11 @@ Usage:
 """
 
 import json
-import os
 import sys
 import tempfile
-from datetime import datetime
 from pathlib import Path
 
-from orchestration.summarise_task import (AgentOutput, QAResults, TaskArtifact,
-                                          TaskSummarizer)
+from orchestration.summarise_task import (TaskSummarizer)
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
@@ -335,7 +332,7 @@ Search users by name.
 }
 """)
 
-    print(f"✅ Demo structure created successfully!")
+    print("✅ Demo structure created successfully!")
     return temp_dir
 
 
@@ -357,23 +354,23 @@ def run_demo():
         summarizer = TaskSummarizer(task_id, str(demo_dir))
 
         # Run full analysis
-        print(f"\n📊 Running comprehensive task analysis...")
+        print("\n📊 Running comprehensive task analysis...")
         summary = summarizer.analyze_task_completion()
 
         # Display results
-        print(f"\n📋 Task Summary Results:")
+        print("\n📋 Task Summary Results:")
         print(f"   Task ID: {summary.task_id}")
         print(f"   Title: {summary.task_title}")
         print(f"   Status: {summary.completion_status}")
         print(f"   Completion Date: {summary.completion_date}")
 
-        print(f"\n📂 Agent Outputs:")
+        print("\n📂 Agent Outputs:")
         for output in summary.agent_outputs:
             print(f"   • {output.agent_id}: {output.status}")
             print(f"     Generated: {len(output.files_generated)} files")
             print(f"     Modified: {len(output.files_modified)} files")
 
-        print(f"\n🔧 Artifacts Generated:")
+        print("\n🔧 Artifacts Generated:")
         artifact_types = {}
         for artifact in summary.artifacts:
             artifact_types[artifact.type] = artifact_types.get(
@@ -382,7 +379,7 @@ def run_demo():
         for artifact_type, count in artifact_types.items():
             print(f"   • {artifact_type.title()}: {count} files")
 
-        print(f"\n🧪 Quality Assurance:")
+        print("\n🧪 Quality Assurance:")
         if summary.qa_results:
             qa = summary.qa_results
             print(f"   • Test Coverage: {qa.test_coverage}%")
@@ -392,25 +389,25 @@ def run_demo():
             print(f"   • Warnings: {qa.warnings}")
             print(f"   • Overall Status: {qa.overall_status}")
 
-        print(f"\n📈 Summary Statistics:")
+        print("\n📈 Summary Statistics:")
         print(f"   • Total Files Created: {summary.total_files_created}")
         print(f"   • Total Files Modified: {summary.total_files_modified}")
         print(f"   • Total Code Lines: {summary.total_code_lines:,}")
 
-        print(f"\n🎯 Next Steps:")
+        print("\n🎯 Next Steps:")
         for i, step in enumerate(summary.next_steps, 1):
             print(f"   {i}. {step}")
 
         # Generate and save report
-        print(f"\n📄 Generating markdown report...")
+        print("\n📄 Generating markdown report...")
         report_path = summarizer.save_completion_report(summary)
 
-        print(f"\n✅ Demo completed successfully!")
+        print("\n✅ Demo completed successfully!")
         print(f"📄 Report would be saved to: {report_path}")
 
         # Show a snippet of the generated report
         markdown_content = summarizer.generate_markdown_report(summary)
-        print(f"\n📝 Report Preview (first 1000 chars):")
+        print("\n📝 Report Preview (first 1000 chars):")
         print("=" * 50)
         print(markdown_content[:1000] +
               "..." if len(markdown_content) > 1000 else markdown_content)

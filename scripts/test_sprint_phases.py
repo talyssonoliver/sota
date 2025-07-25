@@ -7,7 +7,6 @@ import argparse
 import logging
 import os
 import sys
-from pathlib import Path
 
 from scripts.mock_dependencies import patch_imports
 from scripts.patch_dotenv import patch_dotenv
@@ -60,7 +59,7 @@ def test_phase0_setup():
     if yaml_count > 0:
         logger.info(f"✓ Found {yaml_count} task YAML files")
     else:
-        logger.error(f"✗ No task YAML files found")
+        logger.error("✗ No task YAML files found")
         success = False
 
     return success

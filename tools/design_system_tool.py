@@ -2,12 +2,9 @@
 Design System Tool - Provides utilities for working with the Artesanato design system
 """
 
-import json
-import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 from dotenv import load_dotenv
-from langchain_core.tools import BaseTool
 from pydantic import BaseModel, ValidationError
 
 from tools.base_tool import ArtesanatoBaseTool
@@ -309,7 +306,7 @@ class DesignSystemTool(ArtesanatoBaseTool):
 
     def _get_button_specs(self) -> str:
         """Get button component specifications."""
-        button = self.design_system["components"]["button"]
+        self.design_system["components"]["button"]
 
         result = "# Artesanato Design System: Button Components\n\n"
 
@@ -357,7 +354,7 @@ class DesignSystemTool(ArtesanatoBaseTool):
 
     def _get_card_specs(self) -> str:
         """Get card component specifications."""
-        card = self.design_system["components"]["card"]
+        self.design_system["components"]["card"]
 
         result = "# Artesanato Design System: Card Components\n\n"
 
@@ -410,7 +407,7 @@ class DesignSystemTool(ArtesanatoBaseTool):
 
     def _get_input_specs(self) -> str:
         """Get input component specifications."""
-        input_specs = self.design_system["components"]["input"]
+        self.design_system["components"]["input"]
 
         result = "# Artesanato Design System: Form Input Components\n\n"
 

@@ -46,7 +46,7 @@ def test_claude_chat_simple():
         from tests.mock_claude_chat import MockClaudeChatModel
         
         # Use mock implementation for testing
-        config = ClaudeConfig.from_environment()
+        ClaudeConfig.from_environment()
         chat_model = MockClaudeChatModel(temperature=0.7)
         
         # Test basic response generation

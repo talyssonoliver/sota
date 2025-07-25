@@ -11,7 +11,7 @@ from typing import Any, Dict, List, Optional, Union
 from .caching import CacheManager
 from .chunking import SemanticChunker, AdaptiveChunker
 from .config import MemoryEngineConfig
-from .exceptions import MemoryEngineError, SecurityError
+from .exceptions import SecurityError
 from .security import SecurityManager, AccessControlManager, AuditLogger
 from .storage import TieredStorageManager, PartitionManager
 
@@ -88,7 +88,6 @@ class MemoryEngine:
     
     def _create_storage_directories(self):
         """Create required storage directories for tests and normal operation."""
-        import os
         from pathlib import Path
         
         # Define storage paths based on the storage configuration

@@ -6,11 +6,8 @@ and context retrieval functionality.
 """
 
 import json
-import os
 import tempfile
-from datetime import datetime
-from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 import pytest
 
@@ -205,7 +202,7 @@ class TestRunTaskGraph:
         mock_monitor_instance = Mock()
         mock_monitor.return_value = mock_monitor_instance
         
-        result = run_task_graph("ADVANCED-01", workflow_type="advanced")
+        run_task_graph("ADVANCED-01", workflow_type="advanced")
         
         # Verify function calls
         mock_build_state.assert_called_once_with("ADVANCED-01")
@@ -223,7 +220,7 @@ class TestRunTaskGraph:
         mock_graph.invoke.return_value = {"status": "completed"}
         mock_build_graph.return_value = mock_graph
         
-        result = run_task_graph("DYNAMIC-01", workflow_type="dynamic", enable_monitoring=False)
+        run_task_graph("DYNAMIC-01", workflow_type="dynamic", enable_monitoring=False)
         
         mock_build_graph.assert_called_once()
 
@@ -237,7 +234,7 @@ class TestRunTaskGraph:
         mock_graph.invoke.return_value = {"status": "completed"}
         mock_build_graph.return_value = mock_graph
         
-        result = run_task_graph("STATE-01", workflow_type="state", enable_notifications=False)
+        run_task_graph("STATE-01", workflow_type="state", enable_notifications=False)
         
         mock_build_graph.assert_called_once()
 
@@ -251,7 +248,7 @@ class TestRunTaskGraph:
         mock_workflow.invoke.return_value = {"status": "completed"}
         mock_create_workflow.return_value = mock_workflow
         
-        result = run_task_graph("RESILIENT-01", workflow_type="resilient")
+        run_task_graph("RESILIENT-01", workflow_type="resilient")
         
         mock_create_workflow.assert_called_once()
 
@@ -265,7 +262,7 @@ class TestRunTaskGraph:
         }
         
         with patch('builtins.print') as mock_print:
-            result = run_task_graph("DRY-01", dry_run=True, enable_monitoring=False)
+            run_task_graph("DRY-01", dry_run=True, enable_monitoring=False)
             
             # Should print execution plan
             mock_print.assert_called()
@@ -360,7 +357,7 @@ class TestGetRelevantContext:
         
         # Should handle exceptions gracefully
         try:
-            result = get_relevant_context("failing query")
+            get_relevant_context("failing query")
             # If no exception is raised, that's acceptable
         except Exception:
             # If exception is propagated, that's also acceptable behavior
@@ -444,7 +441,6 @@ class TestMainFunction:
     def test_main_argument_parsing_logic(self):
         """Test argument parsing logic in main function."""
         # Test the argument parser setup
-        import argparse
         
         with patch('src.core.workflows.execute_graph.run_task_graph') as mock_run:
             mock_run.return_value = {"status": "test"}
@@ -537,7 +533,7 @@ class TestExecuteGraphIntegration:
         mock_build_state.return_value = None
         
         try:
-            result = run_task_graph("ERROR-01", enable_monitoring=False)
+            run_task_graph("ERROR-01", enable_monitoring=False)
             # Should handle None task state gracefully
         except Exception as e:
             # Exception is acceptable for invalid state
@@ -547,7 +543,7 @@ class TestExecuteGraphIntegration:
         mock_build_state.return_value = {}
         
         try:
-            result = run_task_graph("EMPTY-01", enable_monitoring=False)
+            run_task_graph("EMPTY-01", enable_monitoring=False)
             # Should handle empty state gracefully
         except Exception:
             # Exception is acceptable for empty state

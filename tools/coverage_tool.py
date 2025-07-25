@@ -3,9 +3,7 @@ Coverage Tool - Helps agents analyze test coverage metrics
 """
 
 import json
-import os
-import subprocess
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from .base_tool import ArtesanatoBaseTool
 

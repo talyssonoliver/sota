@@ -434,7 +434,7 @@ class EnhancedQAAgent:
 
         # Initialize components
         try:
-            from tests.unit.core.test_generator import QATestGenerator
+            from src.infrastructure.utils.test_generator import QATestGenerator
 
             self.test_generator = QATestGenerator()
         except ImportError:
@@ -577,8 +577,10 @@ class EnhancedQAAgent:
             file_or_language: Either a filename with extension or a language name
             
         Returns:
-            str: Name of the appropriate test framework (e.g., 'pytest', 'jest')
+            str: QATestFramework constant for the appropriate test framework
         """
+        from src.infrastructure.utils.test_generator import QATestFramework
+        
         # If it's a filename, extract the language from extension
         if "." in file_or_language:
             if file_or_language.endswith(".py"):
@@ -592,21 +594,39 @@ class EnhancedQAAgent:
         # Try different method names for framework detection
         # For e2e tests, use more reliable fallback logic
         if language == "python":
-            return "pytest"
+            return QATestFramework.PYTEST
         elif language == "javascript":
-            return "jest"
+            return QATestFramework.JEST
         elif hasattr(self.test_generator, "detect_framework"):
             try:
-                return self.test_generator.detect_framework(language)  # type: ignore
+                framework_str = self.test_generator.detect_framework(language)  # type: ignore
+                # Convert string to QATestFramework constant
+                if framework_str == "pytest":
+                    return QATestFramework.PYTEST
+                elif framework_str == "jest":
+                    return QATestFramework.JEST
+                elif framework_str == "unittest":
+                    return QATestFramework.UNITTEST
+                else:
+                    return QATestFramework.PYTEST  # Default fallback
             except AttributeError:
-                return "unknown"
+                return QATestFramework.PYTEST  # Default fallback
         elif hasattr(self.test_generator, "_suggest_framework"):
             try:
-                return self.test_generator._suggest_framework(language)  # type: ignore
+                framework_str = self.test_generator._suggest_framework(language)  # type: ignore
+                # Convert string to QATestFramework constant
+                if framework_str == "pytest":
+                    return QATestFramework.PYTEST
+                elif framework_str == "jest":
+                    return QATestFramework.JEST
+                elif framework_str == "unittest":
+                    return QATestFramework.UNITTEST
+                else:
+                    return QATestFramework.PYTEST  # Default fallback
             except (AttributeError, TypeError):
-                return "unknown"
+                return QATestFramework.PYTEST  # Default fallback
         else:
-            return "unknown"
+            return QATestFramework.PYTEST  # Default fallback
 
     def get_test_file_path(self, source_file, framework="pytest"):
         """Get the test file path for a source file.
@@ -616,22 +636,31 @@ class EnhancedQAAgent:
             framework: Test framework being used (default: 'pytest')
             
         Returns:
-            str: Path where the test file should be created
+            Path: Path object where the test file should be created
         """
         from pathlib import Path
+        from src.infrastructure.utils.test_generator import QATestFramework
 
         source_path = Path(source_file)
-        if framework == "pytest":
-            test_dir = self.project_root / "tests"
+        
+        # Handle both string and QATestFramework constant inputs
+        if hasattr(framework, 'value'):  # It's a QATestFramework enum-like
+            pass
+        elif framework == QATestFramework.PYTEST or framework == "pytest":
+            test_dir = self.project_root / "tests" / "generated"
             test_file = f"test_{source_path.stem}.py"
-        elif framework == "jest":
-            test_dir = source_path.parent
+        elif framework == QATestFramework.JEST or framework == "jest":
+            test_dir = source_path.parent / "tests" / "generated"
             test_file = f"{source_path.stem}.test.js"
+        elif framework == QATestFramework.UNITTEST or framework == "unittest":
+            test_dir = self.project_root / "tests" / "generated"
+            test_file = f"test_{source_path.stem}.py"
         else:
-            test_dir = self.project_root / "tests"
+            # Default fallback
+            test_dir = self.project_root / "tests" / "generated" 
             test_file = f"test_{source_path.stem}.py"
 
-        return str(test_dir / test_file)
+        return test_dir / test_file
 
     # Underscore-prefixed aliases for backwards compatibility with tests
     def _discover_source_files(self):

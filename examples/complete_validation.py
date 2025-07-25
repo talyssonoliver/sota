@@ -7,7 +7,6 @@ and Step 3.6 (Pre-Compress Large Files with Chunking Strategy) are working
 correctly with real task data.
 """
 
-import os
 import sys
 from pathlib import Path
 
@@ -165,7 +164,7 @@ This document continues with detailed implementation examples and best practices
 
     try:        # This would normally add to the vector store, but we'll handle permission issues
         # by testing the chunking logic directly in the memory engine
-        memory_engine = MemoryEngine()
+        MemoryEngine()
 
         # Test the chunking functionality directly
         from langchain_text_splitters import CharacterTextSplitter
@@ -181,8 +180,8 @@ This document continues with detailed implementation examples and best practices
         # Split the document
         chunks = text_splitter.split_text(test_content)
 
-        print(f"✅ Document successfully chunked using LangChain CharacterTextSplitter")
-        print(f"📊 Chunking results:")
+        print("✅ Document successfully chunked using LangChain CharacterTextSplitter")
+        print("📊 Chunking results:")
         print(f"   Original length: {len(test_content)} characters")
         print(f"   Number of chunks: {len(chunks)}")
         print(
@@ -190,7 +189,7 @@ This document continues with detailed implementation examples and best practices
                 sum(
                     len(chunk) for chunk in chunks) //
                 len(chunks)} characters")
-        print(f"   Target chunk size: 500 characters (with 50 char overlap)")
+        print("   Target chunk size: 500 characters (with 50 char overlap)")
         print()
 
         # Validate chunk sizes
@@ -239,7 +238,7 @@ def validate_integrated_workflow(task_data: dict):
             user="system"
         )
 
-        print(f"✅ Successfully built focused context")
+        print("✅ Successfully built focused context")
         print(f"📏 Context length: {len(focused_context)} characters")
         print(f"🎯 Estimated tokens: ~{len(focused_context) // 4}")
         print()

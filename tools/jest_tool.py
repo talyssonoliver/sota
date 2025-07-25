@@ -5,8 +5,7 @@ Jest Tool - Helps agents generate and run Jest tests
 import json
 import os
 import re
-import subprocess
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 from tools.base_tool import ArtesanatoBaseTool
 

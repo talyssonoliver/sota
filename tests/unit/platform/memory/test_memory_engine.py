@@ -1,162 +1,129 @@
+import os
+import shutil
+import sys
+import time
+import unittest
+from unittest.mock import patch
+
+
+from tests.helpers import cleanup_test_files
+from tests.mock_environment import setup_mock_environment
+from tests.mock_openai_embeddings import create_mock_openai_embeddings
+from tools.memory import (MemoryEngine, MemoryEngineConfig)
+
+sys.path.insert(0, os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..")))
+setup_mock_environment()
+
 """
-Memory Engine Test Module - Unit and Integration Tests for MemoryEngine
+Unit and Integration Tests for MemoryEngine
 Covers: Initialization, document addition, retrieval, secure deletion, PII scan, and performance benchmarking.
 """
 
-import logging
-import os
-import time
-import unittest
-from unittest.mock import MagicMock, patch
-
-try:
-    from tests.helpers import cleanup_test_files
-except ImportError as e:
-    logging.warning(f"Failed to import test helpers: {e}")
-
-    def cleanup_test_files():
-        """Fallback cleanup function."""
-        pass
-
-
-try:
-    from tests.mock_environment import setup_mock_environment  # type: ignore
-except ImportError as e:
-    logging.warning(f"Failed to import mock environment: {e}")
-
-    def setup_mock_environment():
-        """Fallback mock environment setup."""
-        return {}
-
-
-try:
-    from tests.mock_openai_embeddings import (
-        create_mock_openai_embeddings,  # type: ignore
-    )
-except ImportError as e:
-    logging.warning(f"Failed to import mock OpenAI embeddings: {e}")
-
-    def create_mock_openai_embeddings():
-        """Fallback mock function."""
-        return MagicMock(), MagicMock()  # type: ignore
-
-
-from src.infrastructure.memory import MemoryEngine
-from src.infrastructure.memory.config.memory_config import MemoryEngineConfig
-
 
 class TestMemoryEngine(unittest.TestCase):
-
     def setUp(self):
-        mock_result = create_mock_openai_embeddings()
-        if isinstance(mock_result, tuple):
-            self.mock_embeddings, self.mock_embeddings_instance = mock_result
-        else:
-            self.mock_embeddings = mock_result
-            self.mock_embeddings_instance = MagicMock()
+        # Create mock OpenAI embeddings
+        self.mock_embeddings, self.mock_embeddings_instance = create_mock_openai_embeddings()
+
+        # Patch OpenAIEmbeddings to use our mock
         self.patcher = patch(
-            "src.infrastructure.memory.engines.memory_engine.OpenAIEmbeddings",
-            self.mock_embeddings,
-        )
+            'tools.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
         self.patcher.start()
-        test_config = MemoryEngineConfig()
-        test_config.chunking.min_chunk_size = 1
+        # Grant 'tester' read/write/delete/admin permissions for testing and
+        # set small chunk size
+        test_config = MemoryEngineConfig(
+            collection_name="test_collection",
+            knowledge_base_path="tests/test_data/context-store/"
+        )        # Update chunking config for testing
+        test_config.chunking.min_chunk_size = 1  # allow small test docs
         test_config.chunking.chunk_size = 2048
         test_config.chunking.chunk_overlap = 0
         self.memory = MemoryEngine(config=test_config)
         from config.build_paths import TEST_OUTPUTS_DIR
-
-        self.test_file = str(TEST_OUTPUTS_DIR / "test_doc.md")
+        self.test_file = str(TEST_OUTPUTS_DIR / "test_doc.md")        # Create a test document
         os.makedirs(os.path.dirname(self.test_file), exist_ok=True)
         with open(self.test_file, "w", encoding="utf-8") as f:
             f.write(
-                "This is a test document.\nContact: test@example.com\nSSN: 123-45-6789\n"
-            )
+                "This is a test document.\nContact: test@example.com\nSSN: 123-45-6789\n")
 
     def tearDown(self):
+        # Stop patching
         self.patcher.stop()
+
+        # Clear memory engine to release file handles
         try:
-            if hasattr(self, "memory"):
+            if hasattr(self, 'memory'):
                 self.memory.clear(user="test_cleanup")
         except Exception:
             pass
-        if hasattr(self, "test_file") and os.path.exists(self.test_file):
+
+        # Remove test file with retry for Windows file locking
+        if hasattr(self, 'test_file') and os.path.exists(self.test_file):
             try:
                 os.remove(self.test_file)
             except PermissionError:
-                # Retry immediately without sleep
+                # File is still in use, try after brief delay
+                import time
+                time.sleep(0.1)
                 try:
                     os.remove(self.test_file)
                 except (PermissionError, FileNotFoundError):
-                    pass  # Ignore if file is locked or doesn't exist
+                    # Still locked or already deleted, skip for now - cleanup will handle it
+                    pass
+
+        # Clean up all test files and directories
         cleanup_test_files()
 
     def test_add_and_retrieve_document(self):
         self.memory.add_document(self.test_file, user="tester")
+        # Monkeypatch vector_store.as_retriever().get_relevant_documents to        # return the chunked content
         original_as_retriever = None
         if self.memory.vector_store is not None:
-            original_as_retriever = getattr(
-                self.memory.vector_store, "as_retriever", None
-            )
+            original_as_retriever = getattr(self.memory.vector_store, "as_retriever", None)
 
         class MockRetriever:
-
-            def get_relevant_documents(self, query):
-
+            def get_relevant_documents(inner_self, query):
                 class Doc:
-
                     def __init__(self, content):
                         self.page_content = content
-
-                # Return a simple mock document instead of trying to access tiered_storage
-                return [Doc("test document content")]
+                return [Doc(chunk)
+                        for chunk in self.memory.tiered_storage.hot.keys()]
 
         def patched_as_retriever():
             return MockRetriever()
-
+        
         if self.memory.vector_store is not None:
-            self.memory.vector_store.as_retriever = patched_as_retriever  # type: ignore
+            self.memory.vector_store.as_retriever = patched_as_retriever
+            
         context = self.memory.get_context("test document", k=1, user="tester")
+        
         if self.memory.vector_store is not None:
             if original_as_retriever:
                 self.memory.vector_store.as_retriever = original_as_retriever
             else:
                 del self.memory.vector_store.as_retriever
+                
         self.assertIn("test document", context)
 
     def test_secure_delete(self):
         self.memory.add_document(self.test_file, user="tester")
-        chunk_key = (
-            "This is a test document.\nContact: test@example.com\nSSN: 123-45-6789"
-        )
+        # Use the chunk key directly for test (simulate chunking)
+        chunk_key = "This is a test document.\nContact: test@example.com\nSSN: 123-45-6789"
         result = self.memory.secure_delete(chunk_key, user="tester")
-        # Check that secure_delete returns a boolean (may be False in test environment due to access control)
-        self.assertIsInstance(result, bool)
+        self.assertTrue(result)
 
     def test_scan_for_pii(self):
         self.memory.add_document(self.test_file, user="tester")
         flagged = self.memory.scan_for_pii(user="tester")
-        # Check that scan_for_pii returns a valid result (may be empty in test environment)
-        self.assertIsInstance(flagged, (list, dict))
-        # If PII scanning works, check for expected patterns
-        if flagged:
-            self.assertTrue(
-                any(("SSN" in str(k) or "test@example.com" in str(k) for k in flagged))
-            )
+        # At least one flagged chunk should contain PII
+        self.assertTrue(
+            any("SSN" in k or "test@example.com" in k for k in flagged) or len(flagged) > 0)
 
     def test_index_health(self):
         health = self.memory.get_index_health()
-        self.assertIsInstance(health, dict)
-        # Check that health is returned (may be in error state in test environment)
-        if "status" in health and health["status"] == "error":
-            # Test environment may have limited functionality
-            self.assertIn("error", health)
-        else:
-            # If not in error state, check for expected keys
-            if "cache" in health:
-                self.assertIn("cache", health)
-            if "storage" in health:
-                self.assertIn("storage", health)
+        self.assertIn("cache", health)
+        self.assertIn("storage", health)
 
     def test_profiler_stats(self):
         stats = self.memory.profiler.stats()
@@ -164,13 +131,13 @@ class TestMemoryEngine(unittest.TestCase):
 
     def test_clear(self):
         self.memory.clear(user="tester")
+        # After clear, caches should be empty
         health = self.memory.get_index_health()
-        # Check that health is returned and clear operation completed
-        self.assertIsInstance(health, dict)
-        # If cache info is available, check it
-        if "cache" in health:
-            self.assertEqual(health["cache"]["l1"]["size"], 0)
-            self.assertEqual(health["cache"]["l2"]["size"], 0)
+        self.assertEqual(health["cache"]["l1"]["size"], 0)
+        self.assertEqual(health["cache"]["l2"]["size"], 0)
+
+
+# Performance Benchmarking
 
 
 def benchmark_memory_engine_add_retrieve(iterations: int = 10):
@@ -185,17 +152,13 @@ def benchmark_memory_engine_add_retrieve(iterations: int = 10):
         _ = memory.get_context("Benchmarking document", k=1, user="bench")
     elapsed = time.time() - start
     print(
-        f"Benchmark: {iterations} add+retrieve cycles in {elapsed:.2f}s ({elapsed / iterations:.3f}s per op)"
-    )
+        f"Benchmark: {iterations} add+retrieve cycles in {elapsed:.2f}s ({elapsed / iterations:.3f}s per op)")
     os.remove(test_file)
 
 
 def teardown_module(module):
     """Cleanup test_outputs directory after tests finish."""
-    import shutil
-
     from config.build_paths import TEST_OUTPUTS_DIR
-
     test_output_dir = str(TEST_OUTPUTS_DIR)
     if os.path.exists(test_output_dir):
         for child in os.listdir(test_output_dir):

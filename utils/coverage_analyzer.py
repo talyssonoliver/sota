@@ -5,13 +5,10 @@ Analyzes test coverage patterns, identifies gaps, and provides recommendations.
 
 import json
 import logging
-import os
-import re
-import subprocess
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
 
 @dataclass
@@ -313,7 +310,7 @@ class CoverageAnalyzer:
                                         file_data.get(
                                             'uncovered_lines',
                                             [])))}"],
-                        recommendation=f"Increase line coverage by testing uncovered lines"))
+                        recommendation="Increase line coverage by testing uncovered lines"))
 
         return gaps
 

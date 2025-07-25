@@ -9,7 +9,6 @@ Usage:
     python examples/step_3_8_demo.py
 """
 
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -80,7 +79,7 @@ def test_context_review_help():
                 print("❌ Help output missing expected content")
                 return False
         else:
-            print(f"❌ Help command failed")
+            print("❌ Help command failed")
             return False
 
     except Exception as e:
@@ -169,7 +168,7 @@ def test_integration_with_step_3_7():
                 print("❌ Step 3.7 context log not found")
                 return False
         else:
-            print(f"❌ Context review failed")
+            print("❌ Context review failed")
             return False
 
     except Exception as e:
@@ -205,7 +204,7 @@ def validate_step_3_8_complete():
     passed = sum(1 for _, result in results if result)
     total = len(results)
 
-    print(f"\n📊 STEP 3.8 VALIDATION SUMMARY:")
+    print("\n📊 STEP 3.8 VALIDATION SUMMARY:")
     print(f"   Tests passed: {passed}/{total}")
     print(f"   Success rate: {(passed / total) * 100:.1f}%")
 

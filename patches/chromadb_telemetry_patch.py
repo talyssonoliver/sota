@@ -6,7 +6,6 @@ the is_in_colab function import fails.
 """
 
 import logging
-from types import ModuleType
 
 logger = logging.getLogger(__name__)
 

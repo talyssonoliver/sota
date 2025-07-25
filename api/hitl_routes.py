@@ -6,13 +6,10 @@ Flask routes for Human-in-the-Loop dashboard integration,
 checkpoint management, and approval workflows.
 """
 
-import json
 import logging
-import asyncio
 from datetime import datetime
-from typing import Dict, Any, List
 
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify
 from orchestration.hitl_engine import HITLPolicyEngine
 from utils.feedback_system import get_feedback_system  # Add feedback system import
 
@@ -169,9 +166,9 @@ def get_checkpoints():
     """Get HITL checkpoints with optional filtering."""
     try:
         # Parse query parameters
-        status = request.args.get('status')  # pending, approved, rejected, escalated
-        risk_level = request.args.get('risk_level')  # high, medium, low
-        checkpoint_type = request.args.get('type')
+        request.args.get('status')  # pending, approved, rejected, escalated
+        request.args.get('risk_level')  # high, medium, low
+        request.args.get('type')
         task_id = request.args.get('task_id')
         limit = int(request.args.get('limit', 50))
         offset = int(request.args.get('offset', 0))
@@ -349,7 +346,7 @@ def approve_checkpoint(checkpoint_id: str):
                     "status": "error",
                     "error": "Invalid JSON in request body"
                 }), 400
-        except Exception as json_error:
+        except Exception:
             return jsonify({
                 "status": "error", 
                 "error": "Invalid JSON in request body"

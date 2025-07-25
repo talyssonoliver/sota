@@ -6,7 +6,7 @@
     "owner": "backend",
     "status": "COMPLETED",
     "start_date": null,
-    "completion_date": "2025-07-24T19:39:58.757993",
+    "completion_date": "2025-07-25T23:12:00.221436",
     "duration_hours": null
   },
   "artifacts": [
@@ -21,7 +21,7 @@
       "name": "completion_report.md",
       "path": "completion_report.md",
       "type": "documentation",
-      "size_bytes": 1385,
+      "size_bytes": 1369,
       "description": "Documentation for completion_report (Markdown)"
     }
   ],
@@ -57,8 +57,13 @@
       "type": "task_declaration",
       "title": "Task Declaration - BE-07",
       "url": "outputs/BE-07/task_declaration.json"
+    },
+    {
+      "type": "github_pr",
+      "title": "GitHub PR (manual entry needed)",
+      "url": "#"
     }
   ],
-  "generated_at": "2025-07-24T19:39:59.421964",
+  "generated_at": "2025-07-25T23:12:00.301943",
   "version": "1.0.0"
 }

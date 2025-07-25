@@ -9,7 +9,7 @@ import os
 import sys
 from datetime import datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 import requests
 from langgraph.graph import Graph, StateGraph

@@ -7,7 +7,6 @@ Integrates with completion metrics and real-time monitoring systems.
 """
 
 import json
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -36,7 +35,7 @@ class DashboardUpdater:
     def update_completion_dashboard(self, task_id: Optional[str] = None) -> bool:
         """Update dashboard with completion data"""
         try:
-            print(f"🔄 Updating completion dashboard...")
+            print("🔄 Updating completion dashboard...")
 
             # Calculate latest metrics
             metrics = self.metrics_calculator.calculate_all_metrics()
@@ -54,7 +53,7 @@ class DashboardUpdater:
             # Generate completion charts data
             self._generate_charts_data(metrics)
 
-            print(f"✅ Dashboard updated successfully")
+            print("✅ Dashboard updated successfully")
             return True
 
         except Exception as e:
@@ -107,7 +106,7 @@ class DashboardUpdater:
         with open(summary_file, 'w') as f:
             json.dump(summary, f, indent=2)
 
-        print(f"   📈 Dashboard summary updated")
+        print("   📈 Dashboard summary updated")
 
     def _calculate_status_breakdown(self, task_metrics: List[Dict[str, Any]]) -> Dict[str, int]:
         """Calculate task status breakdown"""
@@ -131,7 +130,7 @@ class DashboardUpdater:
         with open(charts_file, 'w') as f:
             json.dump(charts_data, f, indent=2)
 
-        print(f"   📊 Charts data generated")
+        print("   📊 Charts data generated")
 
     def _create_completion_chart_data(self, metrics: Dict[str, Any]) -> Dict[str, Any]:
         """Create completion status chart data"""

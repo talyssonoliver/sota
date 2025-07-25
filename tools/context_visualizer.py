@@ -35,13 +35,13 @@ import os
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict
 
 # Import from Step 3.7 context tracking
 try:
     from .context_tracker import analyze_context_usage, get_all_context_logs
 except ImportError:
-    from context_tracker import analyze_context_usage, get_all_context_logs
+    from context_tracker import get_all_context_logs
 
 logger = logging.getLogger(__name__)
 
@@ -594,8 +594,8 @@ def generate_context_coverage_report(
 
         if success:
             logger.info(
-                f"✅ Step 3.9 context coverage visualization completed successfully!")
-            print(f"\n📊 Context Coverage Analysis Summary:")
+                "✅ Step 3.9 context coverage visualization completed successfully!")
+            print("\n📊 Context Coverage Analysis Summary:")
             print(f"   Tasks analyzed: {coverage_data['tasks_analyzed']}")
             print(f"   Unique topics: {coverage_data['unique_topics']}")
             print(f"   Unique documents: {coverage_data['unique_documents']}")

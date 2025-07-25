@@ -539,3 +539,6 @@ timestamp,task_id,agent,status,duration_seconds,duration_minutes,output_size,suc
 2025-06-10T23:34:49.242155,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
 2025-06-10T23:34:49.250153,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
 2025-06-10T23:34:49.257169,QA-01,technical,FAILED,0.0,0.0,0,False,Unknown agent identifier: technical
+1753480796.0485466,DECORATOR-001,decorated_agent,COMPLETED,0.006571531295776367,0.00010952552159627278,33,True,
+1753481407.024493,DECORATOR-001,decorated_agent,COMPLETED,0.1620488166809082,0.00270081361134847,33,True,
+1753481489.2001188,DECORATOR-001,decorated_agent,COMPLETED,0.000993967056274414,1.6566117604573568e-05,33,True,

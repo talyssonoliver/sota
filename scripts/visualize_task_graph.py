@@ -4,7 +4,6 @@ Generates visual representation of tasks and their dependencies.
 """
 
 import argparse
-import json
 import os
 import sys
 from collections import defaultdict
@@ -12,9 +11,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import networkx as nx
-import numpy as np
 import yaml
-from matplotlib.colors import LinearSegmentedColormap
 
 from orchestration.states import TaskStatus
 

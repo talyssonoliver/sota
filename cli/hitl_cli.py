@@ -10,7 +10,7 @@ import argparse
 import json
 import logging
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 import yaml
@@ -18,8 +18,8 @@ import yaml
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from orchestration.hitl_engine import HITLPolicyEngine, CheckpointStatus, RiskLevel
-from orchestration.hitl_task_metadata import HITLTaskMetadataManager, HITLStatus
+from orchestration.hitl_engine import HITLPolicyEngine
+from orchestration.hitl_task_metadata import HITLTaskMetadataManager
 from dashboard.hitl_widgets import HITLDashboardManager
 
 
@@ -294,12 +294,12 @@ def cmd_show_checkpoint(args):
         print(f"\nDescription:\n{details['description']}")
     
     if details['mitigation_suggestions']:
-        print(f"\nMitigation Suggestions:")
+        print("\nMitigation Suggestions:")
         for i, suggestion in enumerate(details['mitigation_suggestions'], 1):
             print(f"  {i}. {suggestion}")
     
     if details['content']:
-        print(f"\nContent:")
+        print("\nContent:")
         if isinstance(details['content'], dict):
             print(json.dumps(details['content'], indent=2))
         else:
@@ -480,7 +480,7 @@ def cmd_metrics(args):
     # Overall statistics
     if 'checkpoints' in metrics:
         cp_metrics = metrics['checkpoints']
-        print(f"📋 Checkpoints:")
+        print("📋 Checkpoints:")
         print(f"   Total Created: {cp_metrics.get('total_created', 0)}")
         print(f"   Approved: {cp_metrics.get('approved', 0)}")
         print(f"   Rejected: {cp_metrics.get('rejected', 0)}")
@@ -491,7 +491,7 @@ def cmd_metrics(args):
     # Response times
     if 'response_times' in metrics:
         rt_metrics = metrics['response_times']
-        print(f"⏱️ Response Times:")
+        print("⏱️ Response Times:")
         print(f"   Average: {rt_metrics.get('average_hours', 0):.1f} hours")
         print(f"   Median: {rt_metrics.get('median_hours', 0):.1f} hours")
         print(f"   SLA Breaches: {rt_metrics.get('sla_breaches', 0)}")
@@ -500,7 +500,7 @@ def cmd_metrics(args):
     # Risk distribution
     if 'risk_distribution' in metrics:
         risk_dist = metrics['risk_distribution']
-        print(f"🎯 Risk Distribution:")
+        print("🎯 Risk Distribution:")
         for risk_level, count in risk_dist.items():
             emoji = {"low": "🟢", "medium": "🟡", "high": "🟠", "critical": "🔴"}.get(risk_level, "⚪")
             print(f"   {emoji} {risk_level.capitalize()}: {count}")
@@ -515,7 +515,7 @@ def cmd_export_checkpoint(args):
     if success:
         print(f"✅ Checkpoint data exported to {args.output}")
     else:
-        print(f"❌ Failed to export checkpoint data")
+        print("❌ Failed to export checkpoint data")
 
 
 def main():

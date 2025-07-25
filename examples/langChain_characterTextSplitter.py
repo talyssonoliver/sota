@@ -7,7 +7,6 @@ by directly testing the LangChain CharacterTextSplitter integration
 without access control checks.
 """
 
-import os
 import sys
 from pathlib import Path
 
@@ -85,7 +84,7 @@ This document continues with additional sections to provide sufficient content f
     # Split the document
     chunks = text_splitter.split_text(sample_content)
 
-    print(f"📊 Chunking Results:")
+    print("📊 Chunking Results:")
     print(f"   Original length: {len(sample_content)} characters")
     print(f"   Number of chunks: {len(chunks)}")
     print(
@@ -100,7 +99,7 @@ This document continues with additional sections to provide sufficient content f
     for i, chunk in enumerate(chunks):
         print(f"   Chunk {i + 1}: {len(chunk)} characters")
         if len(chunk) > 500:
-            print(f"      ⚠️  Chunk exceeds target size (500 chars)")
+            print("      ⚠️  Chunk exceeds target size (500 chars)")
 
         # Show first 100 characters of each chunk
         preview = chunk.replace('\n', ' ').strip()[:100]
@@ -132,13 +131,13 @@ This document continues with additional sections to provide sufficient content f
     print("✅ Step 3.6 Enhanced Chunking Test Complete!")
     print()
     print("📋 Summary:")
-    print(f"   ✓ LangChain CharacterTextSplitter configured correctly")
-    print(f"   ✓ Chunk size target: 500 characters (with 50 char overlap)")
+    print("   ✓ LangChain CharacterTextSplitter configured correctly")
+    print("   ✓ Chunk size target: 500 characters (with 50 char overlap)")
     print(
         f"   ✓ Generated {
             len(chunks)} chunks from {
             len(sample_content)} character document")
-    print(f"   ✓ Chunking strategy validated for Step 3.6 implementation")
+    print("   ✓ Chunking strategy validated for Step 3.6 implementation")
 
 
 if __name__ == "__main__":

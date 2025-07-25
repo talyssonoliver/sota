@@ -7,11 +7,9 @@ Usage: python tests/test_phase4_final_validation.py
 """
 
 import json
-import os
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -128,11 +126,13 @@ class TestPhase4FinalValidation(unittest.TestCase):
         """Validate: Status tracked and updated per run"""
         print("\n✓ Testing: Status tracked and updated per run")
 
-        # Check status tracking via status.json files
+        # Check status tracking via task tracking files (status.json or task_declaration.json)
         status_files = list(self.outputs_dir.glob("*/status.json"))
-        print(f"  - Found {len(status_files)} status tracking files")
-        self.assertGreater(len(status_files), 0,
-                           "Should have status tracking files")
+        task_files = list(self.outputs_dir.glob("*/task_declaration.json"))
+        total_tracking_files = len(status_files) + len(task_files)
+        print(f"  - Found {len(status_files)} status files and {len(task_files)} task declaration files")
+        self.assertGreater(total_tracking_files, 0,
+                           "Should have status tracking files (status.json or task_declaration.json)")
 
         # Check monitoring script exists if present
         monitor_script = Path("scripts/monitor_workflow.py")

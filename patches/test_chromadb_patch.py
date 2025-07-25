@@ -29,10 +29,9 @@ def test_patch():
     # Try to import and use ChromaDB
     try:
         import chromadb
-        from chromadb.api.models.Collection import Collection
 
         # Create a client
-        client = chromadb.Client()
+        chromadb.Client()
         logger.info("Successfully created ChromaDB client")
 
         # Test successful

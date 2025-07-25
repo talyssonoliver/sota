@@ -465,14 +465,32 @@ class DocumentationAgent:
         pr_links = []
 
         try:
+            # Check if GitHub token is available
+            import os
+            if not os.getenv('GITHUB_TOKEN'):
+                # Return fallback entry when GitHub integration is not available
+                return [{
+                    "type": "github_pr",
+                    "title": "GitHub PR (manual entry needed)",
+                    "url": "#"
+                }]
+            
             # GitHub integration not available - skipping PR collection
             # Note: GitHub integration can be implemented when tools.github_tool is available
-            return []
+            return [{
+                "type": "github_pr", 
+                "title": "GitHub PR (manual entry needed)",
+                "url": "#"
+            }]
 
         except OSError as e:
             print(f"Warning: Could not fetch GitHub PR links: {e}")
-            # Return empty list when GitHub integration unavailable
-            return []
+            # Return fallback entry when GitHub integration unavailable
+            return [{
+                "type": "github_pr",
+                "title": "GitHub PR (manual entry needed)", 
+                "url": "#"
+            }]
 
         return pr_links
 

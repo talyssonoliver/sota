@@ -101,9 +101,30 @@ def get_valid_transitions(current_status):
     return transitions.get(current_status, [])
 
 
+def is_terminal_status(status):
+    """
+    Check if a status is terminal (no further transitions possible).
+    
+    Args:
+        status: TaskStatus to check
+    
+    Returns:
+        bool: True if status is terminal
+    """
+    terminal_statuses = {
+        TaskStatus.DONE,
+        TaskStatus.BLOCKED, 
+        TaskStatus.HUMAN_REVIEW,
+        TaskStatus.CANCELLED,
+        TaskStatus.FAILED
+    }
+    return status in terminal_statuses
+
+
 __all__ = [
     "TaskStatus",
     "WorkflowState",
     "get_next_status",
     "get_valid_transitions",
+    "is_terminal_status",
 ]

@@ -3,7 +3,6 @@ Memory Engine Security System
 Handles encryption, PII detection, access control, and audit logging
 """
 
-import base64
 import hashlib
 import logging
 import os
@@ -11,10 +10,10 @@ import re
 import secrets
 import threading
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 
 from .config import MemoryEngineConfig
-from .exceptions import SecurityError, AccessDeniedError, EncryptionError
+from .exceptions import EncryptionError
 
 logger = logging.getLogger(__name__)
 

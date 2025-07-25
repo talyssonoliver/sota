@@ -6,7 +6,6 @@ Migration script to convert tasks from the centralized JSON file to individual Y
 import json
 import os
 import sys
-from pathlib import Path
 
 import yaml
 

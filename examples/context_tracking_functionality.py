@@ -10,7 +10,6 @@ Usage:
 """
 
 import json
-import os
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -18,7 +17,6 @@ from pathlib import Path
 from tools.context_tracker import (analyze_context_usage,
                                    export_context_usage_report,
                                    get_context_log,
-                                   track_context_from_memory_engine,
                                    track_context_usage)
 from tools.memory_engine import MemoryEngine
 from utils.task_loader import load_task_metadata
@@ -265,7 +263,7 @@ def validate_step_3_7_complete():
     passed = sum(1 for _, result in results if result)
     total = len(results)
 
-    print(f"\n📊 STEP 3.7 VALIDATION SUMMARY:")
+    print("\n📊 STEP 3.7 VALIDATION SUMMARY:")
     print(f"   Tests passed: {passed}/{total}")
     print(f"   Success rate: {(passed / total) * 100:.1f}%")
 

@@ -2,8 +2,7 @@
 Base Tool - Foundation class for all agent tools
 """
 
-import os
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
 from langchain_core.tools import BaseTool as LangChainBaseTool

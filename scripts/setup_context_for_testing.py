@@ -7,7 +7,6 @@ the context topics used in tasks, enabling proper testing of the
 Step 3.5 and 3.6 implementations.
 """
 
-import os
 import sys
 from pathlib import Path
 
@@ -298,7 +297,7 @@ def populate_memory_engine():
     try:
         print("\n🔧 Initializing memory engine...")
         # Initialize memory engine
-        memory_engine = get_memory_engine()
+        get_memory_engine()
 
         print("📚 Adding context documents to memory engine...")
 

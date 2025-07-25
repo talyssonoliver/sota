@@ -8,13 +8,12 @@ and integration with the existing feedback and HITL systems.
 """
 
 import json
-import os
 import threading
 import time
 from datetime import datetime, timedelta
 from enum import Enum
 from dataclasses import dataclass, asdict
-from typing import Dict, List, Optional, Callable, Any, Union
+from typing import Dict, List, Optional, Callable, Any
 import logging
 from pathlib import Path
 

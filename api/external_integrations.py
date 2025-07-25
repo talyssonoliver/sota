@@ -11,8 +11,8 @@ import logging
 import requests
 import time
 from datetime import datetime, timedelta
-from typing import Dict, Any, List, Optional, Union
-from dataclasses import dataclass, asdict
+from typing import Dict, Any, List, Optional
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 

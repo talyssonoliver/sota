@@ -1,9 +1,9 @@
 {
-  "timestamp": 1753301639.5972319,
-  "total_vulnerabilities": 3809,
+  "timestamp": 1753384313.2728302,
+  "total_vulnerabilities": 6863,
   "categories": {
     "A01:2021-Broken Access Control": {
-      "issues_count": 1027,
+      "issues_count": 1492,
       "status": "NON_COMPLIANT",
       "severity_breakdown": {
         "critical": 0,
@@ -16,7 +16,7 @@
       }
     },
     "A02:2021-Cryptographic Failures": {
-      "issues_count": 810,
+      "issues_count": 1601,
       "status": "NON_COMPLIANT",
       "severity_breakdown": {
         "critical": 0,
@@ -55,7 +55,7 @@
       }
     },
     "A05:2021-Security Misconfiguration": {
-      "issues_count": 2,
+      "issues_count": 3,
       "status": "NON_COMPLIANT",
       "severity_breakdown": {
         "critical": 0,
@@ -94,7 +94,7 @@
       }
     },
     "A08:2021-Software and Data Integrity Failures": {
-      "issues_count": 1925,
+      "issues_count": 3691,
       "status": "NON_COMPLIANT",
       "severity_breakdown": {
         "critical": 0,
@@ -107,7 +107,7 @@
       }
     },
     "A09:2021-Security Logging and Monitoring Failures": {
-      "issues_count": 45,
+      "issues_count": 76,
       "status": "NON_COMPLIANT",
       "severity_breakdown": {
         "critical": 0,

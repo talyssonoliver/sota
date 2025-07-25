@@ -3,7 +3,6 @@
 Script to update all task YAML files to use the local schema.
 """
 
-import os
 import re
 import sys
 from pathlib import Path

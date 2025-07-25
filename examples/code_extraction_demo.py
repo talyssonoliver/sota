@@ -105,7 +105,7 @@ def validate_email(email: str) -> bool:
         print("🔍 Extracting code blocks...")
         result = extractor.extract_from_task_agent("BE-07", "backend")
 
-        print(f"✅ Extraction completed successfully!")
+        print("✅ Extraction completed successfully!")
         print(f"   📊 Total code blocks: {result.total_code_blocks}")
         print(f"   📂 Extracted files: {len(result.extracted_files)}")
         print(
@@ -129,14 +129,14 @@ def validate_email(email: str) -> bool:
         print(f"\\n🗂️  Files extracted to: {code_dir}")
 
         # Test batch extraction
-        print(f"\\n🔄 Testing batch extraction...")
+        print("\\n🔄 Testing batch extraction...")
         results = extractor.extract_from_all_agents("BE-07")
         print(f"✅ Batch extraction completed for {len(results)} agents")
 
         # Cleanup
         shutil.rmtree(test_dir)
 
-        print(f"\\n🎉 Step 4.5 — Code Extraction is working correctly!")
+        print("\\n🎉 Step 4.5 — Code Extraction is working correctly!")
         return True
 
     except Exception as e:

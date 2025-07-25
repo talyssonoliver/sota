@@ -7,11 +7,9 @@ Creates sample checkpoints, performs review actions, and validates the system.
 """
 
 import json
-import subprocess
 import sys
 import tempfile
 import asyncio
-from datetime import datetime, timedelta
 from pathlib import Path
 import uuid
 
@@ -286,7 +284,7 @@ class HITLCLIIntegrationDemo:
                 # Verify export file
                 export_data = json.loads(Path(temp_path).read_text())
                 if export_data.get('checkpoint_id') == checkpoint_id:
-                    print(f"   ✅ Successfully exported checkpoint data")
+                    print("   ✅ Successfully exported checkpoint data")
                     print(f"       File: {temp_path}")
                     print(f"       Size: {len(export_data)} fields")
                     

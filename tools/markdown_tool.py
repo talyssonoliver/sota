@@ -3,7 +3,6 @@ Markdown Tool - Helps agents generate and format markdown documentation
 """
 
 import json
-import os
 import re
 from datetime import datetime
 from typing import Any, Dict

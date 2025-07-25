@@ -6,7 +6,6 @@ This script demonstrates the performance improvements implemented in the test su
 Includes parallel execution, mocking, categorization, and performance monitoring.
 """
 
-import os
 import subprocess
 import sys
 import time
@@ -146,20 +145,20 @@ This demonstrates the implemented optimizations:
     print(f"🧪 Tests Passed: {total_tests}/{len(results)}")
     print(f"⚡ Average Test Phase: {total_duration_sum / len(results):.2f}s")
 
-    print(f"\n📈 Performance Improvements:")
-    print(f"   • Parallel Execution: 4 workers")
-    print(f"   • External Mocking: 100% (LangSmith, Slack, ChromaDB)")
-    print(f"   • Environment Isolation: ✅")
-    print(f"   • Test Categorization: ✅")
-    print(f"   • Recursion Fixes: ✅")
+    print("\n📈 Performance Improvements:")
+    print("   • Parallel Execution: 4 workers")
+    print("   • External Mocking: 100% (LangSmith, Slack, ChromaDB)")
+    print("   • Environment Isolation: ✅")
+    print("   • Test Categorization: ✅")
+    print("   • Recursion Fixes: ✅")
 
-    print(f"\n🎯 Phase Results:")
+    print("\n🎯 Phase Results:")
     for phase, result in results.items():
         status = "✅" if result["success"] else "❌"
         print(f"   {status} {phase}: {result['duration']:.2f}s")
 
     # Expected vs Actual comparison
-    print(f"\n📊 Target Metrics:")
+    print("\n📊 Target Metrics:")
     if total_duration < 60:
         print(f"   ✅ Runtime Target: <60s (Actual: {total_duration:.2f}s)")
     else:
@@ -172,7 +171,7 @@ This demonstrates the implemented optimizations:
         print(
             f"   ⚠️  Pass Rate Target: >90% (Actual: {(total_tests / len(results) * 100):.1f}%)")
 
-    print(f"\n🏁 Optimization Status:")
+    print("\n🏁 Optimization Status:")
     optimizations_completed = [
         "Mock External Dependencies",
         "Parallel Test Execution",

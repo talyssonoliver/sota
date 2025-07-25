@@ -10,10 +10,9 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
 
 from orchestration.langgraph_qa_integration import LangGraphQAIntegration
-from orchestration.qa_execution import QAExecutionEngine, execute_qa_validation
+from orchestration.qa_execution import QAExecutionEngine
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -77,7 +76,7 @@ def display_qa_report(report: dict, verbose: bool = False) -> None:
 
     # Verbose details
     if verbose:
-        print(f"\n📊 Detailed Metrics:")
+        print("\n📊 Detailed Metrics:")
         if 'test_generation' in report:
             gen = report['test_generation']
             print(
@@ -154,7 +153,7 @@ def test_langgraph_integration(
         result = qa_integration.handle_qa_pending_state(
             task_id, {"agent": "test"})
 
-        logger.info(f"LangGraph integration test completed")
+        logger.info("LangGraph integration test completed")
         return result
 
     except Exception as e:

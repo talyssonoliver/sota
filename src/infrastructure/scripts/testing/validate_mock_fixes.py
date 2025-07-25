@@ -6,7 +6,7 @@ import os
 import re
 import subprocess
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 
 def count_mock_patterns(file_path: Path) -> Dict[str, int]:
@@ -59,14 +59,14 @@ def run_test_sample(test_files: List[Path]) -> Dict[str, bool]:
             cmd = ['python3', '-m', 'pytest', str(test_file), '-v', '-x']
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
             results[str(test_file)] = result.returncode == 0
-        except Exception as e:
+        except Exception:
             results[str(test_file)] = False
     
     return results
 
 def generate_report():
     """Generate a comprehensive report of mock fixes."""
-    test_dir = Path('tests')
+    Path('tests')
     
     # Files we've fixed
     fixed_files = [

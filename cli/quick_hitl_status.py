@@ -8,7 +8,6 @@ without starting the full dashboard server.
 
 import json
 import sys
-import os
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any
@@ -138,7 +137,7 @@ def check_feedback_logs() -> List[Dict[str, Any]]:
                         data = json.load(f)
                         
                     approved = data.get('approved', False)
-                    reviewer = data.get('reviewer', 'Unknown')
+                    data.get('reviewer', 'Unknown')
                     
                     items.append({
                         "task_id": task_dir.name,

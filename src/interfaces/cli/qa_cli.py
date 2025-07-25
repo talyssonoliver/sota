@@ -7,25 +7,16 @@ Command-line interface for comprehensive QA validation, test generation, and qua
 
 import argparse
 import json
-import logging
 import sys
 from pathlib import Path
 
 from src.core.agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
 from src.core.workflows.qa_validation import QAValidationPipeline
 from src.infrastructure.utils.coverage_analyzer import CoverageAnalyzer
+# Use centralized logging configuration
+from src.infrastructure.config.logging_config import setup_logging
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-
-def setup_logging(verbose: bool = False):
-    """Setup logging configuration."""
-    level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=level,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[logging.StreamHandler(sys.stdout), logging.FileHandler("qa_cli.log")],
-    )
 
 
 def cmd_generate_tests(args):

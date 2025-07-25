@@ -6,7 +6,6 @@ This script marks a review as complete and resumes workflow.
 import argparse
 import os
 import sys
-from typing import Optional
 
 from orchestration.states import TaskStatus
 from utils.review import approve_review, reject_review

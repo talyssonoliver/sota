@@ -24,7 +24,6 @@ def status_router(state: Dict[str, Any]) -> str:
     Returns:
         The next node to route to
     """
-    from orchestration.states import TaskStatus
 
     status = state.get("status", TaskStatus.CREATED)
 

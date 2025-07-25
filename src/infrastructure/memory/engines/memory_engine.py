@@ -311,7 +311,7 @@ class MemoryEngine:
 
             # Check for API keys based on migration status
             openai_api_key = os.environ.get("OPENAI_API_KEY")
-            claude_api_key = os.environ.get("CLAUDE_API_KEY")
+            os.environ.get("CLAUDE_API_KEY")
             
             # Try to get embeddings instance (Claude or OpenAI based on feature flags)
             self._embeddings = _get_embeddings_instance(embedding_model, openai_api_key)

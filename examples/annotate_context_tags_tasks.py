@@ -11,7 +11,6 @@ Usage:
 """
 
 import json
-import os
 import sys
 from pathlib import Path
 
@@ -94,7 +93,7 @@ def demo_step_3_5_context_topics(memory_engine):
         output_dir.mkdir(parents=True, exist_ok=True)
 
         with open(output_dir / "combined_context.md", 'w', encoding='utf-8') as f:
-            f.write(f"# Context for Task BE-07\n\n")
+            f.write("# Context for Task BE-07\n\n")
             f.write(f"**Topics:** {', '.join(context_topics)}\n\n")
             f.write(combined_context)
 
@@ -263,7 +262,7 @@ def demo_integrated_workflow(memory_engine):
             max_per_topic=2   # Limit documents per topic
         )
 
-        print(f"📊 Focused context built successfully!")
+        print("📊 Focused context built successfully!")
         print(f"📏 Length: {len(focused_context)} characters")
         print(f"🎯 Estimated tokens: ~{len(focused_context) // 4}")
         print()

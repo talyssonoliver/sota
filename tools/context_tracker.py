@@ -23,10 +23,9 @@ Usage:
 
 import json
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
 

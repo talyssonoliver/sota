@@ -21,9 +21,8 @@ import argparse
 import logging
 import os
 import sys
-import time
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Dict
 
 from dotenv import load_dotenv
 
@@ -50,7 +49,6 @@ from langchain.agents import AgentType, initialize_agent
 from langchain_core.tools import Tool
 from langchain_community.chat_models import ChatOpenAI
 
-from graph.flow import build_workflow_graph
 from tools.echo_tool import EchoTool
 from tools.supabase_tool import SupabaseTool
 
@@ -302,7 +300,7 @@ def run_comprehensive_tests() -> bool:
             print("✅ Comprehensive test suite: PASSED")
         else:
             logger.error(f"❌ Comprehensive test suite failed: {result.stderr}")
-            print(f"❌ Comprehensive test suite: FAILED")
+            print("❌ Comprehensive test suite: FAILED")
         
         return success
         

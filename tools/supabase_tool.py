@@ -4,11 +4,11 @@ Supabase Tool - Provides database querying and schema information
 
 import json
 import os
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field, ValidationError
-from supabase import Client, create_client
+from pydantic import BaseModel, ValidationError
+from supabase import create_client
 
 from tools.base_tool import ArtesanatoBaseTool
 

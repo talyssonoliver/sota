@@ -10,12 +10,10 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
 
-from agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
+from agents.qa import EnhancedQAAgent
 from utils.coverage_analyzer import CoverageAnalyzer
 from utils.integration_analyzer import IntegrationAnalyzer
-from utils.test_generator import QATestFramework, QATestGenerator
 
 # Add the project root to the path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -160,7 +158,7 @@ def detect_integration_gaps_command(args) -> int:
         gaps = results.get('gaps', [])
         components = results.get('components', [])
 
-        print(f"\n📊 Integration Analysis Results:")
+        print("\n📊 Integration Analysis Results:")
         print(f"Components analyzed: {len(components)}")
         print(f"Integration gaps found: {len(gaps)}")
 
@@ -205,7 +203,7 @@ def validate_quality_command(args) -> int:
         # Validate against quality gates
         validation = qa_agent.validate_quality_gates(results)
 
-        print(f"\n🎯 Quality Gate Validation:")
+        print("\n🎯 Quality Gate Validation:")
         print(f"Overall Status: {validation['overall_status']}")
         print(f"Summary: {validation['summary']}")
 
@@ -281,7 +279,7 @@ def report_command(args) -> int:
         with open(output_path, 'w') as f:
             json.dump(report, f, indent=2)
 
-        print(f"\n📊 QA Report Summary:")
+        print("\n📊 QA Report Summary:")
         print(f"Quality Status: {validation['overall_status']}")
         print(
             f"Quality Score: {

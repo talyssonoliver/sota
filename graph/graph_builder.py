@@ -7,21 +7,17 @@ Enhanced Error Handling: Added retry logic and self-correction routing.
 import json
 import logging
 import os
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Dict
 
-import yaml
-from langchain.agents import AgentType
-from langchain_openai import ChatOpenAI
 from langgraph.constants import END
-from langgraph.graph import Graph, StateGraph
+from langgraph.graph import StateGraph
 
 from graph.handlers import (backend_handler, coordinator_handler,
                             documentation_handler, frontend_handler,
                             human_review_handler, qa_handler,
                             technical_handler)
-from orchestration.registry import create_agent_instance, get_agent
-from orchestration.states import (TaskStatus, get_next_status,
-                                  get_valid_transitions)
+from orchestration.registry import get_agent
+from orchestration.states import (TaskStatus, get_next_status)
 
 # Configure logger for routing decisions
 logger = logging.getLogger("graph_builder")
@@ -485,7 +481,7 @@ def build_dynamic_workflow_graph(task_id: str = None) -> StateGraph:
     Returns:
         A compiled StateGraph object with dynamic routing based on task lifecycle states
     """
-    config = load_graph_config()
+    load_graph_config()
 
     # Define a state schema for the graph
     from typing import Optional as Opt

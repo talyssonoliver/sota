@@ -3,7 +3,6 @@ Real test for completion metrics that actually executes source code.
 This test demonstrates how to achieve proper test coverage.
 """
 
-import pytest
 from src.infrastructure.utils.completion_metrics import CompletionMetrics, CompletionMetricsCalculator
 
 

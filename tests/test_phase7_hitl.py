@@ -15,13 +15,11 @@ Comprehensive tests for all Phase 7 HITL components including:
 import asyncio
 import json
 import logging
-import os
 import tempfile
 import unittest
-import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock, AsyncMock
+from unittest.mock import patch, MagicMock
 import yaml
 
 # Add parent directory to path for imports
@@ -30,10 +28,10 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from src.infrastructure.hitl.hitl_engine import (
     HITLPolicyEngine, HITLCheckpoint, HITLReviewDecision,
-    CheckpointStatus, RiskLevel, HITLAuditEntry
+    CheckpointStatus, RiskLevel
 )
 from src.core.workflows.notification_handlers import (
-    NotificationHandler, DashboardNotificationHandler, 
+    DashboardNotificationHandler, 
     EmailNotificationHandler, SlackNotificationHandler
 )
 from src.core.workflows.hitl_task_metadata import (
@@ -706,7 +704,7 @@ if __name__ == '__main__':
     
     # Print summary
     print(f"\n{'='*50}")
-    print(f"Phase 7 HITL Test Results:")
+    print("Phase 7 HITL Test Results:")
     print(f"Tests run: {result.testsRun}")
     print(f"Failures: {len(result.failures)}")
     print(f"Errors: {len(result.errors)}")

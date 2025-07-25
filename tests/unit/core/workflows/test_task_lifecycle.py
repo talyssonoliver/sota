@@ -8,13 +8,11 @@ cleanup, and storage optimization functions.
 import json
 import os
 import shutil
-import tarfile
 import tempfile
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-import pytest
 
 from src.core.workflows.task_lifecycle import (
     TaskArchiveMetadata,

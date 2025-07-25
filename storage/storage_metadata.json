@@ -2,14 +2,26 @@
   "TEST-02": {
     "tier": "hot",
     "size_bytes": 313,
-    "created_at": "2025-07-24T19:39:48.357554",
-    "last_accessed": "2025-07-24T19:39:48.391219",
+    "created_at": "2025-07-25T23:11:18.239151",
+    "last_accessed": "2025-07-25T23:11:18.283791",
     "access_count": 2,
-    "file_path": "build/storage/hot/TEST-02.dat",
+    "file_path": "build\\storage\\hot\\TEST-02.dat",
     "safe_key": "TEST-02",
     "metadata": {
       "data_type": "workflow_output",
       "task_id": "TEST-02"
+    }
+  },
+  "/tmp/test_auth_doc.md_0": {
+    "tier": "hot",
+    "size_bytes": 760,
+    "created_at": "2025-07-25T17:55:06.478500",
+    "last_accessed": "2025-07-25T17:55:06.478500",
+    "access_count": 1,
+    "file_path": "/tmp/test_auth_doc.md_0.dat",
+    "metadata": {
+      "total_chunks": 1,
+      "chunk_method": "semantic"
     }
   }
 }

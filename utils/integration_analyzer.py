@@ -4,13 +4,11 @@ Identifies missing integration points or untested code paths.
 """
 
 import ast
-import json
 import logging
-import os
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional
 
 
 class GapSeverity(Enum):

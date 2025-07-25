@@ -447,7 +447,7 @@ def demo_step_4_4():
             }
         )
 
-        print_success(f"Backend output registered successfully")
+        print_success("Backend output registered successfully")
         print_info(f"  📄 Output file: {backend_registration.output_path}")
         print_info(
             f"  📦 Extracted {len(backend_registration.extracted_artifacts)} code artifacts")

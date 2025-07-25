@@ -8,7 +8,7 @@ Validates that the corrected OpenAI + Claude Code integration is working properl
 import os
 import sys
 import logging
-from typing import Dict, List, Tuple
+from typing import Tuple
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
@@ -121,7 +121,7 @@ def test_production_stability() -> Tuple[bool, str]:
         from src.infrastructure.memory.engines.memory_engine import MemoryEngine
         
         # This should work without Claude dependencies
-        memory = MemoryEngine()
+        MemoryEngine()
         
         return True, "✅ Production memory engine stable"
         

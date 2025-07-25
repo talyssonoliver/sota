@@ -6,8 +6,8 @@ Provides command-line access to escalation functionality and management.
 import argparse
 import json
 import sys
-from datetime import datetime, timedelta
-from typing import Dict, Any, List
+from datetime import datetime
+from typing import Dict, Any
 
 # Add parent directory to path for imports
 import os
@@ -240,7 +240,7 @@ def main():
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
     
     # List active escalations
-    list_parser = subparsers.add_parser("list", help="List active escalations")
+    subparsers.add_parser("list", help="List active escalations")
     
     # Get escalation status
     status_parser = subparsers.add_parser("status", help="Get escalation status for a task")
@@ -258,7 +258,7 @@ def main():
     metrics_parser.add_argument("--days", type=int, default=7, help="Number of days to analyze")
     
     # Check pending reviews
-    check_parser = subparsers.add_parser("check", help="Check pending reviews for escalation")
+    subparsers.add_parser("check", help="Check pending reviews for escalation")
     
     # Resolve escalation
     resolve_parser = subparsers.add_parser("resolve", help="Resolve an escalation")

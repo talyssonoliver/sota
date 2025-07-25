@@ -5,11 +5,9 @@ Step 4.8 Enhancement: Added real-time monitoring hooks.
 Enhanced Error Handling: Added detailed error reporting and structured error information.
 """
 
-import json
 import logging
 import traceback
 from datetime import datetime
-from pathlib import Path
 from typing import Any, Dict
 
 from orchestration.registry import create_agent_instance
@@ -326,7 +324,7 @@ def qa_handler(state: Dict[str, Any]) -> Dict[str, Any]:
         Updated state with QA results
     """
     task_id = state.get("task_id", "UNKNOWN")
-    agent_output = state.get("output", "")
+    state.get("output", "")
     logger.info("QA handler invoked", extra={
                 "agent": "qa", "task_id": task_id, "event": "handler_invoked"})
 

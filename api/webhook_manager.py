@@ -14,7 +14,7 @@ import time
 import asyncio
 from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional, Callable
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 
@@ -348,7 +348,7 @@ class WebhookManager:
     
     def _handle_external_approval(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Handle external approval webhook."""
-        task_id = data.get("task_id")
+        data.get("task_id")
         checkpoint_id = data.get("checkpoint_id")
         reviewer = data.get("reviewer", "external_system")
         
@@ -372,7 +372,7 @@ class WebhookManager:
     
     def _handle_external_rejection(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Handle external rejection webhook."""
-        task_id = data.get("task_id")
+        data.get("task_id")
         checkpoint_id = data.get("checkpoint_id")
         reviewer = data.get("reviewer", "external_system")
         reason = data.get("reason", "External system rejection")

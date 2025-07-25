@@ -6,10 +6,8 @@ Enhanced interrupt node implementation for workflow pausing, human checkpoints,
 and approval-based workflow continuation in the AI Agent System.
 """
 
-import os
 import json
 import logging
-import time
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional, List, Callable
 from pathlib import Path

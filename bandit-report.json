@@ -1,6 +1,6 @@
 {
   "errors": [],
-  "generated_at": "2025-07-23T18:21:38Z",
+  "generated_at": "2025-07-24T19:11:42Z",
   "metrics": {
     "_totals": {
       "CONFIDENCE.HIGH": 227,
@@ -11,7 +11,7 @@
       "SEVERITY.LOW": 219,
       "SEVERITY.MEDIUM": 9,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 64417,
+      "loc": 64666,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -154,7 +154,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 878,
+      "loc": 901,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -869,7 +869,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 64,
+      "loc": 92,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -1376,7 +1376,7 @@
       "SEVERITY.LOW": 1,
       "SEVERITY.MEDIUM": 2,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 887,
+      "loc": 915,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -2195,7 +2195,7 @@
       "SEVERITY.LOW": 2,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 114,
+      "loc": 118,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -3044,6 +3044,19 @@
       "nosec": 0,
       "skipped_tests": 0
     },
+    "src/infrastructure\\utils\\test_generator.py": {
+      "CONFIDENCE.HIGH": 0,
+      "CONFIDENCE.LOW": 0,
+      "CONFIDENCE.MEDIUM": 0,
+      "CONFIDENCE.UNDEFINED": 0,
+      "SEVERITY.HIGH": 0,
+      "SEVERITY.LOW": 0,
+      "SEVERITY.MEDIUM": 0,
+      "SEVERITY.UNDEFINED": 0,
+      "loc": 151,
+      "nosec": 0,
+      "skipped_tests": 0
+    },
     "src/infrastructure\\utils\\workflow_recursion_fix.py": {
       "CONFIDENCE.HIGH": 0,
       "CONFIDENCE.LOW": 0,
@@ -3222,7 +3235,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 266,
+      "loc": 270,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -3352,7 +3365,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 7,
+      "loc": 6,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -3365,7 +3378,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 22,
+      "loc": 33,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -3404,7 +3417,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 0,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 1655,
+      "loc": 1656,
       "nosec": 0,
       "skipped_tests": 0
     },
@@ -4210,7 +4223,7 @@
       "test_name": "subprocess_without_shell_equals_true"
     },
     {
-      "code": "616                     os.unlink(temp_file.name)\n617                 except Exception:\n618                     pass\n619 \n",
+      "code": "660                     os.unlink(temp_file.name)\n661                 except Exception:\n662                     pass\n663 \n",
       "col_offset": 16,
       "end_col_offset": 24,
       "filename": "src/infrastructure\\memory\\engines\\memory_engine.py",
@@ -4221,17 +4234,17 @@
       },
       "issue_severity": "LOW",
       "issue_text": "Try, Except, Pass detected.",
-      "line_number": 617,
+      "line_number": 661,
       "line_range": [
-        617,
-        618
+        661,
+        662
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b110_try_except_pass.html",
       "test_id": "B110",
       "test_name": "try_except_pass"
     },
     {
-      "code": "1046                 except Exception as e:\n1047                     logger.warning(f\"Failed to delete from vector store: {e}\")\n1048 \n",
+      "code": "1090                 except Exception as e:\n1091                     logger.warning(f\"Failed to delete from vector store: {e}\")\n1092 \n",
       "col_offset": 37,
       "end_col_offset": 73,
       "filename": "src/infrastructure\\memory\\engines\\memory_engine.py",
@@ -4242,16 +4255,16 @@
       },
       "issue_severity": "MEDIUM",
       "issue_text": "Possible SQL injection vector through string-based query construction.",
-      "line_number": 1047,
+      "line_number": 1091,
       "line_range": [
-        1047
+        1091
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b608_hardcoded_sql_expressions.html",
       "test_id": "B608",
       "test_name": "hardcoded_sql_expressions"
     },
     {
-      "code": "1056                 except Exception as e:\n1057                     logger.warning(f\"Failed to delete from storage: {e}\")\n1058 \n",
+      "code": "1100                 except Exception as e:\n1101                     logger.warning(f\"Failed to delete from storage: {e}\")\n1102 \n",
       "col_offset": 37,
       "end_col_offset": 68,
       "filename": "src/infrastructure\\memory\\engines\\memory_engine.py",
@@ -4262,9 +4275,9 @@
       },
       "issue_severity": "MEDIUM",
       "issue_text": "Possible SQL injection vector through string-based query construction.",
-      "line_number": 1057,
+      "line_number": 1101,
       "line_range": [
-        1057
+        1101
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.8.6/plugins/b608_hardcoded_sql_expressions.html",
       "test_id": "B608",

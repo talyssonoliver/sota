@@ -8,7 +8,6 @@ import time
 import asyncio
 import sys
 from pathlib import Path
-from typing import List, Dict, Any
 
 # Add project root to path for imports
 project_root = Path(__file__).parent.parent

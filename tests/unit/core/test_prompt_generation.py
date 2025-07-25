@@ -1,330 +1,416 @@
 """
-Comprehensive tests for prompt generation workflow.
+Test Suite for Step 4.2: Prompt Generation with Context
 
-Tests prompt generation functions and context formatting.
+This module tests the Step 4.2 implementation including:
+- Prompt template loading from prompts/[agent].md
+- Task metadata loading from tasks/[task-id].yaml
+- Context retrieval via MCP using context_topics
+- Placeholder replacement for {context} and {task_description}
+- Output saving to outputs/[task-id]/prompt_[agent].md
 """
 
+import os
+import shutil
 import sys
 import tempfile
-from io import StringIO
-from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, mock_open, patch
 
 import pytest
 
-from src.core.workflows.generate_prompt import (
-    format_prompt_with_context,
-    generate_prompt,
-    get_task_context,
-    load_prompt_template,
-    load_task_metadata,
-    main,
-)
+from src.core.workflows.generate_prompt import (generate_prompt, get_task_context,
+                                           main)
+
+# Add project root to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 
-class TestGeneratePrompt:
-    """Test the generate_prompt function."""
+class TestStep42PromptGeneration:
+    """Test suite for Step 4.2 prompt generation functionality."""
 
-    def test_generate_prompt_basic(self):
-        """Test basic prompt generation."""
-        result = generate_prompt("TEST-01", "qa_agent")
-        
-        assert result["task_id"] == "TEST-01"
-        assert result["agent_type"] == "qa_agent"
-        assert result["output_path"] is None
+    @pytest.fixture
+    def mock_task_metadata(self):
+        """Mock task metadata for testing."""
+        return {
+            'task_id': 'BE-07',
+            'title': 'Test Backend Task',
+            'description': 'Implement test backend functionality',
+            'context_topics': ['backend', 'api', 'database'],
+            'artefacts': ['backend_service.py', 'api_endpoints.py'],
+            'priority': 'HIGH',
+            'estimation_hours': 8,
+            'depends_on': ['BE-06'],
+            'state': 'IN_PROGRESS'
+        }
 
-    def test_generate_prompt_with_output_path(self):
-        """Test prompt generation with output path."""
-        output_path = "/tmp/output.txt"
-        result = generate_prompt("TEST-02", "documentation_agent", output_path)
-        
-        assert result["task_id"] == "TEST-02"
-        assert result["agent_type"] == "documentation_agent"
-        assert result["output_path"] == output_path
+    @pytest.fixture
+    def mock_prompt_template(self):
+        """Mock prompt template for testing."""
+        return """# Backend Agent Prompt
 
-    def test_generate_prompt_different_agent_types(self):
-        """Test prompt generation with different agent types."""
-        agent_types = ["qa_agent", "documentation_agent", "test_generator", "custom_agent"]
-        
-        for agent_type in agent_types:
-            result = generate_prompt("MULTI-01", agent_type)
-            assert result["agent_type"] == agent_type
-            assert result["task_id"] == "MULTI-01"
+## Task: {title}
 
-    def test_generate_prompt_return_structure(self):
-        """Test that generate_prompt returns expected structure."""
-        result = generate_prompt("STRUCT-01", "test_agent")
-        
-        # Check all expected keys are present
-        expected_keys = ["task_id", "agent_type", "output_path"]
-        for key in expected_keys:
-            assert key in result
+**Description:** {task_description}
 
-    def test_generate_prompt_with_special_characters(self):
-        """Test prompt generation with special characters in inputs."""
-        special_task_id = "TEST-01_special!@#"
-        special_agent = "agent/with/path"
-        special_path = "/path/with spaces/file.txt"
-        
-        result = generate_prompt(special_task_id, special_agent, special_path)
-        
-        assert result["task_id"] == special_task_id
-        assert result["agent_type"] == special_agent
-        assert result["output_path"] == special_path
+**Context:**
+{context}
+
+**Artifacts to create:**
+{artefacts}
+
+**Priority:** {priority}
+**Estimation:** {estimation_hours} hours
+"""
+
+    @pytest.fixture
+    def temp_dir(self):
+        """Create temporary directory for test outputs."""
+        temp_dir = tempfile.mkdtemp()
+        yield temp_dir
+        shutil.rmtree(temp_dir)
+
+    def test_get_task_context_with_valid_task(self, mock_task_metadata):
+        """Test context retrieval for a valid task with context_topics."""
+        with patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task, \
+                patch('src.core.workflows.generate_prompt.MemoryEngine') as mock_memory_engine:
+
+            # Setup mocks
+            mock_load_task.return_value = mock_task_metadata
+            mock_engine_instance = MagicMock()
+            mock_engine_instance.build_focused_context.return_value = "Mocked context about backend APIs and databases"
+            mock_memory_engine.return_value = mock_engine_instance
+
+            # Test context retrieval
+            context = get_task_context('BE-07')
+
+            # Assertions
+            assert context == "Mocked context about backend APIs and databases"
+            mock_load_task.assert_called_once_with('BE-07')
+            mock_engine_instance.build_focused_context.assert_called_once_with(
+                context_topics=['backend', 'api', 'database'],
+                max_tokens=2000,
+                max_per_topic=2,
+                task_id='BE-07',
+                agent_role="system"
+            )
+
+    def test_get_task_context_without_context_topics(self):
+        """Test context retrieval for task without context_topics."""
+        mock_metadata = {
+            'task_id': 'BE-08',
+            'title': 'Task without context topics',
+            'description': 'Simple task'
+        }
+
+        with patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task:
+            mock_load_task.return_value = mock_metadata
+
+            context = get_task_context('BE-08')
+
+            assert "No context_topics defined for task BE-08" in context
+            mock_load_task.assert_called_once_with('BE-08')
+
+    def test_get_task_context_file_not_found(self):
+        """Test context retrieval when task file doesn't exist."""
+        with patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task:
+            mock_load_task.side_effect = FileNotFoundError(
+                "Task file not found")
+
+            context = get_task_context('NONEXISTENT')
+
+            assert "Task metadata not found for NONEXISTENT" in context
+
+    def test_generate_prompt_success(
+            self,
+            mock_task_metadata,
+            mock_prompt_template,
+            temp_dir):
+        """Test successful prompt generation with all components."""
+        with patch('src.core.workflows.generate_prompt.load_prompt_template') as mock_load_template, \
+                patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task, \
+                patch('src.core.workflows.generate_prompt.get_task_context') as mock_get_context, \
+                patch('src.core.workflows.generate_prompt.format_prompt_with_context') as mock_format, \
+                patch('builtins.open', mock_open()) as mock_file, \
+                patch('os.makedirs') as mock_makedirs:
+
+            # Setup mocks
+            mock_load_template.return_value = mock_prompt_template
+            mock_load_task.return_value = mock_task_metadata
+            mock_get_context.return_value = "Generated context about backend development"
+            mock_format.return_value = "Formatted prompt with context"
+
+            # Test prompt generation
+            output_path = os.path.join(temp_dir, "test_prompt.md")
+            result = generate_prompt('BE-07', 'backend-agent', output_path)
+
+            # Assertions
+            assert result == "Formatted prompt with context"
+            mock_load_template.assert_called_once_with(
+                "prompts/backend-agent.md")
+            mock_load_task.assert_called_once_with('BE-07')
+            mock_get_context.assert_called_once_with('BE-07')
+
+            # Verify template variables passed to format function
+            mock_format.assert_called_once()
+            call_args = mock_format.call_args
+            # Third argument contains template_vars
+            template_vars = call_args[0][2]
+
+            assert template_vars['context'] == "Generated context about backend development"
+            assert template_vars['task_description'] == 'Implement test backend functionality'
+            assert template_vars['task_id'] == 'BE-07'
+            assert template_vars['title'] == 'Test Backend Task'
+            assert template_vars['priority'] == 'HIGH'
+            assert template_vars['estimation_hours'] == 8
+
+            # Verify file operations
+            mock_makedirs.assert_called_once()
+            mock_file.assert_called_once_with(
+                output_path, "w", encoding="utf-8")
+
+    def test_generate_prompt_default_output_path(
+            self, mock_task_metadata, mock_prompt_template):
+        """Test prompt generation with default output path."""
+        with patch('src.core.workflows.generate_prompt.load_prompt_template') as mock_load_template, \
+                patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task, \
+                patch('src.core.workflows.generate_prompt.get_task_context') as mock_get_context, \
+                patch('src.core.workflows.generate_prompt.format_prompt_with_context') as mock_format, \
+                patch('builtins.open', mock_open()) as mock_file, \
+                patch('os.makedirs'):
+
+            # Setup mocks
+            mock_load_template.return_value = mock_prompt_template
+            mock_load_task.return_value = mock_task_metadata
+            mock_get_context.return_value = "Test context"
+            mock_format.return_value = "Formatted prompt"
+
+            # Test with default output path
+            generate_prompt('BE-07', 'backend-agent')
+
+            # Verify default output path is used
+            expected_path = "outputs/BE-07/prompt_backend.md"
+            mock_file.assert_called_once_with(
+                expected_path, "w", encoding="utf-8")
+
+    def test_generate_prompt_template_not_found(self, mock_task_metadata):
+        """Test prompt generation when template file doesn't exist."""
+        with patch('src.core.workflows.generate_prompt.load_prompt_template') as mock_load_template, \
+                patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task:
+
+            mock_load_template.side_effect = FileNotFoundError(
+                "Template not found")
+            mock_load_task.return_value = mock_task_metadata
+
+            with pytest.raises(FileNotFoundError, match="Prompt template not found"):
+                generate_prompt('BE-07', 'nonexistent-agent')
+
+    def test_generate_prompt_task_metadata_not_found(
+            self, mock_prompt_template):
+        """Test prompt generation when task metadata doesn't exist."""
+        with patch('src.core.workflows.generate_prompt.load_prompt_template') as mock_load_template, \
+                patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task:
+
+            mock_load_template.return_value = mock_prompt_template
+            mock_load_task.side_effect = FileNotFoundError(
+                "Task metadata not found")
+
+            with pytest.raises(FileNotFoundError, match="Task metadata file not found"):
+                generate_prompt('NONEXISTENT', 'backend-agent')
+
+    def test_agent_id_normalization(
+            self,
+            mock_task_metadata,
+            mock_prompt_template):
+        """Test that agent IDs are properly normalized with .md extension."""
+        with patch('src.core.workflows.generate_prompt.load_prompt_template') as mock_load_template, \
+                patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task, \
+                patch('src.core.workflows.generate_prompt.get_task_context') as mock_get_context, \
+                patch('src.core.workflows.generate_prompt.format_prompt_with_context') as mock_format, \
+                patch('builtins.open', mock_open()), \
+                patch('os.makedirs'):
+
+            # Setup mocks
+            mock_load_template.return_value = mock_prompt_template
+            mock_load_task.return_value = mock_task_metadata
+            mock_get_context.return_value = "Test context"
+            mock_format.return_value = "Formatted prompt"
+
+            # Test with agent ID without .md extension
+            generate_prompt('BE-07', 'backend-agent')
+
+            # Verify .md extension is added
+            mock_load_template.assert_called_once_with(
+                "prompts/backend-agent.md")
+
+    @pytest.mark.parametrize("agent_input,expected_template", [
+        ("backend-agent", "prompts/backend-agent.md"),
+        ("backend-agent.md", "prompts/backend-agent.md"),
+        ("frontend", "prompts/frontend.md"),
+        ("qa.md", "prompts/qa.md")
+    ])
+    def test_agent_template_path_generation(
+            self,
+            agent_input,
+            expected_template,
+            mock_task_metadata,
+            mock_prompt_template):
+        """Test various agent ID inputs generate correct template paths."""
+        with patch('src.core.workflows.generate_prompt.load_prompt_template') as mock_load_template, \
+                patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task, \
+                patch('src.core.workflows.generate_prompt.get_task_context') as mock_get_context, \
+                patch('src.core.workflows.generate_prompt.format_prompt_with_context') as mock_format, \
+                patch('builtins.open', mock_open()), \
+                patch('os.makedirs'):
+
+            # Setup mocks
+            mock_load_template.return_value = mock_prompt_template
+            mock_load_task.return_value = mock_task_metadata
+            mock_get_context.return_value = "Test context"
+            mock_format.return_value = "Formatted prompt"
+
+            generate_prompt('BE-07', agent_input)
+
+            mock_load_template.assert_called_once_with(expected_template)
 
 
-class TestLoadPromptTemplate:
-    """Test the load_prompt_template function."""
+class TestStep42CLI:
+    """Test suite for Step 4.2 CLI interface."""
 
-    def test_load_prompt_template_basic(self):
-        """Test basic template loading."""
-        template_path = "templates/qa_agent.txt"
-        result = load_prompt_template(template_path)
-        
-        assert "template" in result
-        assert result["template"] == "default template"
+    def test_cli_with_positional_arguments(self):
+        """Test CLI with positional arguments."""
+        with patch('src.core.workflows.generate_prompt.generate_prompt') as mock_generate, \
+                patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task, \
+                patch('sys.argv', ['generate_prompt.py', 'BE-07', 'backend-agent']):
 
-    def test_load_prompt_template_different_paths(self):
-        """Test template loading with different paths."""
-        paths = [
-            "templates/qa.txt",
-            "/absolute/path/template.txt",
-            "relative/path/template.md",
-            "template_with_underscores.jinja2"
-        ]
-        
-        for path in paths:
-            result = load_prompt_template(path)
-            assert result["template"] == "default template"
+            mock_generate.return_value = "Generated prompt"
+            mock_load_task.return_value = {'title': 'Test Task'}
 
-    def test_load_prompt_template_return_type(self):
-        """Test that load_prompt_template returns dict."""
-        result = load_prompt_template("any_path.txt")
-        assert isinstance(result, dict)
-        assert len(result) == 1
+            # This would normally call main(), but we'll test argument parsing
 
+            from src.core.workflows.generate_prompt import main
 
-class TestLoadTaskMetadata:
-    """Test the load_task_metadata function."""
+            # Mock sys.exit to prevent actual exit
+            with patch('sys.exit'):
+                try:
+                    main()
+                    mock_generate.assert_called_once_with(
+                        'BE-07', 'backend-agent', None)
+                except SystemExit:
+                    pass  # Expected for successful completion
 
-    def test_load_task_metadata_basic(self):
-        """Test basic metadata loading."""
-        result = load_task_metadata("TASK-01")
-        
-        assert "task_id" in result
-        assert "title" in result
-        assert result["task_id"] == "TASK-01"
-        assert result["title"] == "Default Task"
+    def test_cli_with_named_arguments(self):
+        """Test CLI with named arguments."""
+        with patch('src.core.workflows.generate_prompt.generate_prompt') as mock_generate, \
+                patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task, \
+                patch('sys.argv', ['generate_prompt.py', '--task', 'BE-07', '--agent', 'backend-agent']):
 
-    def test_load_task_metadata_different_task_ids(self):
-        """Test metadata loading with different task IDs."""
-        task_ids = ["BE-01", "FE-02", "TEST-03", "DOC-04", "QA-05"]
-        
-        for task_id in task_ids:
-            result = load_task_metadata(task_id)
-            assert result["task_id"] == task_id
-            assert result["title"] == "Default Task"
+            mock_generate.return_value = "Generated prompt"
+            mock_load_task.return_value = {'title': 'Test Task'}
 
-    def test_load_task_metadata_structure(self):
-        """Test metadata structure consistency."""
-        result = load_task_metadata("STRUCT-01")
-        
-        # Check expected keys
-        expected_keys = ["task_id", "title"]
-        for key in expected_keys:
-            assert key in result
-            assert isinstance(result[key], str)
+            with patch('sys.exit'):
+                try:
+                    main()
+                    mock_generate.assert_called_once_with(
+                        'BE-07', 'backend-agent', None)
+                except SystemExit:
+                    pass
 
-    def test_load_task_metadata_with_special_task_ids(self):
-        """Test metadata loading with special task IDs."""
-        special_ids = ["TASK_01", "task-with-dashes", "LONG_TASK_ID_123", "T1"]
-        
-        for task_id in special_ids:
-            result = load_task_metadata(task_id)
-            assert result["task_id"] == task_id
+    def test_cli_missing_task_id(self):
+        """Test CLI error when task ID is missing."""
+        with patch('sys.argv', ['generate_prompt.py']), \
+                patch('sys.exit') as mock_exit:
 
-
-class TestGetTaskContext:
-    """Test the get_task_context function."""
-
-    def test_get_task_context_basic(self):
-        """Test basic context retrieval."""
-        result = get_task_context("CONTEXT-01")
-        
-        assert isinstance(result, str)
-        assert "CONTEXT-01" in result
-        assert "Context for" in result
-
-    def test_get_task_context_different_task_ids(self):
-        """Test context retrieval with different task IDs."""
-        task_ids = ["BE-01", "FE-02", "TEST-03"]
-        
-        for task_id in task_ids:
-            result = get_task_context(task_id)
-            assert task_id in result
-            assert isinstance(result, str)
-
-    def test_get_task_context_format(self):
-        """Test context format consistency."""
-        result = get_task_context("FORMAT-01")
-        expected_format = "Context for FORMAT-01"
-        assert result == expected_format
-
-    def test_get_task_context_with_empty_string(self):
-        """Test context retrieval with empty string."""
-        result = get_task_context("")
-        assert "Context for " in result
-        assert isinstance(result, str)
-
-
-class TestFormatPromptWithContext:
-    """Test the format_prompt_with_context function."""
-
-    def test_format_prompt_with_context_basic(self):
-        """Test basic prompt formatting."""
-        template = "You are a {role}"
-        context = "qa_agent"
-        
-        result = format_prompt_with_context(template, context)
-        
-        assert isinstance(result, str)
-        assert template in result
-        assert context in result
-        assert "Template:" in result
-        assert "Context:" in result
-
-    def test_format_prompt_with_context_different_inputs(self):
-        """Test formatting with different template and context combinations."""
-        test_cases = [
-            ("Simple template", "Simple context"),
-            ("Complex template with {variables}", "Context with data"),
-            ("", "Empty template context"),
-            ("Non-empty template", ""),
-        ]
-        
-        for template, context in test_cases:
-            result = format_prompt_with_context(template, context)
-            assert isinstance(result, str)
-            assert str(template) in result
-            assert str(context) in result
-
-    def test_format_prompt_with_context_format(self):
-        """Test consistent formatting structure."""
-        template = "Test template"
-        context = "Test context"
-        
-        result = format_prompt_with_context(template, context)
-        expected = f"Template: {template}, Context: {context}"
-        assert result == expected
-
-    def test_format_prompt_with_context_special_characters(self):
-        """Test formatting with special characters."""
-        template = "Template with !@#$%^&*()_+"
-        context = "Context with émojis 🚀 and unicode"
-        
-        result = format_prompt_with_context(template, context)
-        assert template in result
-        assert context in result
-
-
-class TestMainFunction:
-    """Test the main CLI function."""
-
-    def test_main_with_no_arguments(self):
-        """Test main function with no command line arguments."""
-        with patch.object(sys, 'argv', ['generate_prompt.py']):
-            # Should run without error and not print anything
             main()
+            # Accept any nonzero exit code (argparse uses 2 for argument
+            # errors)
+            exit_calls = [call.args[0] for call in mock_exit.call_args_list]
+            assert any(
+                code != 0 for code in exit_calls), f"Expected sys.exit to be called with nonzero code, got: {exit_calls}"
 
-    def test_main_with_task_id_only(self):
-        """Test main function with only task ID."""
-        with patch.object(sys, 'argv', ['generate_prompt.py', 'TEST-01']):
-            with patch('builtins.print') as mock_print:
-                main()
-                
-                mock_print.assert_called_once()
-                call_args = mock_print.call_args[0][0]
-                assert "Generated prompt:" in call_args
-                assert "TEST-01" in call_args
-                assert "default" in call_args
+    def test_cli_with_custom_output_path(self):
+        """Test CLI with custom output path."""
+        with patch('src.core.workflows.generate_prompt.generate_prompt') as mock_generate, \
+                patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task, \
+                patch('sys.argv', ['generate_prompt.py', 'BE-07', 'backend-agent', '--output', 'custom/path.md']):
 
-    def test_main_with_task_id_and_agent_type(self):
-        """Test main function with task ID and agent type."""
-        with patch.object(sys, 'argv', ['generate_prompt.py', 'TEST-02', 'qa_agent']):
-            with patch('builtins.print') as mock_print:
-                main()
-                
-                mock_print.assert_called_once()
-                call_args = mock_print.call_args[0][0]
-                assert "Generated prompt:" in call_args
-                assert "TEST-02" in call_args
-                assert "qa_agent" in call_args
+            mock_generate.return_value = "Generated prompt"
+            mock_load_task.return_value = {'title': 'Test Task'}
 
-    def test_main_with_multiple_arguments(self):
-        """Test main function with multiple arguments."""
-        args = ['generate_prompt.py', 'MULTI-01', 'test_agent', 'extra_arg']
-        with patch.object(sys, 'argv', args):
-            with patch('builtins.print') as mock_print:
-                main()
-                
-                mock_print.assert_called_once()
-                call_args = mock_print.call_args[0][0]
-                assert "MULTI-01" in call_args
-                assert "test_agent" in call_args
-
-    def test_main_output_format(self):
-        """Test main function output format."""
-        with patch.object(sys, 'argv', ['generate_prompt.py', 'FORMAT-01', 'format_agent']):
-            with patch('builtins.print') as mock_print:
-                main()
-                
-                # Verify the output contains expected structure
-                output = mock_print.call_args[0][0]
-                assert output.startswith("Generated prompt: ")
-                assert "task_id" in output
-                assert "agent_type" in output
-                assert "output_path" in output
+            with patch('sys.exit'):
+                try:
+                    main()
+                    mock_generate.assert_called_once_with(
+                        'BE-07', 'backend-agent', 'custom/path.md')
+                except SystemExit:
+                    pass
 
 
-class TestModuleIntegration:
-    """Test integration between different module functions."""
+class TestStep42Integration:
+    """Integration tests for Step 4.2 with real components."""
 
-    def test_full_workflow_integration(self):
-        """Test a complete workflow using multiple functions."""
-        # Generate basic prompt
-        prompt_data = generate_prompt("WORKFLOW-01", "qa_agent", "/tmp/output.txt")
-        
-        # Load template and metadata
-        template = load_prompt_template("templates/qa.txt")
-        metadata = load_task_metadata(prompt_data["task_id"])
-        
-        # Get context and format
-        context = get_task_context(prompt_data["task_id"])
-        formatted = format_prompt_with_context(template["template"], context)
-        
-        # Verify all pieces work together
-        assert prompt_data["task_id"] == "WORKFLOW-01"
-        assert metadata["task_id"] == "WORKFLOW-01"
-        assert "WORKFLOW-01" in context
-        assert template["template"] in formatted
+    def test_end_to_end_prompt_generation(self, tmp_path):
+        """Test end-to-end prompt generation with temporary files."""
+        # Create temporary task file
+        task_file = tmp_path / "BE-TEST.yaml"
+        task_file.write_text("""
+task_id: BE-TEST
+title: Integration Test Task
+description: Test task for integration testing
+context_topics:
+  - testing
+  - integration
+artefacts:
+  - test_file.py
+priority: HIGH
+estimation_hours: 4
+state: PLANNED
+""")
 
-    def test_template_and_context_integration(self):
-        """Test template loading and context formatting integration."""
-        template_data = load_prompt_template("test_template.txt")
-        context = get_task_context("INTEGRATION-01")
-        
-        result = format_prompt_with_context(template_data["template"], context)
-        
-        assert "default template" in result
-        assert "Context for INTEGRATION-01" in result
+        # Create temporary prompt template
+        prompt_file = tmp_path / "test-agent.md"
+        prompt_file.write_text("""
+# Test Agent Prompt
 
-    def test_metadata_and_prompt_generation_consistency(self):
-        """Test consistency between metadata loading and prompt generation."""
-        task_id = "CONSISTENCY-01"
-        
-        prompt_data = generate_prompt(task_id, "test_agent")
-        metadata = load_task_metadata(task_id)
-        
-        # Both should reference the same task
-        assert prompt_data["task_id"] == metadata["task_id"]
-        assert prompt_data["task_id"] == task_id
+## Task: {title}
+**Description:** {task_description}
+**Context:** {context}
+**Files:** {artefacts}
+""")
+
+        # Create output directory
+        output_dir = tmp_path / "outputs" / "BE-TEST"
+        output_dir.mkdir(parents=True)
+        output_path = output_dir / "prompt_test.md"
+
+        with patch('src.core.workflows.generate_prompt.load_task_metadata') as mock_load_task, \
+                patch('src.core.workflows.generate_prompt.load_prompt_template') as mock_load_template, \
+                patch('src.core.workflows.generate_prompt.get_task_context') as mock_get_context:
+
+            # Setup mocks to return our test data
+            mock_load_task.return_value = {
+                'task_id': 'BE-TEST',
+                'title': 'Integration Test Task',
+                'description': 'Test task for integration testing',
+                'context_topics': ['testing', 'integration'],
+                'artefacts': ['test_file.py'],
+                'priority': 'HIGH',
+                'estimation_hours': 4,
+                'state': 'PLANNED'
+            }
+            mock_load_template.return_value = prompt_file.read_text()
+            mock_get_context.return_value = "Integration testing context with mock MCP data"
+
+            # Generate prompt
+            generate_prompt('BE-TEST', 'test-agent', str(output_path))
+
+            # Verify output file exists and contains expected content
+            assert output_path.exists()
+            generated_content = output_path.read_text()
+
+            assert "Integration Test Task" in generated_content
+            assert "Test task for integration testing" in generated_content
+            assert "Integration testing context with mock MCP data" in generated_content
+            assert "test_file.py" in generated_content
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

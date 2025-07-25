@@ -5,7 +5,6 @@ Generates visual representations of the LangGraph workflow.
 
 import os
 import sys
-from pathlib import Path
 
 from graph.graph_builder import (build_advanced_workflow_graph,
                                  build_dynamic_workflow_graph,
@@ -34,16 +33,16 @@ def visualize_workflow(
 
     # Build the requested workflow type
     if workflow_type == "basic":
-        print(f"Building basic workflow graph...")
+        print("Building basic workflow graph...")
         workflow = build_workflow_graph()
     elif workflow_type == "state":
-        print(f"Building stateful workflow graph...")
+        print("Building stateful workflow graph...")
         workflow = build_state_workflow_graph()
     elif workflow_type == "advanced":
-        print(f"Building advanced workflow graph...")
+        print("Building advanced workflow graph...")
         workflow = build_advanced_workflow_graph()
     elif workflow_type == "dynamic":
-        print(f"Building dynamic workflow graph...")
+        print("Building dynamic workflow graph...")
         workflow = build_dynamic_workflow_graph()
     else:
         raise ValueError(f"Unknown workflow type: {workflow_type}")

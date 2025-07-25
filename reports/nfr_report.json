@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-07-23 21:14:41",
+  "timestamp": "2025-07-24 20:15:15",
   "iso_25010_compliance": {
     "overall": 100.0,
     "by_category": {
@@ -17,19 +17,19 @@
     "status": "COMPLIANT"
   },
   "security_metrics": {
-    "authentication_coverage": 22.727272727272727,
-    "input_validation_coverage": 8.981380065717415,
-    "encryption_usage": 0.21443888491779842
+    "authentication_coverage": 9.803921568627452,
+    "input_validation_coverage": 8.734939759036145,
+    "encryption_usage": 0.16736401673640167
   },
   "maintainability_metrics": {
-    "average_complexity": 2.722135183527305,
-    "duplication_percentage": 50.96323732890563,
-    "documentation_coverage": 86.42225031605562
+    "average_complexity": 2.723592458677686,
+    "duplication_percentage": 69.29572082760662,
+    "documentation_coverage": 89.2666270783848
   },
   "performance_profiles": [
     {
       "function": "analyze_file_dependencies",
-      "file": "/mnt/c/taly/ai-system/dependency_analyzer.py",
+      "file": "C:\\taly\\ai-system\\dependency_analyzer.py",
       "execution_time_ms": 14.0,
       "memory_mb": 7.0,
       "cpu_percent": 28.0,
@@ -37,419 +37,155 @@
     },
     {
       "function": "create_parallel_groups",
-      "file": "/mnt/c/taly/ai-system/dependency_analyzer.py",
+      "file": "C:\\taly\\ai-system\\dependency_analyzer.py",
       "execution_time_ms": 5.0,
-      "memory_mb": 2.5,
+      "memory_mb": 4.1012109375,
       "cpu_percent": 10.0,
       "complexity": 5.0
     },
     {
       "function": "main",
-      "file": "/mnt/c/taly/ai-system/dependency_analyzer.py",
+      "file": "C:\\taly\\ai-system\\dependency_analyzer.py",
       "execution_time_ms": 5.0,
-      "memory_mb": 2.5,
+      "memory_mb": 4.1012109375,
       "cpu_percent": 10.0,
       "complexity": 5.0
     },
     {
+      "function": "fix_imports_in_file",
+      "file": "C:\\taly\\ai-system\\fix_legacy_imports.py",
+      "execution_time_ms": 5.0,
+      "memory_mb": 4.1012109375,
+      "cpu_percent": 10.0,
+      "complexity": 5.0
+    },
+    {
+      "function": "find_test_files_with_import_errors",
+      "file": "C:\\taly\\ai-system\\fix_legacy_imports.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 4.1012109375,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "main",
+      "file": "C:\\taly\\ai-system\\fix_legacy_imports.py",
+      "execution_time_ms": 4.0,
+      "memory_mb": 4.1012109375,
+      "cpu_percent": 8.0,
+      "complexity": 4.0
+    },
+    {
       "function": "run_simple_agent_test",
-      "file": "/mnt/c/taly/ai-system/main.py",
+      "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 3.0,
-      "memory_mb": 1.9837109375,
+      "memory_mb": 4.1012109375,
       "cpu_percent": 6.0,
       "complexity": 3.0
     },
     {
       "function": "run_supabase_tool_test",
-      "file": "/mnt/c/taly/ai-system/main.py",
+      "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 3.5,
-      "memory_mb": 1.9837109375,
+      "memory_mb": 4.1012109375,
       "cpu_percent": 7.0,
       "complexity": 3.5
     },
     {
       "function": "run_memory_test",
-      "file": "/mnt/c/taly/ai-system/main.py",
+      "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 7.0,
-      "memory_mb": 3.5,
+      "memory_mb": 4.1012109375,
       "cpu_percent": 14.0,
       "complexity": 7.0
     },
     {
       "function": "run_workflow_test",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 4.500000000000001,
-      "memory_mb": 2.25,
-      "cpu_percent": 9.0,
-      "complexity": 4.5
+      "file": "C:\\taly\\ai-system\\main.py",
+      "execution_time_ms": 3.5,
+      "memory_mb": 4.1012109375,
+      "cpu_percent": 7.0,
+      "complexity": 3.5
     },
     {
       "function": "run_comprehensive_tests",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 5.0,
-      "memory_mb": 2.5,
-      "cpu_percent": 10.0,
-      "complexity": 5.0
+      "file": "C:\\taly\\ai-system\\main.py",
+      "execution_time_ms": 4.0,
+      "memory_mb": 4.1012109375,
+      "cpu_percent": 8.0,
+      "complexity": 4.0
     },
     {
       "function": "run_validation_suite",
-      "file": "/mnt/c/taly/ai-system/main.py",
+      "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
+      "memory_mb": 4.1012109375,
       "cpu_percent": 2.0,
       "complexity": 1.0
     },
     {
       "function": "print_summary",
-      "file": "/mnt/c/taly/ai-system/main.py",
+      "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 5.0,
-      "memory_mb": 2.5,
+      "memory_mb": 4.1012109375,
       "cpu_percent": 10.0,
       "complexity": 5.0
     },
     {
       "function": "main",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 5.0,
-      "memory_mb": 2.5,
-      "cpu_percent": 10.0,
-      "complexity": 5.0
-    },
-    {
-      "function": "load_dotenv",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "initialize_agent",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "create_sql_agent",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "__init__",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "from_function",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "__init__",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "test_handler",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "invoke",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "__init__",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "add_node",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "add_edge",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "set_entry_point",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "set_finish_point",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "compile",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "invoke",
-      "file": "/mnt/c/taly/ai-system/main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "ensure_build_directories",
-      "file": "/mnt/c/taly/ai-system/config/build_paths.py",
-      "execution_time_ms": 2.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 4.0,
-      "complexity": 2.0
-    },
-    {
-      "function": "get_config_manager",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 2.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 4.0,
-      "complexity": 2.0
-    },
-    {
-      "function": "load_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_agents_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_tools_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_critical_path_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_qa_thresholds_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_hitl_policies_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "__init__",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "_validate_config_files",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
+      "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 4.0,
-      "memory_mb": 2.0,
+      "memory_mb": 4.1012109375,
       "cpu_percent": 8.0,
       "complexity": 4.0
     },
     {
-      "function": "load_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 7.5,
-      "memory_mb": 3.75,
-      "cpu_percent": 15.0,
-      "complexity": 7.5
-    },
-    {
-      "function": "get_agents_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
+      "function": "test_handler",
+      "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
+      "memory_mb": 4.1012109375,
       "cpu_percent": 2.0,
       "complexity": 1.0
     },
     {
-      "function": "get_tools_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_critical_path_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_qa_thresholds_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_validation_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_hitl_policies_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_daily_cycle_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_auto_generated_graph_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_task_schema",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_gemini_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_webhook_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_prometheus_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "get_agent_generator_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "reload_config",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 3.0,
-      "memory_mb": 1.9837109375,
-      "cpu_percent": 6.0,
-      "complexity": 3.0
-    },
-    {
-      "function": "get_all_configs",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
+      "function": "test_claude_embeddings",
+      "file": "C:\\taly\\ai-system\\test_claude_integration.py",
       "execution_time_ms": 2.0,
-      "memory_mb": 1.9837109375,
+      "memory_mb": 4.1012109375,
       "cpu_percent": 4.0,
       "complexity": 2.0
     },
     {
-      "function": "validate_configuration_integrity",
-      "file": "/mnt/c/taly/ai-system/config/config_manager.py",
-      "execution_time_ms": 8.0,
-      "memory_mb": 4.0,
-      "cpu_percent": 16.0,
-      "complexity": 8.0
+      "function": "test_claude_chat_simple",
+      "file": "C:\\taly\\ai-system\\test_claude_integration.py",
+      "execution_time_ms": 2.5,
+      "memory_mb": 4.1012109375,
+      "cpu_percent": 5.0,
+      "complexity": 2.5
+    },
+    {
+      "function": "test_feature_flags",
+      "file": "C:\\taly\\ai-system\\test_claude_integration.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 4.1012109375,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "test_memory_integration",
+      "file": "C:\\taly\\ai-system\\test_claude_integration.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 4.1012109375,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "main",
+      "file": "C:\\taly\\ai-system\\test_claude_integration.py",
+      "execution_time_ms": 4.0,
+      "memory_mb": 4.1012109375,
+      "cpu_percent": 8.0,
+      "complexity": 4.0
     }
   ],
   "nfr_violations": [

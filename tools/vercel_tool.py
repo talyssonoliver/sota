@@ -5,7 +5,7 @@ Vercel Tool - Allows agents to interact with Vercel deployments
 import json
 import os
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Dict
 
 import requests
 from pydantic import BaseModel, ValidationError

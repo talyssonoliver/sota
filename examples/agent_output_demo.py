@@ -40,21 +40,21 @@ def demonstrate_step_4_4():
             print(f"      🔧 Artifacts: {agent_data['extracted_artifacts']}")
 
         # Demonstrate QA input preparation
-        print(f"\n🔍 QA Input Preparation:")
+        print("\n🔍 QA Input Preparation:")
         qa_input = registry.prepare_qa_input("BE-07")
 
         print(f"   📋 Primary outputs: {len(qa_input['primary_outputs'])}")
         print(f"   🔧 Code artifacts: {len(qa_input['code_artifacts'])}")
 
         if qa_input['code_artifacts']:
-            print(f"   📁 Code files extracted:")
+            print("   📁 Code files extracted:")
             for artifact in qa_input['code_artifacts']:
                 file_path = Path(artifact['file'])
                 print(
                     f"      📄 {file_path.name} ({artifact['language']}) - {len(artifact['content'])} chars")
 
         # Show file organization
-        print(f"\n📁 File Organization:")
+        print("\n📁 File Organization:")
         task_outputs = registry.list_task_outputs("BE-07")
         for output_file in task_outputs:
             file_path = Path(output_file)
@@ -64,7 +64,7 @@ def demonstrate_step_4_4():
         # Check code directory
         code_dir = Path("outputs/BE-07/code")
         if code_dir.exists():
-            print(f"   📁 code/ directory:")
+            print("   📁 code/ directory:")
             for code_file in code_dir.iterdir():
                 if code_file.is_file():
                     size = code_file.stat().st_size
@@ -76,9 +76,9 @@ def demonstrate_step_4_4():
         print("   python orchestration/register_output.py BE-07 backend outputs/BE-07/sample_backend_output.md --extract-code")
         print("   python orchestration/register_output.py BE-07 qa outputs/BE-07/sample_qa_report.json --type json")
 
-    print(f"\n🎉 Step 4.4 Demo Complete!")
-    print(f"✅ Agent output registration system is operational")
-    print(f"✅ Ready for Phase 5 — Reporting, QA & Completion")
+    print("\n🎉 Step 4.4 Demo Complete!")
+    print("✅ Agent output registration system is operational")
+    print("✅ Ready for Phase 5 — Reporting, QA & Completion")
 
 
 if __name__ == "__main__":

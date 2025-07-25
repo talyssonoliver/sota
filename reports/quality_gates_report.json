@@ -1,28 +1,28 @@
 {
-  "timestamp": "2025-07-23 21:13:51",
+  "timestamp": "2025-07-24 20:15:15",
   "overall_status": "FAILED",
   "quality_gates_passed": 3,
   "quality_gates_failed": 3,
   "quality_gates_warning": 2,
   "metrics": {
     "coverage_percentage": 0.0,
-    "avg_cyclomatic_complexity": 2.927149321266968,
-    "max_cyclomatic_complexity": 34,
-    "duplication_percentage": 50.773087270802044,
+    "avg_cyclomatic_complexity": 2.9268356414946433,
+    "max_cyclomatic_complexity": 50,
+    "duplication_percentage": 68.9922529168989,
     "maintainability_index": 0,
     "issues": {
       "bugs": 0,
       "vulnerabilities": 14,
-      "code_smells": 41,
+      "code_smells": 48,
       "security_hotspots": 219
     },
     "lines_of_code": {
-      "total": 117546,
-      "code": 92551,
-      "comments": 5911,
-      "blank": 19084
+      "total": 206757,
+      "code": 159673,
+      "comments": 11900,
+      "blank": 35184
     },
-    "code_smells_per_kloc": 0.44299899514862073,
+    "code_smells_per_kloc": 0.3006143806404339,
     "critical_bugs": 0,
     "vulnerabilities": 14,
     "security_hotspots": 219
@@ -30,10 +30,10 @@
   "technical_debt": {
     "bugs": 0.0,
     "vulnerabilities": 28.0,
-    "code_smells": 10.25,
+    "code_smells": 12.0,
     "security_hotspots": 164.25,
-    "total_hours": 202.5,
-    "total_days": 25.3125
+    "total_hours": 204.25,
+    "total_days": 25.53125
   },
   "gate_results": [
     {
@@ -66,13 +66,13 @@
       "name": "code_duplication",
       "metric": "duplication_percentage",
       "expected_value": 3.0,
-      "actual_value": 50.773087270802044,
+      "actual_value": 68.9922529168989,
       "operator": "<=",
       "status": "FAILED",
       "severity": "error",
       "category": "maintainability",
-      "deviation": 47.773087270802044,
-      "message": "\u274c Code duplication must be below 3% (Failed: 50.773087270802044 <= 3.0)",
+      "deviation": 65.9922529168989,
+      "message": "\u274c Code duplication must be below 3% (Failed: 68.9922529168989 <= 3.0)",
       "remediation_effort_minutes": 30
     },
     {
@@ -92,12 +92,12 @@
       "name": "cyclomatic_complexity",
       "metric": "avg_cyclomatic_complexity",
       "expected_value": 10.0,
-      "actual_value": 2.927149321266968,
+      "actual_value": 2.9268356414946433,
       "operator": "<=",
       "status": "PASSED",
       "severity": "warning",
       "category": "maintainability",
-      "deviation": 7.072850678733031,
+      "deviation": 7.073164358505357,
       "message": "\u2705 Average cyclomatic complexity should be below 10",
       "remediation_effort_minutes": 45
     },
@@ -131,12 +131,12 @@
       "name": "code_smells_density",
       "metric": "code_smells_per_kloc",
       "expected_value": 10.0,
-      "actual_value": 0.44299899514862073,
+      "actual_value": 0.3006143806404339,
       "operator": "<=",
       "status": "PASSED",
       "severity": "warning",
       "category": "maintainability",
-      "deviation": 9.55700100485138,
+      "deviation": 9.699385619359566,
       "message": "\u2705 Code smells density should be below 10 per KLOC",
       "remediation_effort_minutes": 15
     }

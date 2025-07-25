@@ -384,9 +384,7 @@ class InputValidator:
             for pattern in sql_patterns:
                 if re.search(pattern, content, re.IGNORECASE):
                     logger.warning(f"SQL injection pattern detected: {pattern}")
-                    content = re.sub(
-                        pattern, "[FILTERED]", content, flags=re.IGNORECASE
-                    )
+                    raise ValidationError(f"Dangerous SQL pattern detected: {pattern}")
 
             # Then check other dangerous patterns
             for pattern in self.dangerous_compiled_patterns:
@@ -394,8 +392,7 @@ class InputValidator:
                     logger.warning(
                         f"Potentially dangerous content detected: {pattern.pattern}"
                     )
-                    # Sanitize rather than reject
-                    content = pattern.sub("", content)
+                    raise ValidationError(f"Dangerous content pattern detected: {pattern.pattern}")
 
         # Basic sanitization
         content = content.strip()

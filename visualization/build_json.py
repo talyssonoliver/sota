@@ -11,21 +11,20 @@ Usage:
 
 import json
 import logging
-import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 
-# Add parent directory to path for imports
+# Use centralized path management
 sys.path.append(str(Path(__file__).parent.parent))
 
-try:
-    from utils.completion_metrics import CompletionMetricsCalculator
-    from dashboard.unified_api_server import UnifiedDashboardAPI
-    from orchestration.daily_cycle import DailyCycleOrchestrator
-except ImportError as e:
-    logging.warning(f"Import warning: {e}. Using mock data for visualization.")
+# Use centralized import utilities
+from src.infrastructure.utils.import_utils import conditional_import
+
+CompletionMetricsCalculator = conditional_import('utils.completion_metrics', 'CompletionMetricsCalculator')
+UnifiedDashboardAPI = conditional_import('dashboard.unified_api_server', 'UnifiedDashboardAPI')
+DailyCycleOrchestrator = conditional_import('orchestration.daily_cycle', 'DailyCycleOrchestrator')
 
 
 class VisualProgressChartsDataBuilder:
@@ -628,7 +627,7 @@ class VisualProgressChartsDataBuilder:
         base_date = datetime.now() - timedelta(weeks=4)
         
         for i in range(5):
-            week = base_date + timedelta(weeks=i)
+            base_date + timedelta(weeks=i)
             week_str = f"Week {i+1}"
             velocity[week_str] = {
                 "actual": 20 + (i * 2) + (i % 3),

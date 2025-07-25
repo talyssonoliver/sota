@@ -13,7 +13,6 @@ Usage:
 import argparse
 import json
 import logging
-import shutil
 import sys
 import tarfile
 from datetime import datetime

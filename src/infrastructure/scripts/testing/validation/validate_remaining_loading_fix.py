@@ -208,7 +208,7 @@ def test_remaining_loading_issues():
     with open("c:\\taly\\ai-system\\remaining_loading_fix_validation.json", "w") as f:
         json.dump(validation_data, f, indent=2)
     
-    print(f"\n💾 Results saved to: remaining_loading_fix_validation.json")
+    print("\n💾 Results saved to: remaining_loading_fix_validation.json")
     
     return overall_pass
 

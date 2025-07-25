@@ -221,14 +221,12 @@ def patch_imports():
     """
     Patch import system to provide mock implementations for missing modules.
     """
-    import builtins
     import importlib
     import os
     import sys
     from types import ModuleType
 
     # Store original import function to use for non-mocked modules
-    original_import = builtins.__import__
 
     # Set OpenAI API key environment variable to avoid validation errors
     # Consistent with mock_environment.py

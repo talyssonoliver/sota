@@ -5,7 +5,6 @@ This module provides patches to prevent infinite recursion in workflow execution
 
 import logging
 import types
-from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 
