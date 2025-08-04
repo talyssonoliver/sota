@@ -59,7 +59,7 @@ class MyClass:
     print("📄 Sample Code Analysis:")
     print("----------------------")
     print(f"Lines of code: {len(sample_code.splitlines())}")
-    print(f"Contains these functions:")
+    print("Contains these functions:")
     
     # Parse AST and find all functions
     tree = ast.parse(sample_code)
@@ -91,7 +91,7 @@ class MyClass:
         print(f"     Signature: {func_info['signature']}")
         print(f"     Arguments: {func_info['args']}")
     
-    print(f"\n📊 Analysis Results:")
+    print("\n📊 Analysis Results:")
     print(f"  - Total functions found: {len(all_functions)}")
     print(f"  - Utility functions to consolidate: {len(visitor.utility_functions_found)}")
     print(f"  - Business functions preserved: {len(all_functions) - len(visitor.utility_functions_found)}")
@@ -144,7 +144,7 @@ def business_function():
             temp_file, utility_functions, central_modules
         )
         
-        print(f"\n✅ Processing completed:")
+        print("\n✅ Processing completed:")
         print(f"   - Duplicate lines commented: {duplicates_removed}")
         
         # Read modified content
@@ -161,7 +161,7 @@ def business_function():
             elif i <= 10:  # Show first 10 lines
                 print(f"   {i:2d}: {line}")
         
-        print(f"\n📈 Summary:")
+        print("\n📈 Summary:")
         print(f"   - Original lines: {len(original_content.splitlines())}")
         print(f"   - Modified lines: {len(modified_content.splitlines())}")
         print(f"   - Added imports: {len([l for l in lines if 'from src.infrastructure.utils' in l])}")
@@ -202,8 +202,8 @@ if __name__ == "__main__":
     demonstrate_file_processing()
     demonstrate_coverage_preservation()
     
-    print(f"\n🎉 AST-Based Duplicate Detection Implementation Complete!")
-    print(f"   Successfully implemented proper AST parsing as requested")
+    print("\n🎉 AST-Based Duplicate Detection Implementation Complete!")
+    print("   Successfully implemented proper AST parsing as requested")
     print(f"   ✅ Validates and processes {len(utility_functions_found)} utility function types")
-    print(f"   ✅ Integrates with existing pattern detection infrastructure")
-    print(f"   ✅ Maintains test coverage and code quality standards")
+    print("   ✅ Integrates with existing pattern detection infrastructure")
+    print("   ✅ Maintains test coverage and code quality standards")

@@ -5,8 +5,8 @@ Tests all major functionality including Deploy Hooks and Git repository connecti
 
 import json
 import pytest
-from unittest.mock import Mock, patch, MagicMock
-from src.platform.tools.vercel_tool_unified import VercelTool
+from unittest.mock import Mock, patch
+from src.platform.tools.vercel_tool import VercelTool
 
 
 class TestVercelToolUnified:

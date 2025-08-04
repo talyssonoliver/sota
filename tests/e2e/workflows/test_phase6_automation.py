@@ -546,7 +546,7 @@ class TestPhase6Performance(unittest.TestCase):
     def test_api_response_times(self):
         """Test API endpoint response times - optimized for speed."""
         # Mock DashboardAPI to avoid expensive initialization
-        from unittest.mock import Mock, patch
+        from unittest.mock import Mock
         
         mock_api = Mock()
         mock_app = Mock()

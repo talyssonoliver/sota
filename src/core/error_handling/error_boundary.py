@@ -14,7 +14,7 @@ errors within specific components or operations.
 """
 
 
-from typing import Dict, Any, Optional, Callable, List, TypeVar, Generic, Union
+from typing import Dict, Any, Optional, Callable, List, TypeVar
 from abc import ABC, abstractmethod
 from contextlib import asynccontextmanager
 from .error_types import SystemError, ErrorSeverity, ErrorCategory

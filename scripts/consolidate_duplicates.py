@@ -6,13 +6,10 @@ Automatically refactors files to use base classes and common utilities,
 reducing code duplication from 56.44% toward target of <3%.
 """
 
-import os
 import sys
 import re
-import ast
-import json
 from pathlib import Path
-from typing import Dict, List, Set, Tuple, Optional, Any
+from typing import Dict, List, Any
 from dataclasses import dataclass
 from datetime import datetime
 

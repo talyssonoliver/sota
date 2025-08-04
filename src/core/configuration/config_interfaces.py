@@ -8,7 +8,7 @@ the Interface Segregation and Dependency Inversion principles.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, List
 # from dataclasses import dataclass  # Consolidated to common_imports
 
 

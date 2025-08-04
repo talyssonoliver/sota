@@ -1,0 +1,22 @@
+# optimize_tests.py
+
+## Functions
+- **create_optimized_test_structure()** (line 30)
+- **analyze_current_tests()** (line 71)
+- **categorize_test_files()** (line 118)
+- **determine_test_category(content, file_path)** (line 149)
+- **migrate_test_files(categorization)** (line 203)
+- **generate_migration_plan(categorization)** (line 234)
+- **map_unit_test_location(test_file)** (line 261)
+- **map_integration_test_location(test_file)** (line 289)
+- **map_e2e_test_location(test_file)** (line 305)
+- **adapt_test_code(content, source_file, target_path)** (line 315)
+- **create_test_fixtures()** (line 376)
+- **create_mock_memory()** (line 399)
+- **create_mock_agents()** (line 454)
+- **create_mock_api()** (line 514)
+- **create_agent_factory()** (line 567)
+- **create_task_factory()** (line 595)
+- **create_sample_data()** (line 629)
+- **create_init_files()** (line 677)
+- **main()** (line 697)

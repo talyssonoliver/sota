@@ -17,13 +17,12 @@ to handle different types of system failures gracefully.
 
 # import asyncio  # Consolidated to common_imports
 # import logging  # Consolidated to common_imports
-from typing import Dict, Any, Optional, List, Callable, TypeVar, Protocol
-from abc import ABC, abstractmethod
+from typing import Dict, Any, Optional, Callable, TypeVar, Protocol
 # from dataclasses import dataclass, field  # Consolidated to common_imports
 # from enum import Enum  # Consolidated to common_imports
 # from datetime import datetime, timedelta  # Consolidated to common_imports
 
-from .error_types import SystemError, ErrorSeverity, ErrorCategory
+from .error_types import SystemError, ErrorCategory
 
 T = TypeVar('T')
 

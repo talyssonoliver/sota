@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-
-from src.infrastructure.utils.common_imports import Path, os, sys
 """
 Step 3.9 Demo: Visualise Context Coverage
 
@@ -10,18 +8,20 @@ CSV and HTML reports showing context usage patterns.
 
 """
 
+from src.infrastructure.utils.common_imports import Path, os, sys
+
 # import os  # Consolidated to common_imports
 # import sys  # Consolidated to common_imports
 # from pathlib import Path  # Consolidated to common_imports
 
-from tools.context_tracker import get_all_context_logs
-from tools.context_visualizer import (analyze_context_coverage,
+# Add parent directory to Python path for imports
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.infrastructure.tools.context_tracker import get_all_context_logs
+from src.infrastructure.tools.context_visualizer import (analyze_context_coverage,
                                       generate_context_coverage_report,
                                       generate_csv_report,
                                       generate_html_report)
-
-# Add parent directory to Python path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 def test_context_coverage_analysis():
@@ -142,7 +142,7 @@ def test_html_generation():
     json_path = "reports/step_3_9_test_coverage.json"
     success_html = generate_html_report(coverage_data, html_path)
     # Also generate the JSON file for dynamic HTML
-    from tools.context_visualizer import generate_json_report
+    from src.infrastructure.tools.context_visualizer import generate_json_report
     success_json = generate_json_report(coverage_data, json_path)
 
     if success_html and success_json:
@@ -197,7 +197,7 @@ def test_json_generation():
         print("⚠️  Skipping JSON test - no context data available")
         return False
     json_path = "reports/context-coverage.json"
-    from tools.context_visualizer import generate_json_report
+    from src.infrastructure.tools.context_visualizer import generate_json_report
     success_json = generate_json_report(coverage_data, json_path)
     if success_json:
         print(f"✅ JSON data generated: {json_path}")

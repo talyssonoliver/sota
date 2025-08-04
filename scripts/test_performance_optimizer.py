@@ -12,11 +12,10 @@ Optimizes ~2000 tests with intelligent strategies:
 
 import json
 import logging
-import os
 import subprocess
 import time
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List
 
 import psutil
 
@@ -375,7 +374,7 @@ def main():
     
     # Analyze system
     system_info = optimizer.analyze_system_resources()
-    print(f"💻 System Analysis:")
+    print("💻 System Analysis:")
     print(f"   CPU Cores: {system_info['cpu_count']}")
     print(f"   Memory: {system_info['memory_gb']}GB")
     print(f"   Optimal Workers: {system_info['optimal_workers']}")
@@ -386,21 +385,21 @@ def main():
     
     # Generate recommendations
     recommendations = optimizer.generate_optimization_recommendations()
-    print(f"\n📋 Optimization Recommendations:")
+    print("\n📋 Optimization Recommendations:")
     for rec in recommendations:
         print(f"   {rec}")
     
     # Show test strategies
     strategies = optimizer.create_test_selection_strategies()
-    print(f"\n🎯 Available Test Strategies:")
+    print("\n🎯 Available Test Strategies:")
     for name, command in strategies.items():
         print(f"   {name:15} → pytest {command}")
     
-    print(f"\n✅ Test suite optimization complete!")
-    print(f"💡 Next steps:")
-    print(f"   1. Run: make test-ultra-fast (quick validation)")
-    print(f"   2. Run: make test-parallel (full suite)")
-    print(f"   3. Monitor: tail -f test_performance_results.json")
+    print("\n✅ Test suite optimization complete!")
+    print("💡 Next steps:")
+    print("   1. Run: make test-ultra-fast (quick validation)")
+    print("   2. Run: make test-parallel (full suite)")
+    print("   3. Monitor: tail -f test_performance_results.json")
 
 
 if __name__ == "__main__":

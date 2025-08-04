@@ -6,8 +6,7 @@ scattered validation logic across 53 files.
 """
 
 import pytest
-import asyncio
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 from src.core.validation import (
     BusinessRuleEngine, RuleContext, RuleViolation, 
     RuleSeverity, RuleCategory, IBusinessRule,

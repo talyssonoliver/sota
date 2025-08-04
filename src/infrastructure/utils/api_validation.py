@@ -600,12 +600,10 @@ QA_VALIDATION_SCHEMA = {
 
 # === WEEK 2 DAY 3: STANDARDIZED API VALIDATION ADDITIONS ===
 
-from typing import Callable, Dict, Any, Optional, Union, List
-from flask import request, jsonify, abort
-from functools import wraps
+from typing import Dict, Any, Optional, List
+from flask import request, jsonify
 
 from .validation_errors import APIValidationError, ValidationError
-from .validation_decorators import validate_json
 from .schema_registry import validate_against_schema
 
 

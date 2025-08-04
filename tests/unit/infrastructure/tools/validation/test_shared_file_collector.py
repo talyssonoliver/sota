@@ -5,13 +5,12 @@ Tests for shared file collector - Performance optimization utility.
 import tempfile
 import time
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import pytest
 
 from src.infrastructure.tools.validation.core.shared_file_collector import (
-    SharedFileCollector, 
-    shared_file_collector
+    SharedFileCollector
 )
 
 

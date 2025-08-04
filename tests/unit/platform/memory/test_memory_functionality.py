@@ -251,7 +251,7 @@ class TestMemoryEngineIntegration(unittest.TestCase):
         # Test the mocked function directly
         with patch.dict('sys.modules', {'tools.retrieval_qa': Mock(get_answer=mock_get_answer)}):
             try:
-                from tools.retrieval_qa import get_answer
+                from src.infrastructure.tools.core.retrieval_qa import get_answer
                 
                 # Test the function
                 result = get_answer("Test question")

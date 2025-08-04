@@ -4,10 +4,10 @@ Fixed to match actual DependencyContainer API.
 """
 
 import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 from src.core.dependency_injection.container import (
-    DependencyContainer, ServiceLifetime, DependencyResolutionError,
+    DependencyContainer, DependencyResolutionError,
     CircularDependencyError, ServiceNotRegisteredError
 )
 

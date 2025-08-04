@@ -7,7 +7,6 @@ import json
 import os
 import shutil
 import sys
-import threading
 import time
 import unittest
 from unittest.mock import patch

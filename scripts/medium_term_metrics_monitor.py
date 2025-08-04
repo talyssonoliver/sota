@@ -12,7 +12,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 import ast
-import re
 
 
 class MetricsMonitor:
@@ -531,7 +530,7 @@ class MetricsMonitor:
         
         # Improvements (if baseline exists)
         if improvements:
-            print(f"\n📊 IMPROVEMENTS FROM BASELINE:")
+            print("\n📊 IMPROVEMENTS FROM BASELINE:")
             overall_score = improvements['overall_improvement_score']
             print(f"  Overall Score: {overall_score:+.1f}%")
             
@@ -541,7 +540,7 @@ class MetricsMonitor:
                 print(f"  {status} {category.title()}: {category_score:+.1f}%")
         
         # Week targets
-        print(f"\n🎯 WEEK TARGETS:")
+        print("\n🎯 WEEK TARGETS:")
         week_targets = {
             "Week 2 (Deduplication)": f"<0.1% duplicate code (current: {current_metrics['duplication']['duplication_percentage']:.2f}%)",
             "Week 3 (Testing)": f"80% test coverage (current: {current_metrics['test_coverage']['overall_coverage']:.1f}%)",

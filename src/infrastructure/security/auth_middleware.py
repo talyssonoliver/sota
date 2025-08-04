@@ -12,7 +12,7 @@ import hmac
 from typing import Optional, Tuple
 
 from flask import g, jsonify, request
-from src.infrastructure.utils.common_utils import EnvironmentConfig, is_production_mode
+from src.infrastructure.utils.common_utils import EnvironmentConfig
 
 
 class AuthenticationError(Exception):

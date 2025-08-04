@@ -3,7 +3,6 @@
 from src.infrastructure.utils.common_imports import (
     Path,
     datetime,
-    logging,
     sys,
     traceback
 )

@@ -2,7 +2,6 @@
 Tests for validation issue model - Structured representation of validation issues.
 """
 
-import pytest
 
 from src.infrastructure.tools.validation.core.issue_model import (
     IssueType,

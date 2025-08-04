@@ -12,8 +12,8 @@ import inspect
 from typing import Dict, Any, Optional, Type, TypeVar, List, Callable, Set
 # from dataclasses import dataclass  # Consolidated to common_imports
 from .interfaces import (
-    IContainer, IServiceProvider, IServiceRegistry, IDependencyResolver,
-    IServiceDescriptor, ILifetimeManager, IServiceActivator,
+    IContainer, IServiceProvider, IDependencyResolver,
+    ILifetimeManager, IServiceActivator,
     ServiceLifetime
 )
 

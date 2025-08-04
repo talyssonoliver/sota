@@ -7,7 +7,6 @@ Implement standardized validation patterns across the codebase
 import os
 import re
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
 from datetime import datetime
 
 
@@ -1348,7 +1347,7 @@ def get_api_middleware() -> APIValidationMiddleware:
                             f.write(content)
                         self.files_modified.append(str(file_path))
                         
-                except Exception as e:
+                except Exception:
                     continue  # Skip problematic files
         
         return patterns_applied

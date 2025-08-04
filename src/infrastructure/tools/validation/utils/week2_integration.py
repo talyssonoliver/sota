@@ -8,10 +8,10 @@ from typing import Dict, List, Any
 
 from ..core.base_validator import BaseValidator
 from src.infrastructure.utils.validation_errors import (
-    ValidationError, ErrorCollector, MultipleValidationError
+    ValidationError, ErrorCollector
 )
 from src.infrastructure.utils.validation_decorators import (
-    validate_input, validate_json, validate_schema
+    validate_input, validate_json
 )
 from src.infrastructure.utils.schema_registry import SchemaRegistry
 

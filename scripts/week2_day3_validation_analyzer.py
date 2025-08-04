@@ -4,11 +4,10 @@ Week 2 Day 3: Validation Pattern Analysis
 Analyze validation patterns across the codebase for standardization
 """
 
-import os
 import re
-from collections import defaultdict, Counter
+from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List
 import json
 
 
@@ -111,7 +110,7 @@ class ValidationPatternAnalyzer:
                             'context': lines[line_num - 1].strip() if line_num <= len(lines) else ''
                         })
                         
-        except Exception as e:
+        except Exception:
             pass  # Skip files with issues
         
         return patterns
@@ -424,11 +423,11 @@ class ValidationPatternAnalyzer:
             hours = int(re.search(r'(\d+)', item['estimated_effort']).group(1))
             total_effort += hours
         
-        report += f"\n## 💡 Summary\n"
+        report += "\n## 💡 Summary\n"
         report += f"- **Standardization Modules:** {len(plan)}\n"
         report += f"- **Files to Improve:** {total_impact_files}\n"
         report += f"- **Estimated Total Effort:** {total_effort} hours\n"
-        report += f"- **Expected Impact:** Significant improvement in code consistency and maintainability\n"
+        report += "- **Expected Impact:** Significant improvement in code consistency and maintainability\n"
         
         return report
 

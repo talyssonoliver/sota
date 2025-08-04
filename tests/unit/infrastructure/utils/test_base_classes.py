@@ -7,8 +7,7 @@ import os
 import pytest
 import tempfile
 from datetime import datetime
-from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import patch
 
 from src.infrastructure.utils.base_classes import (
     BaseComponent, BaseTool, BaseAPITool, BaseValidator, 

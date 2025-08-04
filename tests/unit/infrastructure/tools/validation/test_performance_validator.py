@@ -3,9 +3,8 @@ Tests for performance validator - Analyzes code performance patterns and suggest
 """
 
 import tempfile
-import time
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 

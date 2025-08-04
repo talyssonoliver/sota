@@ -23,7 +23,7 @@ Usage:
 # import sys  # Consolidated to common_imports
 # from datetime import datetime, timedelta  # Consolidated to common_imports
 # from pathlib import Path  # Consolidated to common_imports
-from typing import Any, Dict, List, Protocol, runtime_checkable, Optional
+from typing import Any, Dict, List
 
 # Add parent directory to path
 sys.path.append(str(Path(__file__).parent.parent))

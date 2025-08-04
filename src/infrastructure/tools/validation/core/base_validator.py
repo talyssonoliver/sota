@@ -20,13 +20,7 @@ from .issue_model import IssueType, SeverityLevel, ValidationIssue
 # Integration: Enhanced validation errors
 from src.infrastructure.utils.validation_errors import (
     ValidationError as Week2ValidationError,
-    InputValidationError,
-    SchemaValidationError,
-    APIValidationError,
     SecurityValidationError,
-    BusinessValidationError,
-    TypeValidationError,
-    MultipleValidationError,
     ErrorCollector
 )
 

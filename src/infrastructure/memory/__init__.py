@@ -102,7 +102,7 @@ def initialize_memory(config=None):
                 # Fallback to basic config
                 config = {}
         return MemoryEngine(config)
-    except Exception as e:
+    except Exception:
         # Return fallback memory engine if initialization fails
         return MemoryEngine({})
 

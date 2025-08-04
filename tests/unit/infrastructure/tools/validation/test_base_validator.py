@@ -8,13 +8,11 @@ import time
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-import pytest
 
 from src.infrastructure.tools.validation.core.base_validator import BaseValidator
 from src.infrastructure.tools.validation.core.issue_model import (
     IssueType,
     SeverityLevel,
-    ValidationIssue,
 )
 
 

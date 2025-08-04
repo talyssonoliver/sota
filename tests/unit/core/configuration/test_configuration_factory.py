@@ -5,7 +5,6 @@ Validates the clean architecture configuration system including
 environment-specific configuration and validation boundaries.
 """
 
-import pytest
 import os
 from unittest.mock import patch
 from src.core.configuration import (

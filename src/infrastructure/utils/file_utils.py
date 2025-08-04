@@ -5,9 +5,8 @@ Common functions for file and directory operations
 
 import json
 import yaml
-import os
 from pathlib import Path
-from typing import Dict, Any, List, Optional, Union, Iterator
+from typing import Any, List, Union, Iterator
 import shutil
 
 

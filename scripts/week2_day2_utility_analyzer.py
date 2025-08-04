@@ -5,10 +5,9 @@ Identify duplicate utility functions across the codebase for consolidation
 """
 
 import ast
-import os
-from collections import defaultdict, Counter
+from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List
 import hashlib
 import json
 
@@ -277,7 +276,7 @@ class UtilityAnalyzer:
             report += f"- **Occurrences:** {dup['duplicate_count']}\n"
             report += f"- **Total Lines:** {dup['total_lines']}\n"
             report += f"- **Potential Savings:** {dup['potential_savings']} lines\n"
-            report += f"- **Files:**\n"
+            report += "- **Files:**\n"
             for func in dup['functions'][:5]:  # Show first 5 occurrences
                 report += f"  - {func['file']}\n"
             if len(dup['functions']) > 5:
@@ -293,7 +292,7 @@ class UtilityAnalyzer:
             report += f"- **Estimated Savings:** {opp['estimated_savings']} lines\n"
             total_savings += opp['estimated_savings']
         
-        report += f"\n## 💡 Summary\n"
+        report += "\n## 💡 Summary\n"
         report += f"- **Total Potential Line Savings:** {total_savings}\n"
         report += f"- **Recommended Modules to Create:** {len(results['consolidation_opportunities'])}\n"
         

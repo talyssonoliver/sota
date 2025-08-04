@@ -4,11 +4,10 @@ Week 2 Day 2: Simple Utility Function Finder
 Find duplicate utility functions using pattern matching
 """
 
-import os
 import re
-from collections import defaultdict, Counter
+from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict, List
 import json
 
 
@@ -121,7 +120,7 @@ class SimpleUtilityFinder:
                             'preview': '\n'.join(func_lines[:5]) + ('...' if len(func_lines) > 5 else '')
                         })
                         
-        except Exception as e:
+        except Exception:
             pass  # Silently skip files with issues
         
         return functions
@@ -305,10 +304,10 @@ class SimpleUtilityFinder:
             report += f"- Estimated Line Savings: {item['estimated_savings']}\n"
             total_savings += item['estimated_savings']
         
-        report += f"\n## 💡 Total Impact\n"
+        report += "\n## 💡 Total Impact\n"
         report += f"- **New Utility Modules:** {len(plan)}\n"
         report += f"- **Total Line Savings:** ~{total_savings} lines\n"
-        report += f"- **Maintenance Improvement:** Significant - single source of truth for utilities\n"
+        report += "- **Maintenance Improvement:** Significant - single source of truth for utilities\n"
         
         return report
 

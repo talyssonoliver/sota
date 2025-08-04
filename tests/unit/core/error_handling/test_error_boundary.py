@@ -6,8 +6,6 @@ and proper error isolation.
 """
 
 import pytest
-import asyncio
-from unittest.mock import Mock, patch
 from src.core.error_handling import (
     ErrorBoundary, BoundaryConfig, BoundaryMode,
     ErrorBoundaryManager, with_error_boundary,

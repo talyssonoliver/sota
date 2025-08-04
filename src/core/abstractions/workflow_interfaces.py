@@ -8,7 +8,7 @@ breaking dependency on specific LangGraph or workflow implementations.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional, Union, Callable, AsyncGenerator
+from typing import Dict, Any, List, Optional, Callable, AsyncGenerator
 # from dataclasses import dataclass  # Consolidated to common_imports
 # from enum import Enum  # Consolidated to common_imports
 # from datetime import datetime  # Consolidated to common_imports

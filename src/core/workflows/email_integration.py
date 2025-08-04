@@ -9,7 +9,6 @@ from src.infrastructure.utils.common_imports import (
     datetime,
     json,
     logging,
-    re,
     sys
 )
 """

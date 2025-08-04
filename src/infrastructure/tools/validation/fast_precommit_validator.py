@@ -8,7 +8,7 @@ Lightweight validation designed for pre-commit hooks.
 
 import argparse
 import ast
-from typing import List, Optional, Any
+from typing import List, Any
 
 from src.infrastructure.utils.base_classes import BaseValidator
 

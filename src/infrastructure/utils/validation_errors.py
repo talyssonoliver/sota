@@ -3,7 +3,7 @@ Standardized Validation Error Hierarchy
 Provides consistent error types for all validation scenarios
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 
 class ValidationError(Exception):

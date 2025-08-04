@@ -4,10 +4,9 @@ Validates Python imports and checks for issues like circular dependencies.
 Integrates with the unified validation system.
 """
 
-import ast
 import sys
 from pathlib import Path
-from typing import List, Dict, Set, Optional
+from typing import List
 
 # Handle both relative and absolute imports
 try:

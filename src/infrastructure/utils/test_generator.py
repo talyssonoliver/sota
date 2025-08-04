@@ -7,11 +7,9 @@ from src.infrastructure.utils.common_imports import (
     Optional,
     Path,
     dataclass,
-    logging,
-    time
+    logging
 )
 import ast
-import re
 """Test generator utilities for infrastructure testing."""
 
 # import logging  # Consolidated to common_imports
@@ -291,7 +289,7 @@ class Test{module_name.title().replace('_', '')}:
 '''
         
         # Add complex module functionality test
-        test_content += f'''
+        test_content += '''
     def test_complex_module_functionality(self):
         """Test basic functionality."""
         assert True

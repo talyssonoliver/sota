@@ -10,11 +10,10 @@ and storage systems. Addresses the 0.18% encryption coverage gap.
 
 import base64
 # import logging  # Consolidated to common_imports
-from typing import Union, Optional, Dict, Any
+from typing import Optional, Any
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 # import json  # Consolidated to common_imports
 from src.infrastructure.utils.common_utils import EnvironmentConfig

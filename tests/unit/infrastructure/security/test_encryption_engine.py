@@ -8,9 +8,7 @@ Critical for achieving 80% test coverage target.
 
 import pytest
 import os
-import json
-import base64
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from cryptography.fernet import Fernet
 
 from src.infrastructure.security.encryption_engine import (

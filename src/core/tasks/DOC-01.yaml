@@ -1,0 +1,11 @@
+id: DOC-01
+title: Documentation Task
+description: Documentation task for system integration testing
+agent_role: documentation
+agent_type: documentation
+priority: medium
+status: pending
+context_topics:
+  - documentation
+  - technical writing
+  - system documentation

@@ -4,7 +4,6 @@ Common validation functions for input checking and verification
 """
 
 import re
-import os
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Union, Tuple
 from datetime import datetime

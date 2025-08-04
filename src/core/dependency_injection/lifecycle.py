@@ -9,7 +9,6 @@ import weakref
 import threading
 from typing import Dict, Any, Set, Optional, Type, List
 from abc import ABC, abstractmethod
-from .interfaces import ServiceLifetime
 
 
 class IDisposable(ABC):

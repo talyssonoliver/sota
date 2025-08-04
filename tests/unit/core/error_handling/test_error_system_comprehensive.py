@@ -5,12 +5,11 @@ Comprehensive test suite for the unified error handling system.
 import asyncio
 import pytest
 import time
-from unittest.mock import Mock, patch, AsyncMock
+from unittest.mock import Mock, patch
 
 from src.core.error_handling.error_boundary import (
     ErrorBoundary, BoundaryMode, ErrorContext
 )
-from src.core.error_handling.error_handler import ErrorHandler
 from src.core.error_handling.error_recovery import (
     ErrorRecoveryManager, RecoveryStrategy, RecoveryContext
 )

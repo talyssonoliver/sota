@@ -4,7 +4,6 @@ Test cases for the Utility Function Consolidator
 """
 
 import ast
-import os
 import tempfile
 import unittest
 from pathlib import Path
@@ -14,7 +13,7 @@ from unittest.mock import patch, MagicMock
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent / "scripts"))
 
-from week2_day2_utility_consolidator import UtilityConsolidator, FunctionVisitor
+from utility_consolidator import UtilityConsolidator, FunctionVisitor
 
 
 class TestUtilityConsolidator(unittest.TestCase):

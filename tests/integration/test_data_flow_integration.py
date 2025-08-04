@@ -11,7 +11,6 @@ Tests data flow integration including:
 
 import hashlib
 import json
-import pickle
 
 # Add project root to path
 import sys

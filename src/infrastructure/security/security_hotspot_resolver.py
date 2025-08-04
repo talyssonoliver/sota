@@ -3,9 +3,7 @@ from src.infrastructure.utils.common_imports import (
     Path,
     dataclass,
     datetime,
-    hashlib,
     json,
-    logging,
     re
 )
 """
@@ -15,7 +13,6 @@ Analyzes and resolves security hotspots to reduce technical debt.
 Targets the 182.25 hours of security hotspots identified in validation report.
 """
 
-import ast
 # import hashlib  # Consolidated to common_imports
 # import logging  # Consolidated to common_imports
 # import re  # Consolidated to common_imports
@@ -23,10 +20,9 @@ from collections import defaultdict
 # from dataclasses import dataclass  # Consolidated to common_imports
 # from datetime import datetime  # Consolidated to common_imports
 # from pathlib import Path  # Consolidated to common_imports
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional
 
 from ..utils.base_classes import BaseAnalyzer, BaseComponent, BaseFileHandler
-from src.infrastructure.utils.logging_utils import setup_logging
 
 
 @dataclass

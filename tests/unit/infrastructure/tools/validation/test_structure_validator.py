@@ -4,9 +4,8 @@ Tests for structure validator - Validates project structure and naming conventio
 
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 
-import pytest
 
 from src.infrastructure.tools.validation.core.structure_validator import StructureValidator
 from src.infrastructure.tools.validation.core.issue_model import IssueType, SeverityLevel
@@ -18,7 +17,6 @@ class TestStructureValidator:
     @classmethod
     def setup_class(cls):
         """Set up class-level fixtures to reduce overhead."""
-        import shutil
         cls.temp_dir = tempfile.mkdtemp()
         cls.root_path = Path(cls.temp_dir)
         cls.create_test_structure()

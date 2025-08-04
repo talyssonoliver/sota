@@ -11,7 +11,7 @@ for improved error handling and reporting.
 # import hashlib  # Consolidated to common_imports
 # import time  # Consolidated to common_imports
 from typing import Dict, List, Optional, Tuple, Any
-from .error_types import ErrorSeverity, ErrorCategory, SystemError
+from .error_types import ErrorSeverity, ErrorCategory
 
 
 class ErrorClassifier:

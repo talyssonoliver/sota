@@ -8,7 +8,7 @@ dependency on specific email or messaging implementations.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional, Union
+from typing import Dict, Any, List, Optional
 # from dataclasses import dataclass  # Consolidated to common_imports
 # from enum import Enum  # Consolidated to common_imports
 

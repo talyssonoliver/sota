@@ -5,7 +5,6 @@ Tests execute_graph module functions for building task state, running workflows,
 and context retrieval functionality.
 """
 
-import json
 import tempfile
 from unittest.mock import Mock, patch
 

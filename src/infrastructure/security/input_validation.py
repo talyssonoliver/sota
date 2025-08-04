@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 from src.infrastructure.utils.common_imports import (
-    datetime,
     json,
     logging,
     re
@@ -16,7 +15,7 @@ Addresses the 9.55% input validation coverage gap, targeting 95% coverage.
 # import re  # Consolidated to common_imports
 import html
 # import logging  # Consolidated to common_imports
-from typing import Any, Dict, List, Optional, Union, Callable
+from typing import Any, Dict, List, Union
 # from datetime import datetime  # Consolidated to common_imports
 from urllib.parse import urlparse
 # import json  # Consolidated to common_imports
@@ -24,12 +23,8 @@ from functools import wraps
 
 # Week 2 Day 3 Integration: Enhanced validation decorators
 from src.infrastructure.utils.validation_decorators import (
-    validate_input as week2_validate_input,
-    validate_json,
-    validate_args,
-    require_fields
+    validate_input as week2_validate_input
 )
-from src.infrastructure.utils.validation_utils import validate_schema
 
 
 

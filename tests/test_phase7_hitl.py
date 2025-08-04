@@ -15,8 +15,6 @@ Comprehensive tests for all Phase 7 HITL components including:
 import asyncio
 import json
 import logging
-import os
-import pytest
 import tempfile
 import unittest
 from datetime import datetime, timedelta

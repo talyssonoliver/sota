@@ -28,7 +28,7 @@ import logging
 import sys
 import webbrowser
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional
 
 # Configure logging with proper Unicode handling
 import platform

@@ -4,11 +4,8 @@ Week 2 Day 1: Import Consolidation Script
 Systematically replace common imports with consolidated module usage
 """
 
-import os
-import ast
-import re
 from pathlib import Path
-from typing import Dict, List, Set, Tuple
+from typing import Dict
 
 
 class ImportConsolidator:

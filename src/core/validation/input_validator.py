@@ -15,7 +15,7 @@ malicious or malformed data from entering the system.
 # import re  # Consolidated to common_imports
 import html
 # import logging  # Consolidated to common_imports
-from typing import Dict, Any, Optional, List, Union, Callable
+from typing import Dict, Any, Optional, List, Union
 from abc import ABC, abstractmethod
 # from dataclasses import dataclass  # Consolidated to common_imports
 # from enum import Enum  # Consolidated to common_imports

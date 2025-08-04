@@ -7,9 +7,7 @@ Critical for achieving 80% test coverage target.
 """
 
 import pytest
-import json
-from unittest.mock import patch, MagicMock
-from flask import Flask, request
+from flask import Flask
 
 from src.infrastructure.security.input_validation import (
     ValidationError,

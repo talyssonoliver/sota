@@ -8,10 +8,9 @@ from unittest.mock import patch, MagicMock
 import concurrent.futures
 import time
 
-import pytest
 
 from src.infrastructure.tools.validation.core.syntax_validator import SyntaxValidator
-from src.infrastructure.tools.validation.core.issue_model import IssueType, SeverityLevel, ValidationIssue
+from src.infrastructure.tools.validation.core.issue_model import IssueType, SeverityLevel
 
 
 class TestSyntaxValidator:
@@ -20,7 +19,6 @@ class TestSyntaxValidator:
     @classmethod
     def setup_class(cls):
         """Set up class-level fixtures to reduce overhead."""
-        import shutil
         cls.temp_dir = tempfile.mkdtemp()
         cls.root_path = Path(cls.temp_dir)
         cls.create_test_files()

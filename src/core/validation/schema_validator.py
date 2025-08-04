@@ -3,7 +3,6 @@ from src.infrastructure.utils.common_imports import (
     Enum,
     dataclass,
     field,
-    json,
     logging,
     re
 )
@@ -16,7 +15,7 @@ conforms to expected formats and types.
 
 # import json  # Consolidated to common_imports
 # import logging  # Consolidated to common_imports
-from typing import Dict, Any, Optional, List, Union, Type
+from typing import Dict, Any, Optional, List
 from abc import ABC, abstractmethod
 # from dataclasses import dataclass, field  # Consolidated to common_imports
 # from enum import Enum  # Consolidated to common_imports

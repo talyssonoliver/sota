@@ -20,7 +20,7 @@ throughout the system.
 # import sys  # Consolidated to common_imports
 # from datetime import datetime  # Consolidated to common_imports
 # from pathlib import Path  # Consolidated to common_imports
-from typing import Dict, List, Any, Optional, Union
+from typing import Dict, List, Any, Union
 
 
 def setup_logging(name: str = None, level: str = None) -> logging.Logger:

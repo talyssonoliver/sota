@@ -4,7 +4,6 @@ Consolidates logging setup and configuration functions from across the codebase
 """
 
 import logging
-import os
 import sys
 from pathlib import Path
 from typing import Dict, Any, Optional, List

@@ -1,7 +1,6 @@
 
 from src.infrastructure.utils.common_imports import (
     Enum,
-    asyncio,
     dataclass,
     field,
     logging,
@@ -16,11 +15,10 @@ across 53 files, providing consistent business logic enforcement.
 
 # import asyncio  # Consolidated to common_imports
 # import logging  # Consolidated to common_imports
-from typing import Dict, Any, Optional, List, Callable, TypeVar, Type
+from typing import Dict, Any, Optional, List, TypeVar
 from abc import ABC, abstractmethod
 # from dataclasses import dataclass, field  # Consolidated to common_imports
 # from enum import Enum  # Consolidated to common_imports
-from ..error_handling import BusinessLogicError, ValidationError, ErrorSeverity
 from .validation_middleware import ValidationResult, IValidationMiddleware
 
 T = TypeVar('T')

@@ -811,10 +811,10 @@ def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
     except ImportError:
         # Fallback to vector search if memory system is not available
         return get_context_by_keys([query])
-    except (TypeError, AttributeError) as e:
+    except (TypeError, AttributeError):
         # Handle signature mismatch or NoneType errors by falling back to vector search
         return get_context_by_keys([query])
-    except Exception as e:
+    except Exception:
         # Catch any other errors and fallback to vector search
         return get_context_by_keys([query])
 

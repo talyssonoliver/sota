@@ -11,7 +11,7 @@ Fixes Bandit B110 vulnerabilities (6,545 occurrences).
 # import logging  # Consolidated to common_imports
 import functools
 # import traceback  # Consolidated to common_imports
-from typing import Any, Callable, Optional, TypeVar, Union
+from typing import Any, Callable, Optional, TypeVar
 from contextlib import contextmanager
 
 

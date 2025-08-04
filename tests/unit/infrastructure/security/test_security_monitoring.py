@@ -8,11 +8,10 @@ Critical for achieving 80% test coverage target.
 
 import pytest
 import json
-import time
 import os
 import tempfile
 from datetime import datetime, timedelta
-from unittest.mock import patch, MagicMock, mock_open
+from unittest.mock import patch, MagicMock
 from collections import deque
 
 from src.infrastructure.security.security_monitoring import (
@@ -714,7 +713,7 @@ class TestMonitorEndpointDecorator:
     
     def setup_method(self):
         """Set up test Flask app."""
-        from flask import Flask, g
+        from flask import Flask
         self.app = Flask(__name__)
         self.app.secret_key = 'test_secret_key_for_sessions'
         self.mock_monitor = MagicMock()

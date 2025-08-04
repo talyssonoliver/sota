@@ -9,9 +9,9 @@ and escalation to replace inconsistent error patterns.
 
 # import logging  # Consolidated to common_imports
 # import asyncio  # Consolidated to common_imports
-from typing import Dict, Any, Optional, Callable, List, Type
+from typing import Dict, Any, Optional, Callable, List
 from abc import ABC, abstractmethod
-from .error_types import SystemError, ErrorSeverity, ErrorCategory, ErrorSource, create_error_from_exception
+from .error_types import SystemError, ErrorSeverity, ErrorCategory, create_error_from_exception
 
 
 class IErrorHandler(ABC):

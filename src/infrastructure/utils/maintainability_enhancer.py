@@ -8,13 +8,10 @@ Targets improvement from current 0 to target 65+ maintainability index.
 
 import ast
 import inspect
-from abc import ABC, abstractmethod
-from collections import defaultdict
 from functools import lru_cache, wraps
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from .base_classes import BaseAnalyzer, BaseComponent, BaseFileHandler
-from src.infrastructure.utils.logging_utils import setup_logging
 from src.infrastructure.utils.common_imports import (
     Path,
     datetime,

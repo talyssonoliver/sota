@@ -8,7 +8,7 @@ breaking dependency on specific database or file storage implementations.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional, Union, Generic, TypeVar
+from typing import Dict, Any, List, Optional, Generic, TypeVar
 # from dataclasses import dataclass  # Consolidated to common_imports
 # from enum import Enum  # Consolidated to common_imports
 # from datetime import datetime  # Consolidated to common_imports

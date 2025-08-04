@@ -1,5 +1,5 @@
 
-from src.infrastructure.utils.common_imports import dataclass, re
+from src.infrastructure.utils.common_imports import dataclass
 """
 Validation Configuration
 

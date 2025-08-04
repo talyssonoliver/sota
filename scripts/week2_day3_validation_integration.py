@@ -6,9 +6,8 @@ Integrates the standardized validation patterns with the existing enterprise val
 """
 
 import json
-import shutil
 from pathlib import Path
-from typing import Dict, List
+from typing import List
 
 def main():
     """Execute validation integration process"""

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from src.infrastructure.utils.common_imports import Path, os
+from src.infrastructure.utils.common_imports import Path
 """
 Secure Task Lifecycle Management with Archive Validation
 

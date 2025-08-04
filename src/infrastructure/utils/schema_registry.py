@@ -6,7 +6,7 @@ Centralized schema definitions and validation service
 import json
 import yaml
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
 
 from .validation_errors import SchemaValidationError, MultipleValidationError
@@ -372,7 +372,7 @@ def schema_cache(func):
             result = func(data, schema_name)
             cache[cache_key] = result
             return result
-        except Exception as e:
+        except Exception:
             # Don't cache errors
             raise
     

@@ -8,7 +8,7 @@ import os
 import pytest
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 
 from src.infrastructure.utils.common_utils import (
     setup_logging, get_project_root, add_project_to_path,
