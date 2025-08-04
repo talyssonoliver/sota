@@ -184,7 +184,7 @@ services:
     environment:
       - POSTGRES_DB=sota_dev
       - POSTGRES_USER=sota_user
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-sota_dev_pass}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -209,7 +209,7 @@ services:
       - "8889:8888"
     environment:
       - JUPYTER_ENABLE_LAB=yes
-      - JUPYTER_TOKEN=${JUPYTER_TOKEN:-sota-dev-token}
+      - JUPYTER_TOKEN=${JUPYTER_TOKEN}
     volumes:
       - .:/home/jovyan/work
       - jupyter-data:/home/jovyan/.jupyter
@@ -219,7 +219,7 @@ services:
       - jupyter
     command: >
       start-notebook.sh
-      --NotebookApp.token='${JUPYTER_TOKEN:-sota-dev-token}'
+      --NotebookApp.token='${JUPYTER_TOKEN}'
       --NotebookApp.password=''
       --NotebookApp.allow_root=True
 
@@ -249,7 +249,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
     volumes:
       - grafana-data:/var/lib/grafana
       - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
