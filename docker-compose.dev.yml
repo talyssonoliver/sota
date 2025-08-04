@@ -57,12 +57,12 @@ services:
     depends_on:
       chroma:
         condition: service_healthy
+      redis:
+        condition: service_started
     profiles:
       - minimal
       - testing
       - full
-    redis:
-      condition: service_started
     networks:
       - sota-network
     healthcheck:
