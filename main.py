@@ -25,11 +25,10 @@ Usage:
 import argparse
 import asyncio
 import logging
-import os
 import sys
 import webbrowser
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 # Configure logging with proper Unicode handling
 import platform
@@ -43,7 +42,7 @@ log_dir = Path('logs')
 log_dir.mkdir(parents=True, exist_ok=True)
 
 # Configure handlers with proper encoding
-handlers = [
+handlers: List[logging.Handler] = [
     logging.FileHandler('logs/main.log', mode='a', encoding='utf-8')
 ]
 
@@ -76,56 +75,84 @@ import_errors = []
 components_loaded = True
 
 try:
-    from src.interfaces.dashboard.api.unified_api_server import UnifiedDashboardAPI
+    from src.interfaces.dashboard.api.unified_api_server import UnifiedDashboardAPI as RealUnifiedDashboardAPI
 except ImportError as e:
     import_errors.append(f"UnifiedDashboardAPI: {e}")
     components_loaded = False
+    RealUnifiedDashboardAPI = None
     
 try:
-    from src.core.agents.factory import AgentFactory
+    from src.core.agents.factory import AgentFactory as RealAgentFactory
 except ImportError as e:
     import_errors.append(f"AgentFactory: {e}")
     components_loaded = False
+    RealAgentFactory = None
     
 try:
-    from src.infrastructure.memory.engines.memory_engine import MemoryEngine
+    from src.infrastructure.memory.engines.memory_engine import MemoryEngine as RealMemoryEngine
 except ImportError as e:
     import_errors.append(f"MemoryEngine: {e}")
     components_loaded = False
+    RealMemoryEngine = None
     
 try:
-    from src.core.workflows.registry import WorkflowRegistry
+    from src.core.workflows.registry import WorkflowRegistry as RealWorkflowRegistry
 except ImportError as e:
     import_errors.append(f"WorkflowRegistry: {e}")
-    # Create a mock registry since it's not critical
-    class WorkflowRegistry:
-        def __init__(self, *args, **kwargs): pass
-        async def initialize(self): pass
+    RealWorkflowRegistry = None
 
 if import_errors:
     logger.warning(f"Some components not available: {'; '.join(import_errors)}")
     
+# Define type aliases for better type checking
+UnifiedDashboardAPI = RealUnifiedDashboardAPI
+AgentFactory = RealAgentFactory  
+MemoryEngine = RealMemoryEngine
+WorkflowRegistry = RealWorkflowRegistry
+
 # Only create mocks if absolutely necessary
 if not components_loaded:
     logger.warning("Using mock components for demo mode")
     
-    if 'UnifiedDashboardAPI' not in globals():
+    if RealUnifiedDashboardAPI is None:
         class UnifiedDashboardAPI:
-            def __init__(self, *args, **kwargs): 
+            def __init__(self, *args: Any, **kwargs: Any) -> None: 
+                # Mock dashboard API for demo mode
                 self.config = args[0] if args else kwargs.get('config', None)
-            def start_server(self): 
+            def start_server(self) -> bool: 
+                # Mock server start
                 logger.info("Mock server started")
                 return True
-            def stop(self): pass
+            def stop(self) -> None: 
+                # Mock server stop
+                pass
     
-    if 'AgentFactory' not in globals():
+    if RealAgentFactory is None:
         class AgentFactory:
-            def __init__(self, *args, **kwargs): pass
-            async def create_agent(self, agent_type): return {"type": agent_type, "status": "mock"}
+            def __init__(self, *args: Any, **kwargs: Any) -> None: 
+                # Mock agent factory for demo mode
+                pass
+            def create_agent(self, agent_type: str) -> Dict[str, Any]: 
+                # Mock agent creation - not async
+                return {"type": agent_type, "status": "mock"}
     
-    if 'MemoryEngine' not in globals():
+    if RealMemoryEngine is None:
         class MemoryEngine:
-            def __init__(self, *args, **kwargs): pass
+            def __init__(self, *args: Any, **kwargs: Any) -> None: 
+                # Mock memory engine for demo mode
+                pass
+            def cleanup(self) -> None:
+                # Mock cleanup method
+                pass
+    
+    if RealWorkflowRegistry is None:
+        class WorkflowRegistry:
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                # Mock workflow registry for demo mode
+                pass
+            async def initialize(self) -> None:
+                # Mock initialization
+                pass
 
 
 class ClaudeCodeAI:
@@ -209,7 +236,8 @@ class ClaudeCodeAI:
             def run_server():
                 nonlocal server_exception
                 try:
-                    self.api_server.start_server()
+                    if self.api_server:
+                        self.api_server.start_server()
                 except Exception as e:
                     server_exception = e
                     logger.error(f"Server thread error: {e}")
@@ -265,7 +293,7 @@ class ClaudeCodeAI:
                 if path.exists():
                     for project_dir in path.iterdir():
                         if project_dir.is_dir():
-                            project_info = await self.load_project_info(project_dir)
+                            project_info = self.load_project_info(project_dir)
                             if project_info:
                                 self.projects[project_dir.name] = project_info
                                 project_count += 1
@@ -275,7 +303,7 @@ class ClaudeCodeAI:
         except Exception as e:
             logger.error(f"Error discovering projects: {e}")
     
-    async def load_project_info(self, project_path: Path) -> Optional[Dict]:
+    def load_project_info(self, project_path: Path) -> Optional[Dict]:
         """Load project information and configuration."""
         try:
             project_info = {
@@ -314,7 +342,7 @@ class ClaudeCodeAI:
             logger.error(f"Error loading project info for {project_path}: {e}")
             return None
     
-    async def start_agents(self):
+    def start_agents(self):
         """Start the multi-agent system."""
         try:
             logger.info("Starting multi-agent system...")
@@ -351,7 +379,7 @@ class ClaudeCodeAI:
             logger.error(f"Failed to start agents: {e}")
             return False
     
-    async def run_validation(self):
+    def run_validation(self):
         """Run system validation tests."""
         logger.info("Running system validation...")
         
@@ -388,12 +416,18 @@ class ClaudeCodeAI:
             # Stop agents
             for agent_name, agent in self.running_agents.items():
                 if hasattr(agent, 'shutdown'):
-                    await agent.shutdown()
+                    if asyncio.iscoroutinefunction(agent.shutdown):
+                        await agent.shutdown()
+                    else:
+                        agent.shutdown()
                 logger.info(f"Stopped {agent_name} agent")
             
             # Clean up memory engine
             if self.memory_engine and hasattr(self.memory_engine, 'cleanup'):
-                await self.memory_engine.cleanup()
+                if asyncio.iscoroutinefunction(self.memory_engine.cleanup):
+                    await self.memory_engine.cleanup()
+                else:
+                    self.memory_engine.cleanup()
             
             logger.info("Shutdown completed successfully")
             
@@ -409,7 +443,7 @@ class ClaudeCodeAI:
                 return False
             
             # Start agents
-            if not await self.start_agents():
+            if not self.start_agents():
                 logger.error("Failed to start agents")
                 return False
             
@@ -427,7 +461,7 @@ class ClaudeCodeAI:
                 # Get actual port the server is running on
                 actual_port = getattr(self.api_server.config, 'port', self.port) if self.api_server else self.port
                 logger.info(f"🌐 Web interface: http://{self.host}:{actual_port}")
-                print(f"\n🎉 Claude Code AI is ready!")
+                print("\n🎉 Claude Code AI is ready!")
                 print(f"🌐 Open your browser to: http://{self.host}:{actual_port}")
                 print(f"📊 {len(self.running_agents)} agents running")
                 print(f"📁 {len(self.projects)} projects available")
@@ -516,7 +550,7 @@ Features:
     # Handle validation mode
     if args.validate:
         app = ClaudeCodeAI()
-        result = asyncio.run(app.run_validation())
+        result = app.run_validation()
         sys.exit(0 if result else 1)
     
     # Run main application
