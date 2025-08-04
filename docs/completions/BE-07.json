@@ -1,0 +1,83 @@
+{
+  "task_summary": {
+    "task_id": "BE-07",
+    "title": "Backend Service Layer Implementation",
+    "description": "Create service layer for orders and customers using Supabase",
+    "owner": "backend",
+    "status": "COMPLETED",
+    "start_date": null,
+    "completion_date": "2025-08-04T22:34:10.162157",
+    "duration_hours": null
+  },
+  "artifacts": [
+    {
+      "name": "task_declaration.json",
+      "path": "task_declaration.json",
+      "type": "configuration",
+      "size_bytes": 780,
+      "description": "Configuration file for task_declaration (JSON data)"
+    },
+    {
+      "name": "completion_report.md",
+      "path": "completion_report.md",
+      "type": "documentation",
+      "size_bytes": 1553,
+      "description": "Documentation for completion_report (Markdown)"
+    },
+    {
+      "name": "prompt_backend.md",
+      "path": "prompt_backend.md",
+      "type": "documentation",
+      "size_bytes": 1386,
+      "description": "Documentation for prompt_backend (Markdown)"
+    },
+    {
+      "name": "prompt_backend.md",
+      "path": "prompt_backend.md",
+      "type": "output",
+      "size_bytes": 1386,
+      "description": "Agent output containing implementation details (Markdown)"
+    }
+  ],
+  "qa_summary": {
+    "overall_status": "NOT_RUN",
+    "tests_passed": 0,
+    "tests_failed": 0,
+    "coverage_percentage": 0.0,
+    "critical_issues": 0,
+    "recommendations_count": 0
+  },
+  "implementation_notes": [
+    "Implementation completed with standard approach"
+  ],
+  "technical_details": {
+    "technologies": [],
+    "patterns": [],
+    "dependencies": [],
+    "metrics": {
+      "total_files": 0,
+      "lines_of_code": 0,
+      "complexity_estimate": "Low"
+    }
+  },
+  "next_steps": [
+    "Run QA validation if not yet completed",
+    "Consider adding more comprehensive tests",
+    "Update project documentation if this affects architecture",
+    "Notify dependent tasks that this task is complete"
+  ],
+  "references": [
+    {
+      "type": "task_declaration",
+      "title": "Task Declaration - BE-07",
+      "url": "outputs/BE-07/task_declaration.json"
+    },
+    {
+      "type": "github_pr",
+      "title": "GitHub PR (manual entry needed)",
+      "url": "#"
+    }
+  ],
+  "generated_at": "2025-08-04T22:34:10.190624",
+  "version": "1.0.0"
+}
