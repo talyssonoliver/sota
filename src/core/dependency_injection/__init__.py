@@ -6,9 +6,8 @@ patterns to support clean architecture and break circular dependencies.
 """
 
 from .container import DependencyContainer, IContainer
-from .interfaces import IServiceProvider, IServiceRegistry
+from .interfaces import IServiceProvider, IServiceRegistry, ServiceLifetime
 from .decorators import injectable, inject
-from .lifecycle import ServiceLifetime
 
 __all__ = [
     "DependencyContainer",
