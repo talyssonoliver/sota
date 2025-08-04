@@ -389,4 +389,8 @@ def pytest_runtest_logreport(report: pytest.TestReport) -> None:
             # If JSON is corrupted, start with empty dict
             data = {}
     data[report.nodeid] = report.duration
-    _DURATION_CACHE.write_text(json.dumps(data, indent=1))
+    # Temporarily disable duration cache writing to avoid disk space issues
+    try:
+        _DURATION_CACHE.write_text(json.dumps(data, indent=1))
+    except OSError:
+        pass  # Skip caching if disk is full
