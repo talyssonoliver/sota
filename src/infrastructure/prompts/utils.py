@@ -1,10 +1,12 @@
+
+from src.infrastructure.utils.common_imports import Path, os
 """
 Prompt Loader Utility for AI agents
 Handles loading and formatting prompt templates from markdown files
 """
 
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 try:
@@ -16,7 +18,7 @@ try:
 except ImportError:
     pass
 try:
-    import os
+    from src.infrastructure.utils.common_imports import os
 except ImportError:
     pass
     pass

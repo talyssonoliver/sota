@@ -1,3 +1,5 @@
+
+from src.infrastructure.utils.common_imports import Path, re, time
 """
 Syntax Validator
 
@@ -6,8 +8,8 @@ Provides comprehensive validation with parallel processing capabilities.
 """
 
 import ast
-import time
-from pathlib import Path
+# import time  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import List, Optional, Set
 
 from .base_validator import BaseValidator
@@ -69,10 +71,10 @@ class SyntaxValidator(BaseValidator):
         except SyntaxError as e:
             self.add_issue(
                 category="syntax",
-                issue_type="SYNTAX_ERROR",
+                issue_type=IssueType.SYNTAX_ERROR,
                 file_path=str(py_file),
                 message=f"Syntax error: {e}",
-                severity="error",
+                severity=SeverityLevel.ERROR,
                 line=e.lineno if hasattr(e, "lineno") else None,
             )
             self.syntax_errors.append((py_file, f"Syntax error: {e}"))
@@ -80,16 +82,19 @@ class SyntaxValidator(BaseValidator):
         except Exception as e:
             self.add_issue(
                 category="syntax",
-                issue_type="PARSE_ERROR",
+                issue_type=IssueType.PARSE_ERROR,
                 file_path=str(py_file),
                 message=f"Parse error: {e}",
-                severity="error",
+                severity=SeverityLevel.ERROR,
             )
             self.syntax_errors.append((py_file, f"Parse error: {e}"))
             return False
 
     def extract_imports(self, py_file: Path) -> List[str]:
         """Extract all import statements from a Python file.
+        
+        Uses AST parsing when possible, falls back to regex-based parsing
+        when syntax errors prevent AST analysis.
         
         Args:
             py_file: Path to Python file to analyze
@@ -103,7 +108,18 @@ class SyntaxValidator(BaseValidator):
         try:
             with open(py_file, "r", encoding="utf-8") as f:
                 content = f.read()
+        except Exception as e:
+            self.add_issue(
+                category="syntax",
+                issue_type=IssueType.IMPORT_EXTRACTION_ERROR,
+                file_path=str(py_file),
+                message=f"Could not read file: {e}",
+                severity=SeverityLevel.ERROR,
+            )
+            return imports
 
+        # First, try the standard AST approach
+        try:
             tree = ast.parse(content)
 
             # First pass: identify imports in try/except blocks
@@ -130,26 +146,138 @@ class SyntaxValidator(BaseValidator):
                     for alias in node.names:
                         imports.append(alias.name)
                 elif isinstance(node, ast.ImportFrom):
-                    if node.module:
-                        # Mark relative imports with a prefix so we can handle them differently
-                        if node.level > 0:  # This is a relative import
-                            imports.append("." + node.module)
+                    if node.level > 0:  # This is a relative import
+                        if node.module:
+                            # Relative import with module: "from ..parent import x"
+                            dots = "." * node.level
+                            imports.append(dots + node.module)
                         else:
-                            imports.append(node.module)
+                            # Relative import without module: "from . import x"
+                            # We need to get the imported names
+                            dots = "." * node.level
+                            for alias in node.names:
+                                imports.append(dots + alias.name)
+                    elif node.module:
+                        # Absolute import
+                        imports.append(node.module)
 
             # Store handled imports for later use
             self.handled_imports = handled_imports
 
+        except SyntaxError as e:
+            # Fallback to regex-based analysis when AST parsing fails
+            self.add_issue(
+                category="syntax",
+                issue_type=IssueType.IMPORT_EXTRACTION_ERROR,
+                file_path=str(py_file),
+                message=f"AST parsing failed, using fallback analysis: {e}",
+                severity=SeverityLevel.WARNING,
+            )
+            
+            imports, handled_imports = self._extract_imports_fallback(content)
+            self.handled_imports = handled_imports
+            
         except Exception as e:
             self.add_issue(
                 category="syntax",
-                issue_type="IMPORT_EXTRACTION_ERROR",
+                issue_type=IssueType.IMPORT_EXTRACTION_ERROR,
                 file_path=str(py_file),
                 message=f"Could not extract imports: {e}",
-                severity="warning",
+                severity=SeverityLevel.WARNING,
             )
 
         return imports
+
+    def _extract_imports_fallback(self, content: str) -> tuple:
+        """Fallback method using regex when AST parsing fails due to syntax errors.
+        
+        Args:
+            content: File content as string
+            
+        Returns:
+            Tuple of (imports_list, handled_imports_set)
+        """
+#         import re  # Consolidated to common_imports
+        
+        imports = []
+        handled_imports = set()
+        
+        lines = content.split('\n')
+        in_try_block = False
+        try_block_indent = 0
+        
+        # Track try/except blocks and imports within them
+        for i, line in enumerate(lines):
+            stripped = line.strip()
+            
+            # Skip empty lines and comments
+            if not stripped or stripped.startswith('#'):
+                continue
+                
+            # Calculate indentation level
+            indent_level = len(line) - len(line.lstrip())
+            
+            # Check for try block start
+            if stripped.startswith('try:'):
+                in_try_block = True
+                try_block_indent = indent_level
+                continue
+                
+            # Check for except/finally/else - end of try block content
+            if in_try_block and (stripped.startswith('except') or 
+                                stripped.startswith('finally') or 
+                                stripped.startswith('else:')):
+                if indent_level <= try_block_indent:
+                    in_try_block = False
+                continue
+                
+            # If we're back to the same or lower indentation after a try block, we're out
+            if in_try_block and indent_level <= try_block_indent and stripped:
+                in_try_block = False
+            
+            # Extract import statements using regex patterns
+            
+            # Match "import module" statements
+            import_pattern = r'^import\s+([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)'
+            match = re.match(import_pattern, stripped)
+            if match:
+                module_name = match.group(1)
+                imports.append(module_name)
+                if in_try_block:
+                    handled_imports.add(module_name)
+                continue
+                
+            # Match "from module import ..." statements
+            # Handle both "from . import" and "from ..module import" patterns
+            from_pattern1 = r'^from\s+(\.+)\s+import'  # for "from . import" (just dots)
+            from_pattern2 = r'^from\s+(\.{0,2}[a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)\s+import'  # for "from module import"
+            
+            match1 = re.match(from_pattern1, stripped)
+            match2 = re.match(from_pattern2, stripped)
+            
+            if match1:
+                # Handle "from . import" case
+                module_name = match1.group(1)  # Just the dots
+                imports.append(module_name)
+                # No clean module name to add to handled_imports for just dots
+                continue
+            elif match2:
+                module_name = match2.group(1)
+                imports.append(module_name)
+                
+                if in_try_block:
+                    # Remove dots for handled_imports tracking
+                    clean_module = module_name.lstrip('.')
+                    if clean_module:
+                        handled_imports.add(clean_module)
+                        # Also track submodules
+                        module_parts = clean_module.split(".")
+                        for j in range(len(module_parts)):
+                            partial_module = ".".join(module_parts[: j + 1])
+                            handled_imports.add(partial_module)
+                continue
+        
+        return imports, handled_imports
 
     def validate_import(self, import_name: str, source_file: Path) -> bool:
         """Validate a single import statement (syntax-level validation only).
@@ -173,10 +301,10 @@ class SyntaxValidator(BaseValidator):
             if not import_name or import_name.isspace():
                 self.add_issue(
                     category="imports",
-                    issue_type="INVALID_IMPORT_NAME",
+                    issue_type=IssueType.INVALID_IMPORT_NAME,
                     file_path=str(source_file),
                     message=f"Invalid import name: '{import_name}'",
-                    severity="error",
+                    severity=SeverityLevel.ERROR,
                 )
                 return False
 
@@ -184,10 +312,10 @@ class SyntaxValidator(BaseValidator):
             if any(char in import_name for char in ["/", "\\", ":", ";", '"', "'"]):
                 self.add_issue(
                     category="imports",
-                    issue_type="INVALID_IMPORT_SYNTAX",
+                    issue_type=IssueType.INVALID_IMPORT_SYNTAX,
                     file_path=str(source_file),
                     message=f"Invalid characters in import name: '{import_name}'",
-                    severity="error",
+                    severity=SeverityLevel.ERROR,
                 )
                 return False
 
@@ -195,10 +323,10 @@ class SyntaxValidator(BaseValidator):
             if import_name in self.handled_imports:
                 self.add_issue(
                     category="imports",
-                    issue_type="OPTIONAL_DEPENDENCY",
+                    issue_type=IssueType.OPTIONAL_DEPENDENCY,
                     file_path=str(source_file),
                     message=f"Optional dependency detected: '{import_name}' (handled gracefully)",
-                    severity="info",
+                    severity=SeverityLevel.INFO,
                 )
 
             # All imports pass syntax validation - dependency availability is not our concern
@@ -207,10 +335,10 @@ class SyntaxValidator(BaseValidator):
         except Exception as e:
             self.add_issue(
                 category="imports",
-                issue_type="IMPORT_VALIDATION_ERROR",
+                issue_type=IssueType.IMPORT_VALIDATION_ERROR,
                 file_path=str(source_file),
                 message=f"Error validating import '{import_name}': {e}",
-                severity="warning",
+                severity=SeverityLevel.WARNING,
             )
             return False
 
@@ -227,7 +355,7 @@ class SyntaxValidator(BaseValidator):
             True if all files pass validation, False otherwise
         """
         import concurrent.futures
-        import time
+#         import time  # Consolidated to common_imports
 
         start_time = time.time()
         timeout = 300  # 5 minutes timeout for syntax validation
@@ -271,56 +399,61 @@ class SyntaxValidator(BaseValidator):
                     for py_file in py_files
                 }
 
-                for future in concurrent.futures.as_completed(
-                    future_to_file, timeout=timeout
-                ):
-                    if time.time() - start_time > timeout:
-                        print(
-                            "⏱️  Syntax validation timeout reached, cancelling remaining tasks"
-                        )
-                        # Cancel remaining futures
-                        for f in future_to_file:
-                            f.cancel()
-                        break
-
-                    try:
-                        file_path, is_valid, duration = future.result()
-                        if not is_valid:
-                            all_valid = False
-
-                        processed_count += 1
-
-                        # Progress reporting
-                        if (
-                            processed_count % chunk_size == 0
-                            or processed_count == total_files
-                        ):
-                            progress = (processed_count / total_files) * 100
-                            elapsed = time.time() - start_time
-                            rate = processed_count / elapsed if elapsed > 0 else 0
-                            remaining = (
-                                (total_files - processed_count) / rate
-                                if rate > 0
-                                else 0
-                            )
+                try:
+                    for future in concurrent.futures.as_completed(
+                        future_to_file, timeout=timeout
+                    ):
+                        if time.time() - start_time > timeout:
                             print(
-                                f"   Progress: {processed_count}/{total_files} ({progress:.1f}%) - "
-                                f"{rate:.1f} files/sec - ETA: {remaining:.1f}s"
+                                "⏱️  Syntax validation timeout reached, cancelling remaining tasks"
                             )
+                            # Cancel remaining futures
+                            for f in future_to_file:
+                                f.cancel()
+                            break
 
-                    except Exception as e:
-                        print(f"   Error processing file: {e}")
-                        all_valid = False
-                        processed_count += 1
+                        try:
+                            file_path, is_valid, duration = future.result()
+                            if not is_valid:
+                                all_valid = False
+
+                            processed_count += 1
+
+                            # Progress reporting
+                            if (
+                                processed_count % chunk_size == 0
+                                or processed_count == total_files
+                            ):
+                                progress = (processed_count / total_files) * 100
+                                elapsed = time.time() - start_time
+                                rate = processed_count / elapsed if elapsed > 0 else 0
+                                remaining = (
+                                    (total_files - processed_count) / rate
+                                    if rate > 0
+                                    else 0
+                                )
+                                print(
+                                    f"   Progress: {processed_count}/{total_files} ({progress:.1f}%) - "
+                                    f"{rate:.1f} files/sec - ETA: {remaining:.1f}s"
+                                )
+
+                        except Exception as e:
+                            print(f"   Error processing file: {e}")
+                            all_valid = False
+                            processed_count += 1
+                
+                except StopIteration:
+                    print("⏱️  Iterator exhausted during timeout scan, returning partial results")
+                    # Return partial results when StopIteration occurs
 
         except concurrent.futures.TimeoutError:
             print("⏱️  Thread pool timeout reached")
             self.add_issue(
                 category="system",
-                issue_type="other",
+                issue_type=IssueType.OTHER,
                 file_path="validation_system",
                 message=f"Syntax validation timed out after {timeout} seconds",
-                severity="error",
+                severity=SeverityLevel.ERROR,
             )
             return False
         except Exception as e:
@@ -328,11 +461,15 @@ class SyntaxValidator(BaseValidator):
             # Fallback to sequential processing
             return self._validate_all_imports_sequential(py_files, timeout, start_time)
 
-        total_duration = time.time() - start_time
-        print(
-            f"📝 Syntax validation completed in {total_duration:.2f}s "
-            f"({processed_count} files, {processed_count/total_duration:.1f} files/sec)"
-        )
+        try:
+            total_duration = time.time() - start_time
+            files_per_sec = processed_count/total_duration if total_duration > 0 else 0
+            print(
+                f"📝 Syntax validation completed in {total_duration:.2f}s "
+                f"({processed_count} files, {files_per_sec:.1f} files/sec)"
+            )
+        except (StopIteration, ZeroDivisionError):
+            print(f"📝 Syntax validation completed ({processed_count} files processed)")
 
         return all_valid
 
@@ -357,10 +494,10 @@ class SyntaxValidator(BaseValidator):
                 print("⏱️  Sequential validation timeout reached, stopping")
                 self.add_issue(
                     category="system",
-                    issue_type="other",
+                    issue_type=IssueType.OTHER,
                     file_path="validation_system",
                     message=f"Syntax validation timed out after {timeout} seconds",
-                    severity="error",
+                    severity=SeverityLevel.ERROR,
                 )
                 return False
 

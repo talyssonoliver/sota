@@ -1,43 +1,69 @@
+#!/usr/bin/env python3
 """
-AI Agent System - Main Entry Point
+SOTA AI System -Coding Application
+==================================================
 
-Production-ready multi-agent AI system for automating software development workflows.
-Features enterprise-grade security, real-time monitoring, and comprehensive automation.
+A local development environment with multi-agent architecture, modern web GUI,
+and seamless integration with Claude AI for coding, project management, and collaboration.
 
-System Components:
-- 7 Specialized Agents (Technical Lead, Backend, Frontend, QA, Documentation, Product Manager, UX Designer)
-- LangGraph Workflow Engine with dynamic routing and dependency management
-- Enterprise Memory Engine with ChromaDB, encryption, and multi-tier caching
-- Comprehensive Tool Ecosystem for development, testing, and quality assurance
-- Daily Automation Cycle with monitoring and reporting
+Key Features:
+- Multi-Agent Architecture: Specialized agents that collaborate on coding tasks
+- Modern Web GUI: Browser-based interface for managing Claude sessions
+- MCP Integration: Model Context Protocol for seamless tool connections  
+- Local Development: Runs entirely on your machine with Node.js/Python hybrid
+- Project Management: Workspace and file management like a professional IDE
+- Real-time Collaboration: Agents work together on complex development tasks
 
 Usage:
-    python main.py              # Run system validation tests
-    python main.py --test       # Run comprehensive test suite
-    python main.py --help       # Show all available options
+    python main.py                    # Launch with web GUI
+    python main.py --headless         # Run without GUI (API only)
+    python main.py --port 8080        # Specify custom port
+    python main.py --validate         # Run system validation
+    python main.py --agents-only      # Start agents without web interface
 """
 
 import argparse
+import asyncio
 import logging
 import os
 import sys
+import webbrowser
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List, Optional
 
+# Configure logging with proper Unicode handling
+import platform
 from dotenv import load_dotenv
 
-# Configure logging
+# Load environment variables
+load_dotenv()
+
+# Create logs directory if it doesn't exist
+log_dir = Path('logs')
+log_dir.mkdir(parents=True, exist_ok=True)
+
+# Configure handlers with proper encoding
+handlers = [
+    logging.FileHandler('logs/main.log', mode='a', encoding='utf-8')
+]
+
+# Add console handler with Windows-compatible encoding
+if platform.system() == "Windows":
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_formatter)
+    handlers.append(console_handler)
+else:
+    handlers.append(logging.StreamHandler(sys.stdout))
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('build/runtime/logs/main.log', mode='a'),
-        logging.StreamHandler(sys.stdout)
-    ]
+    handlers=handlers
 )
 logger = logging.getLogger(__name__)
 
-# Apply patches to fix external library issues
+# Apply system patches
 try:
     from patches import apply_all_patches
     apply_all_patches()
@@ -45,363 +71,435 @@ try:
 except ImportError:
     logger.warning("Could not load patches. Some features may not work correctly.")
 
-from langchain.agents import AgentType, initialize_agent
-from langchain_core.tools import Tool
-from langchain_community.chat_models import ChatOpenAI
+# Import core components
+import_errors = []
+components_loaded = True
 
-from tools.echo_tool import EchoTool
-from tools.supabase_tool import SupabaseTool
-
-# Load environment variables
-load_dotenv()
-openai_api_key = os.getenv("OPENAI_API_KEY")
-
-if not openai_api_key:
-    logger.error("OPENAI_API_KEY not found in environment variables")
-    print("Error: OPENAI_API_KEY not found in environment variables")
-    print("Please ensure your .env file contains a valid OpenAI API key.")
-    sys.exit(1)
-
-logger.info("AI Agent System initialized successfully")
-
-
-def run_simple_agent_test() -> bool:
-    """Run a simple test using LangChain with the EchoTool.
+try:
+    from src.interfaces.dashboard.api.unified_api_server import UnifiedDashboardAPI
+except ImportError as e:
+    import_errors.append(f"UnifiedDashboardAPI: {e}")
+    components_loaded = False
     
-    Returns:
-        bool: True if test passes, False otherwise
-    """
-    try:
-        logger.info("Running simple agent test with EchoTool...")
-        
-        # Initialize the language model
-        llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
-        
-        # Create the echo tool
-        echo_tool = EchoTool()
-        
-        # Initialize the agent
-        agent = initialize_agent(
-            tools=[Tool.from_function(
-                func=echo_tool._run,
-                name=echo_tool.name,
-                description=echo_tool.description
-            )],
-            llm=llm,
-            agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-            verbose=False
-        )
-        
-        # Run the agent with invoke
-        result = agent.invoke(
-            {"input": "Use the echo tool to repeat 'AI Agent System operational'"})
-        
-        success = "AI Agent System operational" in result['output']
-        if success:
-            logger.info("✅ Simple agent test passed")
-            print("✅ Simple agent test: PASSED")
-        else:
-            logger.error("❌ Simple agent test failed")
-            print("❌ Simple agent test: FAILED")
-        
-        return success
-        
-    except Exception as e:
-        logger.error(f"Simple agent test failed with error: {e}")
-        print(f"❌ Simple agent test: FAILED - {e}")
-        return False
-
-
-def run_supabase_tool_test() -> bool:
-    """Test the Supabase tool.
+try:
+    from src.core.agents.factory import AgentFactory
+except ImportError as e:
+    import_errors.append(f"AgentFactory: {e}")
+    components_loaded = False
     
-    Returns:
-        bool: True if test passes, False otherwise
-    """
-    try:
-        logger.info("Running Supabase tool test...")
-        
-        # Initialize the language model
-        llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-16k")
-        
-        # Create the Supabase tool
-        supabase_tool = SupabaseTool()
-        
-        # Initialize the agent
-        agent = initialize_agent(
-            tools=[Tool.from_function(
-                func=supabase_tool._run,
-                name=supabase_tool.name,
-                description=supabase_tool.description
-            )],
-            llm=llm,
-            agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-            verbose=False
-        )
-        
-        # Run the agent with invoke
-        result = agent.invoke(
-            {"input": "Get the database schema summary for the Artesanato E-commerce project"})
-        
-        success = result['output'] and len(result['output']) > 0
-        if success:
-            logger.info("✅ Supabase tool test passed")
-            print("✅ Supabase tool test: PASSED")
-        else:
-            logger.error("❌ Supabase tool test failed")
-            print("❌ Supabase tool test: FAILED")
-        
-        return success
-        
-    except Exception as e:
-        logger.error(f"Supabase tool test failed with error: {e}")
-        print(f"❌ Supabase tool test: FAILED - {e}")
-        return False
-
-
-def run_memory_test() -> bool:
-    """Test the memory engine.
+try:
+    from src.infrastructure.memory.engines.memory_engine import MemoryEngine
+except ImportError as e:
+    import_errors.append(f"MemoryEngine: {e}")
+    components_loaded = False
     
-    Returns:
-        bool: True if test passes, False otherwise
-    """
-    try:
-        logger.info("Running memory engine test...")
-        
-        # Test memory engine functionality
-        try:
-            from tools.memory_engine import MemoryEngine
-            memory = MemoryEngine()
-            
-            # Test basic context retrieval
-            context = memory.get_relevant_context(
-                query="database schema", 
-                context_domains=["db-schema", "architecture"]
-            )
-            
-            success = context is not None and len(context) > 0
-            if success:
-                logger.info("✅ Memory engine test passed")
-                print("✅ Memory engine test: PASSED")
-            else:
-                logger.error("❌ Memory engine test failed - no context retrieved")
-                print("❌ Memory engine test: FAILED - no context retrieved")
-            
-            return success
-            
-        except ImportError:
-            # Fallback to legacy memory function if available
-            try:
-                from tools.memory import get_memory_instance, get_context_by_keys
-                memory = get_memory_instance()
-                context = get_context_by_keys(["database", "schema"])
-                
-                success = context is not None and len(context) > 0
-                if success:
-                    logger.info("✅ Memory engine test passed (legacy mode)")
-                    print("✅ Memory engine test: PASSED (legacy mode)")
-                else:
-                    logger.error("❌ Memory engine test failed")
-                    print("❌ Memory engine test: FAILED")
-                
-                return success
-                
-            except ImportError:
-                logger.warning("Memory engine not available - skipping test")
-                print("⚠️  Memory engine test: SKIPPED (not available)")
+try:
+    from src.core.workflows.registry import WorkflowRegistry
+except ImportError as e:
+    import_errors.append(f"WorkflowRegistry: {e}")
+    # Create a mock registry since it's not critical
+    class WorkflowRegistry:
+        def __init__(self, *args, **kwargs): pass
+        async def initialize(self): pass
+
+if import_errors:
+    logger.warning(f"Some components not available: {'; '.join(import_errors)}")
+    
+# Only create mocks if absolutely necessary
+if not components_loaded:
+    logger.warning("Using mock components for demo mode")
+    
+    if 'UnifiedDashboardAPI' not in globals():
+        class UnifiedDashboardAPI:
+            def __init__(self, *args, **kwargs): 
+                self.config = args[0] if args else kwargs.get('config', None)
+            def start_server(self): 
+                logger.info("Mock server started")
                 return True
-        
-    except Exception as e:
-        logger.error(f"Memory engine test failed with error: {e}")
-        print(f"❌ Memory engine test: FAILED - {e}")
-        return False
-
-
-def run_workflow_test() -> bool:
-    """Test the basic workflow.
+            def stop(self): pass
     
-    Returns:
-        bool: True if test passes, False otherwise
+    if 'AgentFactory' not in globals():
+        class AgentFactory:
+            def __init__(self, *args, **kwargs): pass
+            async def create_agent(self, agent_type): return {"type": agent_type, "status": "mock"}
+    
+    if 'MemoryEngine' not in globals():
+        class MemoryEngine:
+            def __init__(self, *args, **kwargs): pass
+
+
+class ClaudeCodeAI:
     """
-    try:
-        logger.info("Running basic workflow test...")
+    Main application class for the Sota coding environment.
+    
+    Coordinates multi-agent workflows, web interface, and development tools.
+    """
+    
+    def __init__(self, config: Optional[Dict] = None):
+        """Initialize the Claude Code AI application."""
+        self.config = config or {}
+        self.port = self.config.get('port', 8080)
+        self.host = self.config.get('host', 'localhost')
+        self.headless = self.config.get('headless', False)
         
-        from typing import Optional, TypedDict
-        from langgraph.graph import StateGraph
-
-        # Define a simplified test workflow to avoid recursion issues
-        class WorkflowState(TypedDict):
-            task_id: str
-            message: str
-            status: Optional[str]
-            result: Optional[str]
-
-        # Create a simpler test workflow
-        workflow = StateGraph(state_schema=WorkflowState)
-
-        # Simple handler that just returns the input with a success message
-        def test_handler(state: WorkflowState) -> WorkflowState:
-            return {
-                **state,
-                "result": f"Task {state['task_id']} processed successfully",
-                "status": "DONE"
+        # Core components
+        self.memory_engine: Optional[MemoryEngine] = None
+        self.agent_factory: Optional[AgentFactory] = None
+        self.workflow_registry: Optional[WorkflowRegistry] = None
+        self.api_server: Optional[UnifiedDashboardAPI] = None
+        
+        # Application state
+        self.active_sessions: Dict[str, Dict] = {}
+        self.running_agents: Dict[str, object] = {}
+        self.projects: Dict[str, Dict] = {}
+        self.server_thread = None
+        
+        logger.info(f"Claude Code AI initialized - Port: {self.port}, Headless: {self.headless}")
+    
+    async def initialize_core_systems(self):
+        """Initialize core AI and infrastructure systems."""
+        try:
+            logger.info("Initializing core AI systems...")
+            
+            # Initialize memory engine
+            self.memory_engine = MemoryEngine()
+            logger.info("Memory engine initialized")
+            
+            # Initialize agent factory
+            self.agent_factory = AgentFactory(memory_engine=self.memory_engine)
+            logger.info("Agent factory initialized")
+            
+            # Initialize workflow registry
+            self.workflow_registry = WorkflowRegistry()
+            await self.workflow_registry.initialize()
+            logger.info("Workflow registry initialized")
+            
+            # Load available projects
+            await self.discover_projects()
+            
+            logger.info("Core systems initialized successfully")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to initialize core systems: {e}")
+            return False
+    
+    async def start_web_server(self):
+        """Start the web-based GUI server."""
+        try:
+            if self.headless:
+                logger.info("Running in headless mode - skipping web server")
+                return True
+            
+            logger.info(f"Starting web server on {self.host}:{self.port}")
+            
+            # Initialize unified API server with custom config
+            from src.interfaces.dashboard.config import DashboardConfig
+            config = DashboardConfig()
+            config.host = self.host
+            config.port = self.port
+            config.debug = False
+            
+            self.api_server = UnifiedDashboardAPI(config)
+            
+            # Start the server in a separate thread since Flask's app.run() is blocking
+            import threading
+            server_exception = None
+            
+            def run_server():
+                nonlocal server_exception
+                try:
+                    self.api_server.start_server()
+                except Exception as e:
+                    server_exception = e
+                    logger.error(f"Server thread error: {e}")
+            
+            self.server_thread = threading.Thread(target=run_server, daemon=True)
+            self.server_thread.start()
+            
+            # Give server time to start and check for errors
+            await asyncio.sleep(4)
+            
+            # Check if server had an exception during startup
+            if server_exception:
+                logger.error(f"Server failed with exception: {server_exception}")
+                return False
+            
+            # Verify server is running by checking thread status
+            if not self.server_thread.is_alive():
+                logger.error("Server thread failed to start or died immediately")
+                return False
+            
+            # Open browser if not headless  
+            if not self.headless:
+                # Use the actual port the server is running on
+                actual_port = getattr(self.api_server.config, 'port', self.port)
+                url = f"http://{self.host}:{actual_port}"
+                logger.info(f"Opening browser to {url}")
+                webbrowser.open(url)
+                
+                # Update our port reference
+                self.port = actual_port
+            
+            logger.info("Web server started successfully")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to start web server: {e}")
+            return False
+    
+    async def discover_projects(self):
+        """Discover and load available projects."""
+        try:
+            logger.info("Discovering projects...")
+            
+            # Check common project locations
+            project_paths = [
+                Path.home() / ".claude" / "projects",
+                Path.cwd() / "projects",
+                Path.cwd() / "workspaces"
+            ]
+            
+            project_count = 0
+            for path in project_paths:
+                if path.exists():
+                    for project_dir in path.iterdir():
+                        if project_dir.is_dir():
+                            project_info = await self.load_project_info(project_dir)
+                            if project_info:
+                                self.projects[project_dir.name] = project_info
+                                project_count += 1
+            
+            logger.info(f"Discovered {project_count} projects")
+            
+        except Exception as e:
+            logger.error(f"Error discovering projects: {e}")
+    
+    async def load_project_info(self, project_path: Path) -> Optional[Dict]:
+        """Load project information and configuration."""
+        try:
+            project_info = {
+                'name': project_path.name,
+                'path': str(project_path),
+                'type': 'unknown',
+                'files': [],
+                'config': {}
             }
-
-        # Add a single node for testing
-        workflow.add_node("test_handler", test_handler)
-
-        # Set the entry point
-        workflow.set_entry_point("test_handler")
-
-        # Compile and run
-        app = workflow.compile()
-        result = app.invoke({
-            "task_id": "SYSTEM_TEST",
-            "message": "Validate workflow execution",
-            "status": "TESTING"
-        })
-
-        success = (result and 
-                  result.get("status") == "DONE" and 
-                  "processed successfully" in result.get("result", ""))
+            
+            # Detect project type
+            if (project_path / "package.json").exists():
+                project_info['type'] = 'nodejs'
+            elif (project_path / "requirements.txt").exists() or (project_path / "pyproject.toml").exists():
+                project_info['type'] = 'python'
+            elif (project_path / "Cargo.toml").exists():
+                project_info['type'] = 'rust'
+            elif (project_path / "go.mod").exists():
+                project_info['type'] = 'go'
+            
+            # Load project files (limit for performance)
+            file_count = 0
+            for file_path in project_path.rglob("*"):
+                if file_path.is_file() and file_count < 100:  # Limit for performance
+                    if not any(ignore in str(file_path) for ignore in ['.git', 'node_modules', '__pycache__', '.venv']):
+                        project_info['files'].append({
+                            'name': file_path.name,
+                            'path': str(file_path.relative_to(project_path)),
+                            'size': file_path.stat().st_size
+                        })
+                        file_count += 1
+            
+            return project_info
+            
+        except Exception as e:
+            logger.error(f"Error loading project info for {project_path}: {e}")
+            return None
+    
+    async def start_agents(self):
+        """Start the multi-agent system."""
+        try:
+            logger.info("Starting multi-agent system...")
+            
+            if not self.agent_factory:
+                logger.error("Agent factory not initialized")
+                return False
+            
+            # Start core agents - fix agent names to match factory
+            core_agents = [
+                'technical_lead',
+                'backend', 
+                'frontend',
+                'qa',
+                'documentation'
+            ]
+            
+            for agent_type in core_agents:
+                try:
+                    # Remove await since create_agent is synchronous
+                    agent = self.agent_factory.create_agent(agent_type)
+                    if agent:
+                        self.running_agents[agent_type] = agent
+                        logger.info(f"Started {agent_type} agent")
+                    else:
+                        logger.warning(f"Could not create {agent_type} agent")
+                except Exception as e:
+                    logger.error(f"Error starting {agent_type} agent: {e}")
+            
+            logger.info(f"Started {len(self.running_agents)} agents")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to start agents: {e}")
+            return False
+    
+    async def run_validation(self):
+        """Run system validation tests."""
+        logger.info("Running system validation...")
         
-        if success:
-            logger.info("✅ Basic workflow test passed")
-            print("✅ Basic workflow test: PASSED")
-        else:
-            logger.error("❌ Basic workflow test failed")
-            print("❌ Basic workflow test: FAILED")
+        try:
+            # Import and run validation from backup
+            import subprocess
+            result = subprocess.run([
+                sys.executable, "main_validation_backup.py"
+            ], capture_output=True, text=True, timeout=300)
+            
+            if result.returncode == 0:
+                logger.info("System validation passed")
+                print("✅ System validation: PASSED")
+                return True
+            else:
+                logger.error(f"System validation failed: {result.stderr}")
+                print("❌ System validation: FAILED")
+                return False
+                
+        except Exception as e:
+            logger.error(f"Validation error: {e}")
+            return False
+    
+    async def shutdown(self):
+        """Gracefully shutdown the application."""
+        logger.info("Shutting down Claude Code AI...")
         
-        return success
-        
-    except Exception as e:
-        logger.error(f"Basic workflow test failed with error: {e}")
-        print(f"❌ Basic workflow test: FAILED - {e}")
-        return False
-
-
-def run_comprehensive_tests() -> bool:
-    """Run comprehensive system tests.
+        try:
+            # Stop web server
+            if self.api_server:
+                logger.info("Stopping web server...")
+                # The Flask server will be stopped when the process ends
+            
+            # Stop agents
+            for agent_name, agent in self.running_agents.items():
+                if hasattr(agent, 'shutdown'):
+                    await agent.shutdown()
+                logger.info(f"Stopped {agent_name} agent")
+            
+            # Clean up memory engine
+            if self.memory_engine and hasattr(self.memory_engine, 'cleanup'):
+                await self.memory_engine.cleanup()
+            
+            logger.info("Shutdown completed successfully")
+            
+        except Exception as e:
+            logger.error(f"Error during shutdown: {e}")
     
-    Returns:
-        bool: True if all tests pass, False otherwise
-    """
-    try:
-        logger.info("Starting comprehensive test suite...")
-        
-        import subprocess
-        result = subprocess.run([
-            sys.executable, "-m", "tests.run_tests", "--all"
-        ], capture_output=True, text=True, timeout=300)
-        
-        success = result.returncode == 0
-        if success:
-            logger.info("✅ Comprehensive test suite passed")
-            print("✅ Comprehensive test suite: PASSED")
-        else:
-            logger.error(f"❌ Comprehensive test suite failed: {result.stderr}")
-            print("❌ Comprehensive test suite: FAILED")
-        
-        return success
-        
-    except subprocess.TimeoutExpired:
-        logger.error("❌ Comprehensive test suite timed out")
-        print("❌ Comprehensive test suite: TIMEOUT")
-        return False
-    except Exception as e:
-        logger.error(f"Comprehensive test suite failed with error: {e}")
-        print(f"❌ Comprehensive test suite: FAILED - {e}")
-        return False
-
-
-def run_validation_suite() -> Dict[str, bool]:
-    """Run the complete validation suite.
-    
-    Returns:
-        Dict[str, bool]: Test results for each component
-    """
-    print("\n" + "="*60)
-    print("🚀 AI AGENT SYSTEM - VALIDATION SUITE")
-    print("="*60)
-    
-    results = {}
-    
-    # Create logs directory if it doesn't exist
-    Path("logs").mkdir(exist_ok=True)
-    
-    print("\n📋 Running core component validation tests...")
-    
-    # Core component tests
-    print("\n1. Simple Agent Test (LangChain + EchoTool)")
-    results['simple_agent'] = run_simple_agent_test()
-    
-    print("\n2. Supabase Tool Test")
-    results['supabase_tool'] = run_supabase_tool_test()
-    
-    print("\n3. Memory Engine Test")
-    results['memory_engine'] = run_memory_test()
-    
-    print("\n4. Basic Workflow Test (LangGraph)")
-    results['workflow'] = run_workflow_test()
-    
-    return results
-
-
-def print_summary(results: Dict[str, bool], comprehensive_test: bool = False) -> None:
-    """Print validation summary.
-    
-    Args:
-        results: Test results dictionary
-        comprehensive_test: Whether comprehensive tests were run
-    """
-    print("\n" + "="*60)
-    print("📊 VALIDATION SUMMARY")
-    print("="*60)
-    
-    passed = sum(results.values())
-    total = len(results)
-    
-    print(f"\n✅ Tests Passed: {passed}/{total}")
-    
-    if passed == total:
-        print("\n🎉 ALL CORE TESTS PASSED!")
-        print("🚀 AI Agent System is ready for operation")
-        
-        if not comprehensive_test:
-            print("\n💡 For full system validation, run:")
-            print("   python main.py --test")
-    else:
-        print("\n⚠️  SOME TESTS FAILED:")
-        for test_name, result in results.items():
-            if not result:
-                print(f"   ❌ {test_name}")
-    
-    print("\n📚 Next Steps:")
-    print("   • Review logs in 'logs/main.log' for details")
-    print("   • Check README.md for usage instructions")
-    print("   • Run 'python orchestration/execute_workflow.py --help' for workflow options")
-    print("="*60)
+    async def run(self):
+        """Main application run loop."""
+        try:
+            # Initialize core systems
+            if not await self.initialize_core_systems():
+                logger.error("Failed to initialize core systems")
+                return False
+            
+            # Start agents
+            if not await self.start_agents():
+                logger.error("Failed to start agents")
+                return False
+            
+            # Start web server (unless headless or agents-only)
+            if not self.config.get('agents_only', False):
+                if not await self.start_web_server():
+                    logger.error("Failed to start web server")
+                    return False
+            
+            logger.info("🚀 Claude Code AI is running!")
+            logger.info(f"📊 Active agents: {len(self.running_agents)}")
+            logger.info(f"📁 Available projects: {len(self.projects)}")
+            
+            if not self.headless:
+                # Get actual port the server is running on
+                actual_port = getattr(self.api_server.config, 'port', self.port) if self.api_server else self.port
+                logger.info(f"🌐 Web interface: http://{self.host}:{actual_port}")
+                print(f"\n🎉 Claude Code AI is ready!")
+                print(f"🌐 Open your browser to: http://{self.host}:{actual_port}")
+                print(f"📊 {len(self.running_agents)} agents running")
+                print(f"📁 {len(self.projects)} projects available")
+                print("\n💡 Press Ctrl+C to stop")
+            
+            # Keep running until interrupted
+            try:
+                while True:
+                    await asyncio.sleep(1)
+            except KeyboardInterrupt:
+                logger.info("Received shutdown signal")
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"Application error: {e}")
+            return False
+        finally:
+            await self.shutdown()
 
 
 def main():
     """Main entry point with command line argument support."""
     parser = argparse.ArgumentParser(
-        description="AI Agent System - Production-ready multi-agent automation",
+        description="Claude Code AI - Local development environment with multi-agent architecture",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python main.py                    # Run core validation tests
-  python main.py --test            # Run comprehensive test suite
-  python main.py --quiet           # Run with minimal output
-  
-For more information, see README.md
+  python main.py                    # Launch with web GUI
+  python main.py --headless         # Run without GUI (API only)
+  python main.py --port 8080        # Specify custom port
+  python main.py --validate         # Run system validation
+  python main.py --agents-only      # Start agents without web interface
+
+Features:
+  • Multi-Agent Architecture: Collaborative AI agents for development
+  • Modern Web GUI: Browser-based interface for managing sessions
+  • MCP Integration: Model Context Protocol for tool connections
+  • Project Management: Workspace and file management
+  • Real-time Collaboration: Agents working together on tasks
         """
     )
     
     parser.add_argument(
-        '--test', 
+        '--port', 
+        type=int,
+        default=8080,
+        help='Port for web server (default: 8080)'
+    )
+    
+    parser.add_argument(
+        '--host',
+        default='localhost',
+        help='Host for web server (default: localhost)'
+    )
+    
+    parser.add_argument(
+        '--headless', 
         action='store_true',
-        help='Run comprehensive test suite'
+        help='Run without web GUI (API only)'
+    )
+    
+    parser.add_argument(
+        '--agents-only',
+        action='store_true', 
+        help='Start agents without web interface'
+    )
+    
+    parser.add_argument(
+        '--validate',
+        action='store_true',
+        help='Run system validation tests'
     )
     
     parser.add_argument(
@@ -415,28 +513,31 @@ For more information, see README.md
     if args.quiet:
         logging.getLogger().setLevel(logging.WARNING)
     
-    if args.test:
-        # Run comprehensive tests
-        print("\n🔬 Running comprehensive test suite...")
-        comprehensive_result = run_comprehensive_tests()
-        
-        if comprehensive_result:
-            print("\n🎉 COMPREHENSIVE TEST SUITE PASSED!")
-            print("🚀 AI Agent System is fully validated and ready for production")
-        else:
-            print("\n⚠️  Comprehensive test suite had failures")
-            print("📚 Check test logs for detailed error information")
-        
-        sys.exit(0 if comprehensive_result else 1)
+    # Handle validation mode
+    if args.validate:
+        app = ClaudeCodeAI()
+        result = asyncio.run(app.run_validation())
+        sys.exit(0 if result else 1)
     
-    else:
-        # Run core validation tests
-        results = run_validation_suite()
-        print_summary(results)
+    # Run main application
+    config = {
+        'port': args.port,
+        'host': args.host,
+        'headless': args.headless,
+        'agents_only': args.agents_only
+    }
+    
+    try:
+        app = ClaudeCodeAI(config)
+        success = asyncio.run(app.run())
+        sys.exit(0 if success else 1)
         
-        # Exit with appropriate code
-        all_passed = all(results.values())
-        sys.exit(0 if all_passed else 1)
+    except KeyboardInterrupt:
+        logger.info("Application interrupted by user")
+        sys.exit(0)
+    except Exception as e:
+        logger.error(f"Application failed: {e}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    logging,
+    sys
+)
 """
-import sys
+# import sys  # Consolidated to common_imports
 Step 5.8 — Archive Outputs for Long-Term Use
 
 Compress task data for traceability, compliance, and retrospective audits.
@@ -13,11 +21,11 @@ Usage:
 
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 try:
@@ -26,9 +34,9 @@ except ImportError:
     pass
 
 import argparse
-import json
-import logging
-import sys
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 import tarfile
 
 project_root = Path(__file__).parent.parent
@@ -221,7 +229,36 @@ class TaskArchiver:
             print(f"📦 Extracting archive: {archive_path}")
 
             with tarfile.open(archive_path, "r") as tar:
-                tar.extractall(extract_dir)
+                # Validate members for security before extraction
+                def is_safe_member(member):
+                    # Check for directory traversal
+                    if member.name.startswith('/') or '..' in member.name:
+                        return False
+                    # Check for absolute paths
+                    if os.path.isabs(member.name):
+                        return False
+                    return True
+                
+                def is_within_directory(directory, target):
+                    abs_directory = os.path.abspath(directory)
+                    abs_target = os.path.abspath(target)
+                    prefix = os.path.commonprefix([abs_directory, abs_target])
+                    return prefix == abs_directory
+                
+                # Filter safe members
+                safe_members = []
+                for member in tar.getmembers():
+                    if is_safe_member(member):
+                        target_path = os.path.join(extract_dir, member.name)
+                        if is_within_directory(extract_dir, target_path):
+                            safe_members.append(member)
+                        else:
+                            print(f"⚠️  Skipping member outside target: {member.name}")
+                    else:
+                        print(f"⚠️  Skipping unsafe member: {member.name}")
+                
+                # Safe extraction
+                tar.extractall(extract_dir, members=safe_members)
 
             print(f"✅ Archive extracted to: {extract_dir}")
             return True

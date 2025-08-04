@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import logging, os
 """System-wide encryption utilities.
 
 Provides system-level encryption capabilities for sensitive data.
 Integrates with MemoryEngine security manager for consistent encryption.
 """
 
-import logging
-import os
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
 from typing import Dict
 
 from src.infrastructure.memory.config.memory_config import MemoryEngineConfig

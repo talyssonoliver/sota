@@ -1,184 +1,297 @@
-"""Task loading utilities."""
 
-import json
-import os
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Path,
+    json,
+    logging,
+    yaml
+)
+"""
+Task Metadata Loader Utilities
+Provides functions for loading and managing task metadata from YAML files.
+"""
 
-try:
-    import yaml
-except ImportError:
-    pass
-from typing import Any, Dict, List, Optional
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List  # Consolidated to common_imports
+
+# import yaml  # Consolidated to common_imports
+from src.core.workflows.states import TaskStatus
+from src.infrastructure.utils.common_utils import read_json
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
-class TaskLoader:
-    """Load and manage tasks."""
+# Add custom YAML representer for TaskStatus enum
+def task_status_representer(dumper, data):
+    """Custom YAML representer for TaskStatus enum."""
+    return dumper.represent_scalar('tag:yaml.org,2002:str', str(data))
 
-    def __init__(self):
-        """Initialize task loader."""
-        self.tasks = []
 
-    def load_task(self, task_path):
-        """Load a task from file."""
-        return {"path": task_path, "status": "loaded", "content": {}}
-
-    def load_all_tasks(self, directory):
-        """Load all tasks from directory."""
-        tasks = []
-        if os.path.exists(directory):
-            for file in os.listdir(directory):
-                if file.endswith(".yaml") or file.endswith(".json"):
-                    tasks.append(self.load_task(os.path.join(directory, file)))
-        return tasks
+yaml.add_representer(TaskStatus, task_status_representer)
 
 
 def load_task_metadata(task_id: str) -> Dict[str, Any]:
-    """Load task metadata from task files.
-
-    Args:
-        task_id: Task identifier (e.g., 'BE-01', 'FE-02')
-
-    Returns:
-        Dict containing task metadata
     """
-    # Search for task file in various locations
-    search_paths = [
-        f"tasks/{task_id}.yaml",
-        f"tasks/{task_id}.json",
-        f"src/core/tasks/{task_id}.yaml",
-        f"src/core/tasks/{task_id}.json",
-        f"src/core/tasks/backend/{task_id}.yaml",
-        f"src/core/tasks/backend/{task_id}.json",
-        f"src/core/tasks/frontend/{task_id}.yaml",
-        f"src/core/tasks/frontend/{task_id}.json",
-        f"src/core/tasks/general/{task_id}.yaml",
-        f"src/core/tasks/general/{task_id}.json",
-    ]
-
-    for path in search_paths:
-        if os.path.exists(path):
-            try:
-                with open(path, "r", encoding="utf-8") as f:
-                    if path.endswith(".yaml"):
-                        return yaml.safe_load(f) or {}
-                    else:
-                        return json.load(f) or {}
-            except Exception:
-                continue
-
-    # Return default metadata if file not found
-    return {
-        "id": task_id,
-        "state": "pending",
-        "status": "pending",
-        "depends_on": [],
-        "metadata": {},
-    }
-
-
-def update_task_state(
-    task_id: str, new_state: str, metadata: Optional[Dict[str, Any]] = None
-) -> bool:
-    """Update task state and metadata.
+    Load task metadata from YAML file.
 
     Args:
-        task_id: Task identifier
-        new_state: New state to set (e.g., 'completed', 'failed', 'in_progress')
-        metadata: Optional metadata to update
+        task_id: Unique task identifier
 
     Returns:
-        bool: True if update was successful
+        Dictionary containing task metadata
+
+    Raises:
+        FileNotFoundError: If task file doesn't exist
+        ValueError: If task metadata is invalid
+    """
+    task_file = Path("tasks") / f"{task_id}.yaml"
+
+    if not task_file.exists():
+        # Fallback to agent_task_assignments.json
+        assignments_file = Path("context-store") / \
+            "agent_task_assignments.json"
+        if assignments_file.exists():
+            try:
+                assignments = read_json(assignments_file, default={})
+                
+                # Find task in assignments
+                for task in assignments.get('tasks', []):
+                    if task.get('id') == task_id:
+                        logger.warning(
+                            f"Using fallback data from agent_task_assignments.json for task {task_id}")
+                        return task
+
+            except Exception as e:
+                logger.error(f"Error reading fallback assignments file: {e}")
+
+        raise FileNotFoundError(f"Task file not found: {task_file}")
+
+    try:
+        with open(task_file, 'r', encoding='utf-8') as f:
+            metadata = yaml.safe_load(f)
+
+        if not metadata or 'id' not in metadata:
+            raise ValueError(f"Invalid task metadata in {task_file}")
+
+        return metadata
+
+    except yaml.YAMLError as e:
+        raise ValueError(f"Invalid YAML format in {task_file}: {e}")
+    except Exception as e:
+        raise ValueError(f"Error loading task metadata from {task_file}: {e}")
+
+
+def save_task_metadata(task_id: str, metadata: Dict[str, Any]) -> None:
+    """
+    Save task metadata to YAML file.
+
+    Args:
+        task_id: Unique task identifier
+        metadata: Task metadata dictionary
+    """
+    task_file = Path("tasks") / f"{task_id}.yaml"
+    task_file.parent.mkdir(exist_ok=True)
+
+    # Convert TaskStatus enums to strings before saving
+    def clean_value(value):
+        """Recursively clean enum values from nested structures."""
+        if hasattr(value, 'value') and hasattr(value, 'name'):  # Likely an enum
+            return str(value)  # Convert enum to string
+        elif isinstance(value, dict):
+            return {k: clean_value(v) for k, v in value.items()}
+        elif isinstance(value, list):
+            return [clean_value(v) for v in value]
+        else:
+            return value
+    
+    cleaned_metadata = {key: clean_value(value) for key, value in metadata.items()}
+
+    try:
+        with open(task_file, 'w', encoding='utf-8') as f:
+            yaml.dump(cleaned_metadata, f,
+                      default_flow_style=False, allow_unicode=True)
+
+        logger.info(f"Task metadata saved for {task_id}")
+
+    except Exception as e:
+        logger.error(f"Error saving task metadata for {task_id}: {e}")
+        raise
+
+
+def get_all_tasks() -> List[Dict[str, Any]]:
+    """
+    Get all available tasks from YAML files.
+
+    Returns:
+        List of task metadata dictionaries
+    """
+    tasks = []
+    tasks_dir = Path("tasks")
+
+    if not tasks_dir.exists():
+        logger.warning("Tasks directory not found")
+        return tasks
+
+    for task_file in tasks_dir.glob("*.yaml"):
+        try:
+            task_id = task_file.stem
+            metadata = load_task_metadata(task_id)
+            tasks.append(metadata)
+        except Exception as e:
+            logger.warning(f"Failed to load task from {task_file}: {e}")
+            continue
+
+    return tasks
+
+
+def update_task_state(task_id: str, new_state: str) -> None:
+    """
+    Update task state in YAML file.
+
+    Args:
+        task_id: Unique task identifier
+        new_state: New task state
     """
     try:
-        # Load current task data
-        task_data = load_task_metadata(task_id)
+        metadata = load_task_metadata(task_id)
+        metadata['state'] = new_state
+        save_task_metadata(task_id, metadata)
 
-        # Update state
-        task_data["state"] = new_state
-        task_data["status"] = new_state
+        logger.info(f"Task {task_id} state updated to {new_state}")
 
-        # Update metadata if provided
-        if metadata:
-            if "metadata" not in task_data:
-                task_data["metadata"] = {}
-            task_data["metadata"].update(metadata)
-
-        # Add timestamp
-        try:
-            import datetime
-
-            task_data["updated"] = datetime.datetime.now().isoformat()
-        except ImportError:
-            pass
-
-        # Try to save back to original location
-        search_paths = [
-            f"tasks/{task_id}.yaml",
-            f"tasks/{task_id}.json",
-            f"src/core/tasks/{task_id}.yaml",
-            f"src/core/tasks/{task_id}.json",
-            f"src/core/tasks/backend/{task_id}.yaml",
-            f"src/core/tasks/backend/{task_id}.json",
-            f"src/core/tasks/frontend/{task_id}.yaml",
-            f"src/core/tasks/frontend/{task_id}.json",
-            f"src/core/tasks/general/{task_id}.yaml",
-            f"src/core/tasks/general/{task_id}.json",
-        ]
-
-        for path in search_paths:
-            if os.path.exists(path):
-                try:
-                    with open(path, "w", encoding="utf-8") as f:
-                        if path.endswith(".yaml"):
-                            yaml.dump(task_data, f, default_flow_style=False)
-                        else:
-                            json.dump(task_data, f, indent=2)
-                    return True
-                except Exception:
-                    continue
-
-        # If no existing file found, create new one in tasks directory
-        os.makedirs("tasks", exist_ok=True)
-        output_path = f"tasks/{task_id}.yaml"
-
-        with open(output_path, "w", encoding="utf-8") as f:
-            yaml.dump(task_data, f, default_flow_style=False)
-
-        return True
-
-    except Exception:
-        return False
+    except Exception as e:
+        logger.error(f"Error updating task state for {task_id}: {e}")
+        raise
 
 
-def get_all_tasks() -> List[str]:
-    """Get all available task IDs from the tasks directory.
+def get_tasks_by_state(state: str) -> List[Dict[str, Any]]:
+    """
+    Get tasks in a specific state.
+
+    Args:
+        state: Task state to filter by
 
     Returns:
-        List of task IDs (e.g., ['BE-01', 'FE-02', 'TL-01'])
+        List of task metadata dictionaries
     """
-    task_ids = []
-    search_directories = [
-        "tasks",
-        "src/core/tasks",
-        "src/core/tasks/backend",
-        "src/core/tasks/frontend",
-        "src/core/tasks/general",
-    ]
-
-    for directory in search_directories:
-        if os.path.exists(directory):
-            for file in os.listdir(directory):
-                if file.endswith(".yaml") or file.endswith(".json"):
-                    # Extract task ID from filename (e.g., 'BE-01.yaml' -> 'BE-01')
-                    task_id = os.path.splitext(file)[0]
-                    if task_id not in task_ids:
-                        task_ids.append(task_id)
-
-    return sorted(task_ids)
+    all_tasks = get_all_tasks()
+    return [task for task in all_tasks if task.get('state') == state]
 
 
-__all__ = [
-    "TaskLoader",
-    "load_task_metadata",
-    "update_task_state",
-    "get_all_tasks",
-]
+def get_dependent_tasks(task_id: str) -> List[Dict[str, Any]]:
+    """
+    Get tasks that depend on a given task.
+
+    Args:
+        task_id: Task ID to find dependents for
+
+    Returns:
+        List of task metadata dictionaries
+    """
+    all_tasks = get_all_tasks()
+    dependent_tasks = []
+
+    for task in all_tasks:
+        dependencies = task.get('depends_on', [])
+        if task_id in dependencies:
+            dependent_tasks.append(task)
+
+    return dependent_tasks
+
+
+def get_tasks_by_owner(owner: str) -> List[Dict[str, Any]]:
+    """
+    Get tasks assigned to a specific owner.
+
+    Args:
+        owner: Owner/agent role to filter by
+
+    Returns:
+        List of task metadata dictionaries
+    """
+    all_tasks = get_all_tasks()
+    return [task for task in all_tasks if task.get('owner') == owner]
+
+
+def get_tasks_by_priority(priority: str) -> List[Dict[str, Any]]:
+    """
+    Get tasks with a specific priority.
+
+    Args:
+        priority: Priority level to filter by
+
+    Returns:
+        List of task metadata dictionaries
+    """
+    all_tasks = get_all_tasks()
+    return [task for task in all_tasks if task.get('priority') == priority]
+
+
+def validate_task_dependencies(task_id: str = None) -> Dict[str, Any]:
+    """
+    Validate task dependencies for circular references and missing dependencies.
+
+    Args:
+        task_id: Optional specific task to validate (validates all if None)
+
+    Returns:
+        Validation result dictionary
+    """
+    all_tasks = get_all_tasks()
+    task_map = {task['id']: task for task in all_tasks}
+
+    validation_result = {
+        'valid': True,
+        'errors': [],
+        'warnings': []
+    }
+
+    tasks_to_check = [task_id] if task_id else [task['id']
+                                                for task in all_tasks]
+
+    for tid in tasks_to_check:
+        if tid not in task_map:
+            validation_result['errors'].append(f"Task {tid} not found")
+            validation_result['valid'] = False
+            continue
+
+        task = task_map[tid]
+        dependencies = task.get('depends_on', [])
+
+        # Check for missing dependencies
+        for dep in dependencies:
+            if dep not in task_map:
+                validation_result['errors'].append(
+                    f"Task {tid} depends on missing task {dep}")
+                validation_result['valid'] = False
+
+        # Check for circular dependencies (simplified)
+        visited = set()
+
+        def check_circular(current_task_id):
+            if current_task_id in visited:
+                return True
+            visited.add(current_task_id)
+
+            current_task = task_map.get(current_task_id)
+            if not current_task:
+                return False
+
+            for dep in current_task.get('depends_on', []):
+                if check_circular(dep):
+                    return True
+
+            visited.remove(current_task_id)
+            return False
+
+        if check_circular(tid):
+            validation_result['errors'].append(
+                f"Circular dependency detected for task {tid}")
+            validation_result['valid'] = False
+
+    return validation_result

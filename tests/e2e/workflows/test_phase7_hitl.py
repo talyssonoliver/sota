@@ -634,7 +634,7 @@ def tearDown(self):
             content={"output": "Generated code"},
             risk_factors=["complex_logic"],
         )
-        pending_checkpoints = self.hitl_engine.get_pending_checkpoints_for_task("BE-07")
+        pending_checkpoints = self.hitl_engine.get_checkpoints_for_task("BE-07")
         self.assertTrue(len(pending_checkpoints) > 0)
         self.assertEqual(checkpoint.status, CheckpointStatus.PENDING)
 
@@ -656,5 +656,5 @@ def tearDown(self):
         
         with patch.object(self.hitl_engine, "process_decision", return_value=True):
             pass
-        pending_checkpoints = self.hitl_engine.get_pending_checkpoints_for_task("BE-07")
+        pending_checkpoints = self.hitl_engine.get_checkpoints_for_task("BE-07")
         self.assertEqual(len(pending_checkpoints), 0)

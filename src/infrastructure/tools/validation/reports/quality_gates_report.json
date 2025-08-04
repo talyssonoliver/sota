@@ -1,0 +1,205 @@
+{
+  "timestamp": "2025-08-03 01:40:19",
+  "overall_status": "FAILED",
+  "quality_gates_passed": 5,
+  "quality_gates_failed": 2,
+  "quality_gates_warning": 1,
+  "metrics": {
+    "coverage_percentage": 0.0,
+    "avg_cyclomatic_complexity": 4.616071428571429,
+    "max_cyclomatic_complexity": 24,
+    "duplication_percentage": 46.01549283233906,
+    "maintainability_index": 0,
+    "issues": {
+      "bugs": 0,
+      "vulnerabilities": 0,
+      "code_smells": 1,
+      "security_hotspots": 0
+    },
+    "lines_of_code": {
+      "total": 14288,
+      "code": 11231,
+      "comments": 820,
+      "blank": 2237
+    },
+    "code_smells_per_kloc": 0.08903926631644556,
+    "critical_bugs": 0,
+    "vulnerabilities": 0,
+    "security_hotspots": 0
+  },
+  "technical_debt": {
+    "bugs": 0.0,
+    "vulnerabilities": 0.0,
+    "code_smells": 0.25,
+    "security_hotspots": 0.0,
+    "total_hours": 0.25,
+    "total_days": 0.03125
+  },
+  "gate_results": [
+    {
+      "name": "test_coverage",
+      "metric": "coverage_percentage",
+      "expected_value": 80.0,
+      "actual_value": 0.0,
+      "operator": ">=",
+      "status": "FAILED",
+      "severity": "error",
+      "category": "reliability",
+      "deviation": 80.0,
+      "message": "\u274c Test coverage must be at least 80% (Failed: 0.0 >= 80.0)",
+      "remediation_effort_minutes": 120
+    },
+    {
+      "name": "critical_bugs",
+      "metric": "critical_bugs",
+      "expected_value": 0.0,
+      "actual_value": 0,
+      "operator": "==",
+      "status": "PASSED",
+      "severity": "error",
+      "category": "reliability",
+      "deviation": 0.0,
+      "message": "\u2705 Zero critical bugs allowed",
+      "remediation_effort_minutes": 60
+    },
+    {
+      "name": "code_duplication",
+      "metric": "duplication_percentage",
+      "expected_value": 3.0,
+      "actual_value": 46.01549283233906,
+      "operator": "<=",
+      "status": "FAILED",
+      "severity": "error",
+      "category": "maintainability",
+      "deviation": 43.01549283233906,
+      "message": "\u274c Code duplication must be below 3% (Failed: 46.01549283233906 <= 3.0)",
+      "remediation_effort_minutes": 30
+    },
+    {
+      "name": "vulnerabilities",
+      "metric": "vulnerabilities",
+      "expected_value": 0.0,
+      "actual_value": 0,
+      "operator": "==",
+      "status": "PASSED",
+      "severity": "error",
+      "category": "security",
+      "deviation": 0.0,
+      "message": "\u2705 No new vulnerabilities allowed",
+      "remediation_effort_minutes": 120
+    },
+    {
+      "name": "cyclomatic_complexity",
+      "metric": "avg_cyclomatic_complexity",
+      "expected_value": 10.0,
+      "actual_value": 4.616071428571429,
+      "operator": "<=",
+      "status": "PASSED",
+      "severity": "warning",
+      "category": "maintainability",
+      "deviation": 5.383928571428571,
+      "message": "\u2705 Average cyclomatic complexity should be below 10",
+      "remediation_effort_minutes": 45
+    },
+    {
+      "name": "maintainability_index",
+      "metric": "maintainability_index",
+      "expected_value": 65.0,
+      "actual_value": 0,
+      "operator": ">=",
+      "status": "WARNING",
+      "severity": "warning",
+      "category": "maintainability",
+      "deviation": 65.0,
+      "message": "\u26a0\ufe0f Maintainability index should be above 65 (Warning: 0 >= 65.0)",
+      "remediation_effort_minutes": 90
+    },
+    {
+      "name": "security_hotspots",
+      "metric": "security_hotspots",
+      "expected_value": 5.0,
+      "actual_value": 0,
+      "operator": "<=",
+      "status": "PASSED",
+      "severity": "warning",
+      "category": "security",
+      "deviation": 5.0,
+      "message": "\u2705 Security hotspots should be reviewed",
+      "remediation_effort_minutes": 45
+    },
+    {
+      "name": "code_smells_density",
+      "metric": "code_smells_per_kloc",
+      "expected_value": 10.0,
+      "actual_value": 0.08903926631644556,
+      "operator": "<=",
+      "status": "PASSED",
+      "severity": "warning",
+      "category": "maintainability",
+      "deviation": 9.910960733683554,
+      "message": "\u2705 Code smells density should be below 10 per KLOC",
+      "remediation_effort_minutes": 15
+    }
+  ],
+  "recommendations": [
+    "\ud83d\udea8 Critical issues found that must be fixed before merge:",
+    "  - Test coverage must be at least 80%",
+    "  - Code duplication must be below 3%",
+    "\u26a0\ufe0f Warning issues that should be addressed:",
+    "  - Maintainability index should be above 65",
+    "\ud83d\udcdd Increase test coverage by adding unit tests for uncovered code",
+    "\ud83d\udd04 Refactor duplicated code into reusable functions or modules"
+  ],
+  "iso_25010_compliance": {
+    "functionality": {
+      "score": 0,
+      "status": "NOT_EVALUATED",
+      "evaluated_metrics": 0,
+      "passed_metrics": 0
+    },
+    "reliability": {
+      "score": 50.0,
+      "status": "NON_COMPLIANT",
+      "evaluated_metrics": 2,
+      "passed_metrics": 1
+    },
+    "performance_efficiency": {
+      "score": 0,
+      "status": "NOT_EVALUATED",
+      "evaluated_metrics": 0,
+      "passed_metrics": 0
+    },
+    "usability": {
+      "score": 0,
+      "status": "NOT_EVALUATED",
+      "evaluated_metrics": 0,
+      "passed_metrics": 0
+    },
+    "security": {
+      "score": 100.0,
+      "status": "COMPLIANT",
+      "evaluated_metrics": 2,
+      "passed_metrics": 2
+    },
+    "maintainability": {
+      "score": 50.0,
+      "status": "NON_COMPLIANT",
+      "evaluated_metrics": 4,
+      "passed_metrics": 2
+    },
+    "portability": {
+      "score": 0,
+      "status": "NOT_EVALUATED",
+      "evaluated_metrics": 0,
+      "passed_metrics": 0
+    }
+  },
+  "build_decision": {
+    "allow_merge": false,
+    "require_review": false,
+    "blocking_issues": [
+      "test_coverage",
+      "code_duplication"
+    ]
+  }
+}

@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    logging,
+    sys,
+    timedelta
+)
 """
 Phase 6 Step 6.5 - Visual Progress Charts Data Builder
 
@@ -9,47 +18,44 @@ Usage:
     python visualization/build_json.py > static/progress_data.json
 """
 
-import json
-import logging
-import sys
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Dict, List
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime, timedelta  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+from typing import Any, Dict, List, Protocol, runtime_checkable, Optional
 
 # Add parent directory to path
 sys.path.append(str(Path(__file__).parent.parent))
 
-# Local imports with error handling
+# Constants for deduplication
+STACK_LABEL = "Stack 0"
+IN_PROGRESS_LABEL = "In Progress"
+TODO_LABEL = "To Do"
+COMPLETED_LABEL = "Completed"
+BLOCKED_LABEL = "Blocked"
+
+
+
+
+
+
+# Robust import/fallback pattern for production using external fallback module
 try:
     from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
-
     COMPLETION_METRICS_AVAILABLE = True
 except ImportError as e:
     logging.warning(f"Completion metrics not available: {e}")
     COMPLETION_METRICS_AVAILABLE = False
-
-    class CompletionMetricsCalculator:
-        def __init__(self, *args, **kwargs):
-            pass
-
-        def calculate_metrics(self, *args, **kwargs):
-            return {"error": "Completion metrics not available"}
-
+    from src.interfaces.visualization.fallbacks import CompletionMetricsCalculator
 
 try:
     from src.core.workflows.daily_cycle import DailyCycleOrchestrator
-
     DAILY_CYCLE_AVAILABLE = True
 except ImportError as e:
     logging.warning(f"Daily cycle orchestrator not available: {e}")
     DAILY_CYCLE_AVAILABLE = False
-
-    class DailyCycleOrchestrator:
-        def __init__(self, *args, **kwargs):
-            pass
-
-        def get_status(self, *args, **kwargs):
-            return {"error": "Daily cycle orchestrator not available"}
+    from src.interfaces.visualization.fallbacks import DailyCycleOrchestrator
 
 
 logger = logging.getLogger(__name__)
@@ -64,13 +70,14 @@ class VisualProgressChartsDataBuilder:
     sprint health indicators.
     """
 
-    def __init__(self):
+    def __init__(self, database_client: Any):
         """Initialize the data builder with current project context."""
         self.logger = logging.getLogger(__name__)
         self.base_path = Path(__file__).parent.parent
         self.tasks_dir = self.base_path / "tasks"
         self.reports_dir = self.base_path / "reports"
         self.progress_reports_dir = self.base_path / "progress_reports"
+        self.database_client = database_client
 
         # Initialize metrics calculator if available
         try:
@@ -158,151 +165,44 @@ class VisualProgressChartsDataBuilder:
                 "labels": list(daily_data.keys()),
                 "datasets": [
                     {
-                        "label": "Completed",
-                        "data": [
-                            day_data.get("completed", 0)
-                            for day_data in daily_data.values()
-                        ],
+                        "label": COMPLETED_LABEL,
+                        "data": [day_data.get("completed", 0) for day_data in daily_data.values()],
                         "backgroundColor": "#28a745",
-                        "stack": "Stack 0",
+                        "stack": STACK_LABEL,
                     },
                     {
-                        "label": "In Progress",
-                        "data": [
-                            day_data.get("in_progress", 0)
-                            for day_data in daily_data.values()
-                        ],
+                        "label": IN_PROGRESS_LABEL,
+                        "data": [day_data.get("in_progress", 0) for day_data in daily_data.values()],
                         "backgroundColor": "#17a2b8",
-                        "stack": "Stack 0",
+                        "stack": STACK_LABEL,
                     },
                     {
-                        "label": "Blocked",
-                        "data": [
-                            day_data.get("blocked", 0)
-                            for day_data in daily_data.values()
-                        ],
+                        "label": BLOCKED_LABEL,
+                        "data": [day_data.get("blocked", 0) for day_data in daily_data.values()],
                         "backgroundColor": "#dc3545",
-                        "stack": "Stack 0",
+                        "stack": STACK_LABEL,
                     },
                     {
-                        "label": "To Do",
-                        "data": [
-                            day_data.get("todo", 0) for day_data in daily_data.values()
-                        ],
+                        "label": TODO_LABEL,
+                        "data": [day_data.get("todo", 0) for day_data in daily_data.values()],
                         "backgroundColor": "#ffc107",
-                        "stack": "Stack 0",
+                        "stack": STACK_LABEL,
                     },
                 ],
             },
             "options": {
                 "responsive": True,
-                "scales": {
-                    "x": {"stacked": True},
-                    "y": {"stacked": True, "beginAtZero": True},
-                },
-            },
-        }
-
-    def _build_stacked_bar_by_owner_data(self) -> Dict[str, Any]:
-        """Build stacked bar chart showing tasks by owner."""
-        owner_data = self._get_owner_task_breakdown()
-
-        return {
-            "type": "bar",
-            "title": "Tasks Distribution by Owner",
-            "data": {
-                "labels": list(owner_data.keys()),
-                "datasets": [
-                    {
-                        "label": "Completed",
-                        "data": [
-                            owner_stats.get("completed", 0)
-                            for owner_stats in owner_data.values()
-                        ],
-                        "backgroundColor": "#28a745",
-                        "stack": "Stack 0",
-                    },
-                    {
-                        "label": "In Progress",
-                        "data": [
-                            owner_stats.get("in_progress", 0)
-                            for owner_stats in owner_data.values()
-                        ],
-                        "backgroundColor": "#17a2b8",
-                        "stack": "Stack 0",
-                    },
-                    {
-                        "label": "Blocked",
-                        "data": [
-                            owner_stats.get("blocked", 0)
-                            for owner_stats in owner_data.values()
-                        ],
-                        "backgroundColor": "#dc3545",
-                        "stack": "Stack 0",
-                    },
-                    {
-                        "label": "To Do",
-                        "data": [
-                            owner_stats.get("todo", 0)
-                            for owner_stats in owner_data.values()
-                        ],
-                        "backgroundColor": "#ffc107",
-                        "stack": "Stack 0",
-                    },
-                ],
-            },
-            "options": {
-                "responsive": True,
-                "scales": {
-                    "x": {"stacked": True},
-                    "y": {"stacked": True, "beginAtZero": True},
-                },
-                "plugins": {"legend": {"position": "top"}},
-            },
-        }
-
-    def _build_summary_cards_data(self) -> Dict[str, Any]:
-        """Build summary cards data for quick overview."""
-        task_statuses = self._get_task_status_breakdown()
-
-        return {
-            "completed": {
-                "value": task_statuses.get("Completed", 0),
-                "label": "Completed",
-                "color": "#28a745",
-                "icon": "✅",
-                "trend": self._calculate_trend("completed"),
-            },
-            "in_progress": {
-                "value": task_statuses.get("In Progress", 0),
-                "label": "In Progress",
-                "color": "#17a2b8",
-                "icon": "🔄",
-                "trend": self._calculate_trend("in_progress"),
-            },
-            "blocked": {
-                "value": task_statuses.get("Blocked", 0),
-                "label": "Blocked",
-                "color": "#dc3545",
-                "icon": "🚫",
-                "trend": self._calculate_trend("blocked"),
-            },
-            "todo": {
-                "value": task_statuses.get("To Do", 0),
-                "label": "To Do",
-                "color": "#ffc107",
-                "icon": "📋",
-                "trend": self._calculate_trend("todo"),
+                "scales": {"x": {"stacked": True}, "y": {"stacked": True, "beginAtZero": True}},
             },
         }
 
     def _build_daily_automation_data(self) -> Dict[str, Any]:
-        """Build daily automation visualization data for Phase 6 Step 6.5."""
+        """Build daily automation visualization data."""
         automation_cycles = self._get_daily_automation_cycles()
 
         return {
             "type": "line",
-            "title": "Daily Automation Cycle Performance",
+            "title": "Daily Automation Cycles",
             "data": {
                 "labels": list(automation_cycles.keys()),
                 "datasets": [
@@ -382,21 +282,100 @@ class VisualProgressChartsDataBuilder:
                     "tooltip": {"mode": "index", "intersect": False},
                 },
             },
-            "automation_metrics": {
-                "total_cycles": sum(
-                    cycle.get("morning_briefings", 0)
-                    + cycle.get("eod_reports", 0)
-                    + cycle.get("health_checks", 0)
-                    for cycle in automation_cycles.values()
-                ),
-                "average_success_rate": sum(
-                    cycle.get("success_rate", 0) for cycle in automation_cycles.values()
-                )
-                / max(len(automation_cycles), 1),
-                "uptime_percentage": 98.5,
-                "next_cycle_time": "06:00 AM",
-                "average_duration": 4.2,
-                "error_rate": 1.5,
+        }
+
+    def _build_stacked_bar_by_owner_data(self) -> Dict[str, Any]:
+        """Build stacked bar chart showing tasks by owner."""
+        owner_data = self._get_owner_task_breakdown()
+        if not owner_data:
+            owner_data = {
+                "Default Owner": {
+                    "completed": 0,
+                    "in_progress": 0,
+                    "blocked": 0,
+                    "todo": 0,
+                }
+            }
+
+        return {
+            "type": "bar",
+            "title": "Tasks Distribution by Owner",
+            "data": {
+                "labels": list(owner_data.keys()),
+                "datasets": [
+                    {
+                        "label": COMPLETED_LABEL,
+                        "data": [owner_stats.get("completed", 0) for owner_stats in owner_data.values()],
+                        "backgroundColor": "#28a745",
+                        "stack": STACK_LABEL,
+                    },
+                    {
+                        "label": IN_PROGRESS_LABEL,
+                        "data": [owner_stats.get("in_progress", 0) for owner_stats in owner_data.values()],
+                        "backgroundColor": "#17a2b8",
+                        "stack": STACK_LABEL,
+                    },
+                    {
+                        "label": BLOCKED_LABEL,
+                        "data": [owner_stats.get("blocked", 0) for owner_stats in owner_data.values()],
+                        "backgroundColor": "#dc3545",
+                        "stack": STACK_LABEL,
+                    },
+                    {
+                        "label": TODO_LABEL,
+                        "data": [owner_stats.get("todo", 0) for owner_stats in owner_data.values()],
+                        "backgroundColor": "#ffc107",
+                        "stack": STACK_LABEL,
+                    },
+                ],
+            },
+            "options": {
+                "responsive": True,
+                "scales": {"x": {"stacked": True}, "y": {"stacked": True, "beginAtZero": True}},
+                "plugins": {"legend": {"position": "top"}},
+            },
+        }
+
+    def _build_summary_cards_data(self) -> Dict[str, Any]:
+        """Build summary cards data for quick overview."""
+        owner_data = self._get_owner_task_breakdown()
+
+        return {
+            "type": "bar",
+            "title": "Tasks Distribution by Owner",
+            "data": {
+                "labels": list(owner_data.keys()),
+                "datasets": [
+                    {
+                        "label": COMPLETED_LABEL,
+                        "data": [owner_stats.get("completed", 0) for owner_stats in owner_data.values()],
+                        "backgroundColor": "#28a745",
+                        "stack": STACK_LABEL,
+                    },
+                    {
+                        "label": IN_PROGRESS_LABEL,
+                        "data": [owner_stats.get("in_progress", 0) for owner_stats in owner_data.values()],
+                        "backgroundColor": "#17a2b8",
+                        "stack": STACK_LABEL,
+                    },
+                    {
+                        "label": BLOCKED_LABEL,
+                        "data": [owner_stats.get("blocked", 0) for owner_stats in owner_data.values()],
+                        "backgroundColor": "#dc3545",
+                        "stack": STACK_LABEL,
+                    },
+                    {
+                        "label": TODO_LABEL,
+                        "data": [owner_stats.get("todo", 0) for owner_stats in owner_data.values()],
+                        "backgroundColor": "#ffc107",
+                        "stack": STACK_LABEL,
+                    },
+                ],
+            },
+            "options": {
+                "responsive": True,
+                "scales": {"x": {"stacked": True}, "y": {"stacked": True, "beginAtZero": True}},
+                "plugins": {"legend": {"position": "top"}},
             },
         }
 
@@ -567,12 +546,13 @@ class VisualProgressChartsDataBuilder:
         """Get breakdown of tasks by status."""
         if self.metrics_calculator:
             try:
-                return self.metrics_calculator.get_task_status_breakdown()
+                # type: ignore[attr-defined] for fallback stub
+                return self.metrics_calculator.get_task_status_breakdown()  # type: ignore[attr-defined]
             except Exception:
                 pass
 
         # Mock data for visualization if metrics not available
-        return {"Completed": 25, "In Progress": 8, "Blocked": 2, "To Do": 15}
+        return {COMPLETED_LABEL: 25, IN_PROGRESS_LABEL: 8, BLOCKED_LABEL: 2, TODO_LABEL: 15}
 
     def _get_daily_task_breakdown(self) -> Dict[str, Dict[str, int]]:
         """Get daily breakdown of task progress."""
@@ -597,39 +577,33 @@ class VisualProgressChartsDataBuilder:
 
     def _get_owner_task_breakdown(self) -> Dict[str, Dict[str, int]]:
         """Get breakdown of tasks by owner."""
-        # Mock owner data - in real implementation, this would query actual task assignments
-        return {
-            "Backend Engineer": {
-                "completed": 8,
-                "in_progress": 3,
-                "blocked": 1,
-                "todo": 4,
-            },
-            "Frontend Engineer": {
-                "completed": 7,
-                "in_progress": 2,
-                "blocked": 0,
-                "todo": 5,
-            },
-            "QA Engineer": {
-                "completed": 5,
-                "in_progress": 2,
-                "blocked": 1,
-                "todo": 3,
-            },
-            "Technical Lead": {
-                "completed": 3,
-                "in_progress": 1,
-                "blocked": 0,
-                "todo": 2,
-            },
-            "Coordinator": {
-                "completed": 2,
-                "in_progress": 0,
-                "blocked": 0,
-                "todo": 1,
-            },
-        }
+        try:
+            # Replace with actual query logic to fetch task assignments from a database or API
+            task_assignments = self.database_client.fetch_task_assignments()  # Example method
+
+            owner_data = {}
+            for task in task_assignments:
+                owner = task.get("owner", "Unknown")
+                status = task.get("status", "todo").lower()
+
+                if owner not in owner_data:
+                    owner_data[owner] = {"completed": 0, "in_progress": 0, "blocked": 0, "todo": 0}
+
+                if status in owner_data[owner]:
+                    owner_data[owner][status] += 1
+
+            return owner_data
+        except Exception as e:
+            self.logger.error(f"Failed to fetch task assignments: {e}")
+            # Fallback to default mock data
+            return {
+                "Default Owner": {
+                    "completed": 0,
+                    "in_progress": 0,
+                    "blocked": 0,
+                    "todo": 0,
+                }
+            }
 
     def _calculate_trend(self, status: str) -> str:
         """Calculate trend for status (up, down, stable)."""
@@ -646,10 +620,10 @@ class VisualProgressChartsDataBuilder:
         """Get daily automation cycle data."""
         if self.daily_orchestrator:
             try:
-                # Try to get real automation data
+                # Replace with valid method or remove
                 pass
-            except Exception:
-                pass
+            except Exception as e:
+                self.logger.warning(f"Failed to fetch daily automation cycles: {e}")
 
         # Mock automation data
         cycles = {}
@@ -659,10 +633,10 @@ class VisualProgressChartsDataBuilder:
             day = base_date + timedelta(days=i)
             day_str = day.strftime("%Y-%m-%d")
             cycles[day_str] = {
-                "morning_briefings": 1 if i < 5 else 0,  # Weekdays only
+                "morning_briefings": 1 if i < 5 else 0,
                 "eod_reports": 1 if i < 5 else 0,
-                "health_checks": 3 + (i % 2),  # Variable health checks
-                "success_rate": 95 + (i % 6) - 2,  # Variable success rate 93-99%
+                "health_checks": 3 + (i % 2),
+                "success_rate": 95 + (i % 6) - 2,
             }
 
         return cycles
@@ -798,10 +772,23 @@ class VisualProgressChartsDataBuilder:
         }
 
 
+# Define mock_database_client
+class MockDatabaseClient:
+    """Mock database client for testing and development."""
+
+    def fetch_task_assignments(self):
+        """Mock method to fetch task assignments."""
+        return []
+
+
+mock_database_client = MockDatabaseClient()
+
+
 def main():
     """Main function to generate and output progress data JSON."""
     try:
-        builder = VisualProgressChartsDataBuilder()
+        # Provide required argument
+        builder = VisualProgressChartsDataBuilder(database_client=mock_database_client)
         progress_data = builder.build_comprehensive_progress_data()
 
         # Output JSON to stdout for redirection to file

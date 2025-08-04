@@ -1,0 +1,113 @@
+{
+  "pattern_summary": {
+    "type_validation": 375,
+    "api_validation": 51,
+    "input_validation": 263,
+    "custom_errors": 687,
+    "security_validation": 37,
+    "business_validation": 13,
+    "validation_errors": 355,
+    "schema_validation": 213
+  },
+  "validation_hotspots_count": 20,
+  "inconsistent_patterns_count": 1,
+  "standardization_opportunities": [
+    {
+      "category": "Input Validation Standardization",
+      "description": "Many files have custom input validation logic",
+      "affected_files": 72,
+      "recommendation": "Create @validate_input decorator and standard validation middleware",
+      "estimated_impact": "High - affects core data flow",
+      "implementation": "Extend validation_utils.py with decorators and middleware"
+    },
+    {
+      "category": "Schema Validation Consolidation",
+      "description": "Multiple files implement schema validation differently",
+      "affected_files": 37,
+      "recommendation": "Create centralized schema registry and validation service",
+      "estimated_impact": "Medium - improves API consistency",
+      "implementation": "Create schema_registry.py and update validation_utils.py"
+    },
+    {
+      "category": "API Validation Middleware",
+      "description": "API endpoints have inconsistent validation approaches",
+      "affected_files": 7,
+      "recommendation": "Create standard API validation middleware",
+      "estimated_impact": "High - improves security and consistency",
+      "implementation": "Create api_validation_middleware.py"
+    },
+    {
+      "category": "Security Validation Patterns",
+      "description": "Security validation is scattered and inconsistent",
+      "affected_files": 20,
+      "recommendation": "Create security validation utilities and patterns",
+      "estimated_impact": "Critical - security implications",
+      "implementation": "Extend validation_utils.py with security-focused validators"
+    },
+    {
+      "category": "Error Handling Standardization",
+      "description": "Using 6 different error types for validation",
+      "affected_files": 83,
+      "recommendation": "Create ValidationError hierarchy and standard error handling",
+      "estimated_impact": "Medium - improves debugging and user experience",
+      "implementation": "Create validation_errors.py with error hierarchy"
+    }
+  ],
+  "standardization_plan": [
+    {
+      "module": "src/infrastructure/utils/validation_decorators.py",
+      "description": "Input validation decorators and middleware",
+      "functions_to_create": [
+        "@validate_input",
+        "@validate_json",
+        "@validate_args",
+        "ValidationMiddleware",
+        "create_validator"
+      ],
+      "affected_files": 72,
+      "priority": "High",
+      "estimated_effort": "4 hours"
+    },
+    {
+      "module": "src/infrastructure/utils/schema_registry.py",
+      "description": "Centralized schema definitions and validation",
+      "functions_to_create": [
+        "SchemaRegistry",
+        "register_schema",
+        "validate_against_schema",
+        "load_schema_definitions",
+        "schema_cache"
+      ],
+      "affected_files": 37,
+      "priority": "Medium",
+      "estimated_effort": "3 hours"
+    },
+    {
+      "module": "src/infrastructure/utils/api_validation.py",
+      "description": "API request/response validation middleware",
+      "functions_to_create": [
+        "APIValidationMiddleware",
+        "validate_request",
+        "validate_response",
+        "parameter_validator"
+      ],
+      "affected_files": 7,
+      "priority": "High",
+      "estimated_effort": "3 hours"
+    },
+    {
+      "module": "src/infrastructure/utils/validation_errors.py",
+      "description": "Standardized validation error hierarchy",
+      "functions_to_create": [
+        "ValidationError",
+        "InputValidationError",
+        "SchemaValidationError",
+        "APIValidationError",
+        "SecurityValidationError"
+      ],
+      "affected_files": 83,
+      "priority": "Medium",
+      "estimated_effort": "2 hours"
+    }
+  ]
+}

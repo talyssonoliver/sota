@@ -1,8 +1,16 @@
+
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    Path,
+    datetime,
+    json,
+    logging
+)
 """Quality Assurance agent for testing and validating implementations."""
 
-import logging
-from datetime import datetime
-from enum import Enum
+# import logging  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
 from typing import Any, Dict, List, Optional, Type
 
 logger = logging.getLogger(__name__)
@@ -426,8 +434,8 @@ class EnhancedQAAgent:
             project_root: Root directory of the project to analyze
             config_path: Optional path to custom configuration file
         """
-        import json
-        from pathlib import Path
+#         import json  # Consolidated to common_imports
+#         from pathlib import Path  # Consolidated to common_imports
 
         self.project_root = Path(project_root)
         self.config_path = config_path
@@ -638,7 +646,7 @@ class EnhancedQAAgent:
         Returns:
             Path: Path object where the test file should be created
         """
-        from pathlib import Path
+#         from pathlib import Path  # Consolidated to common_imports
         from src.infrastructure.utils.test_generator import QATestFramework
 
         source_path = Path(source_file)

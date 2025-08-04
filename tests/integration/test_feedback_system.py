@@ -88,8 +88,8 @@ class TestFeedbackCategory:
             "code_quality",
             "performance",
             "security", 
-            "maintainability",
-            "testing"
+            "architecture",
+            "documentation"
         ]
         
         for category in required_categories:

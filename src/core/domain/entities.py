@@ -1,3 +1,16 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Enum,
+    List,
+    Optional,
+    dataclass,
+    datetime,
+    field,
+    re,
+    uuid
+)
 """
 Domain Entities
 
@@ -5,12 +18,12 @@ Core business entities that represent the main concepts in the AI agent system.
 These entities encapsulate business logic and maintain domain invariants.
 """
 
-import uuid
+# import uuid  # Consolidated to common_imports
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum
-from typing import Any, Dict, List, Optional
+# from dataclasses import dataclass, field  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 
 class EntityStatus(Enum):
@@ -274,7 +287,7 @@ class TaskEntity(DomainEntity):
 
     def _is_valid_task_id_format(self, task_id: str) -> bool:
         """Validate task ID format"""
-        import re
+#         import re  # Consolidated to common_imports
 
         pattern = r"^[A-Z]+-\d+$"
         return bool(re.match(pattern, task_id))

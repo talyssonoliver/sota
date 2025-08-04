@@ -1,0 +1,22 @@
+{
+  "task_id": "BE-07",
+  "reviewer": "human.reviewer",
+  "approval_decision": true,
+  "feedback_categories": {
+    "code_quality": {
+      "score": 8,
+      "comments": "Good implementation"
+    },
+    "security": {
+      "score": 9,
+      "comments": "Secure code"
+    }
+  },
+  "comments": [
+    "Approved for production"
+  ],
+  "suggested_improvements": [],
+  "risk_level": "medium",
+  "timestamp": "2025-07-26T15:49:38.504344",
+  "feedback_id": "c7c5d2d3-f10d-4356-a22a-f9705ea0dacb"
+}

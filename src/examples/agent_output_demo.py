@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, os, sys
 """
 Step 4.4 — Register Agent Output Demo
 
@@ -6,12 +8,13 @@ Demonstrates the complete agent output registration workflow
 with real examples and validation.
 """
 
-import os
-import sys
-from pathlib import Path
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 from src.core.workflows.register_output import AgentOutputRegistry
 
+# Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
@@ -28,7 +31,8 @@ def demonstrate_step_4_4():
     status = registry.get_task_status("BE-07")
 
     if "agent_outputs" in status and status["agent_outputs"]:
-        print(f"✅ Task BE-07 has {len(status['agent_outputs'])} registered agents:")
+        print(
+            f"✅ Task BE-07 has {len(status['agent_outputs'])} registered agents:")
 
         for agent_id, agent_data in status["agent_outputs"].items():
             print(f"   🤖 {agent_id}:")
@@ -44,13 +48,12 @@ def demonstrate_step_4_4():
         print(f"   📋 Primary outputs: {len(qa_input['primary_outputs'])}")
         print(f"   🔧 Code artifacts: {len(qa_input['code_artifacts'])}")
 
-        if qa_input["code_artifacts"]:
+        if qa_input['code_artifacts']:
             print("   📁 Code files extracted:")
-            for artifact in qa_input["code_artifacts"]:
-                file_path = Path(artifact["file"])
+            for artifact in qa_input['code_artifacts']:
+                file_path = Path(artifact['file'])
                 print(
-                    f"      📄 {file_path.name} ({artifact['language']}) - {len(artifact['content'])} chars"
-                )
+                    f"      📄 {file_path.name} ({artifact['language']}) - {len(artifact['content'])} chars")
 
         # Show file organization
         print("\n📁 File Organization:")
@@ -72,12 +75,8 @@ def demonstrate_step_4_4():
     else:
         print("ℹ️ No registered outputs found for BE-07")
         print("💡 Run the registration commands to see the demo in action:")
-        print(
-            "   python orchestration/register_output.py BE-07 backend outputs/BE-07/sample_backend_output.md --extract-code"
-        )
-        print(
-            "   python orchestration/register_output.py BE-07 qa outputs/BE-07/sample_qa_report.json --type json"
-        )
+        print("   python orchestration/register_output.py BE-07 backend outputs/BE-07/sample_backend_output.md --extract-code")
+        print("   python orchestration/register_output.py BE-07 qa outputs/BE-07/sample_qa_report.json --type json")
 
     print("\n🎉 Step 4.4 Demo Complete!")
     print("✅ Agent output registration system is operational")

@@ -1,16 +1,32 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    datetime,
+    hashlib,
+    json,
+    os,
+    subprocess,
+    sys,
+    time,
+    timedelta
+)
 """
 Validation History Persistence
 Tracks validation results over time for trend analysis and reporting.
 """
 
-import hashlib
-import json
-import os
-import time
+# import hashlib  # Consolidated to common_imports
+# import json  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
 from collections import defaultdict
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# from datetime import datetime, timedelta  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 
 class ValidationHistoryTracker:
@@ -130,14 +146,14 @@ class ValidationHistoryTracker:
         """Generate unique run ID."""
         # Create hash from timestamp and some entropy
         hash_input = f"{timestamp.isoformat()}{os.getpid()}{time.time()}"
-        return hashlib.md5(hash_input.encode()).hexdigest()[:12]
+        return hashlib.sha256(hash_input.encode()).hexdigest()[:12]
 
     def _get_git_info(self) -> Dict[str, Any]:
         """Get git information if available."""
         git_info = {"commit": None, "branch": None, "author": None}
 
         try:
-            import subprocess
+#             import subprocess  # Consolidated to common_imports
 
             # Get commit hash
             result = subprocess.run(
@@ -215,7 +231,7 @@ class ValidationHistoryTracker:
     def _get_environment_info(self) -> Dict[str, Any]:
         """Get environment information."""
         import platform
-        import sys
+#         import sys  # Consolidated to common_imports
 
         return {
             "python_version": sys.version,

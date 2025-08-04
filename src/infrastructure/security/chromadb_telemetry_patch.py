@@ -1,6 +1,8 @@
+
+from src.infrastructure.utils.common_imports import logging
 """ChromaDB telemetry patch."""
 
-import logging
+# import logging  # Consolidated to common_imports
 
 logger = logging.getLogger(__name__)
 

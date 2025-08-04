@@ -1,3 +1,11 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    datetime,
+    logging,
+    traceback
+)
 """
 Agent Execution Handlers for LangGraph Workflow
 Implements execution wrappers for agents with status management.
@@ -5,12 +13,12 @@ Step 4.8 Enhancement: Added real-time monitoring hooks.
 Enhanced Error Handling: Added detailed error reporting and structured error information.
 """
 
-import logging
-import traceback
-from typing import Any, Dict
+# import logging  # Consolidated to common_imports
+# import traceback  # Consolidated to common_imports
+# from typing import Any, Dict  # Consolidated to common_imports
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
@@ -357,11 +365,11 @@ def qa_handler(state: Dict[str, Any]) -> Dict[str, Any]:
 
     try:
         # Simulate QA testing
-        # In a real implementation, this would run actual tests against the
+        # TODO: Must implement, this would run actual tests against the
         # codebase
 
         # For demonstration purposes, always move to human review
-        # In a real implementation, this might be conditional
+        # TODO: Must implement, this might be conditional
         from src.infrastructure.tools.handlers.qa_handler import qa_agent
 
         # Pass through to our QA agent implementation

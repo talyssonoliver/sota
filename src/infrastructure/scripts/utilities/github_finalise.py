@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
+
 """
-Step 5.9: GitHub Finalisation (Optional)
+GitHub Finalisation (Optional)
 
 Automated GitHub integration for closing issues and attaching completion artifacts.
 This script provides GitHub CLI integration to finalize task completion workflow.
@@ -16,20 +17,23 @@ Usage:
     python scripts/github_finalise.py --task-id BE-07 --close-issue
     python scripts/github_finalise.py BE-07 --attach-artifacts
 """
-
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    logging,
+    subprocess,
+    sys
+)
 import argparse
-import json
-import logging
-import subprocess
-import sys
 from typing import Dict, Optional
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 
@@ -289,7 +293,7 @@ All quality assurance checks have been completed successfully.
             Pull request URL if available, None otherwise
         """
         # This is a placeholder for PR detection logic
-        # In a real implementation, you might search for PRs with the task ID
+        # TODO: Must implement, you might search for PRs with the task ID
         return f"https://github.com/{self.github_repo}/pulls?q={self.task_id}"
 
     def finalise_task_complete(

@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    Path,
+    dataclass,
+    logging,
+    re,
+    sys
+)
 """
 Security Audit Script for Import Patterns
 
@@ -10,12 +19,12 @@ It focuses on:
 4. Missing fallback implementations for critical functionality
 """
 
-import logging
-import re
-import sys
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
+# import logging  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Dict, List, Set, Tuple
 
 # Setup logging

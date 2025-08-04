@@ -1,3 +1,5 @@
+
+from src.infrastructure.utils.common_imports import json, logging
 """
 API Input Validation and Sanitization for AI Agent System
 
@@ -5,8 +7,8 @@ Provides Flask/FastAPI-specific validation middleware and decorators for
 secure handling of API requests, JSON payloads, and query parameters.
 """
 
-import json
-import logging
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
 from functools import wraps
 from typing import Any, Callable, Dict, Optional
 
@@ -594,3 +596,270 @@ QA_VALIDATION_SCHEMA = {
         "metadata": {"type": "object"},
     },
 }
+
+
+# === WEEK 2 DAY 3: STANDARDIZED API VALIDATION ADDITIONS ===
+
+from typing import Callable, Dict, Any, Optional, Union, List
+from flask import request, jsonify, abort
+from functools import wraps
+
+from .validation_errors import APIValidationError, ValidationError
+from .validation_decorators import validate_json
+from .schema_registry import validate_against_schema
+
+
+class APIValidationMiddleware:
+    """Standardized API request/response validation middleware"""
+    
+    def __init__(self):
+        self.request_validators: Dict[str, Callable] = {}
+        self.response_validators: Dict[str, Callable] = {}
+    
+    def add_request_validator(self, endpoint: str, validator: Callable) -> None:
+        """Add request validator for specific endpoint"""
+        self.request_validators[endpoint] = validator
+    
+    def add_response_validator(self, endpoint: str, validator: Callable) -> None:
+        """Add response validator for specific endpoint"""
+        self.response_validators[endpoint] = validator
+    
+    def validate_request(self, endpoint: str, data: Any) -> None:
+        """Validate request data"""
+        if endpoint in self.request_validators:
+            validator = self.request_validators[endpoint]
+            try:
+                if not validator(data):
+                    raise APIValidationError(
+                        f"Request validation failed for endpoint {endpoint}",
+                        status_code=400
+                    )
+            except ValidationError:
+                raise
+            except Exception as e:
+                raise APIValidationError(
+                    f"Request validation error for endpoint {endpoint}: {str(e)}",
+                    status_code=400
+                )
+    
+    def validate_response(self, endpoint: str, data: Any) -> None:
+        """Validate response data"""
+        if endpoint in self.response_validators:
+            validator = self.response_validators[endpoint]
+            try:
+                if not validator(data):
+                    raise APIValidationError(
+                        f"Response validation failed for endpoint {endpoint}",
+                        status_code=500
+                    )
+            except ValidationError:
+                raise
+            except Exception as e:
+                raise APIValidationError(
+                    f"Response validation error for endpoint {endpoint}: {str(e)}",
+                    status_code=500
+                )
+
+
+def validate_request_json(schema_name: Optional[str] = None, 
+                         custom_validator: Optional[Callable] = None) -> Callable:
+    """
+    Decorator to validate JSON request data
+    
+    Usage:
+        @validate_request_json(schema_name='user_create')
+        @app.route('/users', methods=['POST'])
+        def create_user():
+            data = request.json
+            # data is already validated
+    """
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if not request.is_json:
+                raise APIValidationError("Request must be JSON", status_code=400)
+            
+            data = request.get_json()
+            if data is None:
+                raise APIValidationError("Invalid JSON data", status_code=400)
+            
+            # Schema validation
+            if schema_name:
+                try:
+                    validate_against_schema(data, schema_name)
+                except ValidationError as e:
+                    raise APIValidationError(str(e), status_code=400)
+            
+            # Custom validation
+            if custom_validator:
+                try:
+                    if not custom_validator(data):
+                        raise APIValidationError("Custom validation failed", status_code=400)
+                except ValidationError as e:
+                    raise APIValidationError(str(e), status_code=400)
+                except Exception as e:
+                    raise APIValidationError(f"Validation error: {str(e)}", status_code=400)
+            
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+def validate_query_params(**param_validators: Callable) -> Callable:
+    """
+    Decorator to validate query parameters
+    
+    Usage:
+        @validate_query_params(
+            page=lambda x: x.isdigit() and int(x) > 0,
+            limit=lambda x: x.isdigit() and 1 <= int(x) <= 100
+        )
+        @app.route('/items')
+        def get_items():
+            page = int(request.args.get('page', 1))
+            limit = int(request.args.get('limit', 10))
+    """
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            errors = []
+            
+            for param_name, validator in param_validators.items():
+                value = request.args.get(param_name)
+                if value is not None:
+                    try:
+                        if not validator(value):
+                            errors.append(f"Invalid query parameter '{param_name}': {value}")
+                    except Exception as e:
+                        errors.append(f"Validation error for parameter '{param_name}': {str(e)}")
+            
+            if errors:
+                raise APIValidationError("; ".join(errors), status_code=400)
+            
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+def require_auth(auth_validator: Optional[Callable] = None) -> Callable:
+    """
+    Decorator to require authentication
+    
+    Usage:
+        @require_auth()
+        @app.route('/protected')
+        def protected_endpoint():
+            pass
+    """
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            auth_header = request.headers.get('Authorization')
+            
+            if not auth_header:
+                raise APIValidationError("Authorization header required", status_code=401)
+            
+            if auth_validator:
+                try:
+                    if not auth_validator(auth_header):
+                        raise APIValidationError("Invalid authentication", status_code=401)
+                except Exception as e:
+                    raise APIValidationError(f"Authentication error: {str(e)}", status_code=401)
+            
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+def validate_content_type(*allowed_types: str) -> Callable:
+    """
+    Decorator to validate content type
+    
+    Usage:
+        @validate_content_type('application/json', 'application/xml')
+        @app.route('/upload', methods=['POST'])
+        def upload_data():
+            pass
+    """
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            content_type = request.content_type
+            
+            if content_type not in allowed_types:
+                raise APIValidationError(
+                    f"Unsupported content type '{content_type}'. "
+                    f"Allowed types: {', '.join(allowed_types)}",
+                    status_code=415
+                )
+            
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+def parameter_validator(
+    required_params: Optional[List[str]] = None,
+    optional_params: Optional[List[str]] = None,
+    param_types: Optional[Dict[str, type]] = None
+) -> Callable:
+    """
+    General purpose parameter validator
+    
+    Usage:
+        @parameter_validator(
+            required_params=['name', 'email'],
+            optional_params=['age'],
+            param_types={'age': int}
+        )
+        @app.route('/users', methods=['POST'])
+        def create_user():
+            pass
+    """
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            if request.is_json:
+                data = request.get_json() or {}
+            else:
+                data = request.form.to_dict()
+            
+            errors = []
+            
+            # Check required parameters
+            if required_params:
+                for param in required_params:
+                    if param not in data:
+                        errors.append(f"Required parameter '{param}' is missing")
+            
+            # Check parameter types
+            if param_types:
+                for param, expected_type in param_types.items():
+                    if param in data:
+                        try:
+                            if expected_type == int:
+                                data[param] = int(data[param])
+                            elif expected_type == float:
+                                data[param] = float(data[param])
+                            elif expected_type == bool:
+                                data[param] = str(data[param]).lower() in ['true', '1', 'yes']
+                        except (ValueError, TypeError):
+                            errors.append(
+                                f"Parameter '{param}' must be of type {expected_type.__name__}"
+                            )
+            
+            if errors:
+                raise APIValidationError("; ".join(errors), status_code=400)
+            
+            return func(*args, **kwargs)
+        return wrapper
+    return decorator
+
+
+# Global API validation middleware instance
+_api_middleware = APIValidationMiddleware()
+
+
+def get_api_middleware() -> APIValidationMiddleware:
+    """Get global API validation middleware"""
+    return _api_middleware

@@ -1,3 +1,12 @@
+
+from src.infrastructure.utils.common_imports import (
+    datetime,
+    json,
+    logging,
+    re,
+    sys,
+    traceback
+)
 """
 Task Execution Script for the AI Agent System
 
@@ -6,10 +15,10 @@ Provides CLI interface for task execution with context injection and validation.
 """
 
 import argparse
-import json
-import logging
-import sys
-from datetime import datetime
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
 from typing import Any, Dict, Optional
 
 try:
@@ -56,7 +65,7 @@ def _sanitize_filename(filename: str) -> str:
         Sanitized filename safe for filesystem operations
     """
     try:
-        import re
+#         import re  # Consolidated to common_imports
         # Remove characters not allowed in filenames: < > : " / \ | ? *
         sanitized = re.sub(r'[<>:"/\\|?*]', "_", filename)
     except ImportError:
@@ -328,7 +337,7 @@ def main():
     except Exception as e:
         print(f"Error executing task: {e}")
         if args.verbose:
-            import traceback
+#             import traceback  # Consolidated to common_imports
 
             traceback.print_exc()
         sys.exit(1)

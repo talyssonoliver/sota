@@ -80,7 +80,7 @@ def main():
 
     # 2. Run with parallel execution (if available)
     success, duration = run_command(
-        'pytest tests/ -m "unit" -n auto --tb=short',
+        'pytest tests/ -m "unit" -n 4 --tb=short',
         "Phase 2: Parallel Unit Tests"
     )
     results["parallel_tests"] = {"success": success, "duration": duration}
@@ -134,7 +134,7 @@ def main():
 
     print("\n🎯 Quick Commands for Development:")
     print("# Fast development tests (< 30s)")
-    print('pytest tests/ -m "unit" -n auto')
+    print('pytest tests/ -m "unit" -n 4')
     print()
     print("# Full test suite with coverage")
     print('pytest tests/ --cov=. --cov-report=html')

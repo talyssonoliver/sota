@@ -1,17 +1,23 @@
+
+
 """
 Management Dashboard for Engineering Teams
 Provides comprehensive dashboards for engineering teams and tech leads to monitor
 code quality, technical debt, and software engineering metrics.
 """
 
-import json
 import sqlite3
-from dataclasses import dataclass
-from datetime import datetime
-from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional
-
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Enum,
+    List,
+    Optional,
+    Path,
+    dataclass,
+    datetime,
+    json
+)
 from ..core.nfr_validator import NFRValidator
 from ..core.quality_gates import QualityGatesEngine
 from ..core.validator import Validator

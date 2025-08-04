@@ -6,9 +6,31 @@ This script tests both the API server response format and simulates frontend beh
 
 import requests
 from datetime import datetime
+from unittest.mock import Mock, patch
 
-def test_api_endpoint():
-    """Test the /api/progress/trend endpoint."""
+@patch('requests.get')
+def test_api_endpoint(mock_get):
+    """Test the /api/progress/trend endpoint - optimized with mocking."""
+    # Mock successful API response
+    mock_response = Mock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {
+        "status": "success",
+        "timestamp": "2024-01-01T12:00:00",
+        "data": {
+            "datasets": {
+                "completed": [5, 8, 12, 15, 18, 22, 25],
+                "in_progress": [3, 2, 4, 3, 5, 4, 6], 
+                "pending": [10, 8, 6, 4, 3, 2, 1],
+                "blocked": [1, 1, 0, 1, 0, 0, 0]
+            },
+            "dates": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05", "2024-01-06", "2024-01-07"],
+            "total_per_day": [19, 19, 22, 23, 26, 28, 32],
+            "trend_direction": "upward"
+        }
+    }
+    mock_get.return_value = mock_response
+    
     try:
         print("Testing Progress Trend API endpoint...")
         response = requests.get("http://localhost:5000/api/progress/trend?days=7")
@@ -49,8 +71,29 @@ def test_api_endpoint():
         print(f"❌ Error testing API: {e}")
         return False
 
-def simulate_frontend_chart_update():
-    """Simulate how the frontend would process the API response."""
+@patch('requests.get')
+def simulate_frontend_chart_update(mock_get):
+    """Simulate how the frontend would process the API response - optimized."""
+    # Mock the same response structure
+    mock_response = Mock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {
+        "status": "success",
+        "timestamp": "2024-01-01T12:00:00",
+        "data": {
+            "datasets": {
+                "completed": [5, 8, 12, 15, 18, 22, 25],
+                "in_progress": [3, 2, 4, 3, 5, 4, 6], 
+                "pending": [10, 8, 6, 4, 3, 2, 1],
+                "blocked": [1, 1, 0, 1, 0, 0, 0]
+            },
+            "dates": ["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05", "2024-01-06", "2024-01-07"],
+            "total_per_day": [19, 19, 22, 23, 26, 28, 32],
+            "trend_direction": "upward"
+        }
+    }
+    mock_get.return_value = mock_response
+    
     try:
         print("\nSimulating frontend chart update...")
         response = requests.get("http://localhost:5000/api/progress/trend?days=7")

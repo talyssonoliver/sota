@@ -1,13 +1,15 @@
+
+from src.infrastructure.utils.common_imports import logging, yaml
 """Agent factory for creating different types of agents."""
 
-import logging
+# import logging  # Consolidated to common_imports
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 if TYPE_CHECKING:
     from src.infrastructure.memory import MemoryEngine
 
 try:
-    import yaml
+    from src.infrastructure.utils.common_imports import yaml
 except ImportError:
     # Fallback YAML implementation
     class yaml:

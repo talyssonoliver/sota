@@ -1,23 +1,26 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    os,
+    re,
+    sys,
+    tempfile
+)
 """
 Demo script for Step 4.5 — Code Extraction functionality
 """
 
-import os
+# import os  # Consolidated to common_imports
 import shutil
-import sys
-import tempfile
-from pathlib import Path
+# import sys  # Consolidated to common_imports
+# import tempfile  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
-# Add project root to path
+from src.core.workflows.extract_code import CodeExtractor
+
+# Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-# Secure imports
-try:
-    from src.core.workflows.extract_code import CodeExtractor
-except ImportError as e:
-    print(f"CRITICAL: Cannot import CodeExtractor: {e}")
-    sys.exit(1)
 
 
 def demo_code_extraction():
@@ -88,6 +91,7 @@ CREATE INDEX idx_orders_status ON orders(status);
 ```python
 # filename: utils/validation.py
 def validate_email(email: str) -> bool:
+#     import re  # Consolidated to common_imports
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'
     return bool(re.match(pattern, email))
 ```
@@ -112,7 +116,8 @@ def validate_email(email: str) -> bool:
         print("✅ Extraction completed successfully!")
         print(f"   📊 Total code blocks: {result.total_code_blocks}")
         print(f"   📂 Extracted files: {len(result.extracted_files)}")
-        print(f"   🔤 Languages detected: {', '.join(result.languages_detected)}")
+        print(
+            f"   🔤 Languages detected: {', '.join(result.languages_detected)}")
         print()
 
         # Show extracted files

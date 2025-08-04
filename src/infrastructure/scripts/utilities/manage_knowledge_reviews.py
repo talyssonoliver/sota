@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+
+from src.infrastructure.utils.common_imports import datetime, os, re
 """
 Knowledge Summary Review Manager
 
@@ -8,7 +10,7 @@ It can list summaries that need review, show summary details, and mark summaries
 
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
@@ -17,8 +19,8 @@ except ImportError:
     pass
 import argparse
 import csv
-import os
-import re
+# import os  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
 
 CONTEXT_STORE_DIR = "context-store"
 REVIEWS_LOG_FILE = "reviews/knowledge_review_log.csv"

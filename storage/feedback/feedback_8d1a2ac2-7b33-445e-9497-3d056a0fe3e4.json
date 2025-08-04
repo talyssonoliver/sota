@@ -1,0 +1,24 @@
+{
+  "task_id": "BE-07",
+  "reviewer": "human.reviewer",
+  "approval_decision": true,
+  "feedback_categories": {
+    "code_quality": {
+      "score": 8,
+      "comments": "Good structure"
+    },
+    "security": {
+      "score": 9,
+      "comments": "No issues"
+    }
+  },
+  "comments": [
+    "Overall excellent work"
+  ],
+  "suggested_improvements": [
+    "Add integration tests"
+  ],
+  "risk_level": "medium",
+  "timestamp": "2025-07-27T07:58:15.864121",
+  "feedback_id": "8d1a2ac2-7b33-445e-9497-3d056a0fe3e4"
+}

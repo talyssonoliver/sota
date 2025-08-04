@@ -1,12 +1,19 @@
+
+from src.infrastructure.utils.common_imports import (
+    dataclass,
+    datetime,
+    logging,
+    timedelta
+)
 """
 Memory Engine Caching Module
 
 Provides caching functionality for the memory engine.
 """
 
-import logging
-from dataclasses import dataclass
-from datetime import datetime, timedelta
+# import logging  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from datetime import datetime, timedelta  # Consolidated to common_imports
 from typing import Any, Dict, Optional
 
 logger = logging.getLogger(__name__)

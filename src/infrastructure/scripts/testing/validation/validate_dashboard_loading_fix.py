@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import datetime, json
 """
 Complete Dashboard Loading Fix Validation
 Tests all aspects of the dashboard loading and data display.
@@ -6,11 +8,11 @@ Tests all aspects of the dashboard loading and data display.
 
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    import json
+    from src.infrastructure.utils.common_imports import json
 except ImportError:
     pass
     pass

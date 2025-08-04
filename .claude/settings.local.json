@@ -53,8 +53,38 @@
       "Bash(TESTING=1 CLAUDE_ENABLE_EMBEDDINGS=true CLAUDE_ENABLE_CHAT=true python3 -c \"\nprint(''🧪 Running Claude integration test in TESTING mode...'')\n\ntry:\n    # Test feature flags\n    from src.infrastructure.integrations.claude.feature_flags import should_use_claude_embeddings, should_use_claude_chat\n    print(f''✅ Feature flags: embeddings={should_use_claude_embeddings()}, chat={should_use_claude_chat()}'')\n    \n    # Test mock embeddings - should work without API key in testing mode\n    from tests.mock_claude_embeddings import MockClaudeEmbeddings\n    embeddings = MockClaudeEmbeddings()\n    test_docs = [''Hello world'', ''Claude is great'']\n    embedded_docs = embeddings.embed_documents(test_docs)\n    print(f''✅ Mock embeddings: {len(embedded_docs)} docs embedded, dimensions={len(embedded_docs[0])}'')\n    \n    # Test mock chat model\n    from tests.mock_claude_chat import MockClaudeChatModel\n    from langchain.schema import HumanMessage\n    chat_model = MockClaudeChatModel()\n    messages = [HumanMessage(content=''Hello Claude'')]\n    response = chat_model._generate(messages)\n    print(f''✅ Mock chat model: response generated'')\n    \n    print(''\\n🎉 Claude integration mocks are working correctly! Ready for testing.'')\n    \nexcept Exception as e:\n    print(f''❌ Test failed: {e}'')\n    import traceback\n    traceback.print_exc()\n\")",
       "WebFetch(domain:medium.com)",
       "WebFetch(domain:docs.anthropic.com)",
-      "Bash(ruff check:*)"
+      "Bash(ruff check:*)",
+      "Bash(diff:*)",
+      "Bash(pytest:*)",
+      "Bash(timeout 120 pytest tests/ --tb=no)",
+      "Bash(bandit:*)",
+      "Bash(ln:*)",
+      "WebFetch(domain:testdriven.io)",
+      "mcp__filesystem__list_directory",
+      "Bash(cat:*)",
+      "mcp__filesystem__read_multiple_files",
+      "mcp__filesystem__directory_tree",
+      "mcp__filesystem__read_multiple_files",
+      "Bash(touch:*)",
+      "Bash(for file in src/infrastructure/memory/storage.py src/infrastructure/tools/validation/ai/pattern_detector.py src/infrastructure/tools/validation/persistence/validation_history.py src/platform/tools/memory/caching.py src/platform/tools/memory/storage.py src/infrastructure/scripts/generation/generate_agent.py)",
+      "Bash(do python3 -m py_compile \"$file\")",
+      "Bash(echo \"✓ $file compiles successfully\")",
+      "Bash(done)",
+      "Bash(find /mnt/c/taly/ai-system/src -name \"*.py\" -exec grep -l \"md5\\|sha1\\|eval\\|exec\\|pickle\\.load\\|yaml\\.load\" {} ;)",
+      "Bash(python3 -c \"from src.core.workflows.graph.notifications import NotificationLevel; print(''✓ Graph notifications imports working'')\")",
+      "Bash(timeout:*)",
+      "Bash(sed:*)",
+      "Bash(make test-quick:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run docusaurus:*)",
+      "Bash(npx @docusaurus/mdx-loader:*)",
+      "mcp__filesystem__read_text_file",
+      "Bash(curl:*)"
     ],
     "deny": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "filesystem",
+    "github"
+  ]
 }

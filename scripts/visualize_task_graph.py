@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import yaml
 
-from orchestration.states import TaskStatus
+from src.core.workflows.states import TaskStatus
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

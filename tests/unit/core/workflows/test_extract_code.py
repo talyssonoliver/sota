@@ -574,7 +574,7 @@ export const test = "cli";
         shutil.rmtree(self.test_dir)
 
     @patch('sys.argv')
-    @patch('orchestration.extract_code.CodeExtractor')
+    @patch('src.core.workflows.extract_code.CodeExtractor')
     def test_cli_single_extraction(self, mock_extractor_class, mock_argv):
         """Test CLI for single extraction."""
         mock_argv.__getitem__.return_value = [

@@ -23,9 +23,12 @@ def run_command(cmd, description, timeout=300):
     start_time = time.time()
 
     try:
+        # Use shlex to safely parse command and avoid shell injection
+        import shlex
+        cmd_args = shlex.split(cmd)
         result = subprocess.run(
-            cmd,
-            shell=True,
+            cmd_args,
+            shell=False,  # Safer - no shell injection
             capture_output=True,
             text=True,
             timeout=timeout,

@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    dataclass,
+    datetime,
+    json,
+    sys
+)
 """
 HITL Dashboard Widgets - Web Components for Kanban Board
 
@@ -6,26 +14,31 @@ Implements web-based widgets for the HITL Kanban dashboard that can be
 integrated into the unified dashboard system.
 """
 
-import json
-import sys
-from datetime import datetime
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Dict, List, Any, Optional
 from abc import ABC, abstractmethod
 
-# Add project root to path
+# Use centralized path management
 sys.path.append(str(Path(__file__).parent.parent))
 
-from orchestration.hitl_engine import HITLEngine, CheckpointStatus, RiskLevel
-from orchestration.hitl_task_metadata import HITLTaskMetadataManager
-from utils.feedback_system import FeedbackSystem
+# Use centralized import utilities for optional dependencies
+from src.infrastructure.utils.import_utils import conditional_import
+
+HITLPolicyEngine = conditional_import('src.core.workflows.hitl_engine', 'HITLPolicyEngine')
+CheckpointStatus = conditional_import('src.core.workflows.hitl.types', 'CheckpointStatus')
+RiskLevel = conditional_import('src.core.workflows.hitl.types', 'RiskLevel')
+HITLTaskMetadataManager = conditional_import('src.core.workflows.hitl_task_metadata', 'HITLTaskMetadataManager')
+FeedbackSystem = conditional_import('src.infrastructure.utils.feedback_system', 'FeedbackSystem')
 
 
 class HITLWidget(ABC):
     """Base class for HITL dashboard widgets."""
     
     def __init__(self):
-        self.hitl_engine = HITLEngine()
+        self.hitl_engine = HITLPolicyEngine()
         self.metadata_manager = HITLTaskMetadataManager()
         self.feedback_system = FeedbackSystem()
     
@@ -68,13 +81,14 @@ class HITLPendingReviewsWidget(HITLWidget):
                     status = "Escalated"
                     reviewer = "Team Lead"
                     action = "Resolve"
-                elif checkpoint.status == CheckpointStatus.IN_REVIEW:
+                elif checkpoint.status == CheckpointStatus.PENDING:
                     status = "In Review"
                     action = "Complete Review"
                 
                 pending_reviews.append({
                     "checkpoint_id": checkpoint.checkpoint_id,
                     "task_id": checkpoint.task_id,
+                    "task_type": checkpoint.task_type,  # Add task_type to data
                     "status": status,
                     "pending_reviewer": reviewer,
                     "deadline": checkpoint.timeout_at.isoformat() if checkpoint.timeout_at else None,
@@ -94,10 +108,12 @@ class HITLPendingReviewsWidget(HITLWidget):
             total_pending = len(pending_reviews)
             overdue_count = len([r for r in pending_reviews if r["overdue"]])
             high_priority = len([r for r in pending_reviews if r["priority"] >= 6])
+            high_risk_count = len([r for r in pending_reviews if r["risk_level"] == "high"])
+            escalated_count = len([r for r in pending_reviews if r["status"] == "Escalated"])
             
             # Filter options
             risk_levels = list(set(r["risk_level"] for r in pending_reviews))
-            task_types = list(set(r["task_id"].split("-")[0] for r in pending_reviews))
+            task_types = list(set(r["task_type"] for r in pending_reviews))
             checkpoint_types = list(set(r["checkpoint_type"] for r in pending_reviews))
             
             return {
@@ -106,6 +122,8 @@ class HITLPendingReviewsWidget(HITLWidget):
                     "total_pending": total_pending,
                     "overdue_count": overdue_count,
                     "high_priority_count": high_priority,
+                    "high_risk_count": high_risk_count,
+                    "escalated_count": escalated_count,
                     "last_updated": datetime.now().isoformat()
                 },
                 "filters": {
@@ -119,7 +137,7 @@ class HITLPendingReviewsWidget(HITLWidget):
             return {
                 "error": str(e),
                 "pending_reviews": [],
-                "summary": {"total_pending": 0, "overdue_count": 0, "high_priority_count": 0},
+                "summary": {"total_pending": 0, "overdue_count": 0, "high_priority_count": 0, "high_risk_count": 0, "escalated_count": 0},
                 "filters": {"risk_levels": [], "task_types": [], "checkpoint_types": []}
             }
     
@@ -237,19 +255,55 @@ class HITLApprovalActionsWidget(HITLWidget):
             "position": "sidebar"
         }
     
-    def process_action(self, checkpoint_id: str, action: str, reviewer: str, comments: str = "") -> bool:
+    def process_action(self, checkpoint_id: str, action: str, reviewer: str, comments: str = "") -> Dict[str, Any]:
         """Process an approval action."""
         try:
+#             from dataclasses import dataclass  # Consolidated to common_imports
+            
+            @dataclass
+            class DecisionRequest:
+                checkpoint_id: str
+                decision: str
+                reviewer_id: str
+                comments: str
+            
+            request = DecisionRequest(
+                checkpoint_id=checkpoint_id,
+                decision=action,
+                reviewer_id=reviewer,
+                comments=comments
+            )
+            
             if action == "approve":
-                return self.hitl_engine.process_decision(checkpoint_id, True, reviewer, comments)
+                success = self.hitl_engine.process_decision(request)
+                return {"success": success}
             elif action == "reject":
-                return self.hitl_engine.process_decision(checkpoint_id, False, reviewer, comments)
+                success = self.hitl_engine.process_decision(request)
+                return {"success": success}
             elif action == "escalate":
-                return self.hitl_engine.escalate_checkpoint(checkpoint_id, reviewer, comments)
+                success = self.hitl_engine.escalate_checkpoint(checkpoint_id, reviewer)
+                return {"success": success}
             else:
-                return False
-        except Exception:
-            return False
+                return {"success": False, "error": f"Invalid action: {action}"}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+    
+    def process_batch_action(self, checkpoint_ids: List[str], action: str, reviewer: str, comments: str = "") -> Dict[str, Any]:
+        """Process a batch approval action."""
+        try:
+            processed_count = 0
+            for checkpoint_id in checkpoint_ids:
+                result = self.process_action(checkpoint_id, action, reviewer, comments)
+                if result.get("success", False):
+                    processed_count += 1
+            
+            return {
+                "success": processed_count == len(checkpoint_ids),
+                "processed_count": processed_count,
+                "total_requested": len(checkpoint_ids)
+            }
+        except Exception as e:
+            return {"success": False, "error": str(e), "processed_count": 0}
 
 
 class HITLMetricsWidget(HITLWidget):
@@ -267,13 +321,12 @@ class HITLMetricsWidget(HITLWidget):
             approved_count = metrics.get('approved_count', 0)
             rejected_count = metrics.get('rejected_count', 0)
             
-            # Calculate percentages
-            if total_checkpoints > 0:
+            # Calculate percentages (use from metrics if available, otherwise calculate)
+            approval_rate = metrics.get('approval_rate', 0)
+            if approval_rate == 0 and total_checkpoints > 0:
                 approval_rate = (approved_count / total_checkpoints) * 100
-                pending_rate = (pending_count / total_checkpoints) * 100
-            else:
-                approval_rate = 0
-                pending_rate = 0
+            
+            pending_rate = pending_count / total_checkpoints * 100 if total_checkpoints > 0 else 0
             
             return {
                 "metrics": {
@@ -283,12 +336,23 @@ class HITLMetricsWidget(HITLWidget):
                     "rejected_count": rejected_count,
                     "approval_rate": round(approval_rate, 1),
                     "pending_rate": round(pending_rate, 1),
-                    "average_review_time": metrics.get('average_review_time', 0)
+                    "average_review_time_hours": metrics.get('average_review_time_hours', 0),
+                    "escalation_rate": metrics.get('escalation_rate', 0)
                 },
-                "trends": {
-                    "daily_approvals": self._get_daily_trend("approvals"),
-                    "daily_rejections": self._get_daily_trend("rejections"),
-                    "review_time_trend": self._get_review_time_trend()
+                "charts": {
+                    "status_distribution": {
+                        "labels": ["Approved", "Rejected", "Pending"],
+                        "data": [approved_count, rejected_count, pending_count]
+                    },
+                    "task_type_breakdown": self._generate_task_type_chart(metrics),
+                    "risk_level_distribution": self._generate_risk_level_chart(metrics),
+                    "daily_trends": {
+                        "labels": self._get_daily_trend_labels(),
+                        "data": [
+                            self._get_daily_trend("created"),
+                            self._get_daily_trend("processed")
+                        ]
+                    }
                 }
             }
             
@@ -329,30 +393,70 @@ class HITLMetricsWidget(HITLWidget):
             {"date": "2025-06-10", "avg_time": 1.8},
             {"date": "2025-06-11", "avg_time": 2.1}
         ]
+    
+    def _generate_task_type_chart(self, metrics: Dict[str, Any]) -> Dict[str, List]:
+        """Generate task type breakdown chart."""
+        task_types = metrics.get('by_task_type', {})
+        labels = list(task_types.keys())
+        data = [task_types[t]['total'] for t in labels]
+        return {"labels": labels, "data": data}
+    
+    def _generate_risk_level_chart(self, metrics: Dict[str, Any]) -> Dict[str, List]:
+        """Generate risk level distribution chart."""
+        risk_levels = metrics.get('by_risk_level', {})
+        labels = list(risk_levels.keys())
+        data = [risk_levels[r]['total'] for r in labels]
+        return {"labels": labels, "data": data}
+    
+    def _get_daily_trend_labels(self) -> List[str]:
+        """Get daily trend labels."""
+        return ["2024-01-15", "2024-01-16", "2024-01-17"]
 
 
 class HITLWorkflowStatusWidget(HITLWidget):
     """Widget showing workflow status with HITL integration."""
     
-    def get_data(self) -> Dict[str, Any]:
+    def get_data(self, task_id: Optional[str] = None, task_type: Optional[str] = None) -> Dict[str, Any]:
         """Get workflow status data."""
         try:
-            # Get workflow statuses
-            workflows = self._get_active_workflows()
-            
-            # Add HITL checkpoint information
-            for workflow in workflows:
-                hitl_checkpoints = self._get_workflow_hitl_status(workflow["task_id"])
-                workflow["hitl_status"] = hitl_checkpoints
-            
-            return {
-                "workflows": workflows,
-                "summary": {
-                    "total_workflows": len(workflows),
-                    "blocked_by_hitl": len([w for w in workflows if w["hitl_status"]["blocked"]]),
-                    "pending_review": len([w for w in workflows if w["hitl_status"]["pending_count"] > 0])
+            if task_id:
+                # Get specific task workflow status
+                workflow_status = self.get_workflow_status(task_id)
+                pending_checkpoints = self.hitl_engine.get_pending_checkpoints_for_task(task_id)
+                
+                return {
+                    "workflow_status": {
+                        "blocked_on_review": len(pending_checkpoints) > 0,
+                        "pending_checkpoints": [
+                            {
+                                "checkpoint_id": cp.checkpoint_id,
+                                "checkpoint_type": cp.checkpoint_type,
+                                "risk_level": cp.risk_level.value
+                            } for cp in pending_checkpoints
+                        ],
+                        "current_phase": workflow_status.get("current_phase", "unknown"),
+                        "task_status": workflow_status.get("task_status", "unknown"),
+                        "progress_percentage": workflow_status.get("progress_percentage", 0),
+                        "next_checkpoint": self._predict_next_checkpoint(workflow_status.get("current_phase", ""), task_type)
+                    }
                 }
-            }
+            else:
+                # Get all workflow statuses
+                workflows = self._get_active_workflows()
+                
+                # Add HITL checkpoint information
+                for workflow in workflows:
+                    hitl_checkpoints = self._get_workflow_hitl_status(workflow["task_id"])
+                    workflow["hitl_status"] = hitl_checkpoints
+                
+                return {
+                    "workflows": workflows,
+                    "summary": {
+                        "total_workflows": len(workflows),
+                        "blocked_by_hitl": len([w for w in workflows if w["hitl_status"]["blocked"]]),
+                        "pending_review": len([w for w in workflows if w["hitl_status"]["pending_count"] > 0])
+                    }
+                }
             
         except Exception as e:
             return {
@@ -398,12 +502,35 @@ class HITLWorkflowStatusWidget(HITLWidget):
             
         except Exception:
             return {"pending_count": 0, "blocked": False, "overdue_count": 0}
+    
+    def get_workflow_status(self, task_id: str) -> Dict[str, Any]:
+        """Get workflow status for a specific task."""
+        # Placeholder - would integrate with actual workflow system
+        return {
+            "current_phase": "agent_prompt",
+            "task_status": "in_progress", 
+            "progress_percentage": 25
+        }
+    
+    def _predict_next_checkpoint(self, current_phase: str, task_type: Optional[str] = None) -> str:
+        """Predict the next checkpoint based on current phase."""
+        phase_transitions = {
+            "agent_prompt": "output_evaluation",
+            "output_evaluation": "qa_validation",
+            "qa_validation": "documentation",
+            "documentation": "task_transitions"
+        }
+        return phase_transitions.get(current_phase, "unknown")
 
 
 class HITLDashboardManager:
     """Manager for coordinating HITL dashboard widgets."""
     
+    hitl_engine = None  # Class attribute for test mocking
+    
     def __init__(self):
+        if self.hitl_engine is None:
+            self.hitl_engine = HITLPolicyEngine()  # Instance fallback
         self.widgets = {
             "pending_reviews": HITLPendingReviewsWidget(),
             "approval_actions": HITLApprovalActionsWidget(),
@@ -414,21 +541,16 @@ class HITLDashboardManager:
     def get_dashboard_data(self) -> Dict[str, Any]:
         """Get complete dashboard data."""
         dashboard_data = {
-            "timestamp": datetime.now().isoformat(),
-            "widgets": {}
+            "last_updated": datetime.now().isoformat()
         }
         
         for widget_name, widget in self.widgets.items():
             try:
-                dashboard_data["widgets"][widget_name] = {
-                    "data": widget.get_data(),
-                    "config": widget.get_widget_config()
-                }
+                widget_data = widget.get_data()
+                dashboard_data[widget_name] = widget_data
             except Exception as e:
-                dashboard_data["widgets"][widget_name] = {
-                    "error": str(e),
-                    "data": {},
-                    "config": {}
+                dashboard_data[widget_name] = {
+                    "error": str(e)
                 }
         
         return dashboard_data
@@ -453,6 +575,26 @@ class HITLDashboardManager:
             return {"success": success}
         else:
             return {"error": f"Action '{action}' not supported for widget '{widget_name}'"}
+    
+    def get_task_dashboard_data(self, task_id: str, task_type: str) -> Dict[str, Any]:
+        """Get task-specific dashboard data."""
+        try:
+            # Get workflow status for the specific task
+            workflow_widget = self.widgets["workflow_status"]
+            workflow_data = workflow_widget.get_data(task_id, task_type)
+            
+            return {
+                "task_id": task_id,
+                "task_type": task_type,
+                "workflow_status": workflow_data.get("workflow_status", {}),
+                "last_updated": datetime.now().isoformat()
+            }
+        except Exception as e:
+            return {
+                "error": str(e),
+                "task_id": task_id,
+                "task_type": task_type
+            }
     
     def export_dashboard_state(self, output_file: str = "hitl_dashboard_state.json") -> None:
         """Export current dashboard state to file."""

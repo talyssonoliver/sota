@@ -510,7 +510,7 @@ class TestTaskSummarizer:
 class TestCLIInterface:
     """Test cases for CLI interface."""
 
-    @patch('orchestration.summarise_task.TaskSummarizer')
+    @patch('src.core.workflows.summarise_task.TaskSummarizer')
     @patch('sys.argv', ['summarise_task.py', 'CLI-01'])
     def test_cli_basic_usage(self, mock_summarizer_class):
         """Test basic CLI usage."""
@@ -534,7 +534,7 @@ class TestCLIInterface:
         mock_summarizer_class.assert_called_once_with('CLI-01')
         mock_summarizer.run_full_analysis.assert_called_once()
 
-    @patch('orchestration.summarise_task.TaskSummarizer')
+    @patch('src.core.workflows.summarise_task.TaskSummarizer')
     @patch('sys.argv', ['summarise_task.py',
            '--task-id', 'CLI-02', '--verbose'])
     def test_cli_with_options(self, mock_summarizer_class):

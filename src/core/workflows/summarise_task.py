@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
+
 """
-Step 4.6 — Agent Summarisation
+Agent Summarisation
 
 Automated task completion summary generation that analyzes agent outputs,
 extracts key artifacts, incorporates QA results, and generates structured
@@ -18,14 +19,18 @@ Usage:
     python orchestration/summarise_task.py --task-id BE-07 --output-dir custom_docs
 """
 
-import json
-import logging
-import sys
-from dataclasses import dataclass
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
-
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    dataclass,
+    datetime,
+    json,
+    logging,
+    sys
+)
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
@@ -435,26 +440,26 @@ class TaskSummarizer:
     def _determine_language(self, file_path: Path) -> Optional[str]:
         """Determine programming language from file extension."""
         ext_to_lang = {
-            ".py": "python",
-            ".js": "javascript",
-            ".ts": "typescript",
-            ".java": "java",
-            ".cpp": "cpp",
-            ".c": "c",
-            ".go": "go",
-            ".rs": "rust",
-            ".php": "php",
-            ".rb": "ruby",
-            ".swift": "swift",
-            ".kt": "kotlin",
-            ".sql": "sql",
-            ".html": "html",
-            ".css": "css",
-            ".scss": "scss",
-            ".yaml": "yaml",
-            ".yml": "yaml",
-            ".json": "json",
-            ".xml": "xml",
+            ".py": "Python",
+            ".js": "JavaScript",
+            ".ts": "TypeScript",
+            ".java": "Java",
+            ".cpp": "C++",
+            ".c": "C",
+            ".go": "Go",
+            ".rs": "Rust",
+            ".php": "PHP",
+            ".rb": "Ruby",
+            ".swift": "Swift",
+            ".kt": "Kotlin",
+            ".sql": "SQL",
+            ".html": "HTML",
+            ".css": "CSS",
+            ".scss": "SCSS",
+            ".yaml": "YAML",
+            ".yml": "YAML",
+            ".json": "JSON",
+            ".xml": "XML",
         }
         return ext_to_lang.get(file_path.suffix.lower())
 
@@ -682,7 +687,7 @@ class TaskSummarizer:
             for file_path in code_dir.rglob("*"):
                 if file_path.is_file():
                     # Simple heuristic: include all code files
-                    # In a real implementation, this would be more
+                    # TODO: Must implement, this would be more
                     # sophisticated
                     generated_files.append(str(file_path.relative_to(code_dir)))
             # For testing purposes, return consistent results
@@ -701,7 +706,6 @@ class TaskSummarizer:
 def main():
     """CLI interface for task summarization."""
     import argparse
-    import sys
 
     parser = argparse.ArgumentParser(
         description="Generate automated task completion summaries",
@@ -738,8 +742,6 @@ Examples:
 
     # Configure logging
     if args.verbose:
-        import logging
-
         logging.basicConfig(level=logging.INFO)
 
     try:

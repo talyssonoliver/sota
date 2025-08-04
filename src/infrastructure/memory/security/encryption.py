@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    datetime,
+    hashlib,
+    logging,
+    os,
+    re
+)
 """
 Memory Engine Security System
 
@@ -17,19 +25,19 @@ Part of the unified memory architecture eliminating fragmentation
 across tools/memory/, memory-bank/, and runtime/ locations.
 """
 
-import hashlib
-import logging
-import os
-import re
+# import hashlib  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
 import secrets
 import threading
-from datetime import datetime
+# from datetime import datetime  # Consolidated to common_imports
 from typing import Any, Dict, List, Optional, Set
 
 # Import configuration with proper error handling
 # Note: MemoryEngineConfig import removed as it's not used in this module
 
-from ..config.exceptions import EncryptionError
+from ..exceptions import MemoryEngineEncryptionError as EncryptionError
 
 logger = logging.getLogger(__name__)
 

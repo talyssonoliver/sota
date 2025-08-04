@@ -1,3 +1,12 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    datetime,
+    timedelta
+)
 """
 HITL Engine Models
 
@@ -5,8 +14,8 @@ Data classes and model definitions for the HITL system.
 """
 
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional
+# from datetime import datetime, timedelta  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 from .types import CheckpointStatus, RiskLevel
 
@@ -36,10 +45,22 @@ class HITLCheckpoint:
     description: str = ""
     mitigation_suggestions: List[str] = field(default_factory=list)
     timeout_action: Optional[str] = None
+    _timeout_hours: int = field(default=24, init=False)
 
     def __post_init__(self):
         if self.timeout_at is None:
             self.timeout_at = self.created_at + timedelta(hours=24)
+            
+    def __setattr__(self, name, value):
+        """Override setattr to update timeout_at when created_at changes"""
+        super().__setattr__(name, value)
+        
+        # If created_at is being changed and timeout_at was auto-calculated, update it
+        if (name == 'created_at' and 
+            hasattr(self, 'timeout_at') and 
+            self.timeout_at is not None):
+            # Recalculate timeout_at based on new created_at
+            super().__setattr__('timeout_at', value + timedelta(hours=self._timeout_hours))
 
     @property
     def id(self) -> str:

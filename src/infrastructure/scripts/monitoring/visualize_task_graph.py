@@ -1,14 +1,21 @@
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    os,
+    sys,
+    yaml
+)
 """
 Task Graph Visualization
 Generates visual representation of tasks and their dependencies.
 """
 
-import os
-import sys
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 from collections import defaultdict
-from pathlib import Path
+# from pathlib import Path  # Consolidated to common_imports
 
-import yaml
+# import yaml  # Consolidated to common_imports
 
 try:
     import argparse

@@ -1,3 +1,11 @@
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    logging,
+    yaml
+)
 """Generate briefing workflow.
 
 Provides comprehensive briefing generation capabilities for multi-agent workflows
@@ -5,10 +13,10 @@ including daily briefings, weekly summaries, performance alerts, and various
 output formats (markdown, JSON, email, Slack).
 """
 
-import json
-import logging
-from datetime import datetime
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Any, Dict, List, Optional, Protocol
 
 # Import or create CompletionMetricsCalculator for test compatibility
@@ -236,7 +244,7 @@ class BriefingGenerator:
 
     def _get_day_briefing_path(self, day):
         """Get the file path for a day's briefing."""
-        from pathlib import Path
+#         from pathlib import Path  # Consolidated to common_imports
 
         return Path(f"docs/sprint/briefings/day{day}-morning-briefing.md")
 
@@ -636,7 +644,7 @@ Completion Rate: {data['metrics']['completion_rate']}%
 
         try:
             # Import yaml only when needed
-            import yaml
+#             import yaml  # Consolidated to common_imports
 
             with open(path, "r") as f:
                 template = yaml.safe_load(f)

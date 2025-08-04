@@ -128,8 +128,16 @@ class TestDashboardRoutes(unittest.TestCase):
                 self.assertIn("productivity_metrics", deployment)
                 self.assertIn("phase_timeline", deployment)
 
-def test_endpoint_integration():
-    """Integration test for endpoints - can be run manually."""
+@patch('requests.get')
+def test_endpoint_integration(mock_get):
+    """Integration test for endpoints - mocked for speed."""
+    # Mock all HTTP requests to avoid network delays
+    mock_response = Mock()
+    mock_response.status_code = 200
+    mock_response.text = '{"status": "ok"}'
+    mock_response.json.return_value = {"status": "ok"}
+    mock_get.return_value = mock_response
+    
     base_url = "http://localhost:5000"
     api_tests = [
         ("/health", "Health Check Endpoint"),

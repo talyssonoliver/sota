@@ -1,18 +1,34 @@
+
+
 """
 Base Validator Class
 Foundation for all validation implementations.
 """
 
-import json
-import os
-import time
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    os,
+    time
+)
 from collections import defaultdict
-from datetime import datetime
-from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 from .issue_model import IssueType, SeverityLevel, ValidationIssue
 
+# Integration: Enhanced validation errors
+from src.infrastructure.utils.validation_errors import (
+    ValidationError as Week2ValidationError,
+    InputValidationError,
+    SchemaValidationError,
+    APIValidationError,
+    SecurityValidationError,
+    BusinessValidationError,
+    TypeValidationError,
+    MultipleValidationError,
+    ErrorCollector
+)
 
 class BaseValidator:
     """Base class for all validators with common functionality."""
@@ -229,11 +245,13 @@ class BaseValidator:
 
     def has_errors(self) -> bool:
         """Check if any error-level issues were found."""
-        return any(issue.severity == "error" for issue in self.issues)
+        from .issue_model import SeverityLevel
+        return any(issue.severity == SeverityLevel.ERROR for issue in self.issues)
 
     def has_warnings(self) -> bool:
         """Check if any warning-level issues were found."""
-        return any(issue.severity == "warning" for issue in self.issues)
+        from .issue_model import SeverityLevel
+        return any(issue.severity == SeverityLevel.WARNING for issue in self.issues)
 
     def get_issues_by_category(self, category: str) -> List[ValidationIssue]:
         """Get all issues for a specific category."""
@@ -241,7 +259,12 @@ class BaseValidator:
 
     def get_issues_by_severity(self, severity: str) -> List[ValidationIssue]:
         """Get all issues with a specific severity level."""
-        return [issue for issue in self.issues if issue.severity == severity]
+        from .issue_model import SeverityLevel
+        if isinstance(severity, str):
+            severity_enum = SeverityLevel(severity)
+        else:
+            severity_enum = severity
+        return [issue for issue in self.issues if issue.severity == severity_enum]
 
     def generate_json_report(self) -> Dict:
         """Generate machine-readable JSON report."""
@@ -254,9 +277,12 @@ class BaseValidator:
             [issue for issue in self.issues if issue.severity == SeverityLevel.WARNING]
         )
 
-        overall_status = (
-            "FAIL" if total_errors > 0 else "WARN" if total_warnings > 0 else "PASS"
-        )
+        if total_errors > 0:
+            overall_status = "FAIL"
+        elif total_warnings > 0:
+            overall_status = "WARN"
+        else:
+            overall_status = "PASS"
 
         return {
             "meta": {
@@ -299,17 +325,44 @@ class BaseValidator:
             },
         }
 
+
+    def add_validation_error(self, error: Week2ValidationError, category: str = "validation"):
+        """Add a Week 2 validation error to the issues list"""
+        severity = "error" if isinstance(error, SecurityValidationError) else "warning"
+        
+        self.add_issue(
+            category=category,
+            issue_type="VALIDATION_ERROR",
+            file_path=getattr(error, 'field', 'unknown'),
+            message=error.message,
+            severity=severity,
+            fix_suggestion=getattr(error, 'details', {}).get('fix_suggestion'),
+            auto_fixable=False
+        )
+    
+    def validate_with_collector(self) -> ErrorCollector:
+        """Create an error collector for batch validation"""
+        return ErrorCollector()
+    
+    def enhance_issue_with_week2_context(self, issue: ValidationIssue, context: Dict):
+        """Enhance existing issue with Week 2 validation context"""
+        if issue.details is not None:
+            issue.details.update(context)
+        else:
+            issue.details = context
+
     def print_summary(self):
         """Print a human-readable summary of validation results."""
         print("\n" + "=" * 80)
         print("VALIDATION SUMMARY")
         print("=" * 80)
 
+        from .issue_model import SeverityLevel
         total_errors = len(
-            [issue for issue in self.issues if issue.severity == "error"]
+            [issue for issue in self.issues if issue.severity == SeverityLevel.ERROR]
         )
         total_warnings = len(
-            [issue for issue in self.issues if issue.severity == "warning"]
+            [issue for issue in self.issues if issue.severity == SeverityLevel.WARNING]
         )
 
         if total_errors == 0 and total_warnings == 0:
@@ -334,8 +387,8 @@ class BaseValidator:
 
         print("\nIssues by Category:")
         for category, issues in sorted(categories.items()):
-            errors = [i for i in issues if i.severity == "error"]
-            warnings = [i for i in issues if i.severity == "warning"]
+            errors = [i for i in issues if i.severity == SeverityLevel.ERROR]
+            warnings = [i for i in issues if i.severity == SeverityLevel.WARNING]
             print(
                 f"  {category.title()}: {len(errors)} errors, {len(warnings)} warnings"
             )

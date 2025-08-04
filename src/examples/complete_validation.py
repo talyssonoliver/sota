@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    sys,
+    traceback,
+    yaml
+)
 """
 Complete Step 3.5 & 3.6 Validation Script
 
@@ -7,22 +14,16 @@ and Step 3.6 (Pre-Compress Large Files with Chunking Strategy) are working
 correctly with real task data.
 """
 
-import sys
-import traceback
-from pathlib import Path
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
-import yaml
+# import yaml  # Consolidated to common_imports
+
+from src.infrastructure.memory import MemoryEngine
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
-# Secure imports
-try:
-    from src.infrastructure.memory import MemoryEngine
-except ImportError as e:
-    print(f"CRITICAL: Cannot import MemoryEngine: {e}")
-    sys.exit(1)
 
 
 def load_task_metadata(task_id: str) -> dict:
@@ -31,7 +32,7 @@ def load_task_metadata(task_id: str) -> dict:
     if not task_file.exists():
         raise FileNotFoundError(f"Task file not found: {task_file}")
 
-    with open(task_file, "r") as f:
+    with open(task_file, 'r') as f:
         return yaml.safe_load(f)
 
 
@@ -41,9 +42,9 @@ def validate_step_3_5(task_data: dict):
     print("=" * 60)
 
     # Extract context topics from task metadata
-    context_topics = task_data.get("context_topics", [])
-    task_id = task_data.get("id", "unknown")
-    task_title = task_data.get("title", "Unknown Task")
+    context_topics = task_data.get('context_topics', [])
+    task_id = task_data.get('id', 'unknown')
+    task_title = task_data.get('title', 'Unknown Task')
 
     print(f"📋 Task: {task_id}")
     print(f"📝 Title: {task_title}")
@@ -52,29 +53,22 @@ def validate_step_3_5(task_data: dict):
 
     if not context_topics:
         print("❌ No context topics found in task metadata")
-        return False  # Step 3.5: Get documents for context topics
+        return False      # Step 3.5: Get documents for context topics
     print("🔍 Step 3.5: Retrieving documents for context topics...")
     try:
         memory_engine = MemoryEngine()
-        # Get all documents and filter by context topics
-        all_documents = memory_engine.get_documents(user="system")
-
-        # Filter documents based on context topics if available
-        if context_topics:
-            documents = [
-                doc
-                for doc in all_documents
-                if any(topic in doc.get("source", "") for topic in context_topics)
-            ]
-        else:
-            documents = all_documents[:2]  # Limit to first 2 documents
+        documents = memory_engine.get_documents(
+            context_topics=context_topics,
+            max_per_topic=2,
+            user="system"  # Use system user for proper permissions
+        )
 
         print(f"✅ Retrieved {len(documents)} documents")
 
         # Display document summaries
         for i, doc in enumerate(documents, 1):
-            content_preview = doc["page_content"][:100].replace("\n", " ")
-            topic = doc["metadata"].get("topic", "unknown")
+            content_preview = doc['page_content'][:100].replace('\n', ' ')
+            topic = doc['metadata'].get('topic', 'unknown')
             print(f"📖 Document {i} ({topic}): {content_preview}...")
 
         print()
@@ -83,9 +77,9 @@ def validate_step_3_5(task_data: dict):
 
         focused_context = memory_engine.build_focused_context(
             context_topics=context_topics,
-            max_tokens=2000,  # Step 3.5 specification
-            max_per_topic=2,  # Limit documents per topic
-            user="system",
+            max_tokens=2000,    # Step 3.5 specification
+            max_per_topic=2,    # Limit documents per topic
+            user="system"
         )
 
         print(f"✅ Built focused context: {len(focused_context)} characters")
@@ -97,7 +91,8 @@ def validate_step_3_5(task_data: dict):
         if estimated_tokens <= 2000:
             print("✅ Context is within token budget (≤2000 tokens)")
         else:
-            print(f"⚠️  Context exceeds token budget ({estimated_tokens} > 2000 tokens)")
+            print(
+                f"⚠️  Context exceeds token budget ({estimated_tokens} > 2000 tokens)")
 
         print()
         print("✅ Step 3.5 validation successful!")
@@ -161,12 +156,11 @@ This document continues with detailed implementation examples and best practices
     print()
 
     # Create a temporary test file
-    test_file_path = (
-        project_root / "outputs" / "step_3_6_validation" / "test_document.md"
-    )
+    test_file_path = project_root / "outputs" / \
+        "step_3_6_validation" / "test_document.md"
     test_file_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(test_file_path, "w", encoding="utf-8") as f:
+    with open(test_file_path, 'w', encoding='utf-8') as f:
         f.write(test_content)
 
     print(f"📝 Created test file: {test_file_path}")
@@ -175,18 +169,19 @@ This document continues with detailed implementation examples and best practices
     # Step 3.6: Test enhanced chunking
     print("✂️  Step 3.6: Testing enhanced chunking with LangChain...")
 
-    try:  # This would normally add to the vector store, but we'll handle permission issues
-        # by testing the chunking logic directly
+    try:        # This would normally add to the vector store, but we'll handle permission issues
+        # by testing the chunking logic directly in the memory engine
+        MemoryEngine()
 
         # Test the chunking functionality directly
         from langchain_text_splitters import CharacterTextSplitter
 
         # Configure splitter as per Step 3.6 specifications
         text_splitter = CharacterTextSplitter(
-            chunk_size=500,  # Step 3.6 specification
-            chunk_overlap=50,  # Step 3.6 specification
-            separator="\n\n",  # Paragraph-based splitting
-            length_function=len,
+            chunk_size=500,        # Step 3.6 specification
+            chunk_overlap=50,      # Step 3.6 specification
+            separator="\n\n",      # Paragraph-based splitting
+            length_function=len
         )
 
         # Split the document
@@ -196,18 +191,21 @@ This document continues with detailed implementation examples and best practices
         print("📊 Chunking results:")
         print(f"   Original length: {len(test_content)} characters")
         print(f"   Number of chunks: {len(chunks)}")
-        avg_chunk_size = sum(len(chunk) for chunk in chunks) // len(chunks)
-        print(f"   Average chunk size: {avg_chunk_size} characters")
+        print(
+            f"   Average chunk size: {
+                sum(
+                    len(chunk) for chunk in chunks) //
+                len(chunks)} characters")
         print("   Target chunk size: 500 characters (with 50 char overlap)")
         print()
 
         # Validate chunk sizes
-        oversized_chunks = [i for i, chunk in enumerate(chunks) if len(chunk) > 600]
+        oversized_chunks = [i for i, chunk in enumerate(
+            chunks) if len(chunk) > 600]
         if oversized_chunks:
             print(
                 f"⚠️  {
-                    len(oversized_chunks)} chunks exceed recommended size"
-            )
+                    len(oversized_chunks)} chunks exceed recommended size")
         else:
             print("✅ All chunks are within acceptable size limits")
 
@@ -217,6 +215,7 @@ This document continues with detailed implementation examples and best practices
 
     except Exception as e:
         print(f"❌ Step 3.6 validation failed: {e}")
+#         import traceback  # Consolidated to common_imports
         traceback.print_exc()
         return False
 
@@ -226,8 +225,8 @@ def validate_integrated_workflow(task_data: dict):
     print("🔄 INTEGRATED WORKFLOW VALIDATION: Steps 3.5 + 3.6 Together")
     print("=" * 65)
 
-    context_topics = task_data.get("context_topics", [])
-    task_id = task_data.get("id", "unknown")
+    context_topics = task_data.get('context_topics', [])
+    task_id = task_data.get('id', 'unknown')
 
     print(f"🎯 Task: {task_id} - {task_data.get('title', 'Unknown')}")
     print(f"📋 Context Topics: {context_topics}")
@@ -243,7 +242,7 @@ def validate_integrated_workflow(task_data: dict):
             context_topics=context_topics,
             max_tokens=2000,
             max_per_topic=2,
-            user="system",
+            user="system"
         )
 
         print("✅ Successfully built focused context")
@@ -253,8 +252,6 @@ def validate_integrated_workflow(task_data: dict):
 
         # Simulate prompt generation (like orchestration modules would do)
         task_prompt = f"""# Task: {task_id}
-    except ImportError:
-        pass
 
 ## Title
 {task_data.get('title', 'Unknown Task')}
@@ -313,13 +310,12 @@ def main():
         print("=" * 30)
         print(
             f"✅ Step 3.5 (Context Tags): {
-                'PASS' if step_3_5_success else 'FAIL'}"
-        )
-        print(f"✅ Step 3.6 (Chunking): {'PASS' if step_3_6_success else 'FAIL'}")
+                'PASS' if step_3_5_success else 'FAIL'}")
+        print(
+            f"✅ Step 3.6 (Chunking): {'PASS' if step_3_6_success else 'FAIL'}")
         print(
             f"✅ Integrated Workflow: {
-                'PASS' if integrated_success else 'FAIL'}"
-        )
+                'PASS' if integrated_success else 'FAIL'}")
         print()
 
         if step_3_5_success and step_3_6_success and integrated_success:
@@ -331,6 +327,7 @@ def main():
 
     except Exception as e:
         print(f"❌ Validation script failed: {e}")
+#         import traceback  # Consolidated to common_imports
         traceback.print_exc()
 
 

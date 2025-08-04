@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    datetime,
+    json,
+    sys,
+    traceback
+)
 """
 Dashboard Update Script for Phase 5
 
@@ -6,19 +18,19 @@ Updates dashboard with task completion data, QA results, and progress metrics.
 Integrates with completion metrics and real-time monitoring systems.
 """
 
-import json
-import sys
+# import json  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 try:
-    from typing import Any, Dict, List, Optional
+    from src.infrastructure.utils.common_imports import Any, Dict, List, Optional  
 except ImportError:
     pass
 
@@ -368,7 +380,7 @@ def main():
     except Exception as e:
         print(f"❌ Dashboard update failed: {e}")
         if args.verbose:
-            import traceback
+#             import traceback  # Consolidated to common_imports
 
             traceback.print_exc()
         sys.exit(1)

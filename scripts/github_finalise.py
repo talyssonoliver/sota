@@ -200,8 +200,7 @@ All quality assurance checks have been completed successfully.
     
     def create_pull_request_link(self) -> Optional[str]:
         """Generate or find pull request link for the task."""
-        # This is a placeholder for PR detection logic
-        # In a real implementation, you might search for PRs with the task ID
+        # TODO: This is a placeholder for PR detection logic you must search for PRs with the task ID
         return f"https://github.com/{self.github_repo}/pulls?q={self.task_id}"
     
     def finalise_task(self, close_issue: bool = True, attach_artifacts: bool = True) -> bool:

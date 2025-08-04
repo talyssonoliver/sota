@@ -1,3 +1,5 @@
+
+from src.infrastructure.utils.common_imports import os, sys
 """
 Review Completion Script
 
@@ -6,8 +8,8 @@ Provides secure interfaces for review approval and rejection.
 """
 
 import argparse
-import os
-import sys
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

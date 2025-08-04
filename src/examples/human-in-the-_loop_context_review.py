@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    json,
+    subprocess,
+    sys
+)
 """
 Step 3.8 Implementation Test and Validation
 
@@ -9,10 +16,10 @@ Usage:
     python examples/step_3_8_demo.py
 """
 
-import json
-import subprocess
-import sys
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import subprocess  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))

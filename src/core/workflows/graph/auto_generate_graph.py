@@ -4,22 +4,24 @@ Auto Graph Generator
 Scans task YAML files and dynamically generates a LangGraph workflow based on task dependencies.
 """
 
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    json,
+    logging,
+    os,
+    yaml
+)
 import importlib
 import inspect
-import json
-import logging
-# Note: workflow is created dynamically as StateGraph in generate_workflow function
-import os
 from glob import glob
-from typing import Any, Dict, List, Optional
 
 try:
     from typing_extensions import TypedDict
 except ImportError:
     from typing import TypedDict
-
-import yaml
-
 # LangGraph imports with error handling
 try:
     from langgraph.constants import END

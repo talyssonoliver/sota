@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, sys, yaml
 """
 GitHub Actions Workflow Validation Script
 Validates the deploy.yml workflow configuration
 """
 
-import sys
-from pathlib import Path
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
-import yaml
+# import yaml  # Consolidated to common_imports
 
 
 def validate_workflow():

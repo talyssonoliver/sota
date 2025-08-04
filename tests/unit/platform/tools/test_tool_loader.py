@@ -12,8 +12,8 @@ import yaml
 
 from src.core.workflows.registry import get_agent_config
 from tests.unit.core.test_utils import TestFeedback, Timer
-from tools.tool_loader import (instantiate_tool,
-                               load_tool_config)
+from src.platform.tools.tool_loader import (instantiate_tool,
+                                           load_tool_config)
 
 # Add the parent directory to the path so we can import our modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

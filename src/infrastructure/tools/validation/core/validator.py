@@ -1,16 +1,28 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Enum,
+    List,
+    Optional,
+    Path,
+    dataclass,
+    json,
+    time
+)
 """
 Validation Pipeline
 Integrates SonarQube, MyPy, Black, Ruff, and all custom validators into a single,
 comprehensive validation system based on software engineering principles.
 """
 
-import json
-import time
+# import json  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 from ..sonarqube_integrator import SonarQubeIntegrator
 from .base_validator import BaseValidator
@@ -298,69 +310,86 @@ class Validator(BaseValidator):
             "files_collected": len(self.python_files),
         }
 
-    def _static_analysis_phase(self) -> Dict[str, Any]:
-        """Static analysis phase - comprehensive validation."""
-        validators = [
-            ("syntax", self.syntax_validator),
-            ("dependencies", self.dependency_validator),
-            ("structure", self.structure_validator),
-            ("performance", self.performance_validator),
-            ("ai_patterns", self.pattern_detector),
-            ("business_logic", self.business_logic_protector),
+    def _get_validator_configurations(self) -> List[tuple]:
+        """Get validator configurations with their execution methods.
+        
+        Returns:
+            List of (name, validator, method_name, args) tuples
+        """
+        return [
+            ("syntax", self.syntax_validator, "validate_all_imports", (self.python_files,)),
+            ("dependencies", self.dependency_validator, "validate_dependencies", ()),
+            ("structure", self.structure_validator, "validate_structure", ()),
+            ("performance", self.performance_validator, "validate_performance", ()),
+            ("ai_patterns", self.pattern_detector, "analyze_patterns", ()),
+            ("business_logic", self.business_logic_protector, "protect_business_logic", ()),
         ]
 
+    def _execute_validator(self, name: str, validator: Any, method_name: str, args: tuple) -> bool:
+        """Execute a single validator and handle its result.
+        
+        Args:
+            name: Name of the validator
+            validator: Validator instance
+            method_name: Method to call on the validator
+            args: Arguments to pass to the method
+            
+        Returns:
+            Success status of the validation
+        """
+        try:
+            if not validator:
+                print(f"  ⚠️  {name} validator not available")
+                return True
+                
+            method = getattr(validator, method_name)
+            success = method(*args) if args else method()
+            
+            # Merge issues from validator
+            for issue in validator.issues:
+                if issue not in self.issues:
+                    self.issues.append(issue)
+            
+            return bool(success) if success is not None else False
+            
+        except Exception as e:
+            print(f"  ❌ {name} validation failed: {e}")
+            return False
+
+    def _generate_issues_by_category(self) -> Dict[str, int]:
+        """Generate count of issues by category.
+        
+        Returns:
+            Dictionary mapping category names to issue counts
+        """
+        categories = [
+            "syntax", "dependencies", "structure", "performance", 
+            "ai_analysis", "business_logic"
+        ]
+        
+        return {
+            category: len([i for i in self.issues if i.category == category])
+            for category in categories
+        }
+
+    def _static_analysis_phase(self) -> Dict[str, Any]:
+        """Static analysis phase - comprehensive validation."""
+        validator_configs = self._get_validator_configurations()
+        
         results = {}
         overall_success = True
 
-        for name, validator in validators:
-            try:
-                if name == "syntax":
-                    success = validator.validate_all_imports(self.python_files)
-                elif name == "dependencies":
-                    success = validator.validate_dependencies()
-                elif name == "structure":
-                    success = validator.validate_structure()
-                elif name == "performance":
-                    success = validator.validate_performance()
-                elif name == "ai_patterns":
-                    success = validator.analyze_patterns()
-                elif name == "business_logic":
-                    success = validator.protect_business_logic()
-                else:
-                    success = True
-
-                results[name] = success
-                # Ensure success is a boolean to avoid NoneType &= error
-                if success is not None:
-                    overall_success &= bool(success)
-                else:
-                    overall_success = False
-
-                # Merge issues
-                for issue in validator.issues:
-                    if issue not in self.issues:
-                        self.issues.append(issue)
-
-            except Exception as e:
-                results[name] = False
-                overall_success = False
-                print(f"  ❌ {name} validation failed: {e}")
+        # Execute each validator
+        for name, validator, method_name, args in validator_configs:
+            success = self._execute_validator(name, validator, method_name, args)
+            results[name] = success
+            overall_success &= success
 
         return {
             "success": overall_success,
             "validators_run": list(results.keys()),
             "results": results,
-            "issues_by_category": {
-                category: len([i for i in self.issues if i.category == category])
-                for category in [
-                    "syntax",
-                    "dependencies",
-                    "structure",
-                    "performance",
-                    "ai_analysis",
-                    "business_logic",
-                ]
-            },
+            "issues_by_category": self._generate_issues_by_category(),
         }
 
     def _run_parallel_static_analysis(self):

@@ -6,24 +6,15 @@ Flask API endpoints for Gantt chart data, critical path analysis,
 and timeline optimization functionality.
 """
 
-
-import sys
-
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    logging,
+    sys,
+    timedelta
+)
 from src.infrastructure.security.input_validator import validate_input
-
-try:
-    from datetime import datetime, timedelta
-except ImportError:
-    pass
-try:
-    from pathlib import Path
-except ImportError:
-    pass
-try:
-    from flask import Blueprint, jsonify, request
-except ImportError:
-    pass
-# Removed unused typing imports: Any, Dict, List not used in implementation
+from flask import Blueprint, jsonify, request
 sys.path.append(str(Path(__file__).parent.parent))
 
 try:
@@ -46,9 +37,6 @@ except ImportError as e:
 
         def optimize_timeline(self, **kwargs):
             return {}
-
-
-import logging
 
 # Create Blueprint
 gantt_bp = Blueprint("gantt", __name__, url_prefix="/api/gantt")
@@ -395,7 +383,7 @@ def update_task(task_id):
 
         logger.info(f"Updating task {task_id} with data: {data}")
 
-        # In a real implementation, this would update the task in the database
+        # TODO: Must implement, this would update the task in the database
         # For now, we'll just validate the data and return success
 
         allowed_fields = [

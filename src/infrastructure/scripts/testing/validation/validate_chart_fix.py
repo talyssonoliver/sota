@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import json, requests, time
 """
 Chart.js Canvas Size Explosion Fix Validation
 Tests the dashboard stability after fixing critical chart recreation loop
@@ -25,10 +27,10 @@ try:
     from selenium.webdriver.support import expected_conditions as EC
 except ImportError:
     pass
-import json
-import time
+# import json  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
 
-import requests
+# import requests  # Consolidated to common_imports
 
 
 class DashboardStabilityValidator:

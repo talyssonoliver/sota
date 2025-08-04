@@ -265,7 +265,7 @@ class TestTaskDeclarationIntegration:
         """Test declaring a real task from the tasks directory"""
         try:
             # Create manager with real memory engine (mocked for faster tests)
-            with patch('tools.memory.engine.MemoryEngine') as mock_engine_class:
+            with patch('src.infrastructure.memory.engines.memory_engine.MemoryEngine') as mock_engine_class:
                 mock_engine = Mock()
                 mock_engine.build_focused_context.return_value = "Real context content"
                 mock_engine.get_documents.return_value = []

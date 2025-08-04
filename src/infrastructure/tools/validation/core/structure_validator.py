@@ -1,15 +1,24 @@
+
+from src.infrastructure.utils.common_imports import (
+    List,
+    Optional,
+    Path,
+    os,
+    re
+)
 """
 Structure Validator
 Validates project structure, naming conventions, and documentation standards.
 """
 
 import ast
-import os
-import re
-from pathlib import Path
-from typing import List, Optional
+# import os  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import List, Optional  # Consolidated to common_imports
 
 from .base_validator import BaseValidator
+from .issue_model import IssueType, SeverityLevel
 
 
 class StructureValidator(BaseValidator):
@@ -62,10 +71,10 @@ class StructureValidator(BaseValidator):
                 if rel_path not in self.config.get("excluded_dirs", []):
                     self.add_issue(
                         category="structure",
-                        issue_type="EMPTY_DIRECTORY",
+                        issue_type=IssueType.EMPTY_DIRECTORY,
                         file_path=root,
                         message=f"Empty directory: {rel_path}",
-                        severity="warning",
+                        severity=SeverityLevel.WARNING,
                         fix_suggestion="Remove empty directory or add placeholder file",
                         auto_fixable=True,
                     )
@@ -82,10 +91,10 @@ class StructureValidator(BaseValidator):
                 if not re.match(naming_config["files"], file_name):
                     self.add_issue(
                         category="structure",
-                        issue_type="FILE_NAMING_CONVENTION",
+                        issue_type=IssueType.FILE_NAMING_CONVENTION,
                         file_path=str(file_path),
                         message=f"File name doesn't follow convention: {file_name}",
-                        severity="warning",
+                        severity=SeverityLevel.WARNING,
                         fix_suggestion=f"Rename to follow pattern: {naming_config['files']}",
                         auto_fixable=True,
                         expected_pattern=naming_config["files"],
@@ -107,11 +116,11 @@ class StructureValidator(BaseValidator):
                         if not re.match(naming_config["classes"], node.name):
                             self.add_issue(
                                 category="structure",
-                                issue_type="CLASS_NAMING_CONVENTION",
+                                issue_type=IssueType.CLASS_NAMING_CONVENTION,
                                 file_path=str(file_path),
                                 message=f"Class '{node.name}' doesn't follow naming convention",
                                 line=getattr(node, "lineno", None),
-                                severity="warning",
+                                severity=SeverityLevel.WARNING,
                                 fix_suggestion=f"Rename class to follow pattern: {naming_config['classes']}",
                                 auto_fixable=True,
                                 expected_pattern=naming_config["classes"],
@@ -123,11 +132,11 @@ class StructureValidator(BaseValidator):
                         if not re.match(naming_config["functions"], node.name):
                             self.add_issue(
                                 category="structure",
-                                issue_type="FUNCTION_NAMING_CONVENTION",
+                                issue_type=IssueType.FUNCTION_NAMING_CONVENTION,
                                 file_path=str(file_path),
                                 message=f"Function '{node.name}' doesn't follow naming convention",
                                 line=getattr(node, "lineno", None),
-                                severity="warning",
+                                severity=SeverityLevel.WARNING,
                                 fix_suggestion=f"Rename function to follow pattern: {naming_config['functions']}",
                                 auto_fixable=True,
                                 expected_pattern=naming_config["functions"],
@@ -137,10 +146,10 @@ class StructureValidator(BaseValidator):
         except Exception as e:
             self.add_issue(
                 category="structure",
-                issue_type="NAMING_VALIDATION_ERROR",
+                issue_type=IssueType.NAMING_VALIDATION_ERROR,
                 file_path=str(file_path),
                 message=f"Error validating naming conventions: {e}",
-                severity="warning",
+                severity=SeverityLevel.WARNING,
             )
 
     def _validate_documentation(self):
@@ -169,21 +178,21 @@ class StructureValidator(BaseValidator):
         for file_path, name, line_no in undocumented_items[:20]:
             self.add_issue(
                 category="documentation",
-                issue_type="MISSING_DOCSTRING",
+                issue_type=IssueType.MISSING_DOCSTRING,
                 file_path=str(file_path),
                 message=f"Missing docstring for '{name}'",
                 line=line_no,
-                severity="warning",
+                severity=SeverityLevel.WARNING,
                 fix_suggestion=f"Add docstring to document the purpose of '{name}'",
             )
 
         if len(undocumented_items) > 20:
             self.add_issue(
                 category="documentation",
-                issue_type="DOCUMENTATION_COVERAGE",
+                issue_type=IssueType.DOCUMENTATION_COVERAGE,
                 file_path=str(self.root_path),
                 message=f"Found {len(undocumented_items)} undocumented items in total",
-                severity="info",
+                severity=SeverityLevel.INFO,
             )
 
     def _validate_test_coverage(self):
@@ -202,10 +211,10 @@ class StructureValidator(BaseValidator):
             if coverage_ratio < coverage_threshold:
                 self.add_issue(
                     category="coverage",
-                    issue_type="LOW_TEST_COVERAGE",
+                    issue_type=IssueType.LOW_TEST_COVERAGE,
                     file_path=str(self.root_path),
                     message=f"Test coverage appears low: {coverage_ratio:.1f}% (threshold: {coverage_threshold}%)",
-                    severity="warning",
+                    severity=SeverityLevel.WARNING,
                     fix_suggestion="Add more test files to improve coverage",
                 )
 
@@ -224,10 +233,10 @@ class StructureValidator(BaseValidator):
             except Exception as e:
                 self.add_issue(
                     category="security",
-                    issue_type="SECURITY_SCAN_ERROR",
+                    issue_type=IssueType.SECURITY_SCAN_ERROR,
                     file_path=str(file_path),
                     message=f"Error scanning for security issues: {e}",
-                    severity="warning",
+                    severity=SeverityLevel.WARNING,
                 )
 
     def _check_security_patterns(
@@ -247,11 +256,11 @@ class StructureValidator(BaseValidator):
                 if "=" in line and not line.strip().startswith("#"):
                     self.add_issue(
                         category="security",
-                        issue_type="POTENTIAL_HARDCODED_SECRET",
+                        issue_type=IssueType.POTENTIAL_HARDCODED_SECRET,
                         file_path=str(file_path),
                         message="Potential hardcoded secret detected",
                         line=line_num,
-                        severity="warning",
+                        severity=SeverityLevel.WARNING,
                         fix_suggestion="Move secrets to environment variables or config files",
                         offending_line=line.strip(),
                     )
@@ -260,11 +269,11 @@ class StructureValidator(BaseValidator):
             if "eval(" in line or "exec(" in line:
                 self.add_issue(
                     category="security",
-                    issue_type="DANGEROUS_FUNCTION_USAGE",
+                    issue_type=IssueType.DANGEROUS_FUNCTION_USAGE,
                     file_path=str(file_path),
                     message="Potentially dangerous function usage (eval/exec)",
                     line=line_num,
-                    severity="error",
+                    severity=SeverityLevel.ERROR,
                     fix_suggestion="Avoid using eval() or exec() - use safer alternatives",
                     offending_line=line.strip(),
                 )
@@ -273,11 +282,11 @@ class StructureValidator(BaseValidator):
             if "subprocess" in line and "shell=True" in line:
                 self.add_issue(
                     category="security",
-                    issue_type="SHELL_INJECTION_RISK",
+                    issue_type=IssueType.SHELL_INJECTION_RISK,
                     file_path=str(file_path),
                     message="Potential shell injection risk",
                     line=line_num,
-                    severity="warning",
+                    severity=SeverityLevel.WARNING,
                     fix_suggestion="Avoid shell=True in subprocess calls",
                     offending_line=line.strip(),
                 )
@@ -287,8 +296,8 @@ class StructureValidator(BaseValidator):
         return {
             "total_files": len(self.python_files),
             "total_issues": len(self.issues),
-            "error_count": len([i for i in self.issues if i.severity == "error"]),
-            "warning_count": len([i for i in self.issues if i.severity == "warning"]),
+            "error_count": len([i for i in self.issues if i.severity == SeverityLevel.ERROR]),
+            "warning_count": len([i for i in self.issues if i.severity == SeverityLevel.WARNING]),
             "auto_fixable_count": len([i for i in self.issues if i.auto_fixable]),
         }
 
@@ -317,10 +326,10 @@ class StructureValidator(BaseValidator):
         if not self._is_valid_python_filename(file_path.name):
             self.add_issue(
                 category="structure",
-                issue_type="NAMING_CONVENTION",
+                issue_type=IssueType.NAMING_CONVENTION,
                 file_path=str(file_path),
                 message=f"File name '{file_path.name}' doesn't follow Python naming conventions",
-                severity="warning",
+                severity=SeverityLevel.WARNING,
                 fix_suggestion="Use lowercase with underscores (e.g., my_module.py)",
             )
 
@@ -339,10 +348,10 @@ class StructureValidator(BaseValidator):
             ):
                 self.add_issue(
                     category="structure",
-                    issue_type="MISSING_DOCSTRING",
+                    issue_type=IssueType.MISSING_DOCSTRING,
                     file_path=str(file_path),
                     message="Module missing docstring",
-                    severity="warning",
+                    severity=SeverityLevel.WARNING,
                     fix_suggestion="Add module docstring at the top of the file",
                 )
         except Exception:
@@ -359,11 +368,11 @@ class StructureValidator(BaseValidator):
                 if "subprocess.call" in line and "shell=True" in line:
                     self.add_issue(
                         category="security",
-                        issue_type="SECURITY_ISSUE",
+                        issue_type=IssueType.SECURITY_ISSUE,
                         file_path=str(file_path),
                         message="Potential security risk: subprocess with shell=True",
                         line=line_num,
-                        severity="warning",
+                        severity=SeverityLevel.WARNING,
                         fix_suggestion="Avoid shell=True in subprocess calls",
                         offending_line=line.strip(),
                     )

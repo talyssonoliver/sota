@@ -40,8 +40,8 @@ def apply_all_patches():
     # Add more patches here as needed
 
     logger.info(
-        f"Applied {success_count} patches successfully,
-    {failure_count} failed")
+        f"Applied {success_count} patches successfully, "
+        f"{failure_count} failed")
     return success_count, failure_count
 
 

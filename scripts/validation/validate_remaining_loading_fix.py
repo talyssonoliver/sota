@@ -7,12 +7,29 @@ Tests all components that were still stuck on "Loading..." or "--" values.
 import requests
 import time
 import json
+import sys
 from datetime import datetime
+from pathlib import Path
+
+# Add src to path for configuration imports
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+
+from core.configuration import ConfigurationFactory
 
 def test_remaining_loading_issues():
     """Validate that all remaining loading issues are resolved."""
     print("🔍 Validating Remaining Dashboard Loading Issues Fix")
     print("=" * 65)
+    
+    # Get configuration from factory
+    config_factory = ConfigurationFactory()
+    network_provider = config_factory.get_network_provider()
+    
+    # Get API endpoints from configuration
+    api_endpoints = network_provider.get_api_endpoints()
+    dashboard_url = config_factory.get_environment_provider().get_dashboard_url()
+    timeout_config = network_provider.get_timeout_config()
+    api_timeout = timeout_config.get("api_timeout", 30)
     
     results = {
         "recent_activity_api": False,
@@ -26,7 +43,8 @@ def test_remaining_loading_issues():
     # Test 1: Recent Activity API Response
     print("\n1️⃣ Recent Activity API Test")
     try:
-        response = requests.get("http://localhost:5000/api/tasks/recent", timeout=5)
+        recent_tasks_url = f"{api_endpoints['tasks']}/recent"
+        response = requests.get(recent_tasks_url, timeout=api_timeout)
         if response.status_code == 200:
             data = response.json()
             print("✅ Recent activity API responding")
@@ -55,7 +73,7 @@ def test_remaining_loading_issues():
     # Test 2: Automation Status API Response
     print("\n2️⃣ Automation Status API Test")
     try:
-        response = requests.get("http://localhost:5000/api/automation/status", timeout=5)
+        response = requests.get(f"{api_endpoints['automation']}/status", timeout=api_timeout)
         if response.status_code == 200:
             data = response.json()
             print("✅ Automation status API responding")
@@ -80,7 +98,7 @@ def test_remaining_loading_issues():
     # Test 3: Velocity Data Structure
     print("\n3️⃣ Velocity Data Structure Test")
     try:
-        response = requests.get("http://localhost:5000/api/metrics", timeout=5)
+        response = requests.get(api_endpoints['metrics'], timeout=api_timeout)
         if response.status_code == 200:
             data = response.json()
             if "data" in data and "velocity" in data["data"]:
@@ -100,7 +118,8 @@ def test_remaining_loading_issues():
     # Test 4: Element ID Matches
     print("\n4️⃣ Element ID Matching Test")
     try:
-        response = requests.get("http://localhost:5000/dashboard/realtime_dashboard.html", timeout=10)
+        dashboard_html_url = f"{dashboard_url}/realtime_dashboard.html"
+        response = requests.get(dashboard_html_url, timeout=api_timeout)
         if response.status_code == 200:
             html_content = response.text
             
@@ -130,7 +149,8 @@ def test_remaining_loading_issues():
     print("\n5️⃣ Data Format Compatibility Test")
     try:
         # Test that JavaScript can handle the API response formats
-        js_response = requests.get("http://localhost:5000/dashboard/enhanced_dashboard.js", timeout=5)
+        dashboard_js_url = f"{dashboard_url}/enhanced_dashboard.js"
+        js_response = requests.get(dashboard_js_url, timeout=api_timeout)
         if js_response.status_code == 200:
             js_content = js_response.text
             
@@ -187,7 +207,7 @@ def test_remaining_loading_issues():
     
     if overall_pass:
         print("\n🎊 SUCCESS: All dashboard components should now display real data")
-        print("🔗 Test URL: http://localhost:5000/dashboard/realtime_dashboard.html")
+        print(f"🔗 Test URL: {dashboard_url}/realtime_dashboard.html")
         print("📊 All metrics, charts, and status indicators are now functional")
     else:
         print("\n⚠️ ATTENTION: Some components may still need adjustment")

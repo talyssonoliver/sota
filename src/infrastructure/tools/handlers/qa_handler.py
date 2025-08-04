@@ -1,20 +1,14 @@
+
+from src.infrastructure.utils.common_imports import Any, Dict
 """
 QA Handler with Human Review Capability
 This handler processes QA tasks and enables human review checkpoints.
 """
 
-try:
-    from typing import Any, Dict
-except ImportError:
-    pass
-try:
-    from src.core.workflows.states import TaskStatus
-except ImportError:
-    pass
-try:
-    from src.infrastructure.utils.review import save_to_review
-except ImportError:
-    pass
+# from typing import Any, Dict  # Consolidated to common_imports
+
+from src.core.workflows.states import TaskStatus
+from src.infrastructure.utils.review import save_to_review
 
 
 def qa_agent(state: Dict[str, Any]) -> Dict[str, Any]:
@@ -43,37 +37,12 @@ def qa_agent(state: Dict[str, Any]) -> Dict[str, Any]:
 
     # Create result state
     result_state = state.copy()
-    result_state.update(
-        {
-            "status": TaskStatus.HUMAN_REVIEW,  # Fixed: Using the correct TaskStatus enum
-            "output": result,
-            "review_required": True,
-            "review_file": review_filename,
-            "agent": "qa",
-        }
-    )
+    result_state.update({
+        "status": TaskStatus.HUMAN_REVIEW,  # Fixed: Using the correct TaskStatus enum
+        "output": result,
+        "review_required": True,
+        "review_file": review_filename,
+        "agent": "qa"
+    })
 
     return result_state
-
-
-class QAHandler:
-    """Handle QA operations in infrastructure."""
-
-    def __init__(self):
-        """Initialize QA handler."""
-        self.qa_results = []
-
-    def run_qa_check(self, target):
-        """Run QA check on target."""
-        return {
-            "target": target,
-            "status": "passed",
-            "checks": ["syntax", "imports", "standards"],
-        }
-
-    def validate_quality(self, code):
-        """Validate code quality."""
-        return {"quality_score": 95, "issues": [], "recommendations": []}
-
-
-__all__ = ["QAHandler", "qa_agent"]

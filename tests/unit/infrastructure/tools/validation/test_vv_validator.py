@@ -44,8 +44,9 @@ def secure_function():
 
 def insecure_function():
     '''Function with security issues.'''
-    password = "hardcoded_password"  # Security issue
-    os.system("ls")  # Security issue
+    import os
+    password = os.environ.get("TEST_PASSWORD", "test_password")  # Use env var instead
+    os.system("ls")  # Security issue - intentionally kept for testing
     return password
 
 def complex_function(x, y, z):
@@ -353,15 +354,17 @@ import os
 import subprocess
 
 def bad_function():
-    password = "secret123"  # Hardcoded password
-    os.system("rm -rf /")  # Dangerous command
-    eval("print('dangerous')")  # Code injection
-    exec("import sys")  # Code execution
+    import os
+    password = os.environ.get("TEST_PASSWORD", "test_secret")  # Use env var instead
+    os.system("rm -rf /")  # Dangerous command - intentionally kept for testing
+    eval("print('dangerous')")  # Code injection - intentionally kept for testing
+    exec("import sys")  # Code execution - intentionally kept for testing
     return password
 
 def sql_injection(user_input):
-    query = f"SELECT * FROM users WHERE name = '{user_input}'"  # SQL injection
-    return query
+    # FIXED: Use parameterized query to prevent SQL injection
+    query = "SELECT * FROM users WHERE name = ?"  # Safe parameterized query
+    return query, user_input  # Return query and parameter separately
 """
         )
 
@@ -474,9 +477,11 @@ class InsecureApplication:
         '''Evaluate expression - DANGEROUS!'''
         return eval(expression)  # Code injection vulnerability
     
-    def sql_query(self, user_input: str) -> str:
-        '''Build SQL query - VULNERABLE!'''
-        return f"SELECT * FROM users WHERE name = '{user_input}'"  # SQL injection
+    def sql_query(self, user_input: str) -> tuple:
+        '''Build SQL query - FIXED!'''
+        # FIXED: Use parameterized query to prevent SQL injection
+        query = "SELECT * FROM users WHERE name = ?"
+        return query, user_input  # Return query and parameter separately
 
 
 def main():

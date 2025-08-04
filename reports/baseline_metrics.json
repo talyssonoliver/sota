@@ -1,0 +1,40 @@
+{
+  "timestamp": "2025-07-29T22:58:07.675451",
+  "code_quality": {
+    "total_files": 359,
+    "total_lines": 114206,
+    "avg_lines_per_file": 318.1225626740947,
+    "large_files_count": 77,
+    "very_large_files_count": 11,
+    "complex_functions_count": 77,
+    "total_functions": 3916,
+    "total_classes": 742,
+    "import_statements": 2183
+  },
+  "test_coverage": {
+    "overall_coverage": 38.440111420612816,
+    "total_test_files": 138,
+    "untested_modules": 221,
+    "test_lines": 56027,
+    "coverage_by_module": {}
+  },
+  "performance": {
+    "memory_usage_mb": 21.7890625,
+    "startup_time_seconds": 0,
+    "test_execution_time": 10.739923238754272,
+    "import_time_seconds": 1.6202399730682373
+  },
+  "architecture": {
+    "circular_dependencies": 0,
+    "module_coupling": 0,
+    "large_classes": 21,
+    "deep_inheritance": 0,
+    "dependency_violations": 0
+  },
+  "duplication": {
+    "duplicate_imports": 68,
+    "duplicate_functions": 400,
+    "estimated_duplicate_lines": 6395,
+    "duplication_percentage": 5.599530672644169
+  }
+}

@@ -281,7 +281,7 @@ class TeamDeploymentManager:
         """Send deployment notifications to team members."""
         logger.info("📧 Sending deployment notifications...")
         
-        # In a real implementation, this would send emails
+        # TODO: Must implement, this would send emails
         # For now, create notification files
         notifications_dir = "logs/notifications"
         os.makedirs(notifications_dir, exist_ok=True)
@@ -350,7 +350,7 @@ Happy coding! 🚀
         """Check current deployment progress."""
         logger.info("📊 Checking deployment progress...")
         
-        # In a real implementation, this would:
+        # TODO: Must implement, this would:
         # - Check Claude Code usage metrics
         # - Survey team members
         # - Analyze productivity data

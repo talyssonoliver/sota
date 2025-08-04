@@ -50,7 +50,7 @@ class TestQAAgentDecisions(unittest.TestCase):
 
 
 class TestQAAgentMockIntegration(unittest.TestCase):
-    @patch("src.core.handlers.qa_handler.save_to_review")
+    @patch("src.infrastructure.tools.handlers.qa_handler.save_to_review")
     def test_qa_agent_in_workflow(self, mock_save_to_review):
         from src.infrastructure.tools.handlers.qa_handler import qa_agent
         state = {

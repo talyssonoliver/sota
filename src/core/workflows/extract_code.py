@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    dataclass,
+    datetime,
+    json,
+    re,
+    subprocess,
+    sys
+)
 """
 Step 4.5 — Code Extraction (Postprocessing)
 
@@ -8,13 +18,13 @@ and comprehensive testing.
 """
 
 import argparse
-import json
-import re
-import subprocess
-import sys
-from dataclasses import dataclass
-from datetime import datetime
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# import subprocess  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Dict, List, Optional
 
 

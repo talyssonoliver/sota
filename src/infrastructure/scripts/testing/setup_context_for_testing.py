@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, sys, traceback
 """
 Context Store Setup for Step 3.5 & 3.6 Testing
 
@@ -9,10 +11,10 @@ Step 3.5 and 3.6 implementations.
 
 # Mock external dependencies
 
-import sys
+# import sys  # Consolidated to common_imports
 
 # Original imports with error handling
-from pathlib import Path
+# from pathlib import Path  # Consolidated to common_imports
 
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
@@ -344,7 +346,7 @@ def populate_memory_engine():
 
     except Exception as e:
         print(f"❌ Error populating memory engine: {e}")
-        import traceback
+#         import traceback  # Consolidated to common_imports
 
         traceback.print_exc()
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import datetime, json
 """
 Canvas Height Fix Validation Script
 Validates that the dashboard canvas height issue has been resolved.
@@ -6,11 +8,11 @@ Validates that the dashboard canvas height issue has been resolved.
 
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    import json
+    from src.infrastructure.utils.common_imports import json
 except ImportError:
     pass
     pass

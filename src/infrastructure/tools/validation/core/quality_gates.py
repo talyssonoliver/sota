@@ -1,15 +1,24 @@
+
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    Path,
+    dataclass,
+    json,
+    subprocess,
+    time
+)
 """
 Quality Gates Implementation
 Implements quality gates based on software engineering principles and ISO/IEC 25010 standards.
 """
 
 import ast
-import json
-import subprocess
-import time
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import subprocess  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Any, Dict, List, Optional, Tuple
 
 
@@ -442,6 +451,29 @@ class QualityMetricsCalculator:
             "comments": comment_lines,
             "blank": blank_lines,
         }
+    
+    def _analyze_target(self, target: Any):
+        """Perform actual analysis (implement abstract method from BaseAnalyzer).
+        
+        Args:
+            target: The target to analyze
+        """
+        # This calculator uses specific methods for different metrics
+        # The analysis is done through calculate_* methods
+        if target:
+            self.add_result("target", target)
+        
+        # Calculate all metrics and store as results
+        self.add_metric("test_coverage", self.calculate_test_coverage())
+        avg_complexity, max_complexity = self.calculate_cyclomatic_complexity()
+        self.add_metric("avg_complexity", avg_complexity)
+        self.add_metric("max_complexity", max_complexity)
+        self.add_metric("duplication", self.calculate_code_duplication())
+        self.add_metric("critical_issues", len(self.count_critical_issues()))
+        
+        loc_metrics = self.count_lines_of_code()
+        for key, value in loc_metrics.items():
+            self.add_metric(f"loc_{key}", value)
 
 
 class QualityGatesEngine:

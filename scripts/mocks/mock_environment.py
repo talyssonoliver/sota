@@ -31,7 +31,7 @@ def setup_mock_environment():
 
     # Since this module creates test-only mocks, add a cleanup function
     def cleanup():
-        for module_name in list(sys.modules.keys()):
+        for module_name in sys.modules.keys():
             if module_name.startswith("_mock_") and module_name in sys.modules:
                 del sys.modules[module_name]
 

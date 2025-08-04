@@ -12,7 +12,7 @@ from src.core.workflows.documentation_agent import (DocumentationAgent,
 
 def test_documentation_report_exists():
     """Test that the documentation report for BE-07 is generated and non-empty."""
-    report_path = Path('docs/completions/BE-07.md')
+    report_path = Path('docs/website/docs/completions/BE-07.md')
     assert report_path.exists(), f"Report not found: {report_path}"
     content = report_path.read_text(encoding='utf-8')
     assert '# Task Completion Report:' in content or '# Task Completion Summary:' in content
@@ -23,7 +23,7 @@ def test_documentation_report_exists():
 
 def test_documentation_report_structure():
     """Test that the documentation report has the correct structure."""
-    report_path = Path('docs/completions/BE-07.md')
+    report_path = Path('docs/website/docs/completions/BE-07.md')
     assert report_path.exists(), f"Report not found: {report_path}"
     content = report_path.read_text(encoding='utf-8')
 
@@ -52,7 +52,7 @@ def test_documentation_agent_initialization():
 
 def test_documentation_json_output():
     """Test that JSON documentation is also generated."""
-    json_path = Path('docs/completions/BE-07.json')
+    json_path = Path('docs/website/docs/completions/BE-07.json')
     assert json_path.exists(), f"JSON report not found: {json_path}"
 
     with open(json_path) as f:
@@ -71,7 +71,7 @@ def test_documentation_json_output():
 
 def test_both_output_files_exist():
     """Test that both markdown and task output files are generated."""
-    md_path = Path('docs/completions/BE-07.md')
+    md_path = Path('docs/website/docs/completions/BE-07.md')
     task_md_path = Path('outputs/BE-07/completion_report.md')
 
     assert md_path.exists(), f"Main report not found: {md_path}"
@@ -314,6 +314,6 @@ def test_complete_documentation_workflow():
     assert isinstance(doc_report.references, list)
 
     # Verify files were created
-    assert Path("docs/completions/BE-07.md").exists()
-    assert Path("docs/completions/BE-07.json").exists()
+    assert Path("docs/website/docs/completions/BE-07.md").exists()
+    assert Path("docs/website/docs/completions/BE-07.json").exists()
     assert Path("outputs/BE-07/completion_report.md").exists()

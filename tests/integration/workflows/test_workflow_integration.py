@@ -13,11 +13,11 @@ from datetime import datetime
 from pathlib import Path
 from unittest.mock import MagicMock, mock_open, patch
 
-from src.core.graph.notifications import NotificationLevel
+from src.core.workflows.graph.notifications import NotificationLevel
 from src.core.workflows.enhanced_workflow import EnhancedWorkflowExecutor
 from src.core.workflows.states import TaskStatus
 from tests.unit.core.test_utils import TestFeedback, Timer
-from tests.test_workflow_helpers import ensure_check_recursion_method
+from tests.unit.core.workflows.test_workflow_helpers import ensure_check_recursion_method
 
 # Add the parent directory to the path so we can import our modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -83,7 +83,7 @@ class TestIntegratedWorkflowExecution(unittest.TestCase):
 
         return status_data
 
-    @patch('orchestration.enhanced_workflow.EnhancedWorkflowExecutor._build_workflow')
+    @patch('src.core.workflows.enhanced_workflow.EnhancedWorkflowExecutor._build_workflow')
     def test_workflow_with_task_dependencies(self, mock_build_workflow):
         """Test workflow execution respects task dependencies."""
         test_timer = Timer().start()
@@ -150,7 +150,7 @@ class TestIntegratedWorkflowExecution(unittest.TestCase):
         self.test_results["tests_passed"] += 1
         self.test_results["execution_times"]["test_workflow_with_task_dependencies"] = test_timer.elapsed()
 
-    @patch('orchestration.enhanced_workflow.load_task_metadata')
+    @patch('src.core.workflows.enhanced_workflow.load_task_metadata')
     def test_error_handling_in_workflow(self, mock_load_metadata):
         """Test workflow error handling during execution."""
         test_timer = Timer().start()
@@ -191,8 +191,8 @@ class TestIntegratedWorkflowExecution(unittest.TestCase):
         self.test_results["tests_passed"] += 1
         self.test_results["execution_times"]["test_error_handling_in_workflow"] = test_timer.elapsed()
 
-    @patch('orchestration.enhanced_workflow.EnhancedWorkflowExecutor._build_workflow')
-    @patch('utils.task_loader.load_task_metadata')
+    @patch('src.core.workflows.enhanced_workflow.EnhancedWorkflowExecutor._build_workflow')
+    @patch('src.infrastructure.utils.task_loader.load_task_metadata')
     def test_auto_generated_workflow_with_dependencies(
             self, mock_load_metadata, mock_build_workflow):
         """Test auto-generated workflow respects task dependencies."""
@@ -271,7 +271,7 @@ class TestIntegratedWorkflowExecution(unittest.TestCase):
         self.test_results["tests_passed"] += 1
         self.test_results["execution_times"]["test_auto_generated_workflow_with_dependencies"] = test_timer.elapsed()
 
-    @patch('orchestration.enhanced_workflow.EnhancedWorkflowExecutor._build_workflow')
+    @patch('src.core.workflows.enhanced_workflow.EnhancedWorkflowExecutor._build_workflow')
     def test_resilient_workflow_retry_logic(self, mock_build_workflow):
         """Test retry logic in resilient workflow."""
         test_timer = Timer().start()
@@ -326,7 +326,7 @@ class TestIntegratedWorkflowExecution(unittest.TestCase):
         self.test_results["tests_passed"] += 1
         self.test_results["execution_times"]["test_resilient_workflow_retry_logic"] = test_timer.elapsed()
 
-    @patch('orchestration.enhanced_workflow.EnhancedWorkflowExecutor._build_workflow')
+    @patch('src.core.workflows.enhanced_workflow.EnhancedWorkflowExecutor._build_workflow')
     def test_dynamic_routing_based_on_status(self, mock_build_workflow):
         """Test dynamic routing in the workflow based on task status."""
         test_timer = Timer().start()

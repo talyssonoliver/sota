@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 HITL Kanban Dashboard - Bonus Feature from System Implementation
 
@@ -14,14 +15,20 @@ Live-updated from pending_reviews/ and feedback_logs/
 
 
 import argparse
-import json
-import sys
 from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta
-from enum import Enum
-from pathlib import Path
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    Path,
+    datetime,
+    json,
+    os,
+    re,
+    subprocess,
+    sys,
+    time,
+    timedelta
+)
 from typing import List, Optional, Tuple
-
 from rich import box
 from rich.console import Console
 from rich.panel import Panel
@@ -441,7 +448,8 @@ class HITLKanbanBoard:
         """Extract task ID from review filename."""
         # Common patterns: qa_BE-07.md, review_UX-02.md, BE-07_approval.md
         try:
-            import re
+
+            from src.infrastructure.utils.common_imports import re
         except ImportError:
             return None
 
@@ -627,16 +635,16 @@ class HITLKanbanBoard:
             refresh_interval: Refresh interval in seconds
         """
         try:
-            import os
-            import time
-        except ImportError:
-            print("Required modules not available for watch mode")
-            return
-
-        try:
             while True:
-                # Clear screen
-                os.system("cls" if os.name == "nt" else "clear")
+                # Clear screen safely
+                try:
+                    if os.name == "nt":
+                        subprocess.run(["cls"], shell=False, check=False)
+                    else:
+                        subprocess.run(["clear"], shell=False, check=False)
+                except (subprocess.SubprocessError, FileNotFoundError):
+                    # Fallback to ANSI escape sequences
+                    print("\033[2J\033[H", end="")
 
                 # Display board
                 self.display_board()

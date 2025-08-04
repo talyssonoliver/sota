@@ -3,13 +3,13 @@ import shutil
 import sys
 import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
 
 from tests.helpers import cleanup_test_files
-from tests.mock_environment import setup_mock_environment
-from tests.mock_openai_embeddings import create_mock_openai_embeddings
-from tools.memory import (MemoryEngine, MemoryEngineConfig)
+from scripts.mocks.mock_environment import setup_mock_environment
+from scripts.mocks.mock_openai_embeddings import create_mock_openai_embeddings
+from src.infrastructure.memory import MemoryEngine, MemoryEngineConfig
 
 sys.path.insert(0, os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..")))
@@ -27,14 +27,36 @@ class TestMemoryEngine(unittest.TestCase):
         self.mock_embeddings, self.mock_embeddings_instance = create_mock_openai_embeddings()
 
         # Patch OpenAIEmbeddings to use our mock
-        self.patcher = patch(
-            'tools.memory.engine.OpenAIEmbeddings', self.mock_embeddings)
-        self.patcher.start()
+        self.openai_patcher = patch(
+            'src.infrastructure.memory.engines.memory_engine.OpenAIEmbeddings', self.mock_embeddings)
+        self.openai_patcher.start()
+        
+        # Mock security system to avoid encryption key errors - patch where it's imported
+        self.security_patcher = patch('src.infrastructure.memory.engines.memory_engine.SecurityManager')
+        mock_security = self.security_patcher.start()
+        mock_security_instance = MagicMock()
+        mock_security_instance.encrypt_data.return_value = b'encrypted_data'
+        mock_security_instance.decrypt_data.return_value = 'decrypted_data'
+        mock_security_instance.encryption_enabled = True
+        # Make sure get_index_health returns proper structure
+        mock_security_instance.get_index_health.return_value = {
+            'cache': {'l1': {'size': 0}, 'l2': {'size': 0}},
+            'storage': {'status': 'healthy'}
+        }
+        mock_security.return_value = mock_security_instance
+        
+        # Mock Fernet to avoid key generation issues  
+        self.fernet_patcher = patch('src.infrastructure.memory.security.encryption.Fernet')
+        mock_fernet = self.fernet_patcher.start()
+        mock_fernet_instance = MagicMock()
+        mock_fernet_instance.encrypt.return_value = b'encrypted_data'
+        mock_fernet_instance.decrypt.return_value = b'decrypted_data'
+        mock_fernet.return_value = mock_fernet_instance
+        mock_fernet.generate_key.return_value = b'a' * 44  # 44 bytes base64 encoded = 32 bytes raw
         # Grant 'tester' read/write/delete/admin permissions for testing and
         # set small chunk size
         test_config = MemoryEngineConfig(
-            collection_name="test_collection",
-            knowledge_base_path="tests/test_data/context-store/"
+            collection_name="test_collection"
         )        # Update chunking config for testing
         test_config.chunking.min_chunk_size = 1  # allow small test docs
         test_config.chunking.chunk_size = 2048
@@ -49,7 +71,9 @@ class TestMemoryEngine(unittest.TestCase):
 
     def tearDown(self):
         # Stop patching
-        self.patcher.stop()
+        self.openai_patcher.stop()
+        self.security_patcher.stop()
+        self.fernet_patcher.stop()
 
         # Clear memory engine to release file handles
         try:

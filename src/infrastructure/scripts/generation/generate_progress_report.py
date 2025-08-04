@@ -1,13 +1,21 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path
+)
 """Generate progress reports."""
 
 import datetime
-from pathlib import Path
+# from pathlib import Path  # Consolidated to common_imports
 
 try:
     pass
 except ImportError:
     pass
-from typing import Any, Dict, List, Optional
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 # Try to import CompletionMetricsCalculator - will be mocked in tests
 try:

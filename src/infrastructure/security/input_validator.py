@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import re, uuid
 """
 Input Validation Security Module
 """
 
-import re
-import uuid
+# import re  # Consolidated to common_imports
+# import uuid  # Consolidated to common_imports
 from typing import Any, Dict, List, Union
 
 from flask import jsonify, request

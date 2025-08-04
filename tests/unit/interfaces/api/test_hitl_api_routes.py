@@ -8,7 +8,7 @@ Comprehensive tests for HITL REST API endpoints.
 import unittest
 import json
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, Mock
 from datetime import datetime, timedelta
 from flask import Flask
 import sys
@@ -389,7 +389,7 @@ class TestHITLAPIRoutes(unittest.TestCase):
             }
         }
         
-        with patch('api.hitl_routes.HITLDashboardManager') as mock_manager_class:
+        with patch('src.interfaces.api.hitl_routes.HITLDashboardManager') as mock_manager_class:
             mock_manager = mock_manager_class.return_value
             mock_manager.get_dashboard_data.return_value = mock_dashboard_data
             
@@ -413,9 +413,10 @@ class TestHITLAPIRoutes(unittest.TestCase):
             'pending_checkpoints': [self.test_checkpoints[0]]
         }
         
-        with patch('api.hitl_routes.HITLDashboardManager') as mock_manager_class:
-            mock_manager = mock_manager_class.return_value
+        with patch('src.interfaces.api.hitl_routes.get_dashboard_manager') as mock_get_manager:
+            mock_manager = Mock()
             mock_manager.get_task_dashboard_data.return_value = mock_task_data
+            mock_get_manager.return_value = mock_manager
             
             response = self.client.get('/api/hitl/dashboard/tasks/BE-07?task_type=backend')
             

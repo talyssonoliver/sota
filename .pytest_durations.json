@@ -1,0 +1,6 @@
+{
+ "tests/integration/test_business_endpoints.py::test_endpoint_integration": 0.0035236000549048185,
+ "tests/unit/core/workflows/test_generate_briefing.py::TestCLIIntegration::test_cli_day_parameter": 0.8568828999996185,
+ "tests/unit/infrastructure/security/test_security_monitoring.py::TestSecurityEventType::test_security_event_types_exist": 0.001686799805611372,
+ "tests/e2e/workflows/test_phase6_step_6_5_visual_progress_charts.py::TestVisualProgressChartsUIComponents::test_chart_component_specifications": 0.0020067000295966864
+}

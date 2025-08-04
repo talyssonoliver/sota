@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    os,
+    requests,
+    sys
+)
 """
 Comprehensive Health Check for AI System
 Checks all critical components and dependencies
 """
 
-import os
-import sys
-from datetime import datetime
-from pathlib import Path
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Dict, List, Tuple
 
 
@@ -241,7 +249,7 @@ def check_deployment_readiness(environment: str) -> Dict[str, bool]:
 
     try:
         # Health endpoint check
-        import requests
+#         import requests  # Consolidated to common_imports
 
         response = requests.get("http://localhost:8000/health", timeout=5)
         checks["health_endpoint"] = response.status_code == 200

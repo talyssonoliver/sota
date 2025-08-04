@@ -1,3 +1,19 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    asyncio,
+    datetime,
+    json,
+    logging,
+    os,
+    timedelta,
+    uuid,
+    yaml
+)
 """
 Human-in-the-Loop (HITL) Engine for Phase 7 Implementation
 
@@ -13,16 +29,16 @@ Key Features:
 - Audit trail and compliance reporting
 """
 
-import json
-import logging
-import os
-import uuid
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import uuid  # Consolidated to common_imports
+# from datetime import datetime, timedelta  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 try:
-    import yaml
+#     import yaml  # Consolidated to common_imports
 
     YAML_AVAILABLE = True
 except ImportError:
@@ -1522,7 +1538,8 @@ HITLEngine = HITLPolicyEngine  # Alias for backward compatibility
 if __name__ == "__main__":
     # Example usage
     try:
-        import asyncio
+
+        from src.infrastructure.utils.common_imports import asyncio
     except ImportError:
         pass
 
