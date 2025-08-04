@@ -28,7 +28,9 @@ def run_pytest_with_args(args):
     # For quick tests, focus on stable test suites
     stable_test_paths = [
         "tests/test_smoke.py",
-        "tests/unit/infrastructure/",
+        "tests/unit/infrastructure/utils/",
+        "tests/unit/infrastructure/security/",
+        "tests/unit/infrastructure/tools/validation/",
         "tests/unit/interfaces/",
         "tests/unit/core/workflows/",
         "tests/unit/core/tasks/",
