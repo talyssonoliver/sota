@@ -104,58 +104,14 @@ except ImportError as e:
 if import_errors:
     logger.warning(f"Some components not available: {'; '.join(import_errors)}")
     
-# Define type aliases for better type checking
+# Import assignments - use real classes if available
 UnifiedDashboardAPI = RealUnifiedDashboardAPI
 AgentFactory = RealAgentFactory  
 MemoryEngine = RealMemoryEngine
 WorkflowRegistry = RealWorkflowRegistry
 
-# Only create mocks if absolutely necessary
-if not components_loaded:
-    logger.warning("Using mock components for demo mode")
-    
-    if RealUnifiedDashboardAPI is None:
-        class UnifiedDashboardAPI:
-            def __init__(self, *args: Any, **kwargs: Any) -> None: 
-                # Mock dashboard API for demo mode
-                self.config = args[0] if args else kwargs.get('config', None)
-            def start_server(self) -> bool: 
-                # Mock server start
-                logger.info("Mock server started")
-                return True
-            def stop(self) -> None: 
-                # Mock server stop
-                pass
-    
-    if RealAgentFactory is None:
-        class AgentFactory:
-            def __init__(self, *args: Any, **kwargs: Any) -> None: 
-                # Mock agent factory for demo mode
-                pass
-            def create_agent(self, agent_type: str) -> Dict[str, Any]: 
-                # Mock agent creation - not async
-                return {"type": agent_type, "status": "mock"}
-    
-    if RealMemoryEngine is None:
-        class MemoryEngine:
-            def __init__(self, *args: Any, **kwargs: Any) -> None: 
-                # Mock memory engine for demo mode
-                pass
-            def cleanup(self) -> None:
-                # Mock cleanup method
-                pass
-    
-    if RealWorkflowRegistry is None:
-        class WorkflowRegistry:
-            def __init__(self, *args: Any, **kwargs: Any) -> None:
-                # Mock workflow registry for demo mode
-                pass
-            async def initialize(self) -> None:
-                # Mock initialization
-                pass
 
-
-class ClaudeCodeAI:
+class SOTAAISystem:
     """
     Main application class for the Sota coding environment.
     
@@ -181,25 +137,34 @@ class ClaudeCodeAI:
         self.projects: Dict[str, Dict] = {}
         self.server_thread = None
         
-        logger.info(f"Claude Code AI initialized - Port: {self.port}, Headless: {self.headless}")
+        logger.info(f"SOTA AI System initialized - Port: {self.port}, Headless: {self.headless}")
     
     async def initialize_core_systems(self):
         """Initialize core AI and infrastructure systems."""
         try:
             logger.info("Initializing core AI systems...")
             
-            # Initialize memory engine
-            self.memory_engine = MemoryEngine()
-            logger.info("Memory engine initialized")
+            # Initialize memory engine if available
+            if MemoryEngine is not None:
+                self.memory_engine = MemoryEngine()
+                logger.info("Memory engine initialized")
+            else:
+                logger.warning("Memory engine not available - continuing without it")
             
-            # Initialize agent factory
-            self.agent_factory = AgentFactory(memory_engine=self.memory_engine)
-            logger.info("Agent factory initialized")
+            # Initialize agent factory if available
+            if AgentFactory is not None:
+                self.agent_factory = AgentFactory(memory_engine=self.memory_engine)
+                logger.info("Agent factory initialized")
+            else:
+                logger.warning("Agent factory not available - continuing without it")
             
-            # Initialize workflow registry
-            self.workflow_registry = WorkflowRegistry()
-            await self.workflow_registry.initialize()
-            logger.info("Workflow registry initialized")
+            # Initialize workflow registry if available
+            if WorkflowRegistry is not None:
+                self.workflow_registry = WorkflowRegistry()
+                await self.workflow_registry.initialize()
+                logger.info("Workflow registry initialized")
+            else:
+                logger.warning("Workflow registry not available - continuing without it")
             
             # Load available projects
             await self.discover_projects()
@@ -220,14 +185,18 @@ class ClaudeCodeAI:
             
             logger.info(f"Starting web server on {self.host}:{self.port}")
             
-            # Initialize unified API server with custom config
-            from src.interfaces.dashboard.config import DashboardConfig
-            config = DashboardConfig()
-            config.host = self.host
-            config.port = self.port
-            config.debug = False
-            
-            self.api_server = UnifiedDashboardAPI(config)
+            # Initialize unified API server if available
+            if UnifiedDashboardAPI is not None:
+                from src.interfaces.dashboard.config import DashboardConfig
+                config = DashboardConfig()
+                config.host = self.host
+                config.port = self.port
+                config.debug = False
+                
+                self.api_server = UnifiedDashboardAPI(config)
+            else:
+                logger.error("UnifiedDashboardAPI not available - cannot start web server")
+                return False
             
             # Start the server in a separate thread since Flask's app.run() is blocking
             import threading
@@ -347,9 +316,9 @@ class ClaudeCodeAI:
         try:
             logger.info("Starting multi-agent system...")
             
-            if not self.agent_factory:
-                logger.error("Agent factory not initialized")
-                return False
+            if self.agent_factory is None:
+                logger.warning("Agent factory not available - skipping agent startup")
+                return True
             
             # Start core agents - fix agent names to match factory
             core_agents = [
@@ -405,7 +374,7 @@ class ClaudeCodeAI:
     
     async def shutdown(self):
         """Gracefully shutdown the application."""
-        logger.info("Shutting down Claude Code AI...")
+        logger.info("Shutting down SOTA AI System...")
         
         try:
             # Stop web server
@@ -453,7 +422,7 @@ class ClaudeCodeAI:
                     logger.error("Failed to start web server")
                     return False
             
-            logger.info("🚀 Claude Code AI is running!")
+            logger.info("🚀 SOTA AI System is running!")
             logger.info(f"📊 Active agents: {len(self.running_agents)}")
             logger.info(f"📁 Available projects: {len(self.projects)}")
             
@@ -461,7 +430,7 @@ class ClaudeCodeAI:
                 # Get actual port the server is running on
                 actual_port = getattr(self.api_server.config, 'port', self.port) if self.api_server else self.port
                 logger.info(f"🌐 Web interface: http://{self.host}:{actual_port}")
-                print("\n🎉 Claude Code AI is ready!")
+                print("\n🎉 SOTA AI System is ready!")
                 print(f"🌐 Open your browser to: http://{self.host}:{actual_port}")
                 print(f"📊 {len(self.running_agents)} agents running")
                 print(f"📁 {len(self.projects)} projects available")
@@ -486,7 +455,7 @@ class ClaudeCodeAI:
 def main():
     """Main entry point with command line argument support."""
     parser = argparse.ArgumentParser(
-        description="Claude Code AI - Local development environment with multi-agent architecture",
+        description="SOTA AI System - Local development environment with multi-agent architecture",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -549,7 +518,7 @@ Features:
     
     # Handle validation mode
     if args.validate:
-        app = ClaudeCodeAI()
+        app = SOTAAISystem()
         result = app.run_validation()
         sys.exit(0 if result else 1)
     
@@ -562,7 +531,7 @@ Features:
     }
     
     try:
-        app = ClaudeCodeAI(config)
+        app = SOTAAISystem(config)
         success = asyncio.run(app.run())
         sys.exit(0 if success else 1)
         
