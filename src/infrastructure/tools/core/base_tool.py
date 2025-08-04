@@ -1,5 +1,3 @@
-
-from src.infrastructure.utils.common_imports import logging, time
 """
 Base Tool - Foundation for all tools in the AI system
 
@@ -9,9 +7,7 @@ This module defines the ArtesanatoBaseTool, which provides:
 - Error handling and logging
 - Integration with LangChain's BaseTool
 """
-
-# import logging  # Consolidated to common_imports
-# import time  # Consolidated to common_imports
+from src.infrastructure.utils.common_imports import logging, time
 from typing import Any, Dict, Optional
 
 # Conditional import following the project pattern
