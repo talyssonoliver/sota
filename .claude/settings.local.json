@@ -79,7 +79,8 @@
       "Bash(npm run docusaurus:*)",
       "Bash(npx @docusaurus/mdx-loader:*)",
       "mcp__filesystem__read_text_file",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   },
