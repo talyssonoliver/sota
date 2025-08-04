@@ -6,7 +6,7 @@ Tests all major functionality including Deploy Hooks and Git repository connecti
 import json
 import pytest
 from unittest.mock import Mock, patch
-from src.platform.tools.vercel_tool import VercelTool
+from src.infrastructure.tools.external.vercel_tool import VercelTool
 
 
 class TestVercelToolUnified:
