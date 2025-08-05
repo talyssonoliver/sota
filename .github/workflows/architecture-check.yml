@@ -16,7 +16,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: '3.11'
     
     - name: Architecture Compliance Check
       run: |
@@ -32,13 +32,21 @@ jobs:
           VIOLATIONS=true
         fi
         
-        if grep -r "from tools\." src/ tests/ --include="*.py" 2>/dev/null | grep -v "from tools.memory."; then
+        # Check for deprecated imports, excluding validator files and test files that test validators
+        if grep -r "^[[:space:]]*from tools\." src/ tests/ --include="*.py" 2>/dev/null | \
+           grep -v "validator" | \
+           grep -v "test_fast_precommit" | \
+           grep -v "# .*from tools"; then
           echo "❌ Found deprecated 'from tools.' imports"
           echo "💡 Use: from src.infrastructure.tools."
           VIOLATIONS=true
         fi
         
-        if grep -r "from memory\." src/ tests/ --include="*.py" 2>/dev/null; then
+        # Check for deprecated memory imports, excluding validator files  
+        if grep -r "^[[:space:]]*from memory\." src/ tests/ --include="*.py" 2>/dev/null | \
+           grep -v "validator" | \
+           grep -v "test_fast_precommit" | \
+           grep -v "# .*from memory"; then
           echo "❌ Found deprecated 'from memory.' imports"
           echo "💡 Use: from src.infrastructure.memory."
           VIOLATIONS=true
@@ -89,14 +97,14 @@ jobs:
     - name: Test Collection Check
       run: |
         echo "🧪 Verifying all tests can be collected..."
-        python -m pip install pytest
+        python3 -m pip install pytest
         
         # Check if tests can be collected successfully
-        if python -m pytest --collect-only --tb=short > /dev/null 2>&1; then
+        if python3 -m pytest --collect-only --tb=short > /dev/null 2>&1; then
           echo "✅ All tests collect successfully"
-          python -m pytest --collect-only --tb=short | tail -3
+          python3 -m pytest --collect-only --tb=short | tail -3
         else
           echo "❌ Test collection failed"
-          python -m pytest --collect-only --tb=short
+          python3 -m pytest --collect-only --tb=short
           exit 1
         fi
