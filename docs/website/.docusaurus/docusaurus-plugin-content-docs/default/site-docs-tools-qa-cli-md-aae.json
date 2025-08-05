@@ -1,0 +1,24 @@
+{
+  "id": "tools/qa_cli",
+  "title": "qa_cli.py",
+  "description": "Command-line interface used by the QA agent to run automated quality assurance",
+  "source": "@site/docs/tools/qa_cli.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/qa_cli",
+  "permalink": "/docs/tools/qa_cli",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/qa_cli.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "memory_engine_examples.py",
+    "permalink": "/docs/tools/memory_engine_examples"
+  },
+  "next": {
+    "title": "rate_limiter.py",
+    "permalink": "/docs/tools/rate_limiter"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "configuration-consolidation-summary",
+  "title": "Configuration Management Consolidation Summary",
+  "description": "Overview",
+  "source": "@site/docs/configuration-consolidation-summary.md",
+  "sourceDirName": ".",
+  "slug": "/configuration-consolidation-summary",
+  "permalink": "/docs/configuration-consolidation-summary",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/configuration-consolidation-summary.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Clean Architecture Implementation Summary",
+    "permalink": "/docs/clean-architecture-implementation-summary"
+  },
+  "next": {
+    "title": "Configuration Reference",
+    "permalink": "/docs/configuration_reference"
+  }
+}

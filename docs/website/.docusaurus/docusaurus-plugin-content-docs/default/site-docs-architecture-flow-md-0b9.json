@@ -1,0 +1,24 @@
+{
+  "id": "architecture/flow",
+  "title": "graph/flow.py",
+  "description": "Functions",
+  "source": "@site/docs/architecture/flow.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/flow",
+  "permalink": "/docs/architecture/flow",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/flow.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Error Propagation Strategy for Multi-Agent Workflows",
+    "permalink": "/docs/architecture/error_propagation_strategy"
+  },
+  "next": {
+    "title": "graph/graph_builder.py",
+    "permalink": "/docs/architecture/graph_builder"
+  }
+}

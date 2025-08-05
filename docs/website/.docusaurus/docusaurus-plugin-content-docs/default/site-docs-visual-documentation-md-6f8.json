@@ -1,0 +1,24 @@
+{
+  "id": "visual_documentation",
+  "title": "Visual Documentation",
+  "description": "This document outlines useful diagrams to better understand the AI Agent System.",
+  "source": "@site/docs/visual_documentation.md",
+  "sourceDirName": ".",
+  "slug": "/visual_documentation",
+  "permalink": "/docs/visual_documentation",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/visual_documentation.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Visual Documentation",
+    "permalink": "/docs/user-guides/visual_documentation"
+  },
+  "next": {
+    "title": "Workflow Executor Documentation",
+    "permalink": "/docs/workflow_executor"
+  }
+}

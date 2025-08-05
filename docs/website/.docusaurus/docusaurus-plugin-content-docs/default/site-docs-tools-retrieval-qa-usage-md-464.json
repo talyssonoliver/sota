@@ -1,0 +1,24 @@
+{
+  "id": "tools/retrieval_qa_usage",
+  "title": "Using RetrievalQA for Context Injection",
+  "description": "This guide demonstrates how to use the newly implemented RetrievalQA functionality to dynamically generate answers from your context store and inject them into agent prompts.",
+  "source": "@site/docs/tools/retrieval_qa_usage.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/retrieval_qa_usage",
+  "permalink": "/docs/tools/retrieval_qa_usage",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/retrieval_qa_usage.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "tools/retrieval_qa_refactored.py",
+    "permalink": "/docs/tools/retrieval_qa_refactored"
+  },
+  "next": {
+    "title": "supabase_tool.py",
+    "permalink": "/docs/tools/supabase_tool"
+  }
+}

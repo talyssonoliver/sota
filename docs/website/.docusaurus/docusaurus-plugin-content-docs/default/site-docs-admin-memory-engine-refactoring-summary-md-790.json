@@ -1,0 +1,24 @@
+{
+  "id": "admin/MEMORY_ENGINE_REFACTORING_SUMMARY",
+  "title": "Memory Engine Refactoring Summary",
+  "description": "Date: June 8, 2025",
+  "source": "@site/docs/admin/MEMORY_ENGINE_REFACTORING_SUMMARY.md",
+  "sourceDirName": "admin",
+  "slug": "/admin/MEMORY_ENGINE_REFACTORING_SUMMARY",
+  "permalink": "/docs/admin/MEMORY_ENGINE_REFACTORING_SUMMARY",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/admin/MEMORY_ENGINE_REFACTORING_SUMMARY.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Code Quality Improvements Summary",
+    "permalink": "/docs/admin/CODE_QUALITY_IMPROVEMENTS_SUMMARY"
+  },
+  "next": {
+    "title": "ADR‑CLN‑01 – Generated Artifact Strategy",
+    "permalink": "/docs/adr/generated_artefact_strategy"
+  }
+}

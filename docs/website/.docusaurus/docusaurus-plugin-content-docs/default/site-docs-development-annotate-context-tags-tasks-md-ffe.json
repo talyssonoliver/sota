@@ -1,0 +1,24 @@
+{
+  "id": "development/annotate_context_tags_tasks",
+  "title": "examples/annotate_context_tags_tasks.py",
+  "description": "Functions",
+  "source": "@site/docs/development/annotate_context_tags_tasks.md",
+  "sourceDirName": "development",
+  "slug": "/development/annotate_context_tags_tasks",
+  "permalink": "/docs/development/annotate_context_tags_tasks",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/annotate_context_tags_tasks.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Input Validation Implementation Summary",
+    "permalink": "/docs/development/INPUT_VALIDATION_IMPLEMENTATION_SUMMARY"
+  },
+  "next": {
+    "title": "Automation Guide",
+    "permalink": "/docs/development/automation"
+  }
+}

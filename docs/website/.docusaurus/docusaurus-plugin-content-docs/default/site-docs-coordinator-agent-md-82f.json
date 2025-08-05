@@ -1,0 +1,24 @@
+{
+  "id": "coordinator_agent",
+  "title": "Coordinator Agent Documentation",
+  "description": "File: agents/coordinator.py",
+  "source": "@site/docs/coordinator_agent.md",
+  "sourceDirName": ".",
+  "slug": "/coordinator_agent",
+  "permalink": "/docs/coordinator_agent",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/coordinator_agent.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Configuration Reference",
+    "permalink": "/docs/configuration_reference"
+  },
+  "next": {
+    "title": "Daily Cycle Orchestrator Documentation",
+    "permalink": "/docs/daily_cycle_orchestrator"
+  }
+}

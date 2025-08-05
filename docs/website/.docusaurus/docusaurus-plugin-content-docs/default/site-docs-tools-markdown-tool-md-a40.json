@@ -1,0 +1,24 @@
+{
+  "id": "tools/markdown_tool",
+  "title": "markdown_tool.py",
+  "description": "Markdown Tool - Helps agents generate and format markdown documentation",
+  "source": "@site/docs/tools/markdown_tool.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/markdown_tool",
+  "permalink": "/docs/tools/markdown_tool",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/markdown_tool.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "examples/langChain_characterTextSplitter.py",
+    "permalink": "/docs/tools/langChain_characterTextSplitter"
+  },
+  "next": {
+    "title": "memory_engine.py",
+    "permalink": "/docs/tools/memory_engine"
+  }
+}

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI System - Dashboard Switcher</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        .dashboard-selector {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #00ff88, #00ccff, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .toggle-bar {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 10px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 24px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            color: #000000;
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .dashboard-card:hover::before {
+            left: 100%;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 255, 136, 0.5);
+        }
+
+        .dashboard-card.selected {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: #00ff88;
+            box-shadow: 0 15px 35px rgba(0, 255, 136, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+            color: #00ff88;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .card-description {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .card-features li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .card-features li i {
+            color: #00ff88;
+            margin-right: 10px;
+            width: 16px;
+        }
+
+        .card-action {
+            display: flex;
+            gap: 15px;
+            margin-top: auto;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            border: none;
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        }
+
+        .dashboard-frame {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+
+        .dashboard-frame.active {
+            display: block;
+        }
+
+        .frame-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px 25px;
+            border-radius: 50px;
+            backdrop-filter: blur(15px);
+        }
+
+        .frame-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .frame-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .fullscreen-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .back-to-selector {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: none;
+        }
+
+        .back-to-selector.show {
+            display: block;
+        }
+
+        .back-to-selector:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .toggle-bar {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .toggle-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="back-to-selector" onclick="showSelector()">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <div class="dashboard-selector" id="dashboardSelector">
+        <div class="header">
+            <h1><i class="fas fa-th-large"></i> AI System Dashboard Hub</h1>
+            <div class="subtitle">Choose your preferred dashboard interface</div>
+            
+            <div class="toggle-bar">
+                <button class="toggle-btn active" onclick="filterDashboards('all', event)">
+                    <i class="fas fa-th"></i> All Dashboards
+                </button>
+                <button class="toggle-btn" onclick="filterDashboards('monitoring', event)">
+                    <i class="fas fa-chart-line"></i> Monitoring
+                </button>
+                <button class="toggle-btn" onclick="filterDashboards('control', event)">
+                    <i class="fas fa-cogs"></i> Control
+                </button>
+                <button class="toggle-btn" onclick="filterDashboards('management', event)">
+                    <i class="fas fa-users-cog"></i> Management
+                </button>
+                <button class="toggle-btn" onclick="filterDashboards('development', event)">
+                    <i class="fas fa-code"></i> Development
+                </button>
+            </div>
+        </div>
+
+        <div class="dashboard-grid" id="dashboardGrid">
+            <!-- Command Center Dashboard -->
+            <div class="dashboard-card" data-category="control" onclick="loadDashboard('command-center')">
+                <div class="card-header">
+                    <i class="fas fa-rocket card-icon"></i>
+                    <div>
+                        <div class="card-title">Interactive Command Center</div>
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span>Active & Recommended</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Advanced command center with full system control, agent management, and real-time monitoring capabilities.
+                </div>
+                <ul class="card-features">
+                    <li><i class="fas fa-check"></i> System control buttons (start/stop/restart)</li>
+                    <li><i class="fas fa-check"></i> Individual agent management</li>
+                    <li><i class="fas fa-check"></i> Real-time terminal console</li>
+                    <li><i class="fas fa-check"></i> Task queue management</li>
+                    <li><i class="fas fa-check"></i> Workflow orchestration</li>
+                    <li><i class="fas fa-check"></i> Dark theme with neon accents</li>
+                </ul>
+                <div class="card-action">
+                    <button class="btn" onclick="event.stopPropagation(); loadDashboard('command-center')">
+                        <i class="fas fa-rocket"></i> Launch
+                    </button>
+                    <button class="btn btn-secondary" onclick="event.stopPropagation(); previewDashboard('command-center')">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                </div>
+            </div>
+
+            <!-- Enhanced Professional Dashboard -->
+            <div class="dashboard-card" data-category="monitoring" onclick="loadDashboard('professional')">
+                <div class="card-header">
+                    <i class="fas fa-chart-area card-icon"></i>
+                    <div>
+                        <div class="card-title">Enhanced Professional</div>
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span>Production Ready</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Professional-grade dashboard with modern UI, advanced charts, and comprehensive system monitoring.
+                </div>
+                <ul class="card-features">
+                    <li><i class="fas fa-check"></i> Modern gradient design</li>
+                    <li><i class="fas fa-check"></i> Interactive performance charts</li>
+                    <li><i class="fas fa-check"></i> Real-time metrics display</li>
+                    <li><i class="fas fa-check"></i> Agent status monitoring</li>
+                    <li><i class="fas fa-check"></i> System health indicators</li>
+                    <li><i class="fas fa-check"></i> Responsive design</li>
+                </ul>
+                <div class="card-action">
+                    <button class="btn" onclick="event.stopPropagation(); loadDashboard('professional')">
+                        <i class="fas fa-chart-area"></i> Open
+                    </button>
+                    <button class="btn btn-secondary" onclick="event.stopPropagation(); previewDashboard('professional')">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                </div>
+            </div>
+
+            <!-- Unified Basic Dashboard -->
+            <div class="dashboard-card" data-category="monitoring" onclick="loadDashboard('unified')">
+                <div class="card-header">
+                    <i class="fas fa-tachometer-alt card-icon"></i>
+                    <div>
+                        <div class="card-title">Unified Basic</div>
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span>Lightweight</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Clean and simple dashboard for basic monitoring with essential metrics and minimal resource usage.
+                </div>
+                <ul class="card-features">
+                    <li><i class="fas fa-check"></i> Lightweight and fast</li>
+                    <li><i class="fas fa-check"></i> Essential task statistics</li>
+                    <li><i class="fas fa-check"></i> Agent status overview</li>
+                    <li><i class="fas fa-check"></i> Live metrics updates</li>
+                    <li><i class="fas fa-check"></i> Clean interface</li>
+                    <li><i class="fas fa-check"></i> Low resource usage</li>
+                </ul>
+                <div class="card-action">
+                    <button class="btn" onclick="event.stopPropagation(); loadDashboard('unified')">
+                        <i class="fas fa-tachometer-alt"></i> Launch
+                    </button>
+                    <button class="btn btn-secondary" onclick="event.stopPropagation(); previewDashboard('unified')">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                </div>
+            </div>
+
+            <!-- HITL Kanban Dashboard -->
+            <div class="dashboard-card" data-category="management" onclick="loadDashboard('hitl-kanban')">
+                <div class="card-header">
+                    <i class="fas fa-clipboard-list card-icon"></i>
+                    <div>
+                        <div class="card-title">HITL Kanban Board</div>
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span>Human-in-the-Loop</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Human-in-the-Loop review dashboard with Kanban-style task tracking and review management.
+                </div>
+                <ul class="card-features">
+                    <li><i class="fas fa-check"></i> Kanban board interface</li>
+                    <li><i class="fas fa-check"></i> Review queue management</li>
+                    <li><i class="fas fa-check"></i> Task approval workflow</li>
+                    <li><i class="fas fa-check"></i> Deadline tracking</li>
+                    <li><i class="fas fa-check"></i> Comment system</li>
+                    <li><i class="fas fa-check"></i> Priority management</li>
+                </ul>
+                <div class="card-action">
+                    <button class="btn" onclick="event.stopPropagation(); loadDashboard('hitl-kanban')">
+                        <i class="fas fa-clipboard-list"></i> Open
+                    </button>
+                    <button class="btn btn-secondary" onclick="event.stopPropagation(); previewDashboard('hitl-kanban')">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                </div>
+            </div>
+
+            <!-- Management Dashboard -->
+            <div class="dashboard-card" data-category="management" onclick="loadDashboard('management')">
+                <div class="card-header">
+                    <i class="fas fa-users-cog card-icon"></i>
+                    <div>
+                        <div class="card-title">Quality Management</div>
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span>Executive View</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Executive dashboard focused on code quality metrics, compliance status, and team performance analytics.
+                </div>
+                <ul class="card-features">
+                    <li><i class="fas fa-check"></i> Code quality metrics</li>
+                    <li><i class="fas fa-check"></i> Technical debt analysis</li>
+                    <li><i class="fas fa-check"></i> Compliance tracking</li>
+                    <li><i class="fas fa-check"></i> Team performance</li>
+                    <li><i class="fas fa-check"></i> Executive reporting</li>
+                    <li><i class="fas fa-check"></i> Quality gates status</li>
+                </ul>
+                <div class="card-action">
+                    <button class="btn" onclick="event.stopPropagation(); loadDashboard('management')">
+                        <i class="fas fa-users-cog"></i> Access
+                    </button>
+                    <button class="btn btn-secondary" onclick="event.stopPropagation(); previewDashboard('management')">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                </div>
+            </div>
+
+            <!-- API Testing Dashboard -->
+            <div class="dashboard-card" data-category="development" onclick="loadDashboard('api-test')">
+                <div class="card-header">
+                    <i class="fas fa-code card-icon"></i>
+                    <div>
+                        <div class="card-title">API Testing Interface</div>
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span>Development Tool</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    Developer-focused interface for testing API endpoints, debugging responses, and monitoring system health.
+                </div>
+                <ul class="card-features">
+                    <li><i class="fas fa-check"></i> API endpoint testing</li>
+                    <li><i class="fas fa-check"></i> Response validation</li>
+                    <li><i class="fas fa-check"></i> Request/response viewer</li>
+                    <li><i class="fas fa-check"></i> Health check monitoring</li>
+                    <li><i class="fas fa-check"></i> Debug information</li>
+                    <li><i class="fas fa-check"></i> Developer tools</li>
+                </ul>
+                <div class="card-action">
+                    <button class="btn" onclick="event.stopPropagation(); loadDashboard('api-test')">
+                        <i class="fas fa-code"></i> Test
+                    </button>
+                    <button class="btn btn-secondary" onclick="event.stopPropagation(); previewDashboard('api-test')">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Frame Container -->
+    <div id="dashboardFrame" style="display: none;">
+        <div class="frame-controls">
+            <div class="frame-title" id="frameTitle">
+                <i class="fas fa-rocket"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="frame-actions">
+                <button class="fullscreen-btn" onclick="toggleFullscreen()">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button class="fullscreen-btn" onclick="refreshDashboard()">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button class="fullscreen-btn" onclick="showSelector()">
+                    <i class="fas fa-th"></i>
+                </button>
+            </div>
+        </div>
+        
+        <iframe id="dashboardIframe" class="dashboard-frame active" src=""></iframe>
+    </div>
+
+    <script src="dashboard_switcher.js"></script>
+</body>
+</html>

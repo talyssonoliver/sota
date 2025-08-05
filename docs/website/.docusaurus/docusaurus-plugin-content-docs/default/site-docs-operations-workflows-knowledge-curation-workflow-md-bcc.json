@@ -1,0 +1,24 @@
+{
+  "id": "operations/workflows/knowledge_curation_workflow",
+  "title": "Knowledge Curation Workflow",
+  "description": "This document describes the detailed process for creating, reviewing, and validating knowledge summaries in /context-store/ from source documents in /context-source/.",
+  "source": "@site/docs/operations/workflows/knowledge_curation_workflow.md",
+  "sourceDirName": "operations/workflows",
+  "slug": "/operations/workflows/knowledge_curation_workflow",
+  "permalink": "/docs/operations/workflows/knowledge_curation_workflow",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/operations/workflows/knowledge_curation_workflow.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/extract_code.py",
+    "permalink": "/docs/operations/workflows/extract_code"
+  },
+  "next": {
+    "title": "LangGraph Workflow Implementation",
+    "permalink": "/docs/operations/workflows/langgraph_workflow"
+  }
+}

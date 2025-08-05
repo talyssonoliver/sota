@@ -1,0 +1,24 @@
+{
+  "id": "tools/langChain_characterTextSplitter",
+  "title": "examples/langChain_characterTextSplitter.py",
+  "description": "Functions",
+  "source": "@site/docs/tools/langChain_characterTextSplitter.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/langChain_characterTextSplitter",
+  "permalink": "/docs/tools/langChain_characterTextSplitter",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/langChain_characterTextSplitter.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "jest_tool.py",
+    "permalink": "/docs/tools/jest_tool"
+  },
+  "next": {
+    "title": "markdown_tool.py",
+    "permalink": "/docs/tools/markdown_tool"
+  }
+}

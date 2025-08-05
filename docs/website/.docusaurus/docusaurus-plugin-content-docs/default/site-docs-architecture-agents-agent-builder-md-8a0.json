@@ -1,0 +1,24 @@
+{
+  "id": "architecture/agents/agent_builder",
+  "title": "MemoryEnabledAgentBuilder Documentation",
+  "description": "File: agents/init.py",
+  "source": "@site/docs/architecture/agents/agent_builder.md",
+  "sourceDirName": "architecture/agents",
+  "slug": "/architecture/agents/agent_builder",
+  "permalink": "/docs/architecture/agents/agent_builder",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/agents/agent_builder.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Agent System Overview",
+    "permalink": "/docs/architecture/agent_system_overview"
+  },
+  "next": {
+    "title": "Agent Factory Refactoring Summary",
+    "permalink": "/docs/architecture/agents/agent_factory_refactoring_summary"
+  }
+}

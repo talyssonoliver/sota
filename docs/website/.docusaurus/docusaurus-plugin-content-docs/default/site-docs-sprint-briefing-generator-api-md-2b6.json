@@ -1,0 +1,24 @@
+{
+  "id": "sprint/BRIEFING_GENERATOR_API",
+  "title": "Morning Briefing Generator - API Documentation",
+  "description": "Overview",
+  "source": "@site/docs/sprint/BRIEFING_GENERATOR_API.md",
+  "sourceDirName": "sprint",
+  "slug": "/sprint/BRIEFING_GENERATOR_API",
+  "permalink": "/docs/sprint/BRIEFING_GENERATOR_API",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/sprint/BRIEFING_GENERATOR_API.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Quality Gates Configuration Guide",
+    "permalink": "/docs/security/validation/quality_gates"
+  },
+  "next": {
+    "title": "Phase 6 Daily Automation & Visualization - COMPLETION REPORT",
+    "permalink": "/docs/sprint/PHASE6_COMPLETION_REPORT"
+  }
+}

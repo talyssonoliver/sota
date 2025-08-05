@@ -1,0 +1,24 @@
+{
+  "id": "architecture/handlers",
+  "title": "graph/handlers.py",
+  "description": "Functions",
+  "source": "@site/docs/architecture/handlers.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/handlers",
+  "permalink": "/docs/architecture/handlers",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/handlers.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "graph/graph_builder.py",
+    "permalink": "/docs/architecture/graph_builder"
+  },
+  "next": {
+    "title": "orchestration/hitl_engine.py",
+    "permalink": "/docs/architecture/hitl_engine"
+  }
+}

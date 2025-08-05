@@ -1,0 +1,24 @@
+{
+  "id": "security/security-overview",
+  "title": "Security Policy",
+  "description": "🛡️ Security Overview",
+  "source": "@site/docs/security/security-overview.md",
+  "sourceDirName": "security",
+  "slug": "/security/security-overview",
+  "permalink": "/docs/security/security-overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/security/security-overview.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Security Documentation",
+    "permalink": "/docs/security/"
+  },
+  "next": {
+    "title": "Validation System Documentation",
+    "permalink": "/docs/security/validation/"
+  }
+}

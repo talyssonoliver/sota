@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI System - Interactive Command Center</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3a 50%, #2d1b69 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .command-center {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00ff88, #00ccff, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            color: #a0a0ff;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-header i {
+            font-size: 1.5rem;
+            margin-right: 12px;
+            color: #00ff88;
+        }
+
+        .panel-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .main-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #00ff88, #00ccff);
+            border: none;
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #ffa726, #ffcc02);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #64b5f6, #42a5f5);
+        }
+
+        .agent-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .agent-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .agent-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .agent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .agent-name {
+            font-weight: 600;
+            color: #00ff88;
+        }
+
+        .agent-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .status-idle {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+
+        .status-error {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .metric-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border-left: 4px solid #00ff88;
+        }
+
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .system-monitor {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .log-output {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .workflow-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .workflow-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00ccff);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .task-queue {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .task-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 8px 0;
+            border-left: 3px solid #00ff88;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(45deg, #00ff88, #00cc70);
+        }
+
+        .notification.error {
+            background: linear-gradient(45deg, #ff6b6b, #ff5252);
+        }
+
+        .notification.warning {
+            background: linear-gradient(45deg, #ffa726, #ff9800);
+        }
+
+        .terminal-window {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .terminal-header {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27ca3f; }
+
+        .terminal-content {
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #00ff88;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 1200px) {
+            .control-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .agent-controls {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #00ff88;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="command-center">
+        <div class="header">
+            <h1><i class="fas fa-brain"></i> AI SYSTEM COMMAND CENTER</h1>
+            <div class="subtitle">Multi-Agent Orchestration & Control Interface</div>
+        </div>
+
+        <div class="control-grid">
+            <!-- System Controls -->
+            <div class="control-panel">
+                <div class="panel-header">
+                    <i class="fas fa-cogs"></i>
+                    <h3>System Controls</h3>
+                </div>
+                <button class="btn" onclick="startSystem()">
+                    <i class="fas fa-play"></i> Start System
+                </button>
+                <button class="btn btn-warning" onclick="restartSystem()">
+                    <i class="fas fa-redo"></i> Restart
+                </button>
+                <button class="btn btn-danger" onclick="stopSystem()">
+                    <i class="fas fa-stop"></i> Stop System
+                </button>
+                <button class="btn btn-secondary" onclick="emergencyShutdown()">
+                    <i class="fas fa-exclamation-triangle"></i> Emergency
+                </button>
+                
+                <div class="system-monitor">
+                    <h4><i class="fas fa-heartbeat"></i> System Health</h4>
+                    <div class="metric-display">
+                        <div class="metric-item">
+                            <div class="metric-value" id="systemUptime">--</div>
+                            <div class="metric-label">Uptime</div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-value" id="memoryUsage">--</div>
+                            <div class="metric-label">Memory</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Dashboard -->
+            <div class="control-panel">
+                <div class="panel-header">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <h3>Live Metrics</h3>
+                </div>
+                <div class="metric-display">
+                    <div class="metric-item">
+                        <div class="metric-value" id="totalTasks">0</div>
+                        <div class="metric-label">Total Tasks</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="completedTasks">0</div>
+                        <div class="metric-label">Completed</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="activeTasks">0</div>
+                        <div class="metric-label">Active</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="successRate">0%</div>
+                        <div class="metric-label">Success Rate</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="control-panel">
+                <div class="panel-header">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Quick Actions</h3>
+                </div>
+                <button class="btn" onclick="createTask()">
+                    <i class="fas fa-plus"></i> New Task
+                </button>
+                <button class="btn btn-secondary" onclick="runDiagnostics()">
+                    <i class="fas fa-stethoscope"></i> Diagnostics
+                </button>
+                <button class="btn btn-warning" onclick="clearLogs()">
+                    <i class="fas fa-trash"></i> Clear Logs
+                </button>
+                <button class="btn" onclick="exportData()">
+                    <i class="fas fa-download"></i> Export Data
+                </button>
+                
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-dot dot-red"></div>
+                        <div class="terminal-dot dot-yellow"></div>
+                        <div class="terminal-dot dot-green"></div>
+                        <span style="margin-left: 10px; font-size: 0.9rem;">System Console</span>
+                    </div>
+                    <div class="terminal-content" id="terminalOutput">
+                        > AI System initialized...<br>
+                        > Loading agent configurations...<br>
+                        > Memory engine ready<br>
+                        > Workflow orchestrator online<br>
+                        > <span class="loading-spinner"></span> Awaiting commands...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent Management -->
+        <div class="main-dashboard">
+            <div class="dashboard-card">
+                <div class="panel-header">
+                    <i class="fas fa-users-cog"></i>
+                    <h3>Agent Management</h3>
+                </div>
+                <div class="agent-controls" id="agentControls">
+                    <!-- Agents will be populated here -->
+                </div>
+            </div>
+
+            <!-- Task Queue -->
+            <div class="dashboard-card">
+                <div class="panel-header">
+                    <i class="fas fa-list-alt"></i>
+                    <h3>Task Queue</h3>
+                </div>
+                <div class="quick-actions">
+                    <button class="btn" onclick="addTaskToQueue()">
+                        <i class="fas fa-plus"></i> Add Task
+                    </button>
+                    <button class="btn btn-secondary" onclick="pauseQueue()">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button class="btn btn-warning" onclick="clearQueue()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+                <div class="task-queue" id="taskQueue">
+                    <!-- Tasks will be populated here -->
+                </div>
+            </div>
+
+            <!-- Workflow Management -->
+            <div class="dashboard-card">
+                <div class="panel-header">
+                    <i class="fas fa-project-diagram"></i>
+                    <h3>Active Workflows</h3>
+                </div>
+                <div class="workflow-controls" id="workflowControls">
+                    <!-- Workflows will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification" class="notification"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="interactive_command_center.js"></script>
+</body>
+</html>

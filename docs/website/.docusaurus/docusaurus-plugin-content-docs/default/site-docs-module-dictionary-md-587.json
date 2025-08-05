@@ -1,0 +1,24 @@
+{
+  "id": "module_dictionary",
+  "title": "Module Dictionary",
+  "description": "This document provides a high-level alphabetical listing of project modules. Only key modules are described here; see individual documentation files for full details.",
+  "source": "@site/docs/module_dictionary.md",
+  "sourceDirName": ".",
+  "slug": "/module_dictionary",
+  "permalink": "/docs/module_dictionary",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/module_dictionary.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Memory Engine (MCP) - Production Ready 2025 ✅",
+    "permalink": "/docs/memory_engine"
+  },
+  "next": {
+    "title": "AI Agent System - Operational View Documentation",
+    "permalink": "/docs/operations/"
+  }
+}

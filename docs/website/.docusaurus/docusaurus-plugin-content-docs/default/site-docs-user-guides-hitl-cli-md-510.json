@@ -1,0 +1,24 @@
+{
+  "id": "user-guides/hitl_cli",
+  "title": "cli/hitl_cli.py",
+  "description": "Classes",
+  "source": "@site/docs/user-guides/hitl_cli.md",
+  "sourceDirName": "user-guides",
+  "slug": "/user-guides/hitl_cli",
+  "permalink": "/docs/user-guides/hitl_cli",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/user-guides/hitl_cli.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "cli/feedback_cli.py",
+    "permalink": "/docs/user-guides/feedback_cli"
+  },
+  "next": {
+    "title": "dashboard/hitl_kanban_board.py",
+    "permalink": "/docs/user-guides/hitl_kanban_board"
+  }
+}

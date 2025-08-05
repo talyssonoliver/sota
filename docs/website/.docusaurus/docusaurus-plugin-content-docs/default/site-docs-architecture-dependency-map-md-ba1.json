@@ -1,0 +1,24 @@
+{
+  "id": "architecture/dependency_map",
+  "title": "Dependency Map",
+  "description": "This document summarizes external and internal dependencies.",
+  "source": "@site/docs/architecture/dependency_map.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/dependency_map",
+  "permalink": "/docs/architecture/dependency_map",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/dependency_map.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "examples/context_tracking_functionality.py",
+    "permalink": "/docs/architecture/context_tracking_functionality"
+  },
+  "next": {
+    "title": "orchestration/error_handling.py",
+    "permalink": "/docs/architecture/error_handling"
+  }
+}

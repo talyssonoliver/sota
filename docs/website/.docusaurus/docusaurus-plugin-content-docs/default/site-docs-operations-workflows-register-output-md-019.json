@@ -1,0 +1,24 @@
+{
+  "id": "operations/workflows/register_output",
+  "title": "orchestration/register_output.py",
+  "description": "Classes",
+  "source": "@site/docs/operations/workflows/register_output.md",
+  "sourceDirName": "operations/workflows",
+  "slug": "/operations/workflows/register_output",
+  "permalink": "/docs/operations/workflows/register_output",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/operations/workflows/register_output.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/qa_validation.py",
+    "permalink": "/docs/operations/workflows/qa_validation"
+  },
+  "next": {
+    "title": "graph/resilient_workflow.py",
+    "permalink": "/docs/operations/workflows/resilient_workflow"
+  }
+}

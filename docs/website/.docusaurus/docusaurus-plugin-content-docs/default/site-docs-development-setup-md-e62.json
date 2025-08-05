@@ -1,0 +1,24 @@
+{
+  "id": "development/setup",
+  "title": "Development Setup",
+  "description": "Quick Start (Recommended)",
+  "source": "@site/docs/development/setup.md",
+  "sourceDirName": "development",
+  "slug": "/development/setup",
+  "permalink": "/docs/development/setup",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/setup.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Security Guidelines",
+    "permalink": "/docs/development/security"
+  },
+  "next": {
+    "title": "Optimized Test Suite Documentation",
+    "permalink": "/docs/development/testing/OPTIMIZED_TESTING"
+  }
+}

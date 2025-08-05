@@ -1,0 +1,24 @@
+{
+  "id": "tools/coverage_tool",
+  "title": "coverage_tool.py",
+  "description": "The CoverageTool allows agents to inspect test coverage reports and enforce",
+  "source": "@site/docs/tools/coverage_tool.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/coverage_tool",
+  "permalink": "/docs/tools/coverage_tool",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/coverage_tool.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "context_visualizer.py",
+    "permalink": "/docs/tools/context_visualizer"
+  },
+  "next": {
+    "title": "cypress_tool.py",
+    "permalink": "/docs/tools/cypress_tool"
+  }
+}

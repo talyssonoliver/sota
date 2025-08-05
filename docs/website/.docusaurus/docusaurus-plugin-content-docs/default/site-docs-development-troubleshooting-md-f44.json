@@ -1,0 +1,24 @@
+{
+  "id": "development/troubleshooting",
+  "title": "Troubleshooting",
+  "description": "Comprehensive troubleshooting guide for common development issues and automated solutions.",
+  "source": "@site/docs/development/troubleshooting.md",
+  "sourceDirName": "development",
+  "slug": "/development/troubleshooting",
+  "permalink": "/docs/development/troubleshooting",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/troubleshooting.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "validate_imports.py",
+    "permalink": "/docs/development/testing/validate_imports"
+  },
+  "next": {
+    "title": "graph/auto_generate_graph.py",
+    "permalink": "/docs/development/visualization/auto_generate_graph"
+  }
+}

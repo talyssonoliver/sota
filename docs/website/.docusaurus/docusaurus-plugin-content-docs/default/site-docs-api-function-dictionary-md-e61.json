@@ -1,0 +1,24 @@
+{
+  "id": "api/function_dictionary",
+  "title": "Function Dictionary",
+  "description": "This list highlights common functions used across the project.",
+  "source": "@site/docs/api/function_dictionary.md",
+  "sourceDirName": "api",
+  "slug": "/api/function_dictionary",
+  "permalink": "/docs/api/function_dictionary",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/api/function_dictionary.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "api/external_integrations.py",
+    "permalink": "/docs/api/external_integrations"
+  },
+  "next": {
+    "title": "api/hitl_routes.py",
+    "permalink": "/docs/api/hitl_routes"
+  }
+}

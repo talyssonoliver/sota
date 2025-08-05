@@ -1,0 +1,24 @@
+{
+  "id": "user-guides/documentation_search_index",
+  "title": "Documentation Search Index",
+  "description": "A",
+  "source": "@site/docs/user-guides/documentation_search_index.md",
+  "sourceDirName": "user-guides",
+  "slug": "/user-guides/documentation_search_index",
+  "permalink": "/docs/user-guides/documentation_search_index",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/user-guides/documentation_search_index.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Documentation Index",
+    "permalink": "/docs/user-guides/documentation_index"
+  },
+  "next": {
+    "title": "cli/escalation_cli.py",
+    "permalink": "/docs/user-guides/escalation_cli"
+  }
+}

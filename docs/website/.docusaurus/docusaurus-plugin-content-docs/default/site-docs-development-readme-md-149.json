@@ -1,0 +1,24 @@
+{
+  "id": "development/README",
+  "title": "Development Documentation",
+  "description": "This directory contains comprehensive documentation for developing, testing, and maintaining the AI system.",
+  "source": "@site/docs/development/README.md",
+  "sourceDirName": "development",
+  "slug": "/development/",
+  "permalink": "/docs/development/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/README.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "🚀 GitHub Actions Slack Integration - Complete Setup Guide",
+    "permalink": "/docs/cicd/slack-integration-guide"
+  },
+  "next": {
+    "title": "Claude Code Team Onboarding Guide",
+    "permalink": "/docs/development/CLAUDE_CODE_TEAM_ONBOARDING"
+  }
+}

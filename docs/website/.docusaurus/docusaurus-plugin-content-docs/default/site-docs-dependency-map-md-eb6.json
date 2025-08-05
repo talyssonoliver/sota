@@ -1,0 +1,24 @@
+{
+  "id": "dependency_map",
+  "title": "Dependency Map",
+  "description": "This document summarizes external and internal dependencies.",
+  "source": "@site/docs/dependency_map.md",
+  "sourceDirName": ".",
+  "slug": "/dependency_map",
+  "permalink": "/docs/dependency_map",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/dependency_map.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Daily Cycle Orchestrator Documentation",
+    "permalink": "/docs/daily_cycle_orchestrator"
+  },
+  "next": {
+    "title": "Development Documentation",
+    "permalink": "/docs/development/"
+  }
+}

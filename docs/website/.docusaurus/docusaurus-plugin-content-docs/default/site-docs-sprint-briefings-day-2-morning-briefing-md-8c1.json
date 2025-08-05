@@ -1,0 +1,24 @@
+{
+  "id": "sprint/briefings/day2-morning-briefing",
+  "title": "Day 2 Morning Briefing",
+  "description": "Metrics",
+  "source": "@site/docs/sprint/briefings/day2-morning-briefing.md",
+  "sourceDirName": "sprint/briefings",
+  "slug": "/sprint/briefings/day2-morning-briefing",
+  "permalink": "/docs/sprint/briefings/day2-morning-briefing",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/sprint/briefings/day2-morning-briefing.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Day 1 Morning Briefing",
+    "permalink": "/docs/sprint/briefings/day1-morning-briefing"
+  },
+  "next": {
+    "title": "Day 3 Morning Briefing",
+    "permalink": "/docs/sprint/briefings/day3-morning-briefing"
+  }
+}

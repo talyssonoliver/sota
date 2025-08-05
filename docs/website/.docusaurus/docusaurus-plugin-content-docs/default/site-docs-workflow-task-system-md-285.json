@@ -1,0 +1,20 @@
+{
+  "id": "workflow_task_system",
+  "title": "Workflow and Task System Overview",
+  "description": "This document provides a comprehensive reference for the task metadata files under tasks/ and the LangGraph workflows defined in graph/. It consolidates information from existing documentation to give a single overview of how work moves through the multi-agent system.",
+  "source": "@site/docs/workflow_task_system.md",
+  "sourceDirName": ".",
+  "slug": "/workflow_task_system",
+  "permalink": "/docs/workflow_task_system",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/workflow_task_system.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Workflow Monitoring and Notification System",
+    "permalink": "/docs/workflow_monitoring"
+  }
+}

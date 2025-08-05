@@ -1,0 +1,24 @@
+{
+  "id": "operations/workflows/extract_code",
+  "title": "orchestration/extract_code.py",
+  "description": "Classes",
+  "source": "@site/docs/operations/workflows/extract_code.md",
+  "sourceDirName": "operations/workflows",
+  "slug": "/operations/workflows/extract_code",
+  "permalink": "/docs/operations/workflows/extract_code",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/operations/workflows/extract_code.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/execute_workflow.py",
+    "permalink": "/docs/operations/workflows/execute_workflow"
+  },
+  "next": {
+    "title": "Knowledge Curation Workflow",
+    "permalink": "/docs/operations/workflows/knowledge_curation_workflow"
+  }
+}

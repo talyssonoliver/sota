@@ -1,0 +1,1293 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/docs",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Next",
+          "isLast": true,
+          "path": "/docs",
+          "mainDocId": "README",
+          "docs": [
+            {
+              "id": "admin/CODE_QUALITY_IMPROVEMENTS_SUMMARY",
+              "path": "/docs/admin/CODE_QUALITY_IMPROVEMENTS_SUMMARY",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "admin/MEMORY_ENGINE_REFACTORING_SUMMARY",
+              "path": "/docs/admin/MEMORY_ENGINE_REFACTORING_SUMMARY",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "adr/generated_artefact_strategy",
+              "path": "/docs/adr/generated_artefact_strategy",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "adr/generated_artefact_strategy_fixed",
+              "path": "/docs/adr/generated_artefact_strategy_fixed",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "api/api_reference",
+              "path": "/docs/api/api_reference",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "api/class_dictionary",
+              "path": "/docs/api/class_dictionary",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "api/external_integrations",
+              "path": "/docs/api/external_integrations",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "api/function_dictionary",
+              "path": "/docs/api/function_dictionary",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "api/hitl_routes",
+              "path": "/docs/api/hitl_routes",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "api/module_dictionary",
+              "path": "/docs/api/module_dictionary",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "api/README",
+              "path": "/docs/api/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "api/symbol_index",
+              "path": "/docs/api/symbol_index",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "api/unified_api_server",
+              "path": "/docs/api/unified_api_server",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "api/webhook_manager",
+              "path": "/docs/api/webhook_manager",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agent_architecture",
+              "path": "/docs/architecture/agent_architecture",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agent_system_overview",
+              "path": "/docs/architecture/agent_system_overview",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/agent_builder",
+              "path": "/docs/architecture/agents/agent_builder",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/agent_factory_refactoring_summary",
+              "path": "/docs/architecture/agents/agent_factory_refactoring_summary",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/backend",
+              "path": "/docs/architecture/agents/backend",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/backend_agent",
+              "path": "/docs/architecture/agents/backend_agent",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/coordinator",
+              "path": "/docs/architecture/agents/coordinator",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/coordinator_agent",
+              "path": "/docs/architecture/agents/coordinator_agent",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/doc",
+              "path": "/docs/architecture/agents/doc",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/documentation_agent",
+              "path": "/docs/architecture/agents/documentation_agent",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/factory",
+              "path": "/docs/architecture/agents/factory",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/frontend",
+              "path": "/docs/architecture/agents/frontend",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/frontend_agent",
+              "path": "/docs/architecture/agents/frontend_agent",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/human_agents",
+              "path": "/docs/architecture/agents/human_agents",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/qa",
+              "path": "/docs/architecture/agents/qa",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/qa_agent",
+              "path": "/docs/architecture/agents/qa_agent",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/technical",
+              "path": "/docs/architecture/agents/technical",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/agents/technical_lead_agent",
+              "path": "/docs/architecture/agents/technical_lead_agent",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/context_tracking_functionality",
+              "path": "/docs/architecture/context_tracking_functionality",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/COORDINATOR_IMPROVEMENTS",
+              "path": "/docs/architecture/COORDINATOR_IMPROVEMENTS",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/dependency_map",
+              "path": "/docs/architecture/dependency_map",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/error_handling",
+              "path": "/docs/architecture/error_handling",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/ERROR_HANDLING_IMPROVEMENTS",
+              "path": "/docs/architecture/ERROR_HANDLING_IMPROVEMENTS",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/error_propagation_strategy",
+              "path": "/docs/architecture/error_propagation_strategy",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/FILE_ORGANIZATION_IMPROVEMENTS",
+              "path": "/docs/architecture/FILE_ORGANIZATION_IMPROVEMENTS",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/flow",
+              "path": "/docs/architecture/flow",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/graph_builder",
+              "path": "/docs/architecture/graph_builder",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/handlers",
+              "path": "/docs/architecture/handlers",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/hitl_engine",
+              "path": "/docs/architecture/hitl_engine",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/hitl_task_metadata",
+              "path": "/docs/architecture/hitl_task_metadata",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/improvements/index",
+              "path": "/docs/architecture/improvements/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/inject_context",
+              "path": "/docs/architecture/inject_context",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/interrupt_nodes",
+              "path": "/docs/architecture/interrupt_nodes",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/langgraph_qa_integration",
+              "path": "/docs/architecture/langgraph_qa_integration",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/memory_engine",
+              "path": "/docs/architecture/memory_engine",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/modernization-plan",
+              "path": "/docs/architecture/modernization-plan",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/notification_handlers",
+              "path": "/docs/architecture/notification_handlers",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/notifications",
+              "path": "/docs/architecture/notifications",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/qa_handler",
+              "path": "/docs/architecture/qa_handler",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/README",
+              "path": "/docs/architecture/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/registry",
+              "path": "/docs/architecture/registry",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/scalable_storage",
+              "path": "/docs/architecture/scalable_storage",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/states",
+              "path": "/docs/architecture/states",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/system_architecture",
+              "path": "/docs/architecture/system_architecture",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/system-architecture-overview",
+              "path": "/docs/architecture/system-architecture-overview",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/system-overview",
+              "path": "/docs/architecture/system-overview",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/task_lifecycle",
+              "path": "/docs/architecture/task_lifecycle",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/thread_safe_workflow",
+              "path": "/docs/architecture/thread_safe_workflow",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/thread_safety_implementation_summary",
+              "path": "/docs/architecture/thread_safety_implementation_summary",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/tools_system",
+              "path": "/docs/architecture/tools_system",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "architecture/workflow_task_system",
+              "path": "/docs/architecture/workflow_task_system",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "cicd/slack-integration-guide",
+              "path": "/docs/cicd/slack-integration-guide",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/annotate_context_tags_tasks",
+              "path": "/docs/development/annotate_context_tags_tasks",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/automation",
+              "path": "/docs/development/automation",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/build_paths",
+              "path": "/docs/development/build_paths",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/chromadb_telemetry_patch",
+              "path": "/docs/development/chromadb_telemetry_patch",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/CLAUDE_CODE_TEAM_ONBOARDING",
+              "path": "/docs/development/CLAUDE_CODE_TEAM_ONBOARDING",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/configuration_deep_dive",
+              "path": "/docs/development/configuration_deep_dive",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/configuration_reference",
+              "path": "/docs/development/configuration_reference",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/consolidate_dashboard",
+              "path": "/docs/development/consolidate_dashboard",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/debugging/analyze_remaining_failures",
+              "path": "/docs/development/debugging/analyze_remaining_failures",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/debugging/fix_unicode_escapes",
+              "path": "/docs/development/debugging/fix_unicode_escapes",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/debugging/verify_dashboard_fix",
+              "path": "/docs/development/debugging/verify_dashboard_fix",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/ENHANCED_WORKFLOW_GUIDE",
+              "path": "/docs/development/ENHANCED_WORKFLOW_GUIDE",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/generation/automated_doc_generator",
+              "path": "/docs/development/generation/automated_doc_generator",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/generation/automated_symbol_extraction",
+              "path": "/docs/development/generation/automated_symbol_extraction",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/generation/batch_qa_generation",
+              "path": "/docs/development/generation/batch_qa_generation",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/generation/generate_agent",
+              "path": "/docs/development/generation/generate_agent",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/generation/generate_briefing",
+              "path": "/docs/development/generation/generate_briefing",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/generation/generate_progress_report",
+              "path": "/docs/development/generation/generate_progress_report",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/generation/generate_prompt",
+              "path": "/docs/development/generation/generate_prompt",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/generation/generate_task_report",
+              "path": "/docs/development/generation/generate_task_report",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/get-pip",
+              "path": "/docs/development/get-pip",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/helpers",
+              "path": "/docs/development/helpers",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/INPUT_VALIDATION_IMPLEMENTATION_SUMMARY",
+              "path": "/docs/development/INPUT_VALIDATION_IMPLEMENTATION_SUMMARY",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/main",
+              "path": "/docs/development/main",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/main_entry_point",
+              "path": "/docs/development/main_entry_point",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/migrate_source_code",
+              "path": "/docs/development/migrate_source_code",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/mock_memory_engine",
+              "path": "/docs/development/mock_memory_engine",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/mocking/mock_dependencies",
+              "path": "/docs/development/mocking/mock_dependencies",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/mocking/mock_environment",
+              "path": "/docs/development/mocking/mock_environment",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/mocking/mock_langchain",
+              "path": "/docs/development/mocking/mock_langchain",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/mocking/mock_openai_embeddings",
+              "path": "/docs/development/mocking/mock_openai_embeddings",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/monkey_patch",
+              "path": "/docs/development/monkey_patch",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/patch_dotenv",
+              "path": "/docs/development/patch_dotenv",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/README",
+              "path": "/docs/development/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/security",
+              "path": "/docs/development/security",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/setup",
+              "path": "/docs/development/setup",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/analyse_feedback",
+              "path": "/docs/development/testing/analyse_feedback",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/complete_validation",
+              "path": "/docs/development/testing/complete_validation",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/conftest",
+              "path": "/docs/development/testing/conftest",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/end_to_end_test",
+              "path": "/docs/development/testing/end_to_end_test",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/final_validation_complete",
+              "path": "/docs/development/testing/final_validation_complete",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/optimize_tests",
+              "path": "/docs/development/testing/optimize_tests",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/OPTIMIZED_TESTING",
+              "path": "/docs/development/testing/OPTIMIZED_TESTING",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/pytest_simulator",
+              "path": "/docs/development/testing/pytest_simulator",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/run_optimized_tests",
+              "path": "/docs/development/testing/run_optimized_tests",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/run_optimized_tests_enhanced",
+              "path": "/docs/development/testing/run_optimized_tests_enhanced",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/run_tests",
+              "path": "/docs/development/testing/run_tests",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/setup_context_for_testing",
+              "path": "/docs/development/testing/setup_context_for_testing",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/simple_retrieval_test",
+              "path": "/docs/development/testing/simple_retrieval_test",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/test_collection_check",
+              "path": "/docs/development/testing/test_collection_check",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/test_sprint_phases",
+              "path": "/docs/development/testing/test_sprint_phases",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/test_structure",
+              "path": "/docs/development/testing/test_structure",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/testagent_agent",
+              "path": "/docs/development/testing/testagent_agent",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/testing_best_practices",
+              "path": "/docs/development/testing/testing_best_practices",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/testvalidation_agent",
+              "path": "/docs/development/testing/testvalidation_agent",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/testing/validate_imports",
+              "path": "/docs/development/testing/validate_imports",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/troubleshooting",
+              "path": "/docs/development/troubleshooting",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/visualization/auto_generate_graph",
+              "path": "/docs/development/visualization/auto_generate_graph",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/visualization/build_json",
+              "path": "/docs/development/visualization/build_json",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/visualization/gantt_analyzer",
+              "path": "/docs/development/visualization/gantt_analyzer",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/visualization/graph_visualization",
+              "path": "/docs/development/visualization/graph_visualization",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/visualization/sprint_visualizer",
+              "path": "/docs/development/visualization/sprint_visualizer",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/visualization/visualize",
+              "path": "/docs/development/visualization/visualize",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/visualization/visualize_directory_tree",
+              "path": "/docs/development/visualization/visualize_directory_tree",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "development/visualization/visualize_task_graph",
+              "path": "/docs/development/visualization/visualize_task_graph",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "integrations/gemini-cli",
+              "path": "/docs/integrations/gemini-cli",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "intro",
+              "path": "/docs/intro",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/automation/automation_health_check",
+              "path": "/docs/operations/automation/automation_health_check",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/email_integration",
+              "path": "/docs/operations/email_integration",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/list_pending_reviews",
+              "path": "/docs/operations/list_pending_reviews",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/manage_knowledge_reviews",
+              "path": "/docs/operations/manage_knowledge_reviews",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/mark_review_complete",
+              "path": "/docs/operations/mark_review_complete",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/monitoring/monitor_workflow",
+              "path": "/docs/operations/monitoring/monitor_workflow",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/monitoring/workflow_monitoring",
+              "path": "/docs/operations/monitoring/workflow_monitoring",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/README",
+              "path": "/docs/operations/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/update_dashboard",
+              "path": "/docs/operations/update_dashboard",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/archive_task",
+              "path": "/docs/operations/workflows/archive_task",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/complete_task",
+              "path": "/docs/operations/workflows/complete_task",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/daily_cycle",
+              "path": "/docs/operations/workflows/daily_cycle",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/daily_cycle_orchestrator",
+              "path": "/docs/operations/workflows/daily_cycle_orchestrator",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/delegation",
+              "path": "/docs/operations/workflows/delegation",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/end_of_day_report",
+              "path": "/docs/operations/workflows/end_of_day_report",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/enhanced_workflow",
+              "path": "/docs/operations/workflows/enhanced_workflow",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/execute_graph",
+              "path": "/docs/operations/workflows/execute_graph",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/execute_task",
+              "path": "/docs/operations/workflows/execute_task",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/execute_workflow",
+              "path": "/docs/operations/workflows/execute_workflow",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/extract_code",
+              "path": "/docs/operations/workflows/extract_code",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/knowledge_curation_workflow",
+              "path": "/docs/operations/workflows/knowledge_curation_workflow",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/langgraph_workflow",
+              "path": "/docs/operations/workflows/langgraph_workflow",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/plan_execution_manager",
+              "path": "/docs/operations/workflows/plan_execution_manager",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/qa_execution",
+              "path": "/docs/operations/workflows/qa_execution",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/qa_validation",
+              "path": "/docs/operations/workflows/qa_validation",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/register_output",
+              "path": "/docs/operations/workflows/register_output",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/resilient_workflow",
+              "path": "/docs/operations/workflows/resilient_workflow",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/review_context",
+              "path": "/docs/operations/workflows/review_context",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/review_context_simple",
+              "path": "/docs/operations/workflows/review_context_simple",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/review_task",
+              "path": "/docs/operations/workflows/review_task",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/run_workflow",
+              "path": "/docs/operations/workflows/run_workflow",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/summarise_task",
+              "path": "/docs/operations/workflows/summarise_task",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/task_declaration",
+              "path": "/docs/operations/workflows/task_declaration",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/task_orchestration",
+              "path": "/docs/operations/workflows/task_orchestration",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "operations/workflows/workflow_executor",
+              "path": "/docs/operations/workflows/workflow_executor",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "optimizations/PHASE2_COMPLETE_DOCUMENTATION",
+              "path": "/docs/optimizations/PHASE2_COMPLETE_DOCUMENTATION",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "README",
+              "path": "/docs/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "reports/import_refactoring_completion_report",
+              "path": "/docs/reports/import_refactoring_completion_report",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "reports/memory-engine/consolidate_memory",
+              "path": "/docs/reports/memory-engine/consolidate_memory",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "reports/phase7-hitl/phase6_enhanced_eod_reporting_guide",
+              "path": "/docs/reports/phase7-hitl/phase6_enhanced_eod_reporting_guide",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "reports/phase7-hitl/PHASE6_STEP6.3_COMPLETION_SUMMARY",
+              "path": "/docs/reports/phase7-hitl/PHASE6_STEP6.3_COMPLETION_SUMMARY",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "reports/phase7-hitl/PHASE6_STEP6.5_COMPLETION_SUMMARY",
+              "path": "/docs/reports/phase7-hitl/PHASE6_STEP6.5_COMPLETION_SUMMARY",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "reports/phase7-hitl/PHASE6_STEP6.6_EMAIL_INTEGRATION_COMPLETION",
+              "path": "/docs/reports/phase7-hitl/PHASE6_STEP6.6_EMAIL_INTEGRATION_COMPLETION",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "reports/phase7-hitl/PHASE7_STEPS7.2-7.3_COMPLETION_SUMMARY",
+              "path": "/docs/reports/phase7-hitl/PHASE7_STEPS7.2-7.3_COMPLETION_SUMMARY",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "reports/README",
+              "path": "/docs/reports/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "security/README",
+              "path": "/docs/security/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "security/security-overview",
+              "path": "/docs/security/security-overview",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "security/validation/management_dashboard",
+              "path": "/docs/security/validation/management_dashboard",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "security/validation/quality_gates",
+              "path": "/docs/security/validation/quality_gates",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "security/validation/README",
+              "path": "/docs/security/validation/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "setup/complete-directory-structure",
+              "path": "/docs/setup/complete-directory-structure",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "setup/directory-structure",
+              "path": "/docs/setup/directory-structure",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "setup/index",
+              "path": "/docs/setup/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "setup/requirements",
+              "path": "/docs/setup/requirements",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "setup/requirements-compliance",
+              "path": "/docs/setup/requirements-compliance",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "sprint/BRIEFING_GENERATOR_API",
+              "path": "/docs/sprint/BRIEFING_GENERATOR_API",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "sprint/briefings/briefing-2025-05-29",
+              "path": "/docs/sprint/briefings/briefing-2025-05-29",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "sprint/briefings/briefing-2025-06-01",
+              "path": "/docs/sprint/briefings/briefing-2025-06-01",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "sprint/briefings/briefing-2025-06-02",
+              "path": "/docs/sprint/briefings/briefing-2025-06-02",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "sprint/briefings/sprint-day1-briefing",
+              "path": "/docs/sprint/briefings/sprint-day1-briefing",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "sprint/briefings/sprint-day2-briefing",
+              "path": "/docs/sprint/briefings/sprint-day2-briefing",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "sprint/briefings/sprint-day3-briefing",
+              "path": "/docs/sprint/briefings/sprint-day3-briefing",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "sprint/PHASE6_COMPLETION_REPORT",
+              "path": "/docs/sprint/PHASE6_COMPLETION_REPORT",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/__init__",
+              "path": "/docs/tools/__init__",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/base_tool",
+              "path": "/docs/tools/base_tool",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/context_tracker",
+              "path": "/docs/tools/context_tracker",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/context_visualizer",
+              "path": "/docs/tools/context_visualizer",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/coverage_tool",
+              "path": "/docs/tools/coverage_tool",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/cypress_tool",
+              "path": "/docs/tools/cypress_tool",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/design_system_tool",
+              "path": "/docs/tools/design_system_tool",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/echo_tool",
+              "path": "/docs/tools/echo_tool",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/fixed_retrieval_qa",
+              "path": "/docs/tools/fixed_retrieval_qa",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/github_finalise",
+              "path": "/docs/tools/github_finalise",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/github_tool",
+              "path": "/docs/tools/github_tool",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/jest_tool",
+              "path": "/docs/tools/jest_tool",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/langChain_characterTextSplitter",
+              "path": "/docs/tools/langChain_characterTextSplitter",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/markdown_tool",
+              "path": "/docs/tools/markdown_tool",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/memory_engine",
+              "path": "/docs/tools/memory_engine",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/memory_engine_examples",
+              "path": "/docs/tools/memory_engine_examples",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/qa_cli",
+              "path": "/docs/tools/qa_cli",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/rate_limiter",
+              "path": "/docs/tools/rate_limiter",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/retrieval_qa",
+              "path": "/docs/tools/retrieval_qa",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/retrieval_qa_refactored",
+              "path": "/docs/tools/retrieval_qa_refactored",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/retrieval_qa_usage",
+              "path": "/docs/tools/retrieval_qa_usage",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/supabase_tool",
+              "path": "/docs/tools/supabase_tool",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/tailwind_tool",
+              "path": "/docs/tools/tailwind_tool",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/task_loader",
+              "path": "/docs/tools/task_loader",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/tool_loader",
+              "path": "/docs/tools/tool_loader",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/utilities_catalog",
+              "path": "/docs/tools/utilities_catalog",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/utils",
+              "path": "/docs/tools/utils",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/validation/README",
+              "path": "/docs/tools/validation/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/vercel_tool",
+              "path": "/docs/tools/vercel_tool",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "tools/vercel_tool_refactored",
+              "path": "/docs/tools/vercel_tool_refactored",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/demos/agent_output_demo",
+              "path": "/docs/user-guides/demos/agent_output_demo",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/demos/agent_summarization_demo",
+              "path": "/docs/user-guides/demos/agent_summarization_demo",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/demos/code_extraction_demo",
+              "path": "/docs/user-guides/demos/code_extraction_demo",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/demos/hitl_cli_demo",
+              "path": "/docs/user-guides/demos/hitl_cli_demo",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/demos/hitl_kanban_demo",
+              "path": "/docs/user-guides/demos/hitl_kanban_demo",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/demos/human-in-the-Loop_context_review",
+              "path": "/docs/user-guides/demos/human-in-the-Loop_context_review",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/demos/mcp_context_usage",
+              "path": "/docs/user-guides/demos/mcp_context_usage",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/demos/qa_execution_demo",
+              "path": "/docs/user-guides/demos/qa_execution_demo",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/demos/register_agent_output_demo",
+              "path": "/docs/user-guides/demos/register_agent_output_demo",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/demos/task_declaration_preparation",
+              "path": "/docs/user-guides/demos/task_declaration_preparation",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/demos/visualise_context_coverage",
+              "path": "/docs/user-guides/demos/visualise_context_coverage",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/documentation_completeness",
+              "path": "/docs/user-guides/documentation_completeness",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/documentation_index",
+              "path": "/docs/user-guides/documentation_index",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/documentation_search_index",
+              "path": "/docs/user-guides/documentation_search_index",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/escalation_cli",
+              "path": "/docs/user-guides/escalation_cli",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/feedback_cli",
+              "path": "/docs/user-guides/feedback_cli",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/hitl_cli",
+              "path": "/docs/user-guides/hitl_cli",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/hitl_kanban_board",
+              "path": "/docs/user-guides/hitl_kanban_board",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/hitl_kanban_cli",
+              "path": "/docs/user-guides/hitl_kanban_cli",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/hitl_kanban_dashboard",
+              "path": "/docs/user-guides/hitl_kanban_dashboard",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/hitl_widgets",
+              "path": "/docs/user-guides/hitl_widgets",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/MASTER_DOCUMENTATION_GUIDE",
+              "path": "/docs/user-guides/MASTER_DOCUMENTATION_GUIDE",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/qa_execution_cli",
+              "path": "/docs/user-guides/qa_execution_cli",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/quick_hitl_status",
+              "path": "/docs/user-guides/quick_hitl_status",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/quick_reference_cards",
+              "path": "/docs/user-guides/quick_reference_cards",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/README",
+              "path": "/docs/user-guides/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "user-guides/visual_documentation",
+              "path": "/docs/user-guides/visual_documentation",
+              "sidebar": "tutorialSidebar"
+            }
+          ],
+          "draftIds": [],
+          "sidebars": {
+            "tutorialSidebar": {
+              "link": {
+                "path": "/docs/intro",
+                "label": "intro"
+              }
+            }
+          }
+        }
+      ],
+      "breadcrumbs": true
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "architecture/system-architecture-overview",
+  "title": "AI System Architecture Documentation",
+  "description": "Overview",
+  "source": "@site/docs/architecture/system-architecture-overview.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/system-architecture-overview",
+  "permalink": "/docs/architecture/system-architecture-overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/system-architecture-overview.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/states.py",
+    "permalink": "/docs/architecture/states"
+  },
+  "next": {
+    "title": "AI Agent System - Complete Architecture Overview",
+    "permalink": "/docs/architecture/system-overview"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "knowledge_curation_workflow",
+  "title": "Knowledge Curation Workflow",
+  "description": "This document describes the detailed process for creating, reviewing, and validating knowledge summaries in /context-store/ from source documents in /context-source/.",
+  "source": "@site/docs/knowledge_curation_workflow.md",
+  "sourceDirName": ".",
+  "slug": "/knowledge_curation_workflow",
+  "permalink": "/docs/knowledge_curation_workflow",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/knowledge_curation_workflow.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Gemini CLI Integration",
+    "permalink": "/docs/integrations/gemini-cli"
+  },
+  "next": {
+    "title": "LangGraph Workflow Implementation",
+    "permalink": "/docs/langgraph_workflow"
+  }
+}

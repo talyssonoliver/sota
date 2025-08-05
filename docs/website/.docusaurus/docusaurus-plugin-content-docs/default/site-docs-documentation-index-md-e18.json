@@ -1,0 +1,24 @@
+{
+  "id": "documentation-index",
+  "title": "Documentation Index",
+  "description": "This directory contains comprehensive documentation for the AI Agent System, organized by category and implementation phase.",
+  "source": "@site/docs/documentation-index.md",
+  "sourceDirName": ".",
+  "slug": "/documentation-index",
+  "permalink": "/docs/documentation-index",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/documentation-index.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "scripts/visualize_task_graph.py",
+    "permalink": "/docs/development/visualization/visualize_task_graph"
+  },
+  "next": {
+    "title": "Documentation Agent Documentation",
+    "permalink": "/docs/documentation_agent"
+  }
+}

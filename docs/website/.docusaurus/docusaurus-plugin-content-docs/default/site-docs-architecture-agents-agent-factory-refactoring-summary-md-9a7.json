@@ -1,0 +1,24 @@
+{
+  "id": "architecture/agents/agent_factory_refactoring_summary",
+  "title": "Agent Factory Refactoring Summary",
+  "description": "Overview",
+  "source": "@site/docs/architecture/agents/agent_factory_refactoring_summary.md",
+  "sourceDirName": "architecture/agents",
+  "slug": "/architecture/agents/agent_factory_refactoring_summary",
+  "permalink": "/docs/architecture/agents/agent_factory_refactoring_summary",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/agents/agent_factory_refactoring_summary.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "MemoryEnabledAgentBuilder Documentation",
+    "permalink": "/docs/architecture/agents/agent_builder"
+  },
+  "next": {
+    "title": "agents/backend.py",
+    "permalink": "/docs/architecture/agents/backend"
+  }
+}

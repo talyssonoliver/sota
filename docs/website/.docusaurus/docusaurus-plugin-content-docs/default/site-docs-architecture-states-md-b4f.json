@@ -1,0 +1,24 @@
+{
+  "id": "architecture/states",
+  "title": "orchestration/states.py",
+  "description": "Classes",
+  "source": "@site/docs/architecture/states.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/states",
+  "permalink": "/docs/architecture/states",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/states.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/scalable_storage.py",
+    "permalink": "/docs/architecture/scalable_storage"
+  },
+  "next": {
+    "title": "AI System Architecture Documentation",
+    "permalink": "/docs/architecture/system-architecture-overview"
+  }
+}

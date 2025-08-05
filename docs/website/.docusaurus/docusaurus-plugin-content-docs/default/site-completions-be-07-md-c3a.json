@@ -1,0 +1,20 @@
+{
+  "id": "completions/BE-07",
+  "title": "Task Completion Report: BE-07",
+  "description": "Summary",
+  "source": "@site/../completions/BE-07.md",
+  "sourceDirName": "completions",
+  "slug": "/completions/BE-07",
+  "permalink": "/docs/completions/BE-07",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/../completions/BE-07.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "Day 2 Morning Briefing",
+    "permalink": "/docs/sprint/briefings/day2-morning-briefing"
+  }
+}

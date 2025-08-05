@@ -1,0 +1,24 @@
+{
+  "id": "architecture/README",
+  "title": "AI Agent System - Technical Architecture Documentation",
+  "description": "Artesanato E-commerce Project",
+  "source": "@site/docs/architecture/README.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/",
+  "permalink": "/docs/architecture/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/README.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "api/webhook_manager.py",
+    "permalink": "/docs/api/webhook_manager"
+  },
+  "next": {
+    "title": "Coordinator Agent Improvements - JSON-Based Planning",
+    "permalink": "/docs/architecture/COORDINATOR_IMPROVEMENTS"
+  }
+}

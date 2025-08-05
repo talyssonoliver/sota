@@ -1,0 +1,24 @@
+{
+  "id": "architecture/task_lifecycle",
+  "title": "orchestration/task_lifecycle.py",
+  "description": "Classes",
+  "source": "@site/docs/architecture/task_lifecycle.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/task_lifecycle",
+  "permalink": "/docs/architecture/task_lifecycle",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/task_lifecycle.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "System Architecture",
+    "permalink": "/docs/architecture/system_architecture"
+  },
+  "next": {
+    "title": "orchestration/thread_safe_workflow.py",
+    "permalink": "/docs/architecture/thread_safe_workflow"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "ERROR_HANDLING_IMPROVEMENTS",
+  "title": "Enhanced Error Handling & Self-Correction Loops",
+  "description": "Overview",
+  "source": "@site/docs/ERROR_HANDLING_IMPROVEMENTS.md",
+  "sourceDirName": ".",
+  "slug": "/ERROR_HANDLING_IMPROVEMENTS",
+  "permalink": "/docs/ERROR_HANDLING_IMPROVEMENTS",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/ERROR_HANDLING_IMPROVEMENTS.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Coordinator Agent Improvements - JSON-Based Planning",
+    "permalink": "/docs/COORDINATOR_IMPROVEMENTS"
+  },
+  "next": {
+    "title": "File Organization Improvements - June 11, 2025",
+    "permalink": "/docs/FILE_ORGANIZATION_IMPROVEMENTS"
+  }
+}

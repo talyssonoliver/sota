@@ -1,0 +1,24 @@
+{
+  "id": "development/mocking/mock_langchain",
+  "title": "tests/mock_langchain.py",
+  "description": "Functions",
+  "source": "@site/docs/development/mocking/mock_langchain.md",
+  "sourceDirName": "development/mocking",
+  "slug": "/development/mocking/mock_langchain",
+  "permalink": "/docs/development/mocking/mock_langchain",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/mocking/mock_langchain.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "tests/mock_environment.py",
+    "permalink": "/docs/development/mocking/mock_environment"
+  },
+  "next": {
+    "title": "tests/mock_openai_embeddings.py",
+    "permalink": "/docs/development/mocking/mock_openai_embeddings"
+  }
+}

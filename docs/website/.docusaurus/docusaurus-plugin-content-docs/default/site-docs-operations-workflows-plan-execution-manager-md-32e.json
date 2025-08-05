@@ -1,0 +1,24 @@
+{
+  "id": "operations/workflows/plan_execution_manager",
+  "title": "orchestration/plan_execution_manager.py",
+  "description": "Classes",
+  "source": "@site/docs/operations/workflows/plan_execution_manager.md",
+  "sourceDirName": "operations/workflows",
+  "slug": "/operations/workflows/plan_execution_manager",
+  "permalink": "/docs/operations/workflows/plan_execution_manager",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/operations/workflows/plan_execution_manager.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "LangGraph Workflow Implementation",
+    "permalink": "/docs/operations/workflows/langgraph_workflow"
+  },
+  "next": {
+    "title": "orchestration/qa_execution.py",
+    "permalink": "/docs/operations/workflows/qa_execution"
+  }
+}

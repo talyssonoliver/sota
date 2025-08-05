@@ -1,0 +1,24 @@
+{
+  "id": "operations/workflows/complete_task",
+  "title": "orchestration/complete_task.py",
+  "description": "Classes",
+  "source": "@site/docs/operations/workflows/complete_task.md",
+  "sourceDirName": "operations/workflows",
+  "slug": "/operations/workflows/complete_task",
+  "permalink": "/docs/operations/workflows/complete_task",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/operations/workflows/complete_task.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "scripts/archive_task.py",
+    "permalink": "/docs/operations/workflows/archive_task"
+  },
+  "next": {
+    "title": "orchestration/daily_cycle.py",
+    "permalink": "/docs/operations/workflows/daily_cycle"
+  }
+}

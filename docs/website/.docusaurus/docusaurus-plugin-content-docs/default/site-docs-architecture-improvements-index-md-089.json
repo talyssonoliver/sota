@@ -1,0 +1,24 @@
+{
+  "id": "architecture/improvements/index",
+  "title": "System Improvements & Enhancements",
+  "description": "This section serves as the single source of truth for all system improvements, enhancements, and architectural changes made to the AI Agent System.",
+  "source": "@site/docs/architecture/improvements/index.md",
+  "sourceDirName": "architecture/improvements",
+  "slug": "/architecture/improvements/",
+  "permalink": "/docs/architecture/improvements/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/improvements/index.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/hitl_task_metadata.py",
+    "permalink": "/docs/architecture/hitl_task_metadata"
+  },
+  "next": {
+    "title": "orchestration/inject_context.py",
+    "permalink": "/docs/architecture/inject_context"
+  }
+}

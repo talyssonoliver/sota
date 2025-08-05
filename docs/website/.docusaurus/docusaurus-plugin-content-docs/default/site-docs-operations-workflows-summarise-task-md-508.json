@@ -1,0 +1,24 @@
+{
+  "id": "operations/workflows/summarise_task",
+  "title": "orchestration/summarise_task.py",
+  "description": "Classes",
+  "source": "@site/docs/operations/workflows/summarise_task.md",
+  "sourceDirName": "operations/workflows",
+  "slug": "/operations/workflows/summarise_task",
+  "permalink": "/docs/operations/workflows/summarise_task",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/operations/workflows/summarise_task.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/run_workflow.py",
+    "permalink": "/docs/operations/workflows/run_workflow"
+  },
+  "next": {
+    "title": "orchestration/task_declaration.py",
+    "permalink": "/docs/operations/workflows/task_declaration"
+  }
+}

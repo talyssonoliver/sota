@@ -1,0 +1,24 @@
+{
+  "id": "documentation_agent",
+  "title": "Documentation Agent Documentation",
+  "description": "File: agents/doc.py",
+  "source": "@site/docs/documentation_agent.md",
+  "sourceDirName": ".",
+  "slug": "/documentation_agent",
+  "permalink": "/docs/documentation_agent",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/documentation_agent.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Documentation Index",
+    "permalink": "/docs/documentation-index"
+  },
+  "next": {
+    "title": "Documentation Completeness Checklist",
+    "permalink": "/docs/documentation_completeness"
+  }
+}

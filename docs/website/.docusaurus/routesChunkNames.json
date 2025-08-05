@@ -1,0 +1,1041 @@
+{
+  "/markdown-page-3d7": {
+    "__comp": "1f391b9e",
+    "__context": {
+      "plugin": "a7456010"
+    },
+    "content": "393be207"
+  },
+  "/docs-98f": {
+    "__comp": "5e95c892",
+    "__context": {
+      "plugin": "aba21aa0"
+    }
+  },
+  "/docs-d6e": {
+    "__comp": "a7bd4aaa",
+    "__props": "0058b4c6"
+  },
+  "/docs-385": {
+    "__comp": "a94703ab"
+  },
+  "/docs/-ee3": {
+    "__comp": "17896441",
+    "content": "23374ca6"
+  },
+  "/docs/admin/CODE_QUALITY_IMPROVEMENTS_SUMMARY-e11": {
+    "__comp": "17896441",
+    "content": "61de18fb"
+  },
+  "/docs/admin/MEMORY_ENGINE_REFACTORING_SUMMARY-fe4": {
+    "__comp": "17896441",
+    "content": "790f0ccf"
+  },
+  "/docs/adr/generated_artefact_strategy-cbc": {
+    "__comp": "17896441",
+    "content": "ec660e8f"
+  },
+  "/docs/adr/generated_artefact_strategy_fixed-579": {
+    "__comp": "17896441",
+    "content": "0290ba86"
+  },
+  "/docs/api/-788": {
+    "__comp": "17896441",
+    "content": "982ac012"
+  },
+  "/docs/api/api_reference-224": {
+    "__comp": "17896441",
+    "content": "cf3adfc5"
+  },
+  "/docs/api/class_dictionary-b36": {
+    "__comp": "17896441",
+    "content": "256af54b"
+  },
+  "/docs/api/external_integrations-db8": {
+    "__comp": "17896441",
+    "content": "79fc1988"
+  },
+  "/docs/api/function_dictionary-521": {
+    "__comp": "17896441",
+    "content": "e619dbaa"
+  },
+  "/docs/api/hitl_routes-795": {
+    "__comp": "17896441",
+    "content": "caf3b7f1"
+  },
+  "/docs/api/module_dictionary-aa3": {
+    "__comp": "17896441",
+    "content": "fa91209a"
+  },
+  "/docs/api/symbol_index-ff7": {
+    "__comp": "17896441",
+    "content": "d5de4bbc"
+  },
+  "/docs/api/unified_api_server-e01": {
+    "__comp": "17896441",
+    "content": "82d7ac53"
+  },
+  "/docs/api/webhook_manager-ce3": {
+    "__comp": "17896441",
+    "content": "38f89c5c"
+  },
+  "/docs/architecture/-ecf": {
+    "__comp": "17896441",
+    "content": "4b7d5026"
+  },
+  "/docs/architecture/agent_architecture-4bc": {
+    "__comp": "17896441",
+    "content": "9ccf7b74"
+  },
+  "/docs/architecture/agent_system_overview-c6a": {
+    "__comp": "17896441",
+    "content": "9c7e8ea8"
+  },
+  "/docs/architecture/agents/agent_builder-52e": {
+    "__comp": "17896441",
+    "content": "8a0589d6"
+  },
+  "/docs/architecture/agents/agent_factory_refactoring_summary-da1": {
+    "__comp": "17896441",
+    "content": "9a7fa382"
+  },
+  "/docs/architecture/agents/backend-4b5": {
+    "__comp": "17896441",
+    "content": "5716e2e0"
+  },
+  "/docs/architecture/agents/backend_agent-303": {
+    "__comp": "17896441",
+    "content": "c4381394"
+  },
+  "/docs/architecture/agents/coordinator-680": {
+    "__comp": "17896441",
+    "content": "05ce35da"
+  },
+  "/docs/architecture/agents/coordinator_agent-6ff": {
+    "__comp": "17896441",
+    "content": "5053715c"
+  },
+  "/docs/architecture/agents/doc-157": {
+    "__comp": "17896441",
+    "content": "e1e592c4"
+  },
+  "/docs/architecture/agents/documentation_agent-1b9": {
+    "__comp": "17896441",
+    "content": "5e4769e2"
+  },
+  "/docs/architecture/agents/factory-3e1": {
+    "__comp": "17896441",
+    "content": "b6b50c49"
+  },
+  "/docs/architecture/agents/frontend-a89": {
+    "__comp": "17896441",
+    "content": "1d65be1a"
+  },
+  "/docs/architecture/agents/frontend_agent-d50": {
+    "__comp": "17896441",
+    "content": "2e32b8c7"
+  },
+  "/docs/architecture/agents/human_agents-d10": {
+    "__comp": "17896441",
+    "content": "e0e60edd"
+  },
+  "/docs/architecture/agents/qa-492": {
+    "__comp": "17896441",
+    "content": "d1e25e92"
+  },
+  "/docs/architecture/agents/qa_agent-f65": {
+    "__comp": "17896441",
+    "content": "82faf131"
+  },
+  "/docs/architecture/agents/technical-50f": {
+    "__comp": "17896441",
+    "content": "a3ae81b2"
+  },
+  "/docs/architecture/agents/technical_lead_agent-262": {
+    "__comp": "17896441",
+    "content": "e04ce96f"
+  },
+  "/docs/architecture/context_tracking_functionality-abe": {
+    "__comp": "17896441",
+    "content": "447f01de"
+  },
+  "/docs/architecture/COORDINATOR_IMPROVEMENTS-651": {
+    "__comp": "17896441",
+    "content": "4d2e0fc0"
+  },
+  "/docs/architecture/dependency_map-501": {
+    "__comp": "17896441",
+    "content": "ba12f054"
+  },
+  "/docs/architecture/error_handling-7fe": {
+    "__comp": "17896441",
+    "content": "3a2b0ca3"
+  },
+  "/docs/architecture/ERROR_HANDLING_IMPROVEMENTS-f6c": {
+    "__comp": "17896441",
+    "content": "4e1c4cc7"
+  },
+  "/docs/architecture/error_propagation_strategy-485": {
+    "__comp": "17896441",
+    "content": "921368e6"
+  },
+  "/docs/architecture/FILE_ORGANIZATION_IMPROVEMENTS-ca2": {
+    "__comp": "17896441",
+    "content": "fd108e10"
+  },
+  "/docs/architecture/flow-2e6": {
+    "__comp": "17896441",
+    "content": "0b9e7c6d"
+  },
+  "/docs/architecture/graph_builder-a8d": {
+    "__comp": "17896441",
+    "content": "0436a07e"
+  },
+  "/docs/architecture/handlers-66d": {
+    "__comp": "17896441",
+    "content": "771a2027"
+  },
+  "/docs/architecture/hitl_engine-b4c": {
+    "__comp": "17896441",
+    "content": "cf1e2b5d"
+  },
+  "/docs/architecture/hitl_task_metadata-ac0": {
+    "__comp": "17896441",
+    "content": "705f62fd"
+  },
+  "/docs/architecture/improvements/-b6c": {
+    "__comp": "17896441",
+    "content": "089975eb"
+  },
+  "/docs/architecture/inject_context-227": {
+    "__comp": "17896441",
+    "content": "0be8a1fc"
+  },
+  "/docs/architecture/interrupt_nodes-472": {
+    "__comp": "17896441",
+    "content": "4ad32efb"
+  },
+  "/docs/architecture/langgraph_qa_integration-96f": {
+    "__comp": "17896441",
+    "content": "b124e6c1"
+  },
+  "/docs/architecture/memory_engine-e9c": {
+    "__comp": "17896441",
+    "content": "4844941a"
+  },
+  "/docs/architecture/modernization-plan-47e": {
+    "__comp": "17896441",
+    "content": "a623b03c"
+  },
+  "/docs/architecture/notification_handlers-2b5": {
+    "__comp": "17896441",
+    "content": "b57b8d3c"
+  },
+  "/docs/architecture/notifications-ed3": {
+    "__comp": "17896441",
+    "content": "3466cb9b"
+  },
+  "/docs/architecture/qa_handler-2c5": {
+    "__comp": "17896441",
+    "content": "e989537d"
+  },
+  "/docs/architecture/registry-840": {
+    "__comp": "17896441",
+    "content": "a5de0dfe"
+  },
+  "/docs/architecture/scalable_storage-4ae": {
+    "__comp": "17896441",
+    "content": "4fb62f2a"
+  },
+  "/docs/architecture/states-e7a": {
+    "__comp": "17896441",
+    "content": "b4f8621e"
+  },
+  "/docs/architecture/system_architecture-d43": {
+    "__comp": "17896441",
+    "content": "d8c21eb6"
+  },
+  "/docs/architecture/system-architecture-overview-83d": {
+    "__comp": "17896441",
+    "content": "12ab170e"
+  },
+  "/docs/architecture/system-overview-5f1": {
+    "__comp": "17896441",
+    "content": "85944261"
+  },
+  "/docs/architecture/task_lifecycle-adb": {
+    "__comp": "17896441",
+    "content": "ea2f050a"
+  },
+  "/docs/architecture/thread_safe_workflow-d15": {
+    "__comp": "17896441",
+    "content": "a29c5d8f"
+  },
+  "/docs/architecture/thread_safety_implementation_summary-d3b": {
+    "__comp": "17896441",
+    "content": "ce0682c2"
+  },
+  "/docs/architecture/tools_system-7dd": {
+    "__comp": "17896441",
+    "content": "b7bff733"
+  },
+  "/docs/architecture/workflow_task_system-ab1": {
+    "__comp": "17896441",
+    "content": "681fe2dc"
+  },
+  "/docs/cicd/slack-integration-guide-972": {
+    "__comp": "17896441",
+    "content": "c1e575ef"
+  },
+  "/docs/development/-930": {
+    "__comp": "17896441",
+    "content": "1490091d"
+  },
+  "/docs/development/annotate_context_tags_tasks-66a": {
+    "__comp": "17896441",
+    "content": "ffe7f825"
+  },
+  "/docs/development/automation-8a2": {
+    "__comp": "17896441",
+    "content": "2148c175"
+  },
+  "/docs/development/build_paths-d92": {
+    "__comp": "17896441",
+    "content": "8f3ac313"
+  },
+  "/docs/development/chromadb_telemetry_patch-ecf": {
+    "__comp": "17896441",
+    "content": "04ab6ca2"
+  },
+  "/docs/development/CLAUDE_CODE_TEAM_ONBOARDING-651": {
+    "__comp": "17896441",
+    "content": "a91b2689"
+  },
+  "/docs/development/configuration_deep_dive-54a": {
+    "__comp": "17896441",
+    "content": "67f90811"
+  },
+  "/docs/development/configuration_reference-ee8": {
+    "__comp": "17896441",
+    "content": "e48e74d8"
+  },
+  "/docs/development/consolidate_dashboard-36b": {
+    "__comp": "17896441",
+    "content": "b4499773"
+  },
+  "/docs/development/debugging/analyze_remaining_failures-0bf": {
+    "__comp": "17896441",
+    "content": "bfd96f96"
+  },
+  "/docs/development/debugging/fix_unicode_escapes-e4d": {
+    "__comp": "17896441",
+    "content": "4388b88a"
+  },
+  "/docs/development/debugging/verify_dashboard_fix-20e": {
+    "__comp": "17896441",
+    "content": "9f88108a"
+  },
+  "/docs/development/ENHANCED_WORKFLOW_GUIDE-109": {
+    "__comp": "17896441",
+    "content": "5b169c63"
+  },
+  "/docs/development/generation/automated_doc_generator-267": {
+    "__comp": "17896441",
+    "content": "8b3fa32f"
+  },
+  "/docs/development/generation/automated_symbol_extraction-85b": {
+    "__comp": "17896441",
+    "content": "6fe6c7ba"
+  },
+  "/docs/development/generation/batch_qa_generation-e51": {
+    "__comp": "17896441",
+    "content": "c5217005"
+  },
+  "/docs/development/generation/generate_agent-804": {
+    "__comp": "17896441",
+    "content": "dae46296"
+  },
+  "/docs/development/generation/generate_briefing-a6e": {
+    "__comp": "17896441",
+    "content": "7c1c394b"
+  },
+  "/docs/development/generation/generate_progress_report-823": {
+    "__comp": "17896441",
+    "content": "92324b66"
+  },
+  "/docs/development/generation/generate_prompt-f15": {
+    "__comp": "17896441",
+    "content": "d00529d7"
+  },
+  "/docs/development/generation/generate_task_report-1c3": {
+    "__comp": "17896441",
+    "content": "d89c3f88"
+  },
+  "/docs/development/get-pip-346": {
+    "__comp": "17896441",
+    "content": "f9046022"
+  },
+  "/docs/development/helpers-38c": {
+    "__comp": "17896441",
+    "content": "7456ac9a"
+  },
+  "/docs/development/INPUT_VALIDATION_IMPLEMENTATION_SUMMARY-ceb": {
+    "__comp": "17896441",
+    "content": "6dd4890f"
+  },
+  "/docs/development/main-34d": {
+    "__comp": "17896441",
+    "content": "e0995a82"
+  },
+  "/docs/development/main_entry_point-66b": {
+    "__comp": "17896441",
+    "content": "408b35cb"
+  },
+  "/docs/development/migrate_source_code-527": {
+    "__comp": "17896441",
+    "content": "54297135"
+  },
+  "/docs/development/mock_memory_engine-c0c": {
+    "__comp": "17896441",
+    "content": "bb936079"
+  },
+  "/docs/development/mocking/mock_dependencies-bd3": {
+    "__comp": "17896441",
+    "content": "8a0d1876"
+  },
+  "/docs/development/mocking/mock_environment-e17": {
+    "__comp": "17896441",
+    "content": "6bb9d0b3"
+  },
+  "/docs/development/mocking/mock_langchain-47d": {
+    "__comp": "17896441",
+    "content": "ade960fc"
+  },
+  "/docs/development/mocking/mock_openai_embeddings-cf1": {
+    "__comp": "17896441",
+    "content": "35d23011"
+  },
+  "/docs/development/monkey_patch-e2a": {
+    "__comp": "17896441",
+    "content": "fb9dc734"
+  },
+  "/docs/development/patch_dotenv-ff2": {
+    "__comp": "17896441",
+    "content": "7a657bc6"
+  },
+  "/docs/development/security-17e": {
+    "__comp": "17896441",
+    "content": "d2db66e5"
+  },
+  "/docs/development/setup-375": {
+    "__comp": "17896441",
+    "content": "e626e4d0"
+  },
+  "/docs/development/testing/analyse_feedback-6dd": {
+    "__comp": "17896441",
+    "content": "f0a1f8e8"
+  },
+  "/docs/development/testing/complete_validation-f19": {
+    "__comp": "17896441",
+    "content": "6cce84f0"
+  },
+  "/docs/development/testing/conftest-0ed": {
+    "__comp": "17896441",
+    "content": "bb66ea0e"
+  },
+  "/docs/development/testing/end_to_end_test-3cb": {
+    "__comp": "17896441",
+    "content": "5366b1e2"
+  },
+  "/docs/development/testing/final_validation_complete-66b": {
+    "__comp": "17896441",
+    "content": "21ba78e9"
+  },
+  "/docs/development/testing/optimize_tests-476": {
+    "__comp": "17896441",
+    "content": "c4af67a1"
+  },
+  "/docs/development/testing/OPTIMIZED_TESTING-078": {
+    "__comp": "17896441",
+    "content": "4e041829"
+  },
+  "/docs/development/testing/pytest_simulator-caf": {
+    "__comp": "17896441",
+    "content": "b4e797e0"
+  },
+  "/docs/development/testing/run_optimized_tests-323": {
+    "__comp": "17896441",
+    "content": "f7511d78"
+  },
+  "/docs/development/testing/run_optimized_tests_enhanced-24f": {
+    "__comp": "17896441",
+    "content": "17e420f0"
+  },
+  "/docs/development/testing/run_tests-4f2": {
+    "__comp": "17896441",
+    "content": "cc835b48"
+  },
+  "/docs/development/testing/setup_context_for_testing-3f8": {
+    "__comp": "17896441",
+    "content": "1c652fed"
+  },
+  "/docs/development/testing/simple_retrieval_test-f6c": {
+    "__comp": "17896441",
+    "content": "abce599c"
+  },
+  "/docs/development/testing/test_collection_check-258": {
+    "__comp": "17896441",
+    "content": "b1c9e46a"
+  },
+  "/docs/development/testing/test_sprint_phases-41d": {
+    "__comp": "17896441",
+    "content": "13230005"
+  },
+  "/docs/development/testing/test_structure-7d9": {
+    "__comp": "17896441",
+    "content": "55dbe566"
+  },
+  "/docs/development/testing/testagent_agent-b94": {
+    "__comp": "17896441",
+    "content": "d777241c"
+  },
+  "/docs/development/testing/testing_best_practices-996": {
+    "__comp": "17896441",
+    "content": "7d7b200e"
+  },
+  "/docs/development/testing/testvalidation_agent-7bb": {
+    "__comp": "17896441",
+    "content": "28cce478"
+  },
+  "/docs/development/testing/validate_imports-0dc": {
+    "__comp": "17896441",
+    "content": "e80314c4"
+  },
+  "/docs/development/troubleshooting-1ef": {
+    "__comp": "17896441",
+    "content": "f44542d0"
+  },
+  "/docs/development/visualization/auto_generate_graph-bf4": {
+    "__comp": "17896441",
+    "content": "ee891243"
+  },
+  "/docs/development/visualization/build_json-fb6": {
+    "__comp": "17896441",
+    "content": "de9c2c28"
+  },
+  "/docs/development/visualization/gantt_analyzer-ca7": {
+    "__comp": "17896441",
+    "content": "275a9f7e"
+  },
+  "/docs/development/visualization/graph_visualization-f3e": {
+    "__comp": "17896441",
+    "content": "4d1341c8"
+  },
+  "/docs/development/visualization/sprint_visualizer-63c": {
+    "__comp": "17896441",
+    "content": "8a52edd1"
+  },
+  "/docs/development/visualization/visualize-6f8": {
+    "__comp": "17896441",
+    "content": "024a1c40"
+  },
+  "/docs/development/visualization/visualize_directory_tree-9ff": {
+    "__comp": "17896441",
+    "content": "8c348fd0"
+  },
+  "/docs/development/visualization/visualize_task_graph-9c7": {
+    "__comp": "17896441",
+    "content": "48889ac2"
+  },
+  "/docs/integrations/gemini-cli-d0a": {
+    "__comp": "17896441",
+    "content": "65ff6498"
+  },
+  "/docs/intro-61d": {
+    "__comp": "17896441",
+    "content": "0e384e19"
+  },
+  "/docs/operations/-b23": {
+    "__comp": "17896441",
+    "content": "ce9fe717"
+  },
+  "/docs/operations/automation/automation_health_check-b9c": {
+    "__comp": "17896441",
+    "content": "6330d526"
+  },
+  "/docs/operations/email_integration-63c": {
+    "__comp": "17896441",
+    "content": "45287096"
+  },
+  "/docs/operations/list_pending_reviews-cb6": {
+    "__comp": "17896441",
+    "content": "5a8e9f04"
+  },
+  "/docs/operations/manage_knowledge_reviews-041": {
+    "__comp": "17896441",
+    "content": "32273131"
+  },
+  "/docs/operations/mark_review_complete-f73": {
+    "__comp": "17896441",
+    "content": "c8c00f39"
+  },
+  "/docs/operations/monitoring/monitor_workflow-e0b": {
+    "__comp": "17896441",
+    "content": "752edb85"
+  },
+  "/docs/operations/monitoring/workflow_monitoring-e79": {
+    "__comp": "17896441",
+    "content": "4aaef120"
+  },
+  "/docs/operations/update_dashboard-976": {
+    "__comp": "17896441",
+    "content": "9ab0e262"
+  },
+  "/docs/operations/workflows/archive_task-b33": {
+    "__comp": "17896441",
+    "content": "e7ff5d9e"
+  },
+  "/docs/operations/workflows/complete_task-4bc": {
+    "__comp": "17896441",
+    "content": "1f499367"
+  },
+  "/docs/operations/workflows/daily_cycle-fdb": {
+    "__comp": "17896441",
+    "content": "31f61db8"
+  },
+  "/docs/operations/workflows/daily_cycle_orchestrator-9ac": {
+    "__comp": "17896441",
+    "content": "15ae9049"
+  },
+  "/docs/operations/workflows/delegation-7cb": {
+    "__comp": "17896441",
+    "content": "0dd9dafe"
+  },
+  "/docs/operations/workflows/end_of_day_report-54d": {
+    "__comp": "17896441",
+    "content": "d7efee67"
+  },
+  "/docs/operations/workflows/enhanced_workflow-e8b": {
+    "__comp": "17896441",
+    "content": "3c1cbf7c"
+  },
+  "/docs/operations/workflows/execute_graph-951": {
+    "__comp": "17896441",
+    "content": "90317977"
+  },
+  "/docs/operations/workflows/execute_task-7fa": {
+    "__comp": "17896441",
+    "content": "5d8c0a7f"
+  },
+  "/docs/operations/workflows/execute_workflow-f01": {
+    "__comp": "17896441",
+    "content": "537972c9"
+  },
+  "/docs/operations/workflows/extract_code-7e2": {
+    "__comp": "17896441",
+    "content": "7f56e364"
+  },
+  "/docs/operations/workflows/knowledge_curation_workflow-975": {
+    "__comp": "17896441",
+    "content": "bcc3081d"
+  },
+  "/docs/operations/workflows/langgraph_workflow-6e2": {
+    "__comp": "17896441",
+    "content": "d564717e"
+  },
+  "/docs/operations/workflows/plan_execution_manager-686": {
+    "__comp": "17896441",
+    "content": "32e2687a"
+  },
+  "/docs/operations/workflows/qa_execution-d05": {
+    "__comp": "17896441",
+    "content": "516bbe75"
+  },
+  "/docs/operations/workflows/qa_validation-71e": {
+    "__comp": "17896441",
+    "content": "b0b2e4f4"
+  },
+  "/docs/operations/workflows/register_output-59d": {
+    "__comp": "17896441",
+    "content": "019ddbcc"
+  },
+  "/docs/operations/workflows/resilient_workflow-0c0": {
+    "__comp": "17896441",
+    "content": "680a6bb8"
+  },
+  "/docs/operations/workflows/review_context-0e9": {
+    "__comp": "17896441",
+    "content": "e8457857"
+  },
+  "/docs/operations/workflows/review_context_simple-eef": {
+    "__comp": "17896441",
+    "content": "4c3489c0"
+  },
+  "/docs/operations/workflows/review_task-e0a": {
+    "__comp": "17896441",
+    "content": "a6475238"
+  },
+  "/docs/operations/workflows/run_workflow-c0c": {
+    "__comp": "17896441",
+    "content": "7f004896"
+  },
+  "/docs/operations/workflows/summarise_task-878": {
+    "__comp": "17896441",
+    "content": "50892f0a"
+  },
+  "/docs/operations/workflows/task_declaration-952": {
+    "__comp": "17896441",
+    "content": "63972e98"
+  },
+  "/docs/operations/workflows/task_orchestration-5da": {
+    "__comp": "17896441",
+    "content": "a19f6424"
+  },
+  "/docs/operations/workflows/workflow_executor-e50": {
+    "__comp": "17896441",
+    "content": "b2ab261c"
+  },
+  "/docs/optimizations/PHASE2_COMPLETE_DOCUMENTATION-084": {
+    "__comp": "17896441",
+    "content": "848bf807"
+  },
+  "/docs/reports/-3b9": {
+    "__comp": "17896441",
+    "content": "48e87a14"
+  },
+  "/docs/reports/import_refactoring_completion_report-538": {
+    "__comp": "17896441",
+    "content": "0b14d101"
+  },
+  "/docs/reports/memory-engine/consolidate_memory-2cb": {
+    "__comp": "17896441",
+    "content": "c818d0b5"
+  },
+  "/docs/reports/phase7-hitl/phase6_enhanced_eod_reporting_guide-fac": {
+    "__comp": "17896441",
+    "content": "ebeb658f"
+  },
+  "/docs/reports/phase7-hitl/PHASE6_STEP6.3_COMPLETION_SUMMARY-a96": {
+    "__comp": "17896441",
+    "content": "65cb525a"
+  },
+  "/docs/reports/phase7-hitl/PHASE6_STEP6.5_COMPLETION_SUMMARY-da7": {
+    "__comp": "17896441",
+    "content": "aa504d20"
+  },
+  "/docs/reports/phase7-hitl/PHASE6_STEP6.6_EMAIL_INTEGRATION_COMPLETION-057": {
+    "__comp": "17896441",
+    "content": "268aa7d4"
+  },
+  "/docs/reports/phase7-hitl/PHASE7_STEPS7.2-7.3_COMPLETION_SUMMARY-4f6": {
+    "__comp": "17896441",
+    "content": "c4164dfb"
+  },
+  "/docs/security/-4f0": {
+    "__comp": "17896441",
+    "content": "3b63cfa6"
+  },
+  "/docs/security/security-overview-8d4": {
+    "__comp": "17896441",
+    "content": "b2fd587d"
+  },
+  "/docs/security/validation/-835": {
+    "__comp": "17896441",
+    "content": "dc30551c"
+  },
+  "/docs/security/validation/management_dashboard-f55": {
+    "__comp": "17896441",
+    "content": "22f909e9"
+  },
+  "/docs/security/validation/quality_gates-a2b": {
+    "__comp": "17896441",
+    "content": "1f22d47f"
+  },
+  "/docs/setup/-38e": {
+    "__comp": "17896441",
+    "content": "6ff4166c"
+  },
+  "/docs/setup/complete-directory-structure-2e4": {
+    "__comp": "17896441",
+    "content": "af8c960d"
+  },
+  "/docs/setup/directory-structure-c08": {
+    "__comp": "17896441",
+    "content": "c3b93cd6"
+  },
+  "/docs/setup/requirements-85d": {
+    "__comp": "17896441",
+    "content": "6798e8ea"
+  },
+  "/docs/setup/requirements-compliance-fb5": {
+    "__comp": "17896441",
+    "content": "452c31b6"
+  },
+  "/docs/sprint/BRIEFING_GENERATOR_API-320": {
+    "__comp": "17896441",
+    "content": "2b6b884d"
+  },
+  "/docs/sprint/briefings/briefing-2025-05-29-bf8": {
+    "__comp": "17896441",
+    "content": "1e910d8d"
+  },
+  "/docs/sprint/briefings/briefing-2025-06-01-618": {
+    "__comp": "17896441",
+    "content": "17d2a591"
+  },
+  "/docs/sprint/briefings/briefing-2025-06-02-90a": {
+    "__comp": "17896441",
+    "content": "4ac3e825"
+  },
+  "/docs/sprint/briefings/sprint-day1-briefing-266": {
+    "__comp": "17896441",
+    "content": "5bf49063"
+  },
+  "/docs/sprint/briefings/sprint-day2-briefing-3d0": {
+    "__comp": "17896441",
+    "content": "3a29ebb0"
+  },
+  "/docs/sprint/briefings/sprint-day3-briefing-980": {
+    "__comp": "17896441",
+    "content": "089a1617"
+  },
+  "/docs/sprint/PHASE6_COMPLETION_REPORT-759": {
+    "__comp": "17896441",
+    "content": "67eef2e9"
+  },
+  "/docs/tools/__init__-d72": {
+    "__comp": "17896441",
+    "content": "457b1b7d"
+  },
+  "/docs/tools/base_tool-121": {
+    "__comp": "17896441",
+    "content": "538e0f5b"
+  },
+  "/docs/tools/context_tracker-b2a": {
+    "__comp": "17896441",
+    "content": "461089ee"
+  },
+  "/docs/tools/context_visualizer-bb5": {
+    "__comp": "17896441",
+    "content": "63b46fc6"
+  },
+  "/docs/tools/coverage_tool-61b": {
+    "__comp": "17896441",
+    "content": "c0046c29"
+  },
+  "/docs/tools/cypress_tool-562": {
+    "__comp": "17896441",
+    "content": "18cdc836"
+  },
+  "/docs/tools/design_system_tool-155": {
+    "__comp": "17896441",
+    "content": "ff545098"
+  },
+  "/docs/tools/echo_tool-d09": {
+    "__comp": "17896441",
+    "content": "2505753d"
+  },
+  "/docs/tools/fixed_retrieval_qa-069": {
+    "__comp": "17896441",
+    "content": "6fbc5a6b"
+  },
+  "/docs/tools/github_finalise-992": {
+    "__comp": "17896441",
+    "content": "6e18208a"
+  },
+  "/docs/tools/github_tool-6d2": {
+    "__comp": "17896441",
+    "content": "a6560bde"
+  },
+  "/docs/tools/jest_tool-6fb": {
+    "__comp": "17896441",
+    "content": "347f4f7a"
+  },
+  "/docs/tools/langChain_characterTextSplitter-452": {
+    "__comp": "17896441",
+    "content": "c00639a9"
+  },
+  "/docs/tools/markdown_tool-b05": {
+    "__comp": "17896441",
+    "content": "a40b7dcd"
+  },
+  "/docs/tools/memory_engine-222": {
+    "__comp": "17896441",
+    "content": "9080a1ef"
+  },
+  "/docs/tools/memory_engine_examples-1fd": {
+    "__comp": "17896441",
+    "content": "1fb54e23"
+  },
+  "/docs/tools/qa_cli-c70": {
+    "__comp": "17896441",
+    "content": "aaea2dd4"
+  },
+  "/docs/tools/rate_limiter-4a3": {
+    "__comp": "17896441",
+    "content": "65ae123a"
+  },
+  "/docs/tools/retrieval_qa-70f": {
+    "__comp": "17896441",
+    "content": "25cc2cd7"
+  },
+  "/docs/tools/retrieval_qa_refactored-849": {
+    "__comp": "17896441",
+    "content": "0bf8deb1"
+  },
+  "/docs/tools/retrieval_qa_usage-962": {
+    "__comp": "17896441",
+    "content": "464eda86"
+  },
+  "/docs/tools/supabase_tool-e5c": {
+    "__comp": "17896441",
+    "content": "e0a3cb13"
+  },
+  "/docs/tools/tailwind_tool-396": {
+    "__comp": "17896441",
+    "content": "012016fa"
+  },
+  "/docs/tools/task_loader-ab5": {
+    "__comp": "17896441",
+    "content": "f364bb77"
+  },
+  "/docs/tools/tool_loader-520": {
+    "__comp": "17896441",
+    "content": "d1ad590b"
+  },
+  "/docs/tools/utilities_catalog-fe2": {
+    "__comp": "17896441",
+    "content": "5b2e744a"
+  },
+  "/docs/tools/utils-8eb": {
+    "__comp": "17896441",
+    "content": "30343903"
+  },
+  "/docs/tools/validation/-09d": {
+    "__comp": "17896441",
+    "content": "2ce2a88c"
+  },
+  "/docs/tools/vercel_tool-f1a": {
+    "__comp": "17896441",
+    "content": "c3ad17c2"
+  },
+  "/docs/tools/vercel_tool_refactored-c31": {
+    "__comp": "17896441",
+    "content": "721fade9"
+  },
+  "/docs/user-guides/-6b2": {
+    "__comp": "17896441",
+    "content": "c31c1704"
+  },
+  "/docs/user-guides/demos/agent_output_demo-19f": {
+    "__comp": "17896441",
+    "content": "5d9cd3e8"
+  },
+  "/docs/user-guides/demos/agent_summarization_demo-963": {
+    "__comp": "17896441",
+    "content": "f762138c"
+  },
+  "/docs/user-guides/demos/code_extraction_demo-da7": {
+    "__comp": "17896441",
+    "content": "91a350b2"
+  },
+  "/docs/user-guides/demos/hitl_cli_demo-92b": {
+    "__comp": "17896441",
+    "content": "f88416c0"
+  },
+  "/docs/user-guides/demos/hitl_kanban_demo-1d9": {
+    "__comp": "17896441",
+    "content": "34e67e7d"
+  },
+  "/docs/user-guides/demos/human-in-the-Loop_context_review-509": {
+    "__comp": "17896441",
+    "content": "141f1997"
+  },
+  "/docs/user-guides/demos/mcp_context_usage-495": {
+    "__comp": "17896441",
+    "content": "82bf3c96"
+  },
+  "/docs/user-guides/demos/qa_execution_demo-dde": {
+    "__comp": "17896441",
+    "content": "e4d9afd9"
+  },
+  "/docs/user-guides/demos/register_agent_output_demo-19f": {
+    "__comp": "17896441",
+    "content": "7ec1c4e0"
+  },
+  "/docs/user-guides/demos/task_declaration_preparation-8b4": {
+    "__comp": "17896441",
+    "content": "0cd488a8"
+  },
+  "/docs/user-guides/demos/visualise_context_coverage-707": {
+    "__comp": "17896441",
+    "content": "7563139c"
+  },
+  "/docs/user-guides/documentation_completeness-eda": {
+    "__comp": "17896441",
+    "content": "d67e2ae2"
+  },
+  "/docs/user-guides/documentation_index-95f": {
+    "__comp": "17896441",
+    "content": "1d0fbf98"
+  },
+  "/docs/user-guides/documentation_search_index-432": {
+    "__comp": "17896441",
+    "content": "e521104b"
+  },
+  "/docs/user-guides/escalation_cli-eb9": {
+    "__comp": "17896441",
+    "content": "b2f6a7ee"
+  },
+  "/docs/user-guides/feedback_cli-a49": {
+    "__comp": "17896441",
+    "content": "94956eea"
+  },
+  "/docs/user-guides/hitl_cli-5b4": {
+    "__comp": "17896441",
+    "content": "510ac964"
+  },
+  "/docs/user-guides/hitl_kanban_board-600": {
+    "__comp": "17896441",
+    "content": "6333b1d5"
+  },
+  "/docs/user-guides/hitl_kanban_cli-603": {
+    "__comp": "17896441",
+    "content": "1976f649"
+  },
+  "/docs/user-guides/hitl_kanban_dashboard-5b7": {
+    "__comp": "17896441",
+    "content": "356a7b95"
+  },
+  "/docs/user-guides/hitl_widgets-c32": {
+    "__comp": "17896441",
+    "content": "6c9ff1b4"
+  },
+  "/docs/user-guides/MASTER_DOCUMENTATION_GUIDE-203": {
+    "__comp": "17896441",
+    "content": "555fed81"
+  },
+  "/docs/user-guides/qa_execution_cli-582": {
+    "__comp": "17896441",
+    "content": "22ad65cc"
+  },
+  "/docs/user-guides/quick_hitl_status-671": {
+    "__comp": "17896441",
+    "content": "3ca751c6"
+  },
+  "/docs/user-guides/quick_reference_cards-6ec": {
+    "__comp": "17896441",
+    "content": "d106926d"
+  },
+  "/docs/user-guides/visual_documentation-841": {
+    "__comp": "17896441",
+    "content": "96ab57f2"
+  },
+  "/-e5f": {
+    "__comp": "1df93b7f",
+    "__context": {
+      "plugin": "a7456010"
+    },
+    "config": "5e9f5e1a"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "cicd/slack-integration-guide",
+  "title": "🚀 GitHub Actions Slack Integration - Complete Setup Guide",
+  "description": "✅ Issues Fixed in deploy.yml",
+  "source": "@site/docs/cicd/slack-integration-guide.md",
+  "sourceDirName": "cicd",
+  "slug": "/cicd/slack-integration-guide",
+  "permalink": "/docs/cicd/slack-integration-guide",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/cicd/slack-integration-guide.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Workflow and Task System Overview",
+    "permalink": "/docs/architecture/workflow_task_system"
+  },
+  "next": {
+    "title": "Development Documentation",
+    "permalink": "/docs/development/"
+  }
+}

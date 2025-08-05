@@ -1,0 +1,24 @@
+{
+  "id": "operations/workflows/delegation",
+  "title": "orchestration/delegation.py",
+  "description": "Functions",
+  "source": "@site/docs/operations/workflows/delegation.md",
+  "sourceDirName": "operations/workflows",
+  "slug": "/operations/workflows/delegation",
+  "permalink": "/docs/operations/workflows/delegation",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/operations/workflows/delegation.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Daily Cycle Orchestrator Documentation",
+    "permalink": "/docs/operations/workflows/daily_cycle_orchestrator"
+  },
+  "next": {
+    "title": "orchestration/end_of_day_report.py",
+    "permalink": "/docs/operations/workflows/end_of_day_report"
+  }
+}

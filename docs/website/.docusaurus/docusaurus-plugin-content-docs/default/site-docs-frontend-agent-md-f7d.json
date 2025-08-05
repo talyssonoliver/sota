@@ -1,0 +1,24 @@
+{
+  "id": "frontend_agent",
+  "title": "Frontend Engineer Agent Documentation",
+  "description": "File: agents/frontend.py",
+  "source": "@site/docs/frontend_agent.md",
+  "sourceDirName": ".",
+  "slug": "/frontend_agent",
+  "permalink": "/docs/frontend_agent",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/frontend_agent.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Documentation Search Index",
+    "permalink": "/docs/documentation_search_index"
+  },
+  "next": {
+    "title": "Function Dictionary",
+    "permalink": "/docs/function_dictionary"
+  }
+}

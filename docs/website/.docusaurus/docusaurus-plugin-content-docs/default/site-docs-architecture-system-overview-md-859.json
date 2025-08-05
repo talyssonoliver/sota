@@ -1,0 +1,24 @@
+{
+  "id": "architecture/system-overview",
+  "title": "AI Agent System - Complete Architecture Overview",
+  "description": "Single Source of Truth for System Architecture",
+  "source": "@site/docs/architecture/system-overview.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/system-overview",
+  "permalink": "/docs/architecture/system-overview",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/system-overview.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "AI System Architecture Documentation",
+    "permalink": "/docs/architecture/system-architecture-overview"
+  },
+  "next": {
+    "title": "System Architecture",
+    "permalink": "/docs/architecture/system_architecture"
+  }
+}

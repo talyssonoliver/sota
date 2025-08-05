@@ -1,0 +1,24 @@
+{
+  "id": "security/validation/management_dashboard",
+  "title": "Management Dashboard Guide",
+  "description": "The Management Dashboard provides real-time quality metrics and insights for engineering teams, technical leads, and management to monitor code quality, technical debt, and team performance.",
+  "source": "@site/docs/security/validation/management_dashboard.md",
+  "sourceDirName": "security/validation",
+  "slug": "/security/validation/management_dashboard",
+  "permalink": "/docs/security/validation/management_dashboard",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/security/validation/management_dashboard.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Validation System Documentation",
+    "permalink": "/docs/security/validation/"
+  },
+  "next": {
+    "title": "Quality Gates Configuration Guide",
+    "permalink": "/docs/security/validation/quality_gates"
+  }
+}

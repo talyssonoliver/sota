@@ -1,0 +1,24 @@
+{
+  "id": "architecture/agents/human_agents",
+  "title": "agents/human_agents.py",
+  "description": "Classes",
+  "source": "@site/docs/architecture/agents/human_agents.md",
+  "sourceDirName": "architecture/agents",
+  "slug": "/architecture/agents/human_agents",
+  "permalink": "/docs/architecture/agents/human_agents",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/agents/human_agents.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Frontend Engineer Agent Documentation",
+    "permalink": "/docs/architecture/agents/frontend_agent"
+  },
+  "next": {
+    "title": "agents/qa.py",
+    "permalink": "/docs/architecture/agents/qa"
+  }
+}

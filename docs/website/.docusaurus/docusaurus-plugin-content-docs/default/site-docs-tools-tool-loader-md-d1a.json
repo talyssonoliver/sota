@@ -1,0 +1,24 @@
+{
+  "id": "tools/tool_loader",
+  "title": "tool_loader.py",
+  "description": "This module provides dynamic loading of tool classes based on the YAML",
+  "source": "@site/docs/tools/tool_loader.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/tool_loader",
+  "permalink": "/docs/tools/tool_loader",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/tool_loader.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Task Loader Documentation",
+    "permalink": "/docs/tools/task_loader"
+  },
+  "next": {
+    "title": "Utility Functions Catalog",
+    "permalink": "/docs/tools/utilities_catalog"
+  }
+}

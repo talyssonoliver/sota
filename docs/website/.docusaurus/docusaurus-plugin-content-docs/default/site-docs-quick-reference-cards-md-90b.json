@@ -1,0 +1,24 @@
+{
+  "id": "quick_reference_cards",
+  "title": "Quick Reference Cards",
+  "description": "Agent Quick Reference",
+  "source": "@site/docs/quick_reference_cards.md",
+  "sourceDirName": ".",
+  "slug": "/quick_reference_cards",
+  "permalink": "/docs/quick_reference_cards",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/quick_reference_cards.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "QA Agent Documentation",
+    "permalink": "/docs/qa_agent"
+  },
+  "next": {
+    "title": "Project Reports",
+    "permalink": "/docs/reports/"
+  }
+}

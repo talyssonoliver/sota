@@ -1,0 +1,24 @@
+{
+  "id": "development/visualization/auto_generate_graph",
+  "title": "graph/auto_generate_graph.py",
+  "description": "Functions",
+  "source": "@site/docs/development/visualization/auto_generate_graph.md",
+  "sourceDirName": "development/visualization",
+  "slug": "/development/visualization/auto_generate_graph",
+  "permalink": "/docs/development/visualization/auto_generate_graph",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/visualization/auto_generate_graph.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Troubleshooting",
+    "permalink": "/docs/development/troubleshooting"
+  },
+  "next": {
+    "title": "src/interfaces/visualization/build_json.py",
+    "permalink": "/docs/development/visualization/build_json"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "api/external_integrations",
+  "title": "api/external_integrations.py",
+  "description": "Classes",
+  "source": "@site/docs/api/external_integrations.md",
+  "sourceDirName": "api",
+  "slug": "/api/external_integrations",
+  "permalink": "/docs/api/external_integrations",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/api/external_integrations.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Class Dictionary",
+    "permalink": "/docs/api/class_dictionary"
+  },
+  "next": {
+    "title": "Function Dictionary",
+    "permalink": "/docs/api/function_dictionary"
+  }
+}

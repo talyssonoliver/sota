@@ -1,0 +1,24 @@
+{
+  "id": "workflow_executor",
+  "title": "Workflow Executor Documentation",
+  "description": "File: orchestration/execute_graph.py",
+  "source": "@site/docs/workflow_executor.md",
+  "sourceDirName": ".",
+  "slug": "/workflow_executor",
+  "permalink": "/docs/workflow_executor",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/workflow_executor.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Visual Documentation",
+    "permalink": "/docs/visual_documentation"
+  },
+  "next": {
+    "title": "Workflow Monitoring and Notification System",
+    "permalink": "/docs/workflow_monitoring"
+  }
+}

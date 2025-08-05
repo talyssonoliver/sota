@@ -1,0 +1,24 @@
+{
+  "id": "development/mocking/mock_dependencies",
+  "title": "scripts/mock_dependencies.py",
+  "description": "Classes",
+  "source": "@site/docs/development/mocking/mock_dependencies.md",
+  "sourceDirName": "development/mocking",
+  "slug": "/development/mocking/mock_dependencies",
+  "permalink": "/docs/development/mocking/mock_dependencies",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/mocking/mock_dependencies.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "tests/mock_memory_engine.py",
+    "permalink": "/docs/development/mock_memory_engine"
+  },
+  "next": {
+    "title": "tests/mock_environment.py",
+    "permalink": "/docs/development/mocking/mock_environment"
+  }
+}

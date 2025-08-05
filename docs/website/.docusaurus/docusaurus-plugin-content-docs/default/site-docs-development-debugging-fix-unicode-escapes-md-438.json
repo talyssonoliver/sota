@@ -1,0 +1,24 @@
+{
+  "id": "development/debugging/fix_unicode_escapes",
+  "title": "fix_unicode_escapes.py",
+  "description": "Functions",
+  "source": "@site/docs/development/debugging/fix_unicode_escapes.md",
+  "sourceDirName": "development/debugging",
+  "slug": "/development/debugging/fix_unicode_escapes",
+  "permalink": "/docs/development/debugging/fix_unicode_escapes",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/debugging/fix_unicode_escapes.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "analyze_remaining_failures.py",
+    "permalink": "/docs/development/debugging/analyze_remaining_failures"
+  },
+  "next": {
+    "title": "tests/verify_dashboard_fix.py",
+    "permalink": "/docs/development/debugging/verify_dashboard_fix"
+  }
+}

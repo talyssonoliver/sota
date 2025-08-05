@@ -1,0 +1,24 @@
+{
+  "id": "development/debugging/verify_dashboard_fix",
+  "title": "tests/verify_dashboard_fix.py",
+  "description": "Functions",
+  "source": "@site/docs/development/debugging/verify_dashboard_fix.md",
+  "sourceDirName": "development/debugging",
+  "slug": "/development/debugging/verify_dashboard_fix",
+  "permalink": "/docs/development/debugging/verify_dashboard_fix",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/debugging/verify_dashboard_fix.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "fix_unicode_escapes.py",
+    "permalink": "/docs/development/debugging/fix_unicode_escapes"
+  },
+  "next": {
+    "title": "scripts/automated_doc_generator.py",
+    "permalink": "/docs/development/generation/automated_doc_generator"
+  }
+}

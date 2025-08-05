@@ -1,0 +1,23 @@
+{
+  "id": "intro",
+  "title": "AI Agent System Introduction",
+  "description": "Welcome to the AI Agent System - a comprehensive multi-agent platform that automates software development tasks through intelligent orchestration.",
+  "source": "@site/docs/intro.md",
+  "sourceDirName": ".",
+  "slug": "/intro",
+  "permalink": "/docs/intro",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/intro.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "sidebar_position": 1
+  },
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "Setup Guide",
+    "permalink": "/docs/setup/"
+  }
+}

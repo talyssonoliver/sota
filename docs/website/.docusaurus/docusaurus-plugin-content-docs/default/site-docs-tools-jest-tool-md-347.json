@@ -1,0 +1,24 @@
+{
+  "id": "tools/jest_tool",
+  "title": "jest_tool.py",
+  "description": "Utility for running JavaScript unit tests with Jest. It can generate test",
+  "source": "@site/docs/tools/jest_tool.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/jest_tool",
+  "permalink": "/docs/tools/jest_tool",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/jest_tool.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "github_tool.py",
+    "permalink": "/docs/tools/github_tool"
+  },
+  "next": {
+    "title": "examples/langChain_characterTextSplitter.py",
+    "permalink": "/docs/tools/langChain_characterTextSplitter"
+  }
+}

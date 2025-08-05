@@ -1,0 +1,24 @@
+{
+  "id": "development/configuration_reference",
+  "title": "Configuration Reference",
+  "description": "This document summarizes key configuration files and environment variables used throughout the project.",
+  "source": "@site/docs/development/configuration_reference.md",
+  "sourceDirName": "development",
+  "slug": "/development/configuration_reference",
+  "permalink": "/docs/development/configuration_reference",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/configuration_reference.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Configuration Deep Dive",
+    "permalink": "/docs/development/configuration_deep_dive"
+  },
+  "next": {
+    "title": "consolidate_dashboard.py",
+    "permalink": "/docs/development/consolidate_dashboard"
+  }
+}

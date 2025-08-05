@@ -1,0 +1,24 @@
+{
+  "id": "reports/phase7-hitl/PHASE7_STEPS7.2-7.3_COMPLETION_SUMMARY",
+  "title": "Phase 7 Steps 7.2-7.3 - HITL Integration Foundation - COMPLETION SUMMARY",
+  "description": "🎉 Implementation Complete",
+  "source": "@site/docs/reports/phase7-hitl/PHASE7_STEPS7.2-7.3_COMPLETION_SUMMARY.md",
+  "sourceDirName": "reports/phase7-hitl",
+  "slug": "/reports/phase7-hitl/PHASE7_STEPS7.2-7.3_COMPLETION_SUMMARY",
+  "permalink": "/docs/reports/phase7-hitl/PHASE7_STEPS7.2-7.3_COMPLETION_SUMMARY",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/reports/phase7-hitl/PHASE7_STEPS7.2-7.3_COMPLETION_SUMMARY.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Phase 6 Step 6.6: Email Summary Integration - COMPLETION SUMMARY",
+    "permalink": "/docs/reports/phase7-hitl/PHASE6_STEP6.6_EMAIL_INTEGRATION_COMPLETION"
+  },
+  "next": {
+    "title": "Phase 6 Enhanced End-of-Day Reporting - User Guide",
+    "permalink": "/docs/reports/phase7-hitl/phase6_enhanced_eod_reporting_guide"
+  }
+}

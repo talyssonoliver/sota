@@ -1,0 +1,24 @@
+{
+  "id": "tools/context_visualizer",
+  "title": "context_visualizer.py",
+  "description": "Generates reports and visualizations that show how memory context is used across",
+  "source": "@site/docs/tools/context_visualizer.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/context_visualizer",
+  "permalink": "/docs/tools/context_visualizer",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/context_visualizer.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "context_tracker.py",
+    "permalink": "/docs/tools/context_tracker"
+  },
+  "next": {
+    "title": "coverage_tool.py",
+    "permalink": "/docs/tools/coverage_tool"
+  }
+}

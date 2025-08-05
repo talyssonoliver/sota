@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI System - API Testing Interface</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0d1117;
+            color: #c9d1d9;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #161b22;
+            border-radius: 12px;
+            border: 1px solid #30363d;
+        }
+
+        .header h1 {
+            color: #58a6ff;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .api-section {
+            background: #161b22;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #30363d;
+        }
+
+        .api-section h2 {
+            color: #7dd3fc;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .endpoint-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .endpoint {
+            background: #0d1117;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #21262d;
+            transition: all 0.3s ease;
+        }
+
+        .endpoint:hover {
+            border-color: #58a6ff;
+            transform: translateY(-2px);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .method {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .method.get { background: #238636; color: white; }
+        .method.post { background: #1f6feb; color: white; }
+        .method.put { background: #fb8500; color: white; }
+        .method.delete { background: #da3633; color: white; }
+
+        .endpoint-url {
+            font-family: 'Courier New', monospace;
+            color: #ffa657;
+            font-weight: bold;
+        }
+
+        .test-btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .test-btn:hover {
+            background: #2ea043;
+            transform: scale(1.05);
+        }
+
+        .endpoint-description {
+            color: #8b949e;
+            margin-bottom: 15px;
+        }
+
+        .response-area {
+            background: #0d1117;
+            border: 1px solid #21262d;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .response-area.show {
+            display: block;
+        }
+
+        .loading {
+            color: #ffa657;
+            animation: pulse 1.5s infinite;
+        }
+
+        .success {
+            color: #56d364;
+        }
+
+        .error {
+            color: #f85149;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-online {
+            background: #56d364;
+            animation: pulse 2s infinite;
+        }
+
+        .status-offline {
+            background: #f85149;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .quick-btn {
+            background: #21262d;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-btn:hover {
+            background: #30363d;
+            border-color: #58a6ff;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .system-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .status-card {
+            background: #161b22;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            text-align: center;
+        }
+
+        .status-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #58a6ff;
+            margin-bottom: 5px;
+        }
+
+        .status-label {
+            color: #8b949e;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-code"></i> AI System API Testing Interface</h1>
+            <p>Development and debugging tools for API endpoints</p>
+            <div class="status-indicator status-online"></div>
+            <span>System Online</span>
+        </div>
+
+        <div class="quick-actions">
+            <a href="#" class="quick-btn" onclick="testAllEndpoints()">
+                <i class="fas fa-play-circle"></i> Test All Endpoints
+            </a>
+            <a href="#" class="quick-btn" onclick="clearAllResponses()">
+                <i class="fas fa-trash"></i> Clear Responses
+            </a>
+            <a href="#" class="quick-btn" onclick="exportResults()">
+                <i class="fas fa-download"></i> Export Results
+            </a>
+            <a href="/" class="quick-btn">
+                <i class="fas fa-home"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <div class="system-status">
+            <div class="status-card">
+                <div class="status-value" id="responseTime">--</div>
+                <div class="status-label">Avg Response Time (ms)</div>
+            </div>
+            <div class="status-card">
+                <div class="status-value" id="successRate">--</div>
+                <div class="status-label">Success Rate (%)</div>
+            </div>
+            <div class="status-card">
+                <div class="status-value" id="totalTests">0</div>
+                <div class="status-label">Tests Executed</div>
+            </div>
+            <div class="status-card">
+                <div class="status-value" id="uptime">--</div>
+                <div class="status-label">System Uptime</div>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2><i class="fas fa-heart"></i> Health & Status</h2>
+            <div class="endpoint-list">
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <div>
+                            <span class="method get">GET</span>
+                            <span class="endpoint-url">/health</span>
+                        </div>
+                        <button class="test-btn" onclick="testEndpoint('/health', 'GET', 'health')">
+                            <i class="fas fa-play"></i> Test
+                        </button>
+                    </div>
+                    <div class="endpoint-description">System health check and status information</div>
+                    <div class="response-area" id="response-health"></div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <div>
+                            <span class="method get">GET</span>
+                            <span class="endpoint-url">/api/dashboard/health</span>
+                        </div>
+                        <button class="test-btn" onclick="testEndpoint('/api/dashboard/health', 'GET', 'dashboard-health')">
+                            <i class="fas fa-play"></i> Test
+                        </button>
+                    </div>
+                    <div class="endpoint-description">Dashboard API health check</div>
+                    <div class="response-area" id="response-dashboard-health"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2><i class="fas fa-chart-bar"></i> Dashboard Data</h2>
+            <div class="endpoint-list">
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <div>
+                            <span class="method get">GET</span>
+                            <span class="endpoint-url">/api/dashboard/task-stats</span>
+                        </div>
+                        <button class="test-btn" onclick="testEndpoint('/api/dashboard/task-stats', 'GET', 'task-stats')">
+                            <i class="fas fa-play"></i> Test
+                        </button>
+                    </div>
+                    <div class="endpoint-description">Get task statistics and metrics</div>
+                    <div class="response-area" id="response-task-stats"></div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <div>
+                            <span class="method get">GET</span>
+                            <span class="endpoint-url">/api/dashboard/agent-status</span>
+                        </div>
+                        <button class="test-btn" onclick="testEndpoint('/api/dashboard/agent-status', 'GET', 'agent-status')">
+                            <i class="fas fa-play"></i> Test
+                        </button>
+                    </div>
+                    <div class="endpoint-description">Get agent status and performance data</div>
+                    <div class="response-area" id="response-agent-status"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="api-section">
+            <h2><i class="fas fa-cogs"></i> Control & Management</h2>
+            <div class="endpoint-list">
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <div>
+                            <span class="method post">POST</span>
+                            <span class="endpoint-url">/api/agent/control</span>
+                        </div>
+                        <button class="test-btn" onclick="testControlEndpoint()">
+                            <i class="fas fa-play"></i> Test
+                        </button>
+                    </div>
+                    <div class="endpoint-description">Control agent operations (start/stop/restart)</div>
+                    <div class="response-area" id="response-agent-control"></div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <div>
+                            <span class="method get">GET</span>
+                            <span class="endpoint-url">/api/tasks/queue</span>
+                        </div>
+                        <button class="test-btn" onclick="testEndpoint('/api/tasks/queue', 'GET', 'task-queue')">
+                            <i class="fas fa-play"></i> Test
+                        </button>
+                    </div>
+                    <div class="endpoint-description">Get current task queue</div>
+                    <div class="response-area" id="response-task-queue"></div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <div>
+                            <span class="method get">GET</span>
+                            <span class="endpoint-url">/api/workflows</span>
+                        </div>
+                        <button class="test-btn" onclick="testEndpoint('/api/workflows', 'GET', 'workflows')">
+                            <i class="fas fa-play"></i> Test
+                        </button>
+                    </div>
+                    <div class="endpoint-description">Get active workflows</div>
+                    <div class="response-area" id="response-workflows"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testStats = {
+            totalTests: 0,
+            successfulTests: 0,
+            totalResponseTime: 0
+        };
+
+        async function testEndpoint(url, method, responseId) {
+            const responseArea = document.getElementById(`response-${responseId}`);
+            responseArea.classList.add('show');
+            responseArea.innerHTML = '<div class="loading">Testing endpoint...</div>';
+
+            const startTime = Date.now();
+            testStats.totalTests++;
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const responseTime = Date.now() - startTime;
+                testStats.totalResponseTime += responseTime;
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    testStats.successfulTests++;
+                    responseArea.innerHTML = `
+                        <div class="success">✅ Success (${response.status}) - ${responseTime}ms</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    responseArea.innerHTML = `
+                        <div class="error">❌ Error (${response.status}) - ${responseTime}ms</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                const responseTime = Date.now() - startTime;
+                responseArea.innerHTML = `
+                    <div class="error">❌ Network Error - ${responseTime}ms</div>
+                    <pre>${error.message}</pre>
+                `;
+            }
+
+            updateStats();
+        }
+
+        async function testControlEndpoint() {
+            const testData = {
+                agent_id: 'backend',
+                action: 'status'
+            };
+
+            const responseArea = document.getElementById('response-agent-control');
+            responseArea.classList.add('show');
+            responseArea.innerHTML = '<div class="loading">Testing control endpoint...</div>';
+
+            const startTime = Date.now();
+            testStats.totalTests++;
+
+            try {
+                const response = await fetch('/api/agent/control', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                const responseTime = Date.now() - startTime;
+                testStats.totalResponseTime += responseTime;
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    testStats.successfulTests++;
+                    responseArea.innerHTML = `
+                        <div class="success">✅ Success (${response.status}) - ${responseTime}ms</div>
+                        <div>Test payload: <code>${JSON.stringify(testData)}</code></div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    responseArea.innerHTML = `
+                        <div class="error">❌ Error (${response.status}) - ${responseTime}ms</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                const responseTime = Date.now() - startTime;
+                responseArea.innerHTML = `
+                    <div class="error">❌ Network Error - ${responseTime}ms</div>
+                    <pre>${error.message}</pre>
+                `;
+            }
+
+            updateStats();
+        }
+
+        function updateStats() {
+            document.getElementById('totalTests').textContent = testStats.totalTests;
+            
+            const successRate = testStats.totalTests > 0 ? 
+                Math.round((testStats.successfulTests / testStats.totalTests) * 100) : 0;
+            document.getElementById('successRate').textContent = successRate;
+
+            const avgResponseTime = testStats.totalTests > 0 ? 
+                Math.round(testStats.totalResponseTime / testStats.totalTests) : 0;
+            document.getElementById('responseTime').textContent = avgResponseTime;
+        }
+
+        async function testAllEndpoints() {
+            const endpoints = [
+                ['/health', 'GET', 'health'],
+                ['/api/dashboard/health', 'GET', 'dashboard-health'],
+                ['/api/dashboard/task-stats', 'GET', 'task-stats'],
+                ['/api/dashboard/agent-status', 'GET', 'agent-status'],
+                ['/api/tasks/queue', 'GET', 'task-queue'],
+                ['/api/workflows', 'GET', 'workflows']
+            ];
+
+            for (const [url, method, id] of endpoints) {
+                await testEndpoint(url, method, id);
+                await new Promise(resolve => setTimeout(resolve, 500)); // Small delay between tests
+            }
+
+            // Test control endpoint separately
+            await testControlEndpoint();
+        }
+
+        function clearAllResponses() {
+            document.querySelectorAll('.response-area').forEach(area => {
+                area.classList.remove('show');
+                area.innerHTML = '';
+            });
+
+            testStats = {
+                totalTests: 0,
+                successfulTests: 0,
+                totalResponseTime: 0
+            };
+            updateStats();
+        }
+
+        function exportResults() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                stats: testStats,
+                tests: []
+            };
+
+            document.querySelectorAll('.response-area.show').forEach(area => {
+                results.tests.push({
+                    id: area.id,
+                    content: area.textContent
+                });
+            });
+
+            const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `api-test-results-${Date.now()}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Update uptime display
+        function updateUptime() {
+            const startTime = Date.now();
+            setInterval(() => {
+                const uptime = Date.now() - startTime;
+                const seconds = Math.floor(uptime / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hours = Math.floor(minutes / 60);
+
+                let uptimeStr = '';
+                if (hours > 0) uptimeStr += `${hours}h `;
+                if (minutes > 0) uptimeStr += `${minutes % 60}m `;
+                uptimeStr += `${seconds % 60}s`;
+
+                document.getElementById('uptime').textContent = uptimeStr;
+            }, 1000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUptime();
+            updateStats();
+            console.log('🔧 API Testing Interface loaded');
+        });
+    </script>
+</body>
+</html>

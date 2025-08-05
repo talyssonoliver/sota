@@ -1,0 +1,24 @@
+{
+  "id": "MASTER_DOCUMENTATION_GUIDE",
+  "title": "AI Agent System - Master Documentation Guide",
+  "description": "📚 Complete Documentation Reference",
+  "source": "@site/docs/MASTER_DOCUMENTATION_GUIDE.md",
+  "sourceDirName": ".",
+  "slug": "/MASTER_DOCUMENTATION_GUIDE",
+  "permalink": "/docs/MASTER_DOCUMENTATION_GUIDE",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/MASTER_DOCUMENTATION_GUIDE.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "File Organization Improvements - June 11, 2025",
+    "permalink": "/docs/FILE_ORGANIZATION_IMPROVEMENTS"
+  },
+  "next": {
+    "title": "Phase 6 Step 6.3 Enhanced End-of-Day Reporting - COMPLETION SUMMARY",
+    "permalink": "/docs/PHASE6_STEP6-3_COMPLETION_SUMMARY"
+  }
+}

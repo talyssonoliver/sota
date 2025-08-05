@@ -1,0 +1,24 @@
+{
+  "id": "architecture/agents/coordinator",
+  "title": "agents/coordinator.py",
+  "description": "Functions",
+  "source": "@site/docs/architecture/agents/coordinator.md",
+  "sourceDirName": "architecture/agents",
+  "slug": "/architecture/agents/coordinator",
+  "permalink": "/docs/architecture/agents/coordinator",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/agents/coordinator.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Backend Engineer Agent Documentation",
+    "permalink": "/docs/architecture/agents/backend_agent"
+  },
+  "next": {
+    "title": "Coordinator Agent Documentation",
+    "permalink": "/docs/architecture/agents/coordinator_agent"
+  }
+}

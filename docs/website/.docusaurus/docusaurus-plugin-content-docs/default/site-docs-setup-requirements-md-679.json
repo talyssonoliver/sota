@@ -1,0 +1,27 @@
+{
+  "id": "setup/requirements",
+  "title": "Requirements Management",
+  "description": "This guide explains how the AI System manages Python dependencies following best practices and library documentation standards.",
+  "source": "@site/docs/setup/requirements.md",
+  "sourceDirName": "setup",
+  "slug": "/setup/requirements",
+  "permalink": "/docs/setup/requirements",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/setup/requirements.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "sidebar_position": 3
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Setup Guide",
+    "permalink": "/docs/setup/"
+  },
+  "next": {
+    "title": "Requirements Compliance Report",
+    "permalink": "/docs/setup/requirements-compliance"
+  }
+}

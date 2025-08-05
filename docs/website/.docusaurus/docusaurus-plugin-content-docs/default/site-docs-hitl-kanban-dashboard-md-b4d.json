@@ -1,0 +1,24 @@
+{
+  "id": "hitl_kanban_dashboard",
+  "title": "HITL Kanban Dashboard - Human-in-the-Loop Review Board",
+  "description": "Overview",
+  "source": "@site/docs/hitl_kanban_dashboard.md",
+  "sourceDirName": ".",
+  "slug": "/hitl_kanban_dashboard",
+  "permalink": "/docs/hitl_kanban_dashboard",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/hitl_kanban_dashboard.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Graph Visualization",
+    "permalink": "/docs/graph_visualization"
+  },
+  "next": {
+    "title": "Gemini CLI Integration",
+    "permalink": "/docs/integrations/gemini-cli"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "operations/email_integration",
+  "title": "orchestration/email_integration.py",
+  "description": "Classes",
+  "source": "@site/docs/operations/email_integration.md",
+  "sourceDirName": "operations",
+  "slug": "/operations/email_integration",
+  "permalink": "/docs/operations/email_integration",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/operations/email_integration.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/automation_health_check.py",
+    "permalink": "/docs/operations/automation/automation_health_check"
+  },
+  "next": {
+    "title": "scripts/list_pending_reviews.py",
+    "permalink": "/docs/operations/list_pending_reviews"
+  }
+}

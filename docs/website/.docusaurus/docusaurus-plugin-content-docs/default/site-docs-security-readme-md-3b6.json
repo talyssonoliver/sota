@@ -1,0 +1,24 @@
+{
+  "id": "security/README",
+  "title": "Security Documentation",
+  "description": "This directory contains comprehensive security documentation for the AI Agent System, including code quality validation, security analysis, and compliance frameworks.",
+  "source": "@site/docs/security/README.md",
+  "sourceDirName": "security",
+  "slug": "/security/",
+  "permalink": "/docs/security/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/security/README.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Phase 6 Enhanced End-of-Day Reporting - User Guide",
+    "permalink": "/docs/reports/phase7-hitl/phase6_enhanced_eod_reporting_guide"
+  },
+  "next": {
+    "title": "Security Policy",
+    "permalink": "/docs/security/security-overview"
+  }
+}

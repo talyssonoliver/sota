@@ -1,0 +1,24 @@
+{
+  "id": "architecture/agents/factory",
+  "title": "agents/factory.py",
+  "description": "Classes",
+  "source": "@site/docs/architecture/agents/factory.md",
+  "sourceDirName": "architecture/agents",
+  "slug": "/architecture/agents/factory",
+  "permalink": "/docs/architecture/agents/factory",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/agents/factory.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/documentation_agent.py",
+    "permalink": "/docs/architecture/agents/documentation_agent"
+  },
+  "next": {
+    "title": "agents/frontend.py",
+    "permalink": "/docs/architecture/agents/frontend"
+  }
+}

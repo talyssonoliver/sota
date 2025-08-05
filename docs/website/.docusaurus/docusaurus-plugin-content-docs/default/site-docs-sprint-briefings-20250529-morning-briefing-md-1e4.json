@@ -1,0 +1,25 @@
+{
+  "id": "sprint/briefings/morning_briefing",
+  "title": "Morning Briefing - Thursday, May 29, 2025",
+  "description": "Sprint Health Overview",
+  "source": "@site/docs/sprint/briefings/20250529_morning_briefing.md",
+  "sourceDirName": "sprint/briefings",
+  "slug": "/sprint/briefings/morning_briefing",
+  "permalink": "/docs/sprint/briefings/morning_briefing",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/sprint/briefings/20250529_morning_briefing.md",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 20250529,
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Phase 6 Daily Automation & Visualization - COMPLETION REPORT",
+    "permalink": "/docs/sprint/PHASE6_COMPLETION_REPORT"
+  },
+  "next": {
+    "title": "Morning Briefing - Monday, June 02, 2025",
+    "permalink": "/docs/sprint/briefings/morning_briefing"
+  }
+}

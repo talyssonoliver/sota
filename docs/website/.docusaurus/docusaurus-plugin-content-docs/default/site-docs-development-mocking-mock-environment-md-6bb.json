@@ -1,0 +1,24 @@
+{
+  "id": "development/mocking/mock_environment",
+  "title": "tests/mock_environment.py",
+  "description": "Functions",
+  "source": "@site/docs/development/mocking/mock_environment.md",
+  "sourceDirName": "development/mocking",
+  "slug": "/development/mocking/mock_environment",
+  "permalink": "/docs/development/mocking/mock_environment",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/mocking/mock_environment.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "scripts/mock_dependencies.py",
+    "permalink": "/docs/development/mocking/mock_dependencies"
+  },
+  "next": {
+    "title": "tests/mock_langchain.py",
+    "permalink": "/docs/development/mocking/mock_langchain"
+  }
+}

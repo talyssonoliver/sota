@@ -1,0 +1,24 @@
+{
+  "id": "development/visualization/graph_visualization",
+  "title": "Graph Visualization",
+  "description": "This document describes the graph visualization components of the AI Agent System, which enable visual representation of agent-to-agent task flows.",
+  "source": "@site/docs/development/visualization/graph_visualization.md",
+  "sourceDirName": "development/visualization",
+  "slug": "/development/visualization/graph_visualization",
+  "permalink": "/docs/development/visualization/graph_visualization",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/visualization/graph_visualization.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/gantt_analyzer.py",
+    "permalink": "/docs/development/visualization/gantt_analyzer"
+  },
+  "next": {
+    "title": "orchestration/sprint_visualizer.py",
+    "permalink": "/docs/development/visualization/sprint_visualizer"
+  }
+}

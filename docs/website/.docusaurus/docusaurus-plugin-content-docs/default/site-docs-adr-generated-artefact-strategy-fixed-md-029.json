@@ -1,0 +1,24 @@
+{
+  "id": "adr/generated_artefact_strategy_fixed",
+  "title": "ADR‑CLN‑01 – Generated Artifact Strategy",
+  "description": "Status              : Proposed",
+  "source": "@site/docs/adr/generated_artefact_strategy_fixed.md",
+  "sourceDirName": "adr",
+  "slug": "/adr/generated_artefact_strategy_fixed",
+  "permalink": "/docs/adr/generated_artefact_strategy_fixed",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/adr/generated_artefact_strategy_fixed.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "ADR‑CLN‑01 – Generated Artifact Strategy",
+    "permalink": "/docs/adr/generated_artefact_strategy"
+  },
+  "next": {
+    "title": "API Documentation",
+    "permalink": "/docs/api/"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "user-guides/hitl_widgets",
+  "title": "dashboard/hitl_widgets.py",
+  "description": "Classes",
+  "source": "@site/docs/user-guides/hitl_widgets.md",
+  "sourceDirName": "user-guides",
+  "slug": "/user-guides/hitl_widgets",
+  "permalink": "/docs/user-guides/hitl_widgets",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/user-guides/hitl_widgets.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "HITL Kanban Dashboard - Human-in-the-Loop Review Board",
+    "permalink": "/docs/user-guides/hitl_kanban_dashboard"
+  },
+  "next": {
+    "title": "cli/qa_execution_cli.py",
+    "permalink": "/docs/user-guides/qa_execution_cli"
+  }
+}

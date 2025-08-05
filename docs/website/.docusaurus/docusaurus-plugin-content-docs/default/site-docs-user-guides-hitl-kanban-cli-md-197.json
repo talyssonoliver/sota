@@ -1,0 +1,24 @@
+{
+  "id": "user-guides/hitl_kanban_cli",
+  "title": "cli/hitl_kanban_cli.py",
+  "description": "Functions",
+  "source": "@site/docs/user-guides/hitl_kanban_cli.md",
+  "sourceDirName": "user-guides",
+  "slug": "/user-guides/hitl_kanban_cli",
+  "permalink": "/docs/user-guides/hitl_kanban_cli",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/user-guides/hitl_kanban_cli.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "dashboard/hitl_kanban_board.py",
+    "permalink": "/docs/user-guides/hitl_kanban_board"
+  },
+  "next": {
+    "title": "HITL Kanban Dashboard - Human-in-the-Loop Review Board",
+    "permalink": "/docs/user-guides/hitl_kanban_dashboard"
+  }
+}

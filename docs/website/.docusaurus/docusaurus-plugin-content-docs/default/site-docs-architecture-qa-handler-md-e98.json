@@ -1,0 +1,24 @@
+{
+  "id": "architecture/qa_handler",
+  "title": "handlers/qa_handler.py",
+  "description": "Functions",
+  "source": "@site/docs/architecture/qa_handler.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/qa_handler",
+  "permalink": "/docs/architecture/qa_handler",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/qa_handler.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "graph/notifications.py",
+    "permalink": "/docs/architecture/notifications"
+  },
+  "next": {
+    "title": "orchestration/registry.py",
+    "permalink": "/docs/architecture/registry"
+  }
+}

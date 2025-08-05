@@ -1,0 +1,24 @@
+{
+  "id": "api/hitl_routes",
+  "title": "api/hitl_routes.py",
+  "description": "Functions",
+  "source": "@site/docs/api/hitl_routes.md",
+  "sourceDirName": "api",
+  "slug": "/api/hitl_routes",
+  "permalink": "/docs/api/hitl_routes",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/api/hitl_routes.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Function Dictionary",
+    "permalink": "/docs/api/function_dictionary"
+  },
+  "next": {
+    "title": "Module Dictionary",
+    "permalink": "/docs/api/module_dictionary"
+  }
+}

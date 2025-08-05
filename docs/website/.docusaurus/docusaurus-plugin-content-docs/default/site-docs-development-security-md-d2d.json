@@ -1,0 +1,24 @@
+{
+  "id": "development/security",
+  "title": "Security Guidelines",
+  "description": "⚠️ CRITICAL SECURITY NOTICE: Never commit actual encryption keys or API keys to version control. This repository has been configured to prevent such issues, but always verify that .env files containing real secrets are properly ignored.",
+  "source": "@site/docs/development/security.md",
+  "sourceDirName": "development",
+  "slug": "/development/security",
+  "permalink": "/docs/development/security",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/security.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "scripts/patch_dotenv.py",
+    "permalink": "/docs/development/patch_dotenv"
+  },
+  "next": {
+    "title": "Development Setup",
+    "permalink": "/docs/development/setup"
+  }
+}

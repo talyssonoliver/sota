@@ -1,0 +1,24 @@
+{
+  "id": "tools/task_loader",
+  "title": "Task Loader Documentation",
+  "description": "File: utils/task_loader.py",
+  "source": "@site/docs/tools/task_loader.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/task_loader",
+  "permalink": "/docs/tools/task_loader",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/task_loader.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "tailwind_tool.py",
+    "permalink": "/docs/tools/tailwind_tool"
+  },
+  "next": {
+    "title": "tool_loader.py",
+    "permalink": "/docs/tools/tool_loader"
+  }
+}

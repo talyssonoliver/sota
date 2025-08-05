@@ -1,0 +1,24 @@
+{
+  "id": "development/testing/simple_retrieval_test",
+  "title": "tests/simple_retrieval_test.py",
+  "description": "Classes",
+  "source": "@site/docs/development/testing/simple_retrieval_test.md",
+  "sourceDirName": "development/testing",
+  "slug": "/development/testing/simple_retrieval_test",
+  "permalink": "/docs/development/testing/simple_retrieval_test",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/testing/simple_retrieval_test.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "scripts/setup_context_for_testing.py",
+    "permalink": "/docs/development/testing/setup_context_for_testing"
+  },
+  "next": {
+    "title": "test_collection_check.py",
+    "permalink": "/docs/development/testing/test_collection_check"
+  }
+}

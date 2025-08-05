@@ -1,0 +1,24 @@
+{
+  "id": "development/patch_dotenv",
+  "title": "scripts/patch_dotenv.py",
+  "description": "Functions",
+  "source": "@site/docs/development/patch_dotenv.md",
+  "sourceDirName": "development",
+  "slug": "/development/patch_dotenv",
+  "permalink": "/docs/development/patch_dotenv",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/patch_dotenv.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "tests/monkey_patch.py",
+    "permalink": "/docs/development/monkey_patch"
+  },
+  "next": {
+    "title": "Security Guidelines",
+    "permalink": "/docs/development/security"
+  }
+}

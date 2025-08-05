@@ -1,0 +1,24 @@
+{
+  "id": "development/testing/optimize_tests",
+  "title": "optimize_tests.py",
+  "description": "Functions",
+  "source": "@site/docs/development/testing/optimize_tests.md",
+  "sourceDirName": "development/testing",
+  "slug": "/development/testing/optimize_tests",
+  "permalink": "/docs/development/testing/optimize_tests",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/testing/optimize_tests.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "tests/final_validation_complete.py",
+    "permalink": "/docs/development/testing/final_validation_complete"
+  },
+  "next": {
+    "title": "pytest_simulator.py",
+    "permalink": "/docs/development/testing/pytest_simulator"
+  }
+}

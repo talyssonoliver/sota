@@ -1,0 +1,24 @@
+{
+  "id": "development/mock_memory_engine",
+  "title": "tests/mock_memory_engine.py",
+  "description": "Classes",
+  "source": "@site/docs/development/mock_memory_engine.md",
+  "sourceDirName": "development",
+  "slug": "/development/mock_memory_engine",
+  "permalink": "/docs/development/mock_memory_engine",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/mock_memory_engine.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "migrate_source_code.py",
+    "permalink": "/docs/development/migrate_source_code"
+  },
+  "next": {
+    "title": "scripts/mock_dependencies.py",
+    "permalink": "/docs/development/mocking/mock_dependencies"
+  }
+}

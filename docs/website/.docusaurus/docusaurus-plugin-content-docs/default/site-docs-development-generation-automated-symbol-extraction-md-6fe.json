@@ -1,0 +1,24 @@
+{
+  "id": "development/generation/automated_symbol_extraction",
+  "title": "Automated Symbol Extraction",
+  "description": "A simple utility, scripts/automateddocgenerator.py, generates minimal documentation for Python modules that are not documented manually. It scans the repository, extracts function and class definitions, and writes a short Markdown file for each module.",
+  "source": "@site/docs/development/generation/automated_symbol_extraction.md",
+  "sourceDirName": "development/generation",
+  "slug": "/development/generation/automated_symbol_extraction",
+  "permalink": "/docs/development/generation/automated_symbol_extraction",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/generation/automated_symbol_extraction.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "scripts/automated_doc_generator.py",
+    "permalink": "/docs/development/generation/automated_doc_generator"
+  },
+  "next": {
+    "title": "scripts/batch_qa_generation.py",
+    "permalink": "/docs/development/generation/batch_qa_generation"
+  }
+}

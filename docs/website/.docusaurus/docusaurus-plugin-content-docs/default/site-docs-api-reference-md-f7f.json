@@ -1,0 +1,24 @@
+{
+  "id": "api_reference",
+  "title": "API Reference",
+  "description": "The dashboard exposes a small set of HTTP endpoints implemented with Flask.",
+  "source": "@site/docs/api_reference.md",
+  "sourceDirName": ".",
+  "slug": "/api_reference",
+  "permalink": "/docs/api_reference",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/api_reference.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "api/webhook_manager.py",
+    "permalink": "/docs/api/webhook_manager"
+  },
+  "next": {
+    "title": "AI Agent System - Technical Architecture Documentation",
+    "permalink": "/docs/architecture/"
+  }
+}

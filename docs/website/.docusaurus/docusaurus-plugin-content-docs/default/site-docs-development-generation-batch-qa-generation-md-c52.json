@@ -1,0 +1,24 @@
+{
+  "id": "development/generation/batch_qa_generation",
+  "title": "scripts/batch_qa_generation.py",
+  "description": "Functions",
+  "source": "@site/docs/development/generation/batch_qa_generation.md",
+  "sourceDirName": "development/generation",
+  "slug": "/development/generation/batch_qa_generation",
+  "permalink": "/docs/development/generation/batch_qa_generation",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/generation/batch_qa_generation.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Automated Symbol Extraction",
+    "permalink": "/docs/development/generation/automated_symbol_extraction"
+  },
+  "next": {
+    "title": "scripts/generate_agent.py",
+    "permalink": "/docs/development/generation/generate_agent"
+  }
+}

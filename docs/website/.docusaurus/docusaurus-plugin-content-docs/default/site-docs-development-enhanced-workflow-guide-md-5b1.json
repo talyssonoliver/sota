@@ -1,0 +1,24 @@
+{
+  "id": "development/ENHANCED_WORKFLOW_GUIDE",
+  "title": "Enhanced Development Workflow Guide",
+  "description": "Overview",
+  "source": "@site/docs/development/ENHANCED_WORKFLOW_GUIDE.md",
+  "sourceDirName": "development",
+  "slug": "/development/ENHANCED_WORKFLOW_GUIDE",
+  "permalink": "/docs/development/ENHANCED_WORKFLOW_GUIDE",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/ENHANCED_WORKFLOW_GUIDE.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Claude Code Team Onboarding Guide",
+    "permalink": "/docs/development/CLAUDE_CODE_TEAM_ONBOARDING"
+  },
+  "next": {
+    "title": "Input Validation Implementation Summary",
+    "permalink": "/docs/development/INPUT_VALIDATION_IMPLEMENTATION_SUMMARY"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "architecture/agent_architecture",
+  "title": "Agent Architecture",
+  "description": "This document describes the architecture of the agent system used in the AI Agent System for Artesanato E-commerce.",
+  "source": "@site/docs/architecture/agent_architecture.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/agent_architecture",
+  "permalink": "/docs/architecture/agent_architecture",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/agent_architecture.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "File Organization Improvements - June 11, 2025",
+    "permalink": "/docs/architecture/FILE_ORGANIZATION_IMPROVEMENTS"
+  },
+  "next": {
+    "title": "Agent System Overview",
+    "permalink": "/docs/architecture/agent_system_overview"
+  }
+}

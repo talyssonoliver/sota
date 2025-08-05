@@ -1,0 +1,24 @@
+{
+  "id": "security/validation/README",
+  "title": "Validation System Documentation",
+  "description": "The Unified Validation Pipeline is a comprehensive code quality and security validation system that integrates multiple tools and frameworks to ensure software engineering excellence.",
+  "source": "@site/docs/security/validation/README.md",
+  "sourceDirName": "security/validation",
+  "slug": "/security/validation/",
+  "permalink": "/docs/security/validation/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/security/validation/README.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Security Policy",
+    "permalink": "/docs/security/security-overview"
+  },
+  "next": {
+    "title": "Management Dashboard Guide",
+    "permalink": "/docs/security/validation/management_dashboard"
+  }
+}

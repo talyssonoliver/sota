@@ -1,0 +1,24 @@
+{
+  "id": "architecture/hitl_engine",
+  "title": "orchestration/hitl_engine.py",
+  "description": "Classes",
+  "source": "@site/docs/architecture/hitl_engine.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/hitl_engine",
+  "permalink": "/docs/architecture/hitl_engine",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/hitl_engine.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "graph/handlers.py",
+    "permalink": "/docs/architecture/handlers"
+  },
+  "next": {
+    "title": "orchestration/hitl_task_metadata.py",
+    "permalink": "/docs/architecture/hitl_task_metadata"
+  }
+}

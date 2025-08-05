@@ -1,0 +1,24 @@
+{
+  "id": "sonarqube-community-setup",
+  "title": "SonarQube Community Edition Setup",
+  "description": "This project has been configured to work with SonarQube Community Edition, which provides essential code quality analysis features without requiring a commercial license.",
+  "source": "@site/docs/sonarqube-community-setup.md",
+  "sourceDirName": ".",
+  "slug": "/sonarqube-community-setup",
+  "permalink": "/docs/sonarqube-community-setup",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/sonarqube-community-setup.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Quality Gates Configuration Guide",
+    "permalink": "/docs/security/validation/quality_gates"
+  },
+  "next": {
+    "title": "Morning Briefing Generator - API Documentation",
+    "permalink": "/docs/sprint/BRIEFING_GENERATOR_API"
+  }
+}

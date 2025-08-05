@@ -1,0 +1,24 @@
+{
+  "id": "user-guides/demos/visualise_context_coverage",
+  "title": "examples/visualise_context_coverage.py",
+  "description": "Functions",
+  "source": "@site/docs/user-guides/demos/visualise_context_coverage.md",
+  "sourceDirName": "user-guides/demos",
+  "slug": "/user-guides/demos/visualise_context_coverage",
+  "permalink": "/docs/user-guides/demos/visualise_context_coverage",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/user-guides/demos/visualise_context_coverage.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "examples/task_declaration_preparation.py",
+    "permalink": "/docs/user-guides/demos/task_declaration_preparation"
+  },
+  "next": {
+    "title": "Documentation Completeness Checklist",
+    "permalink": "/docs/user-guides/documentation_completeness"
+  }
+}

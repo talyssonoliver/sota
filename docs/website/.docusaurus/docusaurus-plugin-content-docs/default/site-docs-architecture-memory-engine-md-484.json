@@ -1,0 +1,24 @@
+{
+  "id": "architecture/memory_engine",
+  "title": "Memory Engine (MCP) - Production Ready 2025 ✅",
+  "description": "STATUS: FULLY PRODUCTION-READY - All critical security vulnerabilities and implementation bugs have been successfully resolved.",
+  "source": "@site/docs/architecture/memory_engine.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/memory_engine",
+  "permalink": "/docs/architecture/memory_engine",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/memory_engine.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/langgraph_qa_integration.py",
+    "permalink": "/docs/architecture/langgraph_qa_integration"
+  },
+  "next": {
+    "title": "AI System Architecture Analysis & Comprehensive Modernization Plan",
+    "permalink": "/docs/architecture/modernization-plan"
+  }
+}

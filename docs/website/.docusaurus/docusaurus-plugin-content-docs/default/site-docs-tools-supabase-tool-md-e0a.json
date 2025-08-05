@@ -1,0 +1,24 @@
+{
+  "id": "tools/supabase_tool",
+  "title": "supabase_tool.py",
+  "description": "Interface for interacting with a Supabase database. The tool can execute SQL",
+  "source": "@site/docs/tools/supabase_tool.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/supabase_tool",
+  "permalink": "/docs/tools/supabase_tool",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/supabase_tool.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Using RetrievalQA for Context Injection",
+    "permalink": "/docs/tools/retrieval_qa_usage"
+  },
+  "next": {
+    "title": "tailwind_tool.py",
+    "permalink": "/docs/tools/tailwind_tool"
+  }
+}

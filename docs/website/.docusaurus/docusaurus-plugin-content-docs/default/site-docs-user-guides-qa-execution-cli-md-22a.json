@@ -1,0 +1,24 @@
+{
+  "id": "user-guides/qa_execution_cli",
+  "title": "cli/qa_execution_cli.py",
+  "description": "Functions",
+  "source": "@site/docs/user-guides/qa_execution_cli.md",
+  "sourceDirName": "user-guides",
+  "slug": "/user-guides/qa_execution_cli",
+  "permalink": "/docs/user-guides/qa_execution_cli",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/user-guides/qa_execution_cli.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "dashboard/hitl_widgets.py",
+    "permalink": "/docs/user-guides/hitl_widgets"
+  },
+  "next": {
+    "title": "cli/quick_hitl_status.py",
+    "permalink": "/docs/user-guides/quick_hitl_status"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "user-guides/demos/agent_summarization_demo",
+  "title": "examples/agent_summarization_demo.py",
+  "description": "Functions",
+  "source": "@site/docs/user-guides/demos/agent_summarization_demo.md",
+  "sourceDirName": "user-guides/demos",
+  "slug": "/user-guides/demos/agent_summarization_demo",
+  "permalink": "/docs/user-guides/demos/agent_summarization_demo",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/user-guides/demos/agent_summarization_demo.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "examples/agent_output_demo.py",
+    "permalink": "/docs/user-guides/demos/agent_output_demo"
+  },
+  "next": {
+    "title": "examples/code_extraction_demo.py",
+    "permalink": "/docs/user-guides/demos/code_extraction_demo"
+  }
+}

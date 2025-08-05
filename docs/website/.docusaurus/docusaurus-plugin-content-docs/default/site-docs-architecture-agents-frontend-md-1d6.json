@@ -1,0 +1,24 @@
+{
+  "id": "architecture/agents/frontend",
+  "title": "agents/frontend.py",
+  "description": "Functions",
+  "source": "@site/docs/architecture/agents/frontend.md",
+  "sourceDirName": "architecture/agents",
+  "slug": "/architecture/agents/frontend",
+  "permalink": "/docs/architecture/agents/frontend",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/agents/frontend.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "agents/factory.py",
+    "permalink": "/docs/architecture/agents/factory"
+  },
+  "next": {
+    "title": "Frontend Engineer Agent Documentation",
+    "permalink": "/docs/architecture/agents/frontend_agent"
+  }
+}

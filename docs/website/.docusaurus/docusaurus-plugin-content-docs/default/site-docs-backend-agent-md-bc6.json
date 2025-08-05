@@ -1,0 +1,24 @@
+{
+  "id": "backend_agent",
+  "title": "Backend Engineer Agent Documentation",
+  "description": "File: agents/backend.py",
+  "source": "@site/docs/backend_agent.md",
+  "sourceDirName": ".",
+  "slug": "/backend_agent",
+  "permalink": "/docs/backend_agent",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/backend_agent.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Workflow and Task System Overview",
+    "permalink": "/docs/architecture/workflow_task_system"
+  },
+  "next": {
+    "title": "🚀 GitHub Actions Slack Integration - Complete Setup Guide",
+    "permalink": "/docs/cicd/slack-integration-guide"
+  }
+}

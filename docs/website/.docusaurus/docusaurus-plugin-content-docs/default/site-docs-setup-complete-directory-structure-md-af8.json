@@ -1,0 +1,24 @@
+{
+  "id": "setup/complete-directory-structure",
+  "title": "Complete Directory Structure",
+  "description": "Generated on12:06",
+  "source": "@site/docs/setup/complete-directory-structure.md",
+  "sourceDirName": "setup",
+  "slug": "/setup/complete-directory-structure",
+  "permalink": "/docs/setup/complete-directory-structure",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/setup/complete-directory-structure.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Requirements Compliance Report",
+    "permalink": "/docs/setup/requirements-compliance"
+  },
+  "next": {
+    "title": "Directory Structure",
+    "permalink": "/docs/setup/directory-structure"
+  }
+}

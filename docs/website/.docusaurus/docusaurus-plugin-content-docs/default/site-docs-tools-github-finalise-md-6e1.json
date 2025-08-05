@@ -1,0 +1,24 @@
+{
+  "id": "tools/github_finalise",
+  "title": "scripts/github_finalise.py",
+  "description": "Classes",
+  "source": "@site/docs/tools/github_finalise.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/github_finalise",
+  "permalink": "/docs/tools/github_finalise",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/github_finalise.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "fixed_retrieval_qa.py",
+    "permalink": "/docs/tools/fixed_retrieval_qa"
+  },
+  "next": {
+    "title": "github_tool.py",
+    "permalink": "/docs/tools/github_tool"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "website/src/pages/markdown-page",
+  "title": "Markdown page example",
+  "description": "You don't need React to write simple standalone pages.",
+  "source": "@site/src/pages/markdown-page.md",
+  "sourceDirName": "website/src/pages",
+  "slug": "/website/src/pages/markdown-page",
+  "permalink": "/docs/website/src/pages/markdown-page",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/../website/src/pages/markdown-page.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {
+    "title": "Markdown page example"
+  },
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Workflow and Task System Overview",
+    "permalink": "/docs/website/docs/workflow_task_system"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "architecture/langgraph_qa_integration",
+  "title": "orchestration/langgraph_qa_integration.py",
+  "description": "Classes",
+  "source": "@site/docs/architecture/langgraph_qa_integration.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/langgraph_qa_integration",
+  "permalink": "/docs/architecture/langgraph_qa_integration",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/langgraph_qa_integration.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "graph/interrupt_nodes.py",
+    "permalink": "/docs/architecture/interrupt_nodes"
+  },
+  "next": {
+    "title": "Memory Engine (MCP) - Production Ready 2025 ✅",
+    "permalink": "/docs/architecture/memory_engine"
+  }
+}

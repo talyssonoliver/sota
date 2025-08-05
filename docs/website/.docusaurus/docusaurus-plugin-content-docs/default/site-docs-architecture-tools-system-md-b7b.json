@@ -1,0 +1,24 @@
+{
+  "id": "architecture/tools_system",
+  "title": "Tools System",
+  "description": "This document describes the tools system in the AI Agent System, which extends agent capabilities with specialized functions.",
+  "source": "@site/docs/architecture/tools_system.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/tools_system",
+  "permalink": "/docs/architecture/tools_system",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/tools_system.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Thread-Safety Implementation Summary",
+    "permalink": "/docs/architecture/thread_safety_implementation_summary"
+  },
+  "next": {
+    "title": "Workflow and Task System Overview",
+    "permalink": "/docs/architecture/workflow_task_system"
+  }
+}

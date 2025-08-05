@@ -1,0 +1,24 @@
+{
+  "id": "tools/utils",
+  "title": "prompts/utils.py",
+  "description": "Functions",
+  "source": "@site/docs/tools/utils.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/utils",
+  "permalink": "/docs/tools/utils",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/utils.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Utility Functions Catalog",
+    "permalink": "/docs/tools/utilities_catalog"
+  },
+  "next": {
+    "title": "Validation Tools Documentation",
+    "permalink": "/docs/tools/validation/"
+  }
+}

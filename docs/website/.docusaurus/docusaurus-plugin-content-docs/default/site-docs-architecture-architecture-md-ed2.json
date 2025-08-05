@@ -1,0 +1,24 @@
+{
+  "id": "architecture/ARCHITECTURE",
+  "title": "AI System Architecture Documentation",
+  "description": "Overview",
+  "source": "@site/docs/architecture/ARCHITECTURE.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/",
+  "permalink": "/docs/architecture/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/ARCHITECTURE.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "API Reference",
+    "permalink": "/docs/api_reference"
+  },
+  "next": {
+    "title": "Coordinator Agent Improvements - JSON-Based Planning",
+    "permalink": "/docs/architecture/COORDINATOR_IMPROVEMENTS"
+  }
+}

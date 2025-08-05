@@ -1,0 +1,24 @@
+{
+  "id": "development/testing/OPTIMIZED_TESTING",
+  "title": "Optimized Test Suite Documentation",
+  "description": "Overview",
+  "source": "@site/docs/development/testing/OPTIMIZED_TESTING.md",
+  "sourceDirName": "development/testing",
+  "slug": "/development/testing/OPTIMIZED_TESTING",
+  "permalink": "/docs/development/testing/OPTIMIZED_TESTING",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/testing/OPTIMIZED_TESTING.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Development Setup",
+    "permalink": "/docs/development/setup"
+  },
+  "next": {
+    "title": "analytics/analyse_feedback.py",
+    "permalink": "/docs/development/testing/analyse_feedback"
+  }
+}

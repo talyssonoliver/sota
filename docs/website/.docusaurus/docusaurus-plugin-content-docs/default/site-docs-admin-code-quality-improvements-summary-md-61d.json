@@ -1,0 +1,24 @@
+{
+  "id": "admin/CODE_QUALITY_IMPROVEMENTS_SUMMARY",
+  "title": "Code Quality Improvements Summary",
+  "description": "Date: June 8, 2025",
+  "source": "@site/docs/admin/CODE_QUALITY_IMPROVEMENTS_SUMMARY.md",
+  "sourceDirName": "admin",
+  "slug": "/admin/CODE_QUALITY_IMPROVEMENTS_SUMMARY",
+  "permalink": "/docs/admin/CODE_QUALITY_IMPROVEMENTS_SUMMARY",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/admin/CODE_QUALITY_IMPROVEMENTS_SUMMARY.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "AI System Documentation",
+    "permalink": "/docs/"
+  },
+  "next": {
+    "title": "Memory Engine Refactoring Summary",
+    "permalink": "/docs/admin/MEMORY_ENGINE_REFACTORING_SUMMARY"
+  }
+}

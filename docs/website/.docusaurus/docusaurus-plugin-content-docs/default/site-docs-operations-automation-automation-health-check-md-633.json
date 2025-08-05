@@ -1,0 +1,24 @@
+{
+  "id": "operations/automation/automation_health_check",
+  "title": "orchestration/automation_health_check.py",
+  "description": "Classes",
+  "source": "@site/docs/operations/automation/automation_health_check.md",
+  "sourceDirName": "operations/automation",
+  "slug": "/operations/automation/automation_health_check",
+  "permalink": "/docs/operations/automation/automation_health_check",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/operations/automation/automation_health_check.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "AI Agent System - Operational View Documentation",
+    "permalink": "/docs/operations/"
+  },
+  "next": {
+    "title": "orchestration/email_integration.py",
+    "permalink": "/docs/operations/email_integration"
+  }
+}

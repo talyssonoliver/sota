@@ -1,0 +1,24 @@
+{
+  "id": "phase6_enhanced_eod_reporting_guide",
+  "title": "Phase 6 Enhanced End-of-Day Reporting - User Guide",
+  "description": "Overview",
+  "source": "@site/docs/phase6_enhanced_eod_reporting_guide.md",
+  "sourceDirName": ".",
+  "slug": "/phase6_enhanced_eod_reporting_guide",
+  "permalink": "/docs/phase6_enhanced_eod_reporting_guide",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/phase6_enhanced_eod_reporting_guide.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Test Optimization - COMPLETE DOCUMENTATION",
+    "permalink": "/docs/optimizations/PHASE2_COMPLETE_DOCUMENTATION"
+  },
+  "next": {
+    "title": "QA Agent Documentation",
+    "permalink": "/docs/qa_agent"
+  }
+}

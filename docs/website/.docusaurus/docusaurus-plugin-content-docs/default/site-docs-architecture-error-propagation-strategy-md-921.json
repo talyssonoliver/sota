@@ -1,0 +1,24 @@
+{
+  "id": "architecture/error_propagation_strategy",
+  "title": "Error Propagation Strategy for Multi-Agent Workflows",
+  "description": "Overview",
+  "source": "@site/docs/architecture/error_propagation_strategy.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/error_propagation_strategy",
+  "permalink": "/docs/architecture/error_propagation_strategy",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/error_propagation_strategy.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/error_handling.py",
+    "permalink": "/docs/architecture/error_handling"
+  },
+  "next": {
+    "title": "graph/flow.py",
+    "permalink": "/docs/architecture/flow"
+  }
+}

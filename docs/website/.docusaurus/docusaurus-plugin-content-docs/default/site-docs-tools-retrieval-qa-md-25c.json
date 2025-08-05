@@ -1,0 +1,24 @@
+{
+  "id": "tools/retrieval_qa",
+  "title": "retrieval_qa.py",
+  "description": "Helper function to get an answer from the memory engine using retrieval_qa.",
+  "source": "@site/docs/tools/retrieval_qa.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/retrieval_qa",
+  "permalink": "/docs/tools/retrieval_qa",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/retrieval_qa.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "rate_limiter.py",
+    "permalink": "/docs/tools/rate_limiter"
+  },
+  "next": {
+    "title": "tools/retrieval_qa_refactored.py",
+    "permalink": "/docs/tools/retrieval_qa_refactored"
+  }
+}

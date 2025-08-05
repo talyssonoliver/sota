@@ -1,0 +1,24 @@
+{
+  "id": "operations/workflows/archive_task",
+  "title": "scripts/archive_task.py",
+  "description": "Classes",
+  "source": "@site/docs/operations/workflows/archive_task.md",
+  "sourceDirName": "operations/workflows",
+  "slug": "/operations/workflows/archive_task",
+  "permalink": "/docs/operations/workflows/archive_task",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/operations/workflows/archive_task.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "scripts/update_dashboard.py",
+    "permalink": "/docs/operations/update_dashboard"
+  },
+  "next": {
+    "title": "orchestration/complete_task.py",
+    "permalink": "/docs/operations/workflows/complete_task"
+  }
+}

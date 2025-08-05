@@ -1,0 +1,24 @@
+{
+  "id": "architecture/thread_safety_implementation_summary",
+  "title": "Thread-Safety Implementation Summary",
+  "description": "Overview",
+  "source": "@site/docs/architecture/thread_safety_implementation_summary.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/thread_safety_implementation_summary",
+  "permalink": "/docs/architecture/thread_safety_implementation_summary",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/thread_safety_implementation_summary.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "orchestration/thread_safe_workflow.py",
+    "permalink": "/docs/architecture/thread_safe_workflow"
+  },
+  "next": {
+    "title": "Tools System",
+    "permalink": "/docs/architecture/tools_system"
+  }
+}

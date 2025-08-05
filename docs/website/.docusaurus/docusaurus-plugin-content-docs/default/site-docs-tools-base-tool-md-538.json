@@ -1,0 +1,24 @@
+{
+  "id": "tools/base_tool",
+  "title": "base_tool.py",
+  "description": "This module defines the ArtesanatoBaseTool, the foundation for all tools in",
+  "source": "@site/docs/tools/base_tool.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/base_tool",
+  "permalink": "/docs/tools/base_tool",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/base_tool.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "__init__.py",
+    "permalink": "/docs/tools/__init__"
+  },
+  "next": {
+    "title": "context_tracker.py",
+    "permalink": "/docs/tools/context_tracker"
+  }
+}

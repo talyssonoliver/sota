@@ -1,0 +1,24 @@
+{
+  "id": "tools/cypress_tool",
+  "title": "cypress_tool.py",
+  "description": "The CypressTool enables agents to generate and run end-to-end tests using",
+  "source": "@site/docs/tools/cypress_tool.md",
+  "sourceDirName": "tools",
+  "slug": "/tools/cypress_tool",
+  "permalink": "/docs/tools/cypress_tool",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/tools/cypress_tool.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "coverage_tool.py",
+    "permalink": "/docs/tools/coverage_tool"
+  },
+  "next": {
+    "title": "design_system_tool.py",
+    "permalink": "/docs/tools/design_system_tool"
+  }
+}

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Dashboard Debug Test</h1>
+    
+    <div class="test-section">
+        <h2>DOM Element Tests</h2>
+        <div id="taskMetrics">
+            <div class="loading">Loading real-time data...</div>
+        </div>
+        <div id="agentStatus">
+            <div class="loading">Loading agent data...</div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>API Tests</h2>
+        <button onclick="testAPI()">Test API Calls</button>
+        <div id="apiResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>DOM Update Tests</h2>
+        <button onclick="testDOMUpdate()">Test DOM Updates</button>
+        <div id="updateResults"></div>
+    </div>
+
+    <script>
+        async function testAPI() {
+            const results = document.getElementById('apiResults');
+            results.innerHTML = '<div class="info">Testing API calls...</div>';
+            
+            try {
+                // Test task stats
+                const taskResponse = await fetch('/api/dashboard/task-stats');
+                const taskData = await taskResponse.json();
+                console.log('Task API Response:', taskData);
+                
+                // Test agent status
+                const agentResponse = await fetch('/api/dashboard/agent-status');
+                const agentData = await agentResponse.json();
+                console.log('Agent API Response:', agentData);
+                
+                results.innerHTML = `
+                    <div class="success">✅ API calls successful!</div>
+                    <div>Task Stats: ${JSON.stringify(taskData, null, 2)}</div>
+                    <div>Agent Status: ${JSON.stringify(agentData, null, 2)}</div>
+                `;
+                
+                return { taskData, agentData };
+            } catch (error) {
+                console.error('API Test Error:', error);
+                results.innerHTML = `<div class="error">❌ API calls failed: ${error.message}</div>`;
+                return null;
+            }
+        }
+        
+        async function testDOMUpdate() {
+            const results = document.getElementById('updateResults');
+            results.innerHTML = '<div class="info">Testing DOM updates...</div>';
+            
+            try {
+                // Test finding elements
+                const taskContainer = document.getElementById('taskMetrics');
+                const agentContainer = document.getElementById('agentStatus');
+                
+                if (!taskContainer) {
+                    throw new Error('taskMetrics container not found');
+                }
+                if (!agentContainer) {
+                    throw new Error('agentStatus container not found');
+                }
+                
+                console.log('Found containers:', { taskContainer, agentContainer });
+                
+                // Test updating task metrics
+                const mockTaskData = {
+                    total: 25,
+                    completed: 20,
+                    inProgress: 3,
+                    failed: 2,
+                    successRate: 80
+                };
+                
+                taskContainer.innerHTML = `
+                    <div>Total: ${mockTaskData.total}</div>
+                    <div>Completed: ${mockTaskData.completed}</div>
+                    <div>In Progress: ${mockTaskData.inProgress}</div>
+                    <div>Failed: ${mockTaskData.failed}</div>
+                    <div>Success Rate: ${mockTaskData.successRate}%</div>
+                `;
+                
+                // Test updating agent status
+                const mockAgentData = [
+                    { id: 'test1', name: 'Test Agent 1', status: 'active', tasks: 10, efficiency: 95 },
+                    { id: 'test2', name: 'Test Agent 2', status: 'idle', tasks: 5, efficiency: 85 }
+                ];
+                
+                agentContainer.innerHTML = mockAgentData.map(agent => `
+                    <div>
+                        <strong>${agent.name}</strong> - ${agent.status} 
+                        (Tasks: ${agent.tasks}, Efficiency: ${agent.efficiency}%)
+                    </div>
+                `).join('');
+                
+                results.innerHTML = '<div class="success">✅ DOM updates successful!</div>';
+                
+            } catch (error) {
+                console.error('DOM Update Test Error:', error);
+                results.innerHTML = `<div class="error">❌ DOM updates failed: ${error.message}</div>`;
+            }
+        }
+        
+        // Auto-run tests when page loads
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Debug page loaded');
+            
+            // Test API and DOM integration
+            setTimeout(async () => {
+                const apiData = await testAPI();
+                if (apiData) {
+                    await testDOMUpdate();
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

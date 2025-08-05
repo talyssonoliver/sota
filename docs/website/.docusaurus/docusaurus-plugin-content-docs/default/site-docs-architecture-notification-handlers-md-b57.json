@@ -1,0 +1,24 @@
+{
+  "id": "architecture/notification_handlers",
+  "title": "orchestration/notification_handlers.py",
+  "description": "Classes",
+  "source": "@site/docs/architecture/notification_handlers.md",
+  "sourceDirName": "architecture",
+  "slug": "/architecture/notification_handlers",
+  "permalink": "/docs/architecture/notification_handlers",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/architecture/notification_handlers.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "AI System Architecture Analysis & Comprehensive Modernization Plan",
+    "permalink": "/docs/architecture/modernization-plan"
+  },
+  "next": {
+    "title": "graph/notifications.py",
+    "permalink": "/docs/architecture/notifications"
+  }
+}

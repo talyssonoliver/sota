@@ -1,0 +1,24 @@
+{
+  "id": "development/get-pip",
+  "title": "get-pip.py",
+  "description": "Functions",
+  "source": "@site/docs/development/get-pip.md",
+  "sourceDirName": "development",
+  "slug": "/development/get-pip",
+  "permalink": "/docs/development/get-pip",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/development/get-pip.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "scripts/generate_task_report.py",
+    "permalink": "/docs/development/generation/generate_task_report"
+  },
+  "next": {
+    "title": "tests/helpers.py",
+    "permalink": "/docs/development/helpers"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "clean-architecture-implementation-summary",
+  "title": "Clean Architecture Implementation Summary",
+  "description": "Overview",
+  "source": "@site/docs/clean-architecture-implementation-summary.md",
+  "sourceDirName": ".",
+  "slug": "/clean-architecture-implementation-summary",
+  "permalink": "/docs/clean-architecture-implementation-summary",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/clean-architecture-implementation-summary.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Class Dictionary",
+    "permalink": "/docs/class_dictionary"
+  },
+  "next": {
+    "title": "Configuration Management Consolidation Summary",
+    "permalink": "/docs/configuration-consolidation-summary"
+  }
+}

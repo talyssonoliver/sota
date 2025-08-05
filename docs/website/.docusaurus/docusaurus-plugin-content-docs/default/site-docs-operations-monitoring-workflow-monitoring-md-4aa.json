@@ -1,0 +1,24 @@
+{
+  "id": "operations/monitoring/workflow_monitoring",
+  "title": "Workflow Monitoring and Notification System",
+  "description": "This document describes the monitoring, notification, and resilience features for the AI Agent System workflow.",
+  "source": "@site/docs/operations/monitoring/workflow_monitoring.md",
+  "sourceDirName": "operations/monitoring",
+  "slug": "/operations/monitoring/workflow_monitoring",
+  "permalink": "/docs/operations/monitoring/workflow_monitoring",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/operations/monitoring/workflow_monitoring.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "scripts/monitor_workflow.py",
+    "permalink": "/docs/operations/monitoring/monitor_workflow"
+  },
+  "next": {
+    "title": "scripts/update_dashboard.py",
+    "permalink": "/docs/operations/update_dashboard"
+  }
+}

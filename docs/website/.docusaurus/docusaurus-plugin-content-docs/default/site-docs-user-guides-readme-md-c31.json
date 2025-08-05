@@ -1,0 +1,24 @@
+{
+  "id": "user-guides/README",
+  "title": "User Guides",
+  "description": "This directory contains user-friendly guides, tutorials, and examples for using the AI system effectively.",
+  "source": "@site/docs/user-guides/README.md",
+  "sourceDirName": "user-guides",
+  "slug": "/user-guides/",
+  "permalink": "/docs/user-guides/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/user-guides/README.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "tools/vercel_tool_refactored.py",
+    "permalink": "/docs/tools/vercel_tool_refactored"
+  },
+  "next": {
+    "title": "AI Agent System - Master Documentation Guide",
+    "permalink": "/docs/user-guides/MASTER_DOCUMENTATION_GUIDE"
+  }
+}
