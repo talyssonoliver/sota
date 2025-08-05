@@ -1,0 +1,643 @@
+{
+  "timestamp": "2025-08-03 01:40:24",
+  "iso_25010_compliance": {
+    "overall": 100.0,
+    "by_category": {
+      "security": 100.0,
+      "performance_efficiency": 100.0,
+      "maintainability": 100.0,
+      "reliability": 100.0,
+      "usability": 100.0,
+      "compatibility": 100,
+      "portability": 100.0
+    },
+    "compliant_categories": 7,
+    "non_compliant_categories": 0,
+    "total_categories": 7,
+    "status": "COMPLIANT"
+  },
+  "security_metrics": {
+    "authentication_coverage": 100.0,
+    "input_validation_coverage": 14.641744548286603,
+    "encryption_usage": 0.0
+  },
+  "maintainability_metrics": {
+    "average_complexity": 4.141741071428571,
+    "duplication_percentage": 46.01549283233906,
+    "documentation_coverage": 97.74011299435028
+  },
+  "performance_profiles": [
+    {
+      "function": "main",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\fast_precommit_validator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "__init__",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\fast_precommit_validator.py",
+      "execution_time_ms": 1.5,
+      "memory_mb": 0.75,
+      "cpu_percent": 3.0,
+      "complexity": 1.5
+    },
+    {
+      "function": "validate_all",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\fast_precommit_validator.py",
+      "execution_time_ms": 7.0,
+      "memory_mb": 3.5,
+      "cpu_percent": 14.0,
+      "complexity": 7.0
+    },
+    {
+      "function": "_validate_file",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\fast_precommit_validator.py",
+      "execution_time_ms": 7.0,
+      "memory_mb": 3.5,
+      "cpu_percent": 14.0,
+      "complexity": 7.0
+    },
+    {
+      "function": "_check_syntax",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\fast_precommit_validator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "_check_imports",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\fast_precommit_validator.py",
+      "execution_time_ms": 5.5,
+      "memory_mb": 2.75,
+      "cpu_percent": 11.0,
+      "complexity": 5.5
+    },
+    {
+      "function": "_check_architecture",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\fast_precommit_validator.py",
+      "execution_time_ms": 3.5,
+      "memory_mb": 1.75,
+      "cpu_percent": 7.0,
+      "complexity": 3.5
+    },
+    {
+      "function": "_get_default_config",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\fast_precommit_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "_validate_target",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\fast_precommit_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "create_import_validator_cli",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "_run_basic_validation",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 3.5,
+      "memory_mb": 1.75,
+      "cpu_percent": 7.0,
+      "complexity": 3.5
+    },
+    {
+      "function": "_run_enhanced_validation",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "_run_circular_check",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "_run_architecture_check",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "_run_directory_validation",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 4.500000000000001,
+      "memory_mb": 2.25,
+      "cpu_percent": 9.0,
+      "complexity": 4.5
+    },
+    {
+      "function": "_run_quiet_validation",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 2.5,
+      "memory_mb": 1.25,
+      "cpu_percent": 5.0,
+      "complexity": 2.5
+    },
+    {
+      "function": "_run_warnings_only",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 2.5,
+      "memory_mb": 1.25,
+      "cpu_percent": 5.0,
+      "complexity": 2.5
+    },
+    {
+      "function": "_show_help",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "__init__",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "__getattr__",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "__call__",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "__init__",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "_setup_import_paths",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "get_validator_name",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "get_supported_file_types",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "validate_file",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "_validate_syntax",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "_get_syntax_issues",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "_validate_file_imports",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 4.0,
+      "memory_mb": 2.0,
+      "cpu_percent": 8.0,
+      "complexity": 4.0
+    },
+    {
+      "function": "_extract_imports",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "_extract_handled_imports",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "_process_try_block_imports",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 5.5,
+      "memory_mb": 2.75,
+      "cpu_percent": 11.0,
+      "complexity": 5.5
+    },
+    {
+      "function": "_add_module_hierarchy",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "_extract_all_imports",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 5.5,
+      "memory_mb": 2.75,
+      "cpu_percent": 11.0,
+      "complexity": 5.5
+    },
+    {
+      "function": "_format_import_name",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "_validate_single_import",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 5.5,
+      "memory_mb": 2.75,
+      "cpu_percent": 11.0,
+      "complexity": 5.5
+    },
+    {
+      "function": "_validate_handled_import",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "add_warning",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "print_warning_summary",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 6.0,
+      "memory_mb": 3.0,
+      "cpu_percent": 12.0,
+      "complexity": 6.0
+    },
+    {
+      "function": "check_circular_imports",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "_build_import_graph",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 5.0,
+      "memory_mb": 2.5,
+      "cpu_percent": 10.0,
+      "complexity": 5.0
+    },
+    {
+      "function": "_should_skip_circular_analysis",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "_extract_file_imports",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 7.5,
+      "memory_mb": 3.75,
+      "cpu_percent": 15.0,
+      "complexity": 7.5
+    },
+    {
+      "function": "_extract_from_import",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "_extract_direct_import",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "_detect_cycles",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 8.0,
+      "memory_mb": 4.0,
+      "cpu_percent": 16.0,
+      "complexity": 8.0
+    },
+    {
+      "function": "_remove_duplicate_cycles",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "validate_architecture_compliance",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "_check_architecture_violations",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 4.500000000000001,
+      "memory_mb": 2.25,
+      "cpu_percent": 9.0,
+      "complexity": 4.5
+    },
+    {
+      "function": "main",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "has_cycle",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\import_validator.py",
+      "execution_time_ms": 6.0,
+      "memory_mb": 3.0,
+      "cpu_percent": 12.0,
+      "complexity": 6.0
+    },
+    {
+      "function": "__init__",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "_find_sonar_scanner",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 5.0,
+      "memory_mb": 2.5,
+      "cpu_percent": 10.0,
+      "complexity": 5.0
+    },
+    {
+      "function": "is_sonarqube_available",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 4.0,
+      "memory_mb": 2.0,
+      "cpu_percent": 8.0,
+      "complexity": 4.0
+    },
+    {
+      "function": "run_sonarqube_analysis",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "_generate_coverage_report",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "_execute_sonar_scanner",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 5.0,
+      "memory_mb": 2.5,
+      "cpu_percent": 10.0,
+      "complexity": 5.0
+    },
+    {
+      "function": "_retrieve_analysis_results",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 4.0,
+      "memory_mb": 2.0,
+      "cpu_percent": 8.0,
+      "complexity": 4.0
+    },
+    {
+      "function": "_process_sonar_issues",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "get_validation_summary",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "generate_integrated_report",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "_get_sonarqube_summary",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 3.0,
+      "memory_mb": 1.5,
+      "cpu_percent": 6.0,
+      "complexity": 3.0
+    },
+    {
+      "function": "_calculate_combined_metrics",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 5.0,
+      "memory_mb": 2.5,
+      "cpu_percent": 10.0,
+      "complexity": 5.0
+    },
+    {
+      "function": "_analyze_coverage_overlap",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "_generate_integration_recommendations",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 4.0,
+      "memory_mb": 2.0,
+      "cpu_percent": 8.0,
+      "complexity": 4.0
+    },
+    {
+      "function": "export_sonarqube_config",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\sonarqube_integrator.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 1.0,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
+    },
+    {
+      "function": "main",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\validate.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "print_validation_summary",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\validation_report.py",
+      "execution_time_ms": 12.0,
+      "memory_mb": 6.0,
+      "cpu_percent": 24.0,
+      "complexity": 12.0
+    },
+    {
+      "function": "print_detailed_trends",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\validation_report.py",
+      "execution_time_ms": 6.500000000000001,
+      "memory_mb": 3.25,
+      "cpu_percent": 13.0,
+      "complexity": 6.5
+    },
+    {
+      "function": "print_metrics",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\validation_report.py",
+      "execution_time_ms": 16.5,
+      "memory_mb": 8.25,
+      "cpu_percent": 33.0,
+      "complexity": 16.5
+    },
+    {
+      "function": "cleanup_old_data",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\validation_report.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 0.51125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
+    },
+    {
+      "function": "main",
+      "file": "C:\\taly\\ai-system\\src\\infrastructure\\tools\\validation\\validation_report.py",
+      "execution_time_ms": 8.0,
+      "memory_mb": 4.0,
+      "cpu_percent": 16.0,
+      "complexity": 8.0
+    }
+  ],
+  "nfr_violations": [
+    {
+      "metric": "Input validation coverage must be at least 95% (Actual",
+      "severity": "error",
+      "category": "nfr"
+    },
+    {
+      "metric": "All sensitive data must be encrypted (Actual",
+      "severity": "error",
+      "category": "nfr"
+    },
+    {
+      "metric": "Code duplication should be under 5% (Actual",
+      "severity": "warning",
+      "category": "nfr"
+    },
+    {
+      "metric": "Error handling coverage should be at least 90% (Actual",
+      "severity": "error",
+      "category": "nfr"
+    },
+    {
+      "metric": "API design consistency should be at least 95% (Actual",
+      "severity": "warning",
+      "category": "nfr"
+    },
+    {
+      "metric": "Platform compatibility should be at least 95% (Actual",
+      "severity": "warning",
+      "category": "nfr"
+    }
+  ],
+  "recommendations": [
+    "\ud83d\udccb 6 NFR violations found:",
+    "  compatibility: 1 issues"
+  ]
+}

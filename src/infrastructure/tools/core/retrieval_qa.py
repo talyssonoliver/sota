@@ -1,3 +1,5 @@
+
+from src.infrastructure.utils.common_imports import logging
 """
 Retrieval QA Tool
 
@@ -5,7 +7,7 @@ Provides question-answering capabilities using retrieval-augmented generation (R
 with support for conversational context and metadata filtering.
 """
 
-import logging
+# import logging  # Consolidated to common_imports
 from typing import Any, Dict, List, Optional, Tuple
 
 # External dependencies with error handling

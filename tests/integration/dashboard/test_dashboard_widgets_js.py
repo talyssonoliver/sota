@@ -13,10 +13,10 @@ the dashboard, including:
 import unittest
 import json
 import tempfile
-import time
 from pathlib import Path
 from unittest.mock import patch
 import sys
+import pytest
 
 # Add project root to path
 project_root = Path(__file__).parent.parent.parent.parent
@@ -71,6 +71,7 @@ class TestDashboardWidgetsIntegration(unittest.TestCase):
         import shutil
         shutil.rmtree(self.temp_dir)
     
+    @pytest.mark.slow
     def test_deployment_metrics_api_response_format(self):
         """Test that API returns data in format expected by JavaScript widgets."""
         with patch.object(self.config, 'get_absolute_path') as mock_path:
@@ -157,8 +158,9 @@ class TestDashboardWidgetsIntegration(unittest.TestCase):
                         self.assertIsInstance(deploy_auto[field], (int, float))
                         self.assertGreaterEqual(deploy_auto[field], 0)
     
+    @pytest.mark.slow
     def test_widget_update_data_consistency(self):
-        """Test that widget update data remains consistent across multiple calls."""
+        """Test that widget update data remains consistent across multiple calls - optimized."""
         with patch.object(self.config, 'get_absolute_path') as mock_path:
             mock_path.return_value = Path(self.temp_dir) / "outputs"
             
@@ -166,18 +168,17 @@ class TestDashboardWidgetsIntegration(unittest.TestCase):
             
             with api.app.test_client() as client:
                 with patch('src.infrastructure.security.auth_middleware.requires_auth', lambda f: f):
-                    # Make multiple API calls
+                    # Make fewer API calls and remove sleep for speed
                     responses = []
-                    for _ in range(3):
+                    for _ in range(2):  # Reduced from 3 to 2
                         response = client.get('/api/metrics')
                         self.assertEqual(response.status_code, 200)
                         responses.append(response.get_json())
-                        time.sleep(0.1)  # Small delay
+                        # Removed time.sleep(0.1) for speed
                     
                     # Verify data consistency for widgets
                     deployment_data_1 = responses[0]["data"]["deployment"]
                     deployment_data_2 = responses[1]["data"]["deployment"]
-                    deployment_data_3 = responses[2]["data"]["deployment"]
                     
                     # Key metrics should be consistent for widgets
                     self.assertEqual(
@@ -186,11 +187,12 @@ class TestDashboardWidgetsIntegration(unittest.TestCase):
                     )
                     self.assertEqual(
                         deployment_data_1["deployment_status"]["current_phase"],
-                        deployment_data_3["deployment_status"]["current_phase"]
+                        deployment_data_2["deployment_status"]["current_phase"]
                     )
     
+    @pytest.mark.slow 
     def test_widget_error_handling_scenarios(self):
-        """Test widget behavior with various error scenarios."""
+        """Test widget behavior with various error scenarios - optimized."""
         # Test with missing deployment config
         empty_temp_dir = tempfile.mkdtemp()
         

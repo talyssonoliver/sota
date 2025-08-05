@@ -10,7 +10,7 @@ def test_imports():
     print("=" * 60)
 
     try:
-        import pandas as pd  # noqa: F401
+        import pandas as pd
 
         print("✅ pandas imported successfully")
     except ImportError as e:
@@ -18,7 +18,7 @@ def test_imports():
         return False
 
     try:
-        import numpy as np  # noqa: F401
+        import numpy as np
 
         print("✅ numpy imported successfully")
     except ImportError as e:
@@ -26,7 +26,7 @@ def test_imports():
         return False
 
     try:
-        import matplotlib.pyplot as plt  # noqa: F401
+        import matplotlib.pyplot as plt
 
         print("✅ matplotlib imported successfully")
     except ImportError as e:
@@ -34,7 +34,7 @@ def test_imports():
         return False
 
     try:
-        import seaborn as sns  # noqa: F401
+        import seaborn as sns
 
         print("✅ seaborn imported successfully")
     except ImportError as e:
@@ -58,7 +58,7 @@ def test_basic_functionality():
     print("=" * 40)
 
     try:
-        import pandas as pd  # noqa: F401
+        import pandas as pd
 
         # Test DataFrame creation (used in notebook)
         test_data = [
@@ -77,7 +77,7 @@ def test_basic_functionality():
 
         # Test groupby (used in notebook)
         grouped = df.groupby("type").size()
-        print(f"✅ DataFrame groupby works - {len(grouped)} groups found")
+        print("✅ DataFrame groupby works")
 
         return True
 

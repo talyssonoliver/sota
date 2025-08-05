@@ -1,3 +1,17 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Enum,
+    List,
+    Optional,
+    Path,
+    dataclass,
+    json,
+    re,
+    subprocess,
+    time
+)
 """
 Validation and Verification (V&V) Validator
 Implements comprehensive V&V based on software engineering principles, coding standards,
@@ -5,14 +19,14 @@ vulnerabilities, and OWASP rules.
 """
 
 import ast
-import json
-import re
-import subprocess
-import time
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# import json  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# import subprocess  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 from .base_validator import BaseValidator
 from .issue_model import ValidationIssue

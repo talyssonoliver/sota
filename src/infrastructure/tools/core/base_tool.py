@@ -7,9 +7,7 @@ This module defines the ArtesanatoBaseTool, which provides:
 - Error handling and logging
 - Integration with LangChain's BaseTool
 """
-
-import logging
-import time
+from src.infrastructure.utils.common_imports import logging, time
 from typing import Any, Dict, Optional
 
 # Conditional import following the project pattern

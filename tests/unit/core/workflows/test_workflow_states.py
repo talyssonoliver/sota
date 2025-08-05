@@ -130,7 +130,7 @@ class TestHandlerStateTransitions(unittest.TestCase):
         }
 
         # Mock the agent instance since we're not testing execution
-        with patch('graph.handlers.create_agent_instance') as mock_create_agent:
+        with patch('src.core.workflows.registry.create_agent_instance') as mock_create_agent:
             mock_agent = MagicMock()
             mock_agent.execute.return_value = {
                 "output": "Task planned successfully",
@@ -154,7 +154,7 @@ class TestHandlerStateTransitions(unittest.TestCase):
         }
 
         # Mock the agent instance
-        with patch('graph.handlers.create_agent_instance') as mock_create_agent:
+        with patch('src.core.workflows.registry.create_agent_instance') as mock_create_agent:
             mock_agent = MagicMock()
             mock_agent.execute.return_value = {
                 "output": "Task implementation started",
@@ -178,7 +178,7 @@ class TestHandlerStateTransitions(unittest.TestCase):
         }
 
         # Mock the agent instance
-        with patch('graph.handlers.create_agent_instance') as mock_create_agent:
+        with patch('src.core.workflows.registry.create_agent_instance') as mock_create_agent:
             mock_agent = MagicMock()
             mock_agent.execute.return_value = {
                 "output": "Task implementation completed",
@@ -276,7 +276,7 @@ class TestHandlerStateTransitions(unittest.TestCase):
         }
 
         # Mock the agent instance
-        with patch('graph.handlers.create_agent_instance') as mock_create_agent:
+        with patch('src.core.workflows.registry.create_agent_instance') as mock_create_agent:
             mock_agent = MagicMock()
             mock_agent.execute.return_value = {
                 "output": "Documentation created successfully",
@@ -325,8 +325,8 @@ class TestFullWorkflowStateSequence(unittest.TestCase):
                 "task_id": "BE-07"}}
 
         # Patch all handler dependencies - Fixed the import path
-        with patch('graph.handlers.create_agent_instance') as mock_create_agent, \
-                patch('src.core.handlers.qa_handler.qa_agent') as mock_qa_agent:
+        with patch('src.core.workflows.registry.create_agent_instance') as mock_create_agent, \
+                patch('src.infrastructure.tools.handlers.qa_handler.qa_agent') as mock_qa_agent:
 
             # Configure mocks
             mock_agent = MagicMock()

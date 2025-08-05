@@ -1,0 +1,11 @@
+id: PERF-26
+title: Performance Task 26
+description: Performance test task for system benchmarking
+agent_role: backend
+agent_type: backend
+priority: medium
+status: pending
+context_topics:
+  - performance testing
+  - benchmarking
+  - system testing

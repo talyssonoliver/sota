@@ -1,3 +1,10 @@
+
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    dataclass,
+    datetime,
+    logging
+)
 """
 Business Rules Engine
 
@@ -7,11 +14,11 @@ scattered across infrastructure and interface layers.
 Extracted from src/infrastructure/tools/validation/ai/business_logic_protector.py
 """
 
-import logging
+# import logging  # Consolidated to common_imports
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from datetime import datetime
-from enum import Enum
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
 from typing import Any, Callable, Dict, List, Optional
 
 logger = logging.getLogger(__name__)

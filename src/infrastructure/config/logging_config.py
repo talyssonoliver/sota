@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    logging,
+    sys
+)
 """
 Centralized Logging Configuration
 
@@ -6,10 +13,12 @@ This module provides centralized logging setup to eliminate duplication
 of logging configuration patterns throughout the codebase.
 """
 
-import logging
-import sys
-from pathlib import Path
-from datetime import datetime
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+
+from src.infrastructure.utils.logging_utils import setup_logging as common_setup_logging
 
 
 def setup_logging(
@@ -17,7 +26,8 @@ def setup_logging(
     level: int = logging.INFO,
     format_string: str = None,
     log_file: str = None,
-    console_output: bool = True
+    console_output: bool = True,
+    verbose: bool = False
 ) -> logging.Logger:
     """
     Set up centralized logging configuration.
@@ -28,10 +38,30 @@ def setup_logging(
         format_string: Custom format string
         log_file: Optional log file path
         console_output: Whether to output to console
+        verbose: Enable verbose logging (sets level to DEBUG)
         
     Returns:
         Configured logger instance
+        
+    Note:
+        This is a wrapper around the common_utils setup_logging function
+        for backward compatibility while providing additional features.
     """
+    # For simple cases, use the common setup_logging function
+    if (log_file is None and 
+        console_output and 
+        format_string is None):
+        # Convert logging level to string for common_utils
+        level_name = logging.getLevelName(level)
+        if verbose:
+            level_name = "DEBUG"
+        return common_setup_logging(name, level_name)
+    
+    # For complex cases with file logging, keep the original implementation
+    # Handle verbose mode
+    if verbose:
+        level = logging.DEBUG
+    
     # Default format string
     if format_string is None:
         format_string = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

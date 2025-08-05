@@ -1,3 +1,17 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    datetime,
+    json,
+    logging,
+    os,
+    sys,
+    time
+)
 """
 Task Execution with LangGraph Workflow
 
@@ -7,14 +21,14 @@ coordinator planning and plan execution management.
 """
 
 import argparse
-import json
-import logging
-import os
-import sys
-import time
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 try:
     from pythonjsonlogger import jsonlogger

@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Counter,
+    Dict,
+    Path,
+    datetime,
+    defaultdict,
+    json,
+    logging,
+    os
+)
 """
 Step 3.9 Implementation: Visualise Context Coverage
 
@@ -15,7 +27,7 @@ Features:
 Usage:
 
     1. Import the main function:
-       >>> from tools.context_visualizer import generate_context_coverage_report
+       >>> from src.platform.tools.context_visualizer import generate_context_coverage_report
 
     2. Generate coverage report:
        >>> generate_context_coverage_report()
@@ -31,13 +43,13 @@ CLI Usage:
 """
 
 import csv
-import json
-import logging
-import os
-from collections import Counter, defaultdict
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# from collections import Counter, defaultdict  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict  # Consolidated to common_imports
 
 # Import from Step 3.7 context tracking
 try:

@@ -17,7 +17,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.interfaces.cli.hitl_cli import HITLCLIManager
-from src.infrastructure.hitl.hitl_engine import CheckpointStatus, RiskLevel
+from src.core.workflows.hitl import CheckpointStatus, RiskLevel
 
 
 class TestHITLCLIManager(unittest.TestCase):
@@ -359,7 +359,7 @@ class TestHITLCLIManager(unittest.TestCase):
 class TestHITLCLICommands(unittest.TestCase):
     """Test cases for HITL CLI command functions."""
     
-    @patch('cli.hitl_cli.HITLCLIManager')
+    @patch('src.interfaces.cli.hitl_cli.HITLCLIManager')
     @patch('builtins.print')
     def test_cmd_list_checkpoints_empty(self, mock_print, mock_manager_class):
         """Test list command with no checkpoints."""
@@ -377,7 +377,7 @@ class TestHITLCLICommands(unittest.TestCase):
         
         mock_print.assert_called_with("No pending checkpoints found.")
     
-    @patch('cli.hitl_cli.HITLCLIManager')
+    @patch('src.interfaces.cli.hitl_cli.HITLCLIManager')
     @patch('builtins.print')
     def test_cmd_list_checkpoints_with_data(self, mock_print, mock_manager_class):
         """Test list command with checkpoints."""
@@ -411,7 +411,7 @@ class TestHITLCLICommands(unittest.TestCase):
         self.assertIn("BE-07", checkpoint_output)
         self.assertIn("output_evaluation", checkpoint_output)
     
-    @patch('cli.hitl_cli.HITLCLIManager')
+    @patch('src.interfaces.cli.hitl_cli.HITLCLIManager')
     @patch('builtins.print')
     def test_cmd_show_checkpoint_found(self, mock_print, mock_manager_class):
         """Test show command with existing checkpoint."""
@@ -448,7 +448,7 @@ class TestHITLCLICommands(unittest.TestCase):
         self.assertIn("output_evaluation", output)
         self.assertIn("Run security scan", output)
     
-    @patch('cli.hitl_cli.HITLCLIManager')
+    @patch('src.interfaces.cli.hitl_cli.HITLCLIManager')
     @patch('builtins.print')
     def test_cmd_show_checkpoint_not_found(self, mock_print, mock_manager_class):
         """Test show command with non-existent checkpoint."""
@@ -465,7 +465,7 @@ class TestHITLCLICommands(unittest.TestCase):
         
         mock_print.assert_any_call("❌ Checkpoint nonexistent not found.")
     
-    @patch('cli.hitl_cli.HITLCLIManager')
+    @patch('src.interfaces.cli.hitl_cli.HITLCLIManager')
     @patch('builtins.print')
     @patch('builtins.input')
     def test_cmd_approve_checkpoint_with_confirmation(self, mock_input, mock_print, mock_manager_class):
@@ -499,7 +499,7 @@ class TestHITLCLICommands(unittest.TestCase):
         )
         mock_print.assert_any_call("✅ Checkpoint hitl_BE-07_abc123 approved by alice")
     
-    @patch('cli.hitl_cli.HITLCLIManager')
+    @patch('src.interfaces.cli.hitl_cli.HITLCLIManager')
     @patch('builtins.print')
     @patch('builtins.input')
     def test_cmd_approve_checkpoint_cancelled(self, mock_input, mock_print, mock_manager_class):

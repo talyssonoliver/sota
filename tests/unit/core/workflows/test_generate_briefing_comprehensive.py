@@ -276,7 +276,8 @@ class TestBriefingGenerator:
         mock_monitor_instance.get_weekly_status.assert_called_once()
 
     @patch("src.core.workflows.generate_briefing.Path")
-    def test_load_briefing_template(self, mock_path):
+    @patch('src.core.workflows.generate_briefing.yaml')
+    def test_load_briefing_template(self, mock_yaml, mock_path):
         """Test loading briefing template."""
         mock_template = {
             "title": "Daily Sprint Briefing - Day {day_number}",
@@ -289,28 +290,33 @@ class TestBriefingGenerator:
         mock_path_instance.exists.return_value = True
         mock_path.return_value = mock_path_instance
 
-        # Create briefing_generator instance after patches are applied
-        briefing_generator = BriefingGenerator()
-
-        # Create a mock yaml module
-        mock_yaml = Mock()
+        # Setup yaml mock with safe_load method
         mock_yaml.safe_load.return_value = mock_template
 
-        # Mock the open function and yaml import locally in the function
-        with patch("builtins.open", mock_open(read_data='title: "test"')) as mock_file:
-            with patch.dict("sys.modules", {"yaml": mock_yaml}):
-                template = briefing_generator.load_briefing_template(
-                    "custom_template.yaml"
-                )
-                # Verify file was opened (Path object may be used internally)
-                mock_file.assert_called()
-
+        # Mock the open function
+        yaml_content = '''title: "Daily Sprint Briefing - Day {day_number}"
+sections:
+  - summary
+  - metrics
+  - system_status
+  - recommendations
+format: markdown'''
+        
+        with patch("builtins.open", mock_open(read_data=yaml_content)) as mock_file:
+            # Create briefing_generator instance after patches are applied
+            briefing_generator = BriefingGenerator()
+            
+            template = briefing_generator.load_briefing_template(
+                "custom_template.yaml"
+            )
+        
         assert template["title"].format(day_number=1) == "Daily Sprint Briefing - Day 1"
         assert "sections" in template
         assert template["format"] == "markdown"
         # Verify mock interactions
         mock_yaml.safe_load.assert_called_once()
         mock_path_instance.exists.assert_called_once()
+        mock_file.assert_called()
 
     @patch("src.core.workflows.generate_briefing.Path")
     def test_load_briefing_template_not_found(self, mock_path):

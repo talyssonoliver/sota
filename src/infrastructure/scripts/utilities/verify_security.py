@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    re,
+    subprocess,
+    sys
+)
 """
 Security Verification Script
 Validates that all Docker images and configurations use Python 3.13.5+
 """
 
-import re
-import subprocess
-import sys
-from pathlib import Path
+# import re  # Consolidated to common_imports
+# import subprocess  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 
 def check_python_version():

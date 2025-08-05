@@ -1,22 +1,34 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    json,
+    sys
+)
 """
-import sys
 Enhanced QA System CLI
 Command-line interface for comprehensive QA validation, test generation, and quality analysis.
 """
 
 import argparse
-import json
-import sys
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
-from src.core.agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
+from agents.qa import EnhancedQAAgent, create_enhanced_qa_workflow
 from src.core.workflows.qa_validation import QAValidationPipeline
 from src.infrastructure.utils.coverage_analyzer import CoverageAnalyzer
-# Use centralized logging configuration
-from src.infrastructure.config.logging_config import setup_logging
+from src.infrastructure.utils.logging_utils import setup_logging
 
+# Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+
+def setup_logging_wrapper(verbose: bool = False):
+    """Setup logging configuration."""
+    level = "DEBUG" if verbose else "INFO"
+    return setup_logging(__name__, level)
 
 
 def cmd_generate_tests(args):
@@ -28,7 +40,7 @@ def cmd_generate_tests(args):
 
         source_files = None
         if args.files:
-            source_files = args.files.split(",")
+            source_files = args.files.split(',')
 
         results = qa_agent.generate_comprehensive_tests(source_files)
 
@@ -36,29 +48,26 @@ def cmd_generate_tests(args):
         output_file = Path(args.output) / "qa_test_generation_report.json"
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_file, "w") as f:
+        with open(output_file, 'w') as f:
             json.dump(results, f, indent=2)
 
         # Print summary
         print("✅ Test generation completed!")
         print(
             f"📊 Generated {
-                results['quality_metrics']['total_generated_tests']} tests"
-        )
+                results['quality_metrics']['total_generated_tests']} tests")
         print(
             f"📁 Processed {
-                results['quality_metrics']['total_source_files']} files"
-        )
+                results['quality_metrics']['total_source_files']} files")
         print(
             f"⭐ Quality Score: {
-                results['quality_metrics']['quality_score']:.1f}%"
-        )
+                results['quality_metrics']['quality_score']:.1f}%")
         print(f"📄 Report saved to: {output_file}")
 
         # Print recommendations
-        if results["recommendations"]:
+        if results['recommendations']:
             print("\n💡 Recommendations:")
-            for rec in results["recommendations"]:
+            for rec in results['recommendations']:
                 print(f"  • {rec}")
 
     except Exception as e:
@@ -78,7 +87,7 @@ def cmd_analyze_coverage(args):
         output_file = Path(args.output) / "coverage_analysis_report.json"
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_file, "w") as f:
+        with open(output_file, 'w') as f:
             json.dump(analysis, f, indent=2)
 
         print("✅ Coverage analysis completed!")
@@ -86,8 +95,7 @@ def cmd_analyze_coverage(args):
             f"📊 Quality Score: {
                 analysis.get(
                     'overall_quality_score',
-                    0):.1f}%"
-        )
+                    0):.1f}%")
         print(f"🎯 Coverage Gaps: {len(analysis.get('coverage_gaps', []))}")
         print(f"📄 Report saved to: {output_file}")
 
@@ -108,7 +116,7 @@ def cmd_validate_quality(args):
         output_file = Path(args.output) / f"qa_validation_{args.task_id}.json"
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_file, "w") as f:
+        with open(output_file, 'w') as f:
             json.dump(results, f, indent=2)
 
         # Print summary
@@ -117,19 +125,18 @@ def cmd_validate_quality(args):
         print(f"📄 Report saved to: {output_file}")
 
         # Show quality gates status
-        if "quality_gates" in results:
-            gates = results["quality_gates"]["gates"]
-            passed = sum(1 for g in gates.values() if g["passed"])
+        if 'quality_gates' in results:
+            gates = results['quality_gates']['gates']
+            passed = sum(1 for g in gates.values() if g['passed'])
             total = len(gates)
             print(f"🚪 Quality Gates: {passed}/{total} passed")
 
             for gate_name, gate_info in gates.items():
-                status = "✅" if gate_info["passed"] else "❌"
+                status = "✅" if gate_info['passed'] else "❌"
                 print(
                     f"  {status} {gate_name}: {
                         gate_info['current']:.1f}% (threshold: {
-                        gate_info['threshold']}%)"
-                )
+                        gate_info['threshold']}%)")
 
     except Exception as e:
         print(f"❌ Error running QA validation: {e}")
@@ -156,21 +163,20 @@ def cmd_run_workflow(args):
             "workflow_status": "COMPLETED",
             "test_generation": test_results,
             "quality_gates": gate_results,
-            "timestamp": str(Path().cwd()),
+            "timestamp": str(Path().cwd())
         }
 
         # Save comprehensive report
         output_file = Path(args.output) / "qa_workflow_report.json"
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_file, "w") as f:
+        with open(output_file, 'w') as f:
             json.dump(workflow_results, f, indent=2)
 
         print("✅ QA workflow completed!")
         print(
             f"📊 Overall Quality: {
-                test_results['quality_metrics']['quality_score']:.1f}%"
-        )
+                test_results['quality_metrics']['quality_score']:.1f}%")
         print(f"🚪 Quality Gates: {gate_results['summary']}")
         print(f"📄 Complete report saved to: {output_file}")
 
@@ -188,15 +194,15 @@ def cmd_show_config(args):
         config = qa_agent.config
 
         print("\n📋 Coverage Thresholds:")
-        for key, value in config["coverage_thresholds"].items():
+        for key, value in config['coverage_thresholds'].items():
             print(f"  {key}: {value}%")
 
         print("\n🎯 Quality Gates:")
-        for key, value in config["quality_gates"].items():
+        for key, value in config['quality_gates'].items():
             print(f"  {key}: {value}")
 
         print("\n🧪 Test Patterns:")
-        for key, value in config["test_patterns"].items():
+        for key, value in config['test_patterns'].items():
             print(f"  {key}: {value}")
 
     except Exception as e:
@@ -225,58 +231,51 @@ Examples:
 
   # Show current configuration
   python cli/qa_cli.py show-config --project-root .
-        """,
-    )
+        """)
 
     # Global arguments
+    parser.add_argument('--verbose', '-v', action='store_true',
+                        help='Enable verbose logging')
     parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Enable verbose logging"
-    )
-    parser.add_argument(
-        "--project-root",
-        default=".",
-        help="Project root directory (default: current directory)",
-    )
-    parser.add_argument("--config", help="QA configuration file path")
-    parser.add_argument(
-        "--output", default="outputs", help="Output directory (default: outputs)"
-    )
+        '--project-root',
+        default='.',
+        help='Project root directory (default: current directory)')
+    parser.add_argument('--config', help='QA configuration file path')
+    parser.add_argument('--output', default='outputs',
+                        help='Output directory (default: outputs)')
 
     # Subcommands
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    subparsers = parser.add_subparsers(
+        dest='command', help='Available commands')
 
     # Generate tests command
     gen_parser = subparsers.add_parser(
-        "generate-tests", help="Generate comprehensive test suite"
-    )
+        'generate-tests', help='Generate comprehensive test suite')
     gen_parser.add_argument(
-        "--files", help="Comma-separated list of source files (default: auto-discover)"
-    )
+        '--files',
+        help='Comma-separated list of source files (default: auto-discover)')
     gen_parser.set_defaults(func=cmd_generate_tests)
 
     # Analyze coverage command
     cov_parser = subparsers.add_parser(
-        "analyze-coverage", help="Analyze test coverage patterns"
-    )
+        'analyze-coverage', help='Analyze test coverage patterns')
     cov_parser.set_defaults(func=cmd_analyze_coverage)
 
     # Validate quality command
     val_parser = subparsers.add_parser(
-        "validate-quality", help="Run comprehensive QA validation"
-    )
-    val_parser.add_argument("--task-id", required=True, help="Task ID to validate")
+        'validate-quality', help='Run comprehensive QA validation')
+    val_parser.add_argument('--task-id', required=True,
+                            help='Task ID to validate')
     val_parser.set_defaults(func=cmd_validate_quality)
 
     # Run workflow command
     wf_parser = subparsers.add_parser(
-        "run-workflow", help="Run complete enhanced QA workflow"
-    )
+        'run-workflow', help='Run complete enhanced QA workflow')
     wf_parser.set_defaults(func=cmd_run_workflow)
 
     # Show config command
     cfg_parser = subparsers.add_parser(
-        "show-config", help="Show current QA configuration"
-    )
+        'show-config', help='Show current QA configuration')
     cfg_parser.set_defaults(func=cmd_show_config)
 
     # Parse arguments
@@ -287,7 +286,7 @@ Examples:
         sys.exit(1)
 
     # Setup logging
-    setup_logging(args.verbose)
+    setup_logging_wrapper(args.verbose)
 
     # Run command
     args.func(args)

@@ -323,9 +323,9 @@ CREATE TABLE IF NOT EXISTS customers (
         # List outputs
         outputs = self.registry.list_task_outputs("BE-07")
 
-        self.assertEqual(len(outputs), 1)  # Only output_* files
+        self.assertEqual(len(outputs), 2)  # Both backend and qa output files
         self.assertTrue(
-            any("output_backend.md" in output for output in outputs))
+            any("output_backend.md" in output["file_name"] for output in outputs))
 
     def test_prepare_qa_input(self):
         """Test preparing input for QA agent."""
@@ -456,7 +456,7 @@ class TestRegistrationIntegration(unittest.TestCase):
         self.assertTrue(output_file.exists())
         self.assertTrue(status_file.exists())
 
-    @patch('orchestration.register_output.MemoryEngine')
+    @patch('src.infrastructure.memory.engines.memory_engine.MemoryEngine')
     def test_memory_engine_integration(self, mock_memory_engine):
         """Test potential integration with memory engine."""
         # This test verifies that the registration system can work

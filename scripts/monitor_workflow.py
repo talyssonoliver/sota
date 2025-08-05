@@ -18,7 +18,7 @@ from pythonjsonlogger import jsonlogger
 from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
-from orchestration.states import TaskStatus
+from src.core.workflows.states import TaskStatus
 from utils.execution_monitor import get_dashboard_logger, get_execution_monitor
 
 # Add parent directory to path to allow imports

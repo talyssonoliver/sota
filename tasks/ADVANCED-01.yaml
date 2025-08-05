@@ -1,7 +1,0 @@
-depends_on: []
-id: ADVANCED-01
-metadata: {}
-state: &id001 !!python/object/apply:src.core.workflows.states.TaskStatus
-- failed
-status: *id001
-updated: '2025-07-25T23:12:50.627336'

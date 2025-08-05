@@ -151,14 +151,14 @@ def test_phase2_langgraph():
 
     # Try to import critical modules
     try:
-        from graph.graph_builder import build_workflow_graph
+        from src.core.workflows.graph.graph_builder import build_workflow_graph
         logger.info("✓ Successfully imported build_workflow_graph")
     except ImportError as e:
         logger.error(f"✗ Failed to import build_workflow_graph: {str(e)}")
         success = False
 
     try:
-        from orchestration.enhanced_workflow import EnhancedWorkflowExecutor
+        from src.core.workflows.enhanced_workflow import EnhancedWorkflowExecutor
         logger.info("✓ Successfully imported EnhancedWorkflowExecutor")
     except ImportError as e:
         logger.error(f"✗ Failed to import EnhancedWorkflowExecutor: {str(e)}")

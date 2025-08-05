@@ -139,7 +139,7 @@ class TestEnhancedQAAgent:
         
         assert isinstance(test_path, Path)
         assert test_path.name == "test_module.py"
-        assert "tests/generated" in str(test_path)
+        assert "tests" in test_path.parts and "generated" in test_path.parts
 
     def test_get_test_file_path_jest(self):
         """Test get_test_file_path for Jest framework."""
@@ -148,7 +148,7 @@ class TestEnhancedQAAgent:
         
         assert isinstance(test_path, Path)
         assert test_path.name == "component.test.js"
-        assert "tests/generated" in str(test_path)
+        assert "tests" in test_path.parts and "generated" in test_path.parts
 
     def test_calculate_quality_metrics_with_source_files(self):
         """Test calculate_quality_metrics with source files."""
@@ -519,7 +519,7 @@ def authenticate_user(username, password):
 
 def hash_password(password):
     import hashlib
-    return hashlib.md5(password.encode()).hexdigest()
+    return hashlib.md5(password.encode(), usedforsecurity=False).hexdigest()
 """)
             
             # Initialize QA agent

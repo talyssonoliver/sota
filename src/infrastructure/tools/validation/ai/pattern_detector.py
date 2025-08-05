@@ -1,3 +1,12 @@
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    hashlib,
+    json,
+    os,
+    re,
+    time
+)
 """
 AI Pattern Detector
 Advanced pattern detection using AI-assisted analysis for code quality and consistency.
@@ -5,15 +14,18 @@ Advanced pattern detection using AI-assisted analysis for code quality and consi
 
 import ast
 import difflib
-import hashlib
-import json
-import re
-import time
 from collections import defaultdict
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from ..core.base_validator import BaseValidator
+
+# Security pattern constants to avoid duplication
+EVAL_PATTERN = r"eval\s*\("
+EVAL_MESSAGE = "Use of eval() is dangerous"
+EXEC_PATTERN = r"exec\s*\("
+EXEC_MESSAGE = "Use of exec() is dangerous"
+OS_SYSTEM_PATTERN = r"os\.system\s*\("
+OS_SYSTEM_MESSAGE = "Use of os.system() is dangerous"
 
 
 class AIPatternDetector(BaseValidator):
@@ -144,9 +156,9 @@ class AIPatternDetector(BaseValidator):
         """Run only lightweight analysis when all files are cached."""
         # Quick check for critical issues only
         critical_patterns = [
-            (r"eval\s*\(", "Use of eval() is dangerous"),
-            (r"exec\s*\(", "Use of exec() is dangerous"),
-            (r"os\.system\s*\(", "Use of os.system() is dangerous"),
+            (EVAL_PATTERN, EVAL_MESSAGE),
+            (EXEC_PATTERN, EXEC_MESSAGE),
+            (OS_SYSTEM_PATTERN, OS_SYSTEM_MESSAGE),
         ]
 
         # Sample only a few files for quick check
@@ -194,7 +206,7 @@ class AIPatternDetector(BaseValidator):
                 with open(file_path, "r", encoding="utf-8") as f:
                     lines = f.readlines()
 
-                blocks = self._extract_code_blocks(file_path, lines)
+                blocks = self._extract_code_blocks(lines)
                 return [(file_path, block) for block in blocks]
             except Exception:
                 return []
@@ -260,7 +272,7 @@ class AIPatternDetector(BaseValidator):
         if duplicate_count > 0:
             print(f"   ⚠️  Found {duplicate_count} duplicate code blocks")
 
-    def _extract_code_blocks(self, file_path: Path, lines: List[str]) -> List[Dict]:
+    def _extract_code_blocks(self, lines: List[str]) -> List[Dict]:
         """Extract meaningful code blocks from file."""
         blocks = []
 
@@ -304,7 +316,7 @@ class AIPatternDetector(BaseValidator):
 
         # Create hash of normalized content
         content_str = "\n".join(normalized)
-        return hashlib.md5(content_str.encode()).hexdigest()
+        return hashlib.sha256(content_str.encode()).hexdigest()
 
     def _calculate_similarity(self, content1: List[str], content2: List[str]) -> float:
         """Calculate similarity between two code blocks."""
@@ -542,9 +554,11 @@ class AIPatternDetector(BaseValidator):
         if not self.config.get("unused_code_detection", True):
             return
 
-        # This would be enhanced with more sophisticated analysis
-        # For now, check for basic unused imports (already handled by other validators)
-        pass
+        # Enhanced unused code detection could include:
+        # - Unused imports analysis
+        # - Unused variable detection
+        # - Dead code identification
+        # For now, this is handled by other validators
 
     def _analyze_security_patterns(self):
         """Analyze security patterns and vulnerabilities."""
@@ -552,9 +566,9 @@ class AIPatternDetector(BaseValidator):
             return
 
         security_patterns = [
-            (r"eval\s*\(", "Use of eval() is dangerous"),
-            (r"exec\s*\(", "Use of exec() is dangerous"),
-            (r"os\.system\s*\(", "Use of os.system() is dangerous"),
+            (EVAL_PATTERN, EVAL_MESSAGE),
+            (EXEC_PATTERN, EXEC_MESSAGE),
+            (OS_SYSTEM_PATTERN, OS_SYSTEM_MESSAGE),
             (
                 r"subprocess\.shell\s*=\s*True",
                 "Shell=True in subprocess is dangerous",
@@ -664,7 +678,6 @@ class AIPatternDetector(BaseValidator):
 
     def _load_cache(self):
         """Load cached analysis results."""
-        import json
 
         try:
             if self._cache_file.exists():
@@ -679,7 +692,6 @@ class AIPatternDetector(BaseValidator):
 
     def _save_cache(self):
         """Save analysis results to cache."""
-        import json
 
         try:
             self._cache_file.parent.mkdir(parents=True, exist_ok=True)
@@ -696,8 +708,6 @@ class AIPatternDetector(BaseValidator):
 
     def _get_changed_files(self) -> List[Path]:
         """Get list of files that have changed since last analysis."""
-        import os
-
         changed_files = []
 
         for file_path in self.python_files:
@@ -741,7 +751,7 @@ class AIPatternDetector(BaseValidator):
                 with open(file_path, "r", encoding="utf-8") as f:
                     lines = f.readlines()
 
-                blocks = self._extract_code_blocks(file_path, lines)
+                blocks = self._extract_code_blocks(lines)
 
                 for block_info in blocks:
                     block_hash = self._calculate_block_hash(block_info["content"])
@@ -882,9 +892,9 @@ class AIPatternDetector(BaseValidator):
 
         # Focus on most critical security patterns only
         critical_patterns = [
-            (r"eval\s*\(", "Use of eval() is dangerous"),
-            (r"exec\s*\(", "Use of exec() is dangerous"),
-            (r"os\.system\s*\(", "Use of os.system() is dangerous"),
+            (EVAL_PATTERN, EVAL_MESSAGE),
+            (EXEC_PATTERN, EXEC_MESSAGE),
+            (OS_SYSTEM_PATTERN, OS_SYSTEM_MESSAGE),
             (r"subprocess.*shell\s*=\s*True", "Shell=True in subprocess is dangerous"),
         ]
 

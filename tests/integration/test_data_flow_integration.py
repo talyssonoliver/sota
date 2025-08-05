@@ -11,7 +11,6 @@ Tests data flow integration including:
 
 import hashlib
 import json
-import pickle
 
 # Add project root to path
 import sys
@@ -492,13 +491,22 @@ class TestDataFlowIntegration(unittest.TestCase):
         self.assertEqual(json_loaded["id"], "SER-001")
         self.assertEqual(json_loaded["nested"]["list"], [1, 2, 3])
 
-        # Pickle serialization
-        pickle_data = pickle.dumps(test_data)
-        pickle_loaded = pickle.loads(pickle_data)
+        # Secure JSON serialization instead of pickle
+        # Convert datetime and bytes to JSON-serializable format
+        secure_data = {
+            "id": test_data["id"],
+            "timestamp": test_data["timestamp"].isoformat(),
+            "nested": test_data["nested"],
+            "binary": list(test_data["binary"])  # Convert bytes to list
+        }
+        json_secure_data = json.dumps(secure_data)
+        json_secure_loaded = json.loads(json_secure_data)
 
-        self.assertEqual(pickle_loaded["id"], "SER-001")
-        self.assertIsInstance(pickle_loaded["timestamp"], datetime)
-        self.assertEqual(pickle_loaded["binary"], bytes([0x00, 0x01, 0x02, 0x03]))
+        self.assertEqual(json_secure_loaded["id"], "SER-001")
+        # Convert back from ISO format for comparison
+        loaded_timestamp = datetime.fromisoformat(json_secure_loaded["timestamp"])
+        self.assertIsInstance(loaded_timestamp, datetime)
+        self.assertEqual(bytes(json_secure_loaded["binary"]), bytes([0x00, 0x01, 0x02, 0x03]))
 
         # YAML serialization
         # YAML serialization (convert tuple to list for YAML compatibility)

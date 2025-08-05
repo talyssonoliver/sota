@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    sys
+)
 """
-import sys
 Step 3.7 Implementation Test and Validation
 
 This script tests the context tracking functionality implemented in Step 3.7.
@@ -9,19 +15,18 @@ It validates that context usage is properly tracked and stored per task executio
 Usage:
     python examples/step_3_7_demo.py
 """
-import json
-import sys
-from datetime import datetime
-from pathlib import Path
 
+# import json  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+
+from src.infrastructure.tools.context_tracker import (analyze_context_usage,
+                                   export_context_usage_report,
+                                   get_context_log,
+                                   track_context_usage)
 from src.infrastructure.memory import MemoryEngine
-from src.infrastructure.tools.context_tracker import (
-    analyze_context_usage,
-    export_context_usage_report,
-    get_context_log,
-    track_context_usage,
-)
-from src.infrastructure.utils.task_loader import load_task_metadata
+from utils.task_loader import load_task_metadata
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
@@ -45,8 +50,8 @@ def test_basic_context_tracking():
                 "source": "context-store/db/schema.md",
                 "topic": "db-schema",
                 "query_used": "database schema",
-                "retrieved_at": datetime.now().isoformat(),
-            },
+                "retrieved_at": datetime.now().isoformat()
+            }
         },
         {
             "page_content": "# Service Pattern\nThis describes the service layer pattern...",
@@ -54,9 +59,9 @@ def test_basic_context_tracking():
                 "source": "context-store/patterns/service-layer.md",
                 "topic": "service-pattern",
                 "query_used": "service pattern",
-                "retrieved_at": datetime.now().isoformat(),
-            },
-        },
+                "retrieved_at": datetime.now().isoformat()
+            }
+        }
     ]
 
     print(f"📋 Task: {task_id}")
@@ -69,7 +74,7 @@ def test_basic_context_tracking():
         context_topics=context_topics,
         documents_used=mock_documents,
         agent_role="backend",
-        context_length=sum(len(doc["page_content"]) for doc in mock_documents),
+        context_length=sum(len(doc["page_content"]) for doc in mock_documents)
     )
 
     print(f"✅ Context tracking successful: {success}")
@@ -80,7 +85,7 @@ def test_basic_context_tracking():
         print(f"✅ Context log created: {log_file}")
 
         # Load and display the log
-        with open(log_file, "r") as f:
+        with open(log_file, 'r') as f:
             log_data = json.load(f)
 
         print("\n📊 Context Log Contents:")
@@ -110,7 +115,7 @@ def test_memory_engine_integration():
         print(f"❌ Could not load task metadata for {task_id}")
         return False
 
-    context_topics = task_metadata.get("context_topics", [])
+    context_topics = task_metadata.get('context_topics', [])
     print(f"📋 Task: {task_id}")
     print(f"🏷️  Context Topics: {context_topics}")
 
@@ -125,7 +130,7 @@ def test_memory_engine_integration():
             max_per_topic=2,
             user="system",
             task_id=task_id,  # Step 3.7: Enable tracking
-            agent_role="backend",  # Step 3.7: Specify agent role
+            agent_role="backend"  # Step 3.7: Specify agent role
         )
 
         print(f"✅ Built focused context: {len(focused_context)} characters")
@@ -141,14 +146,12 @@ def test_memory_engine_integration():
                 f"   Within budget: {
                     log_data.get(
                         'within_budget',
-                        'unknown')}"
-            )
+                        'unknown')}")
             print(
                 f"   Step 3.5 integration: {
                     log_data.get(
                         'step_3_5_integration',
-                        False)}"
-            )
+                        False)}")
             return True
         else:
             print("⚠️  Context log not found - tracking may not be fully integrated")
@@ -170,7 +173,7 @@ def test_context_analysis():
     sample_topics = [
         ["technical-architecture", "setup-patterns"],
         ["frontend-patterns", "component-design"],
-        ["testing-patterns", "quality-standards"],
+        ["testing-patterns", "quality-standards"]
     ]
 
     for i, task_id in enumerate(sample_tasks):
@@ -181,19 +184,18 @@ def test_context_analysis():
                 "metadata": {
                     "source": f"context-store/{topic.split('-')[0]}/{topic}.md",
                     "topic": topic,
-                    "query_used": topic.replace("-", " "),
-                    "retrieved_at": datetime.now().isoformat(),
-                },
-            }
-            for topic in topics
+                    "query_used": topic.replace('-', ' '),
+                    "retrieved_at": datetime.now().isoformat()
+                }
+            } for topic in topics
         ]
 
         track_context_usage(
             task_id=task_id,
             context_topics=topics,
             documents_used=mock_docs,
-            agent_role=task_id.split("-")[0].lower(),
-            context_length=sum(len(doc["page_content"]) for doc in mock_docs),
+            agent_role=task_id.split('-')[0].lower(),
+            context_length=sum(len(doc["page_content"]) for doc in mock_docs)
         )
 
     # Analyze context usage
@@ -205,7 +207,7 @@ def test_context_analysis():
     print(f"   Most used topics: {analysis['most_used_topics']}")
     print(f"   Agent usage: {analysis['agent_usage_frequency']}")
 
-    return analysis["total_tasks_analyzed"] > 0
+    return analysis['total_tasks_analyzed'] > 0
 
 
 def test_report_generation():
@@ -222,16 +224,16 @@ def test_report_generation():
         print(f"✅ Context usage report generated: {report_path}")
 
         # Load and display summary
-        with open(report_path, "r") as f:
+        with open(report_path, 'r') as f:
             report = json.load(f)
 
         print("📋 Report Summary:")
-        summary = report.get("summary", {})
+        summary = report.get('summary', {})
         print(f"   Tasks analyzed: {summary.get('total_tasks_analyzed', 0)}")
-        print(f"   Unique topics: {len(summary.get('topic_usage_frequency', {}))}")
         print(
-            f"   Unique documents: {len(summary.get('document_usage_frequency', {}))}"
-        )
+            f"   Unique topics: {len(summary.get('topic_usage_frequency', {}))}")
+        print(
+            f"   Unique documents: {len(summary.get('document_usage_frequency', {}))}")
         print(f"   Generated at: {report.get('generated_at', 'unknown')}")
 
         return True
@@ -250,7 +252,7 @@ def validate_step_3_7_complete():
         ("Basic context tracking functionality", test_basic_context_tracking),
         ("Memory engine integration", test_memory_engine_integration),
         ("Context usage analysis", test_context_analysis),
-        ("Report generation", test_report_generation),
+        ("Report generation", test_report_generation)
     ]
 
     results = []
@@ -290,7 +292,8 @@ def main():
 
     if success:
         print("\n✅ Step 3.7 'Context Tracking per Task' is fully implemented!")
-        print("📁 Context logs are stored under outputs/[TASK-ID]/context_log.json")
+        print(
+            "📁 Context logs are stored under outputs/[TASK-ID]/context_log.json")
         print("📊 Analysis and reporting tools are available via context_tracker.py")
         print("🔗 Integration with memory engine enables automatic tracking")
     else:

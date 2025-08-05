@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, sys, time
 """
 Fast Pre-commit Validator
 Lightweight validation designed for pre-commit hooks.
@@ -6,16 +8,17 @@ Lightweight validation designed for pre-commit hooks.
 
 import argparse
 import ast
-import sys
-import time
-from pathlib import Path
-from typing import List
+from typing import List, Any
+
+from src.infrastructure.utils.base_classes import BaseValidator
 
 
-class FastPrecommitValidator:
+class FastPrecommitValidator(BaseValidator):
     """Ultra-fast validator for pre-commit hooks."""
 
     def __init__(self, files: List[str]):
+        # Initialize base validator without a specific root path
+        super().__init__(name="FastPrecommitValidator")
         self.files = [Path(f) for f in files if f.endswith(".py")]
         self.errors = []
         self.warnings = []
@@ -103,15 +106,15 @@ class FastPrecommitValidator:
                 )
                 success = False
 
-            if line.startswith("from orchestration."):
+            if line.startswith("from src.core.workflows."):
                 self.errors.append(
-                    f"{file_path}:{i}: Deprecated import 'from orchestration.' - use 'from src.core.workflows.'"
+                    f"{file_path}:{i}: Deprecated import 'from src.core.workflows.' - use 'from src.core.workflows.'"
                 )
                 success = False
 
-            if line.startswith("from tools.") and "tools.memory." not in line:
+            if line.startswith("from src.platform.tools.") and "tools.memory." not in line:
                 self.errors.append(
-                    f"{file_path}:{i}: Deprecated import 'from tools.' - use 'from src.infrastructure.tools.'"
+                    f"{file_path}:{i}: Deprecated import 'from src.platform.tools.' - use 'from src.infrastructure.tools.'"
                 )
                 success = False
 
@@ -121,25 +124,57 @@ class FastPrecommitValidator:
         """Quick architecture validation."""
         success = True
 
-        # Check if file is in deprecated directory
+        # Check for deprecated directory locations
         deprecated_dirs = [
-            "orchestration/",
-            "tools/memory/",
-            "handlers/",
-            "memory-bank/",
-            "patches/",
+            "orchestration",
+            "tools", 
+            "utils",
+            "memory",
+            "analytics",
+            "api",
+            "cli",
+            "dashboard",
+            "visualization",
+            "handlers",
+            "graph",
+            "examples",
+            "scripts",
+            "memory-bank",
+            "patches"
         ]
-        file_str = str(file_path).replace("\\", "/")
-
+        
+        # Convert path to string and check if it's in any deprecated directory
+        path_str = str(file_path).replace("\\", "/")  # Handle Windows paths
         for deprecated_dir in deprecated_dirs:
-            if deprecated_dir in file_str:
+            # Check if path starts with deprecated dir or contains it as a directory
+            if (path_str.startswith(f"{deprecated_dir}/") or 
+                f"/{deprecated_dir}/" in path_str or
+                path_str == deprecated_dir):
                 self.errors.append(
-                    f"{file_path}: File in deprecated directory - move to /src/ structure"
+                    f"{file_path}: File in deprecated directory '{deprecated_dir}' - should be moved to src/ structure"
                 )
                 success = False
                 break
 
         return success
+    
+    def _get_default_config(self):
+        """Get default configuration for this validator."""
+        return {
+            "strict_mode": False,
+            "auto_fix": False,
+            "max_issues": 1000
+        }
+    
+    def _validate_target(self, target: Any):
+        """Implementation of abstract method from BaseValidator.
+        
+        Args:
+            target: The target to validate (not used in this implementation)
+        """
+        # This validator uses validate_all() as the main entry point
+        # The actual validation logic is in validate_all() and _validate_file()
+        pass
 
 
 def main():

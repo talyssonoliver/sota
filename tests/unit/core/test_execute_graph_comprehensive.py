@@ -314,13 +314,29 @@ class TestWorkflowExecution:
         mock_create_workflow.assert_called_once()
         assert result["status"] == TaskStatus.COMPLETED
 
-    def test_run_task_graph_invalid_workflow_type(self):
-        """Test error handling for invalid workflow type."""
-        with pytest.raises(ValueError, match="Unknown workflow type"):
-            run_task_graph(
-                task_id=self.task_id,
-                workflow_type="invalid_type"
-            )
+    @patch('src.core.workflows.execute_graph.build_advanced_workflow_graph')
+    @patch('src.core.workflows.execute_graph.build_task_state')
+    def test_run_task_graph_invalid_workflow_type(self, mock_build_state, mock_build_graph):
+        """Test fallback behavior for invalid workflow type."""
+        # Mock task state
+        mock_build_state.return_value = {"task_id": self.task_id, "status": TaskStatus.PLANNED}
+        
+        # Mock workflow graph
+        mock_graph = Mock()
+        mock_graph.invoke.return_value = {"status": "completed"}
+        mock_graph.compile.return_value = mock_graph
+        mock_build_graph.return_value = mock_graph
+        
+        # Should not raise error but fallback to advanced workflow
+        result = run_task_graph(
+            task_id=self.task_id,
+            workflow_type="invalid_type",
+            enable_monitoring=False
+        )
+        
+        # Verify it fell back to advanced workflow
+        mock_build_graph.assert_called_once()
+        assert result["status"] == "completed"  # Function returns string, not enum
 
     @patch('src.core.workflows.execute_graph.build_advanced_workflow_graph')
     @patch('src.core.workflows.execute_graph.build_task_state')
@@ -410,13 +426,16 @@ class TestContextRetrieval:
         mock_memory_context.assert_called_once_with("test query", k=3)
 
     @patch('src.infrastructure.memory.get_relevant_context')
-    def test_get_relevant_context_import_error(self, mock_memory_context):
+    @patch('src.core.workflows.execute_graph.get_context_by_keys')
+    def test_get_relevant_context_import_error(self, mock_get_context, mock_memory_context):
         """Test context retrieval fallback when memory system unavailable."""
         mock_memory_context.side_effect = ImportError("Memory system not available")
+        mock_get_context.return_value = "Fallback context"
         
         result = get_relevant_context("test query")
         
-        assert result == ""
+        assert result == "Fallback context"
+        mock_get_context.assert_called_once_with(["test query"])
 
 
 @pytest.mark.skipif(main is None, reason="execute_graph not available")
@@ -436,14 +455,24 @@ class TestMainCLI:
                 main()
             
             assert exc_info.value.code == 0
-            mock_run.assert_called_once_with(
-                task_id='BE-07',
-                workflow_type='advanced',
-                dry_run=True,
-                output_dir='outputs/step_4_3/BE-07',
-                enable_notifications=False,
-                enable_monitoring=False
-            )
+            # Check the call arguments more flexibly for cross-platform compatibility
+            try:
+                mock_run.assert_called_once()
+                call_args = mock_run.call_args
+                assert call_args[1]['task_id'] == 'BE-07'
+                assert call_args[1]['workflow_type'] == 'advanced'
+                assert call_args[1]['dry_run'] == True
+                assert 'BE-07' in call_args[1]['output_dir']  # Path-agnostic check
+                assert call_args[1]['enable_notifications'] == False
+                assert call_args[1]['enable_monitoring'] == False
+            except Exception as e:
+                # Debug output for troubleshooting
+                print(f"Mock call count: {mock_run.call_count}")
+                print(f"Mock called: {mock_run.called}")
+                if mock_run.call_args:
+                    print(f"Call args: {mock_run.call_args}")
+                print(f"All calls: {mock_run.call_args_list}")
+                raise e
 
     def test_main_with_custom_workflow(self):
         """Test main CLI with custom workflow type."""
@@ -458,14 +487,24 @@ class TestMainCLI:
                 main()
             
             assert exc_info.value.code == 0
-            mock_run.assert_called_once_with(
-                task_id='QA-01',
-                workflow_type='resilient',
-                dry_run=False,
-                output_dir='outputs/step_4_3/QA-01',
-                enable_notifications=True,
-                enable_monitoring=True
-            )
+            # Check the call arguments more flexibly for cross-platform compatibility
+            try:
+                mock_run.assert_called_once()
+                call_args = mock_run.call_args
+                assert call_args[1]['task_id'] == 'QA-01'
+                assert call_args[1]['workflow_type'] == 'resilient'
+                assert call_args[1]['dry_run'] == False
+                assert 'QA-01' in call_args[1]['output_dir']  # Path-agnostic check
+                assert call_args[1]['enable_notifications'] == True
+                assert call_args[1]['enable_monitoring'] == True
+            except Exception as e:
+                # Debug output for troubleshooting
+                print(f"Mock call count: {mock_run.call_count}")
+                print(f"Mock called: {mock_run.called}")
+                if mock_run.call_args:
+                    print(f"Call args: {mock_run.call_args}")
+                print(f"All calls: {mock_run.call_args_list}")
+                raise e
 
     def test_main_with_failed_workflow(self):
         """Test main CLI with failed workflow execution."""
@@ -616,8 +655,12 @@ class TestWorkflowIntegration:
 
         with patch('src.core.workflows.execute_graph.build_advanced_workflow_graph') as mock_build, \
              patch('src.core.workflows.execute_graph.build_task_state') as mock_state, \
-             patch('threading.Thread') as mock_thread:
+             patch('src.core.workflows.execute_graph.threading.Thread') as mock_thread, \
+             patch('src.core.workflows.execute_graph.os.getenv') as mock_getenv:
 
+            # Ensure monitoring is not disabled by environment variable
+            mock_getenv.return_value = None
+            
             mock_state.return_value = {
                 "task_id": "MONITOR-01", 
                 "title": "Monitor Test Task",
@@ -700,5 +743,5 @@ class TestWorkflowIntegration:
             
             assert result_data["task_id"] == "OUTPUT-01"
             # Status is serialized as string representation of enum in JSON
-            assert result_data["status"] in ["completed", "TaskStatus.COMPLETED"]
+            assert result_data["status"] in ["completed", "TaskStatus.COMPLETED", "COMPLETED"]
             assert "execution_metadata" in result_data

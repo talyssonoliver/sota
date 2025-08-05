@@ -1,31 +1,27 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    json,
+    logging,
+    sys
+)
 """
-import sys
 CLI interface for QA Agent Execution (Step 5.3)
 
 Provides command-line interface for manual QA validation and testing.
 """
 
-
-try:
-    from pathlib import Path
-except ImportError:
-    pass
-# Optional import removed as it was unused
-try:
-    from src.core.workflows.langgraph_qa_integration import LangGraphQAIntegration
-except ImportError:
-    pass
-try:
-    from src.core.workflows.qa_execution import QAExecutionEngine
-except ImportError:
-    pass
-
 import argparse
-import json
-import logging
-import sys
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
+from src.core.workflows.langgraph_qa_integration import LangGraphQAIntegration
+from src.core.workflows.qa_execution import QAExecutionEngine
+
+# Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
@@ -36,7 +32,7 @@ def setup_cli_logger(verbose: bool = False) -> logging.Logger:
     if not logger.handlers:
         handler = logging.StreamHandler()
         formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
         )
         handler.setFormatter(formatter)
         logger.addHandler(handler)
@@ -51,35 +47,36 @@ def display_qa_report(report: dict, verbose: bool = False) -> None:
     print("=" * 60)
 
     # Status
-    status = report.get("status", "UNKNOWN")
+    status = report.get('status', 'UNKNOWN')
     status_emoji = {
-        "PASSED": "✅",
-        "FAILED": "❌",
-        "WARNING": "⚠️",
-        "ERROR": "💥",
-        "SKIPPED": "⏭️",
-    }.get(status, "❓")
+        'PASSED': '✅',
+        'FAILED': '❌',
+        'WARNING': '⚠️',
+        'ERROR': '💥',
+        'SKIPPED': '⏭️'
+    }.get(status, '❓')
 
     print(f"Status: {status_emoji} {status}")
 
     # Test Results
-    tests_passed = report.get("tests_passed", 0)
-    tests_failed = report.get("tests_failed", 0)
+    tests_passed = report.get('tests_passed', 0)
+    tests_failed = report.get('tests_failed', 0)
     total_tests = tests_passed + tests_failed
 
-    print(f"Tests: {tests_passed} passed, {tests_failed} failed ({total_tests} total)")
+    print(
+        f"Tests: {tests_passed} passed, {tests_failed} failed ({total_tests} total)")
 
     # Coverage
-    coverage = report.get("coverage", 0)
+    coverage = report.get('coverage', 0)
     print(f"Coverage: {coverage:.1f}%")
 
     # Issues
-    issues = report.get("issues", [])
+    issues = report.get('issues', [])
     if issues:
         print(f"\n⚠️  Issues Found ({len(issues)}):")
         for i, issue in enumerate(issues, 1):
-            severity = issue.get("severity", "unknown")
-            message = issue.get("message", "No message")
+            severity = issue.get('severity', 'unknown')
+            message = issue.get('message', 'No message')
             print(f"  {i}. [{severity.upper()}] {message}")
     else:
         print("\n✅ No critical issues found")
@@ -87,8 +84,8 @@ def display_qa_report(report: dict, verbose: bool = False) -> None:
     # Verbose details
     if verbose:
         print("\n📊 Detailed Metrics:")
-        if "test_generation" in report:
-            gen = report["test_generation"]
+        if 'test_generation' in report:
+            gen = report['test_generation']
             print(
                 f"  Test Generation: {
                     gen.get(
@@ -96,17 +93,15 @@ def display_qa_report(report: dict, verbose: bool = False) -> None:
                         0)} successful, {
                     gen.get(
                         'failed',
-                        0)} failed"
-            )
+                        0)} failed")
 
-        if "static_analysis" in report:
-            analysis = report["static_analysis"]
+        if 'static_analysis' in report:
+            analysis = report['static_analysis']
             print(
                 f"  Static Analysis: {
                     analysis.get(
                         'files_analyzed',
-                        0)} files analyzed"
-            )
+                        0)} files analyzed")
             print(f"  Critical Issues: {analysis.get('critical_issues', 0)}")
             print(f"  Warnings: {analysis.get('warnings', 0)}")
 
@@ -115,7 +110,10 @@ def display_qa_report(report: dict, verbose: bool = False) -> None:
     print("=" * 60)
 
 
-def validate_task(task_id: str, outputs_dir: str, verbose: bool = False) -> dict:
+def validate_task(
+        task_id: str,
+        outputs_dir: str,
+        verbose: bool = False) -> dict:
     """Execute QA validation for a specific task"""
     logger = setup_cli_logger(verbose)
 
@@ -128,7 +126,8 @@ def validate_task(task_id: str, outputs_dir: str, verbose: bool = False) -> dict
         # Execute QA validation
         qa_report = qa_engine.execute_qa_for_task(task_id)
 
-        logger.info(f"QA validation completed with status: {qa_report.get('status')}")
+        logger.info(
+            f"QA validation completed with status: {qa_report.get('status')}")
         return qa_report
 
     except Exception as e:
@@ -139,16 +138,15 @@ def validate_task(task_id: str, outputs_dir: str, verbose: bool = False) -> dict
             "tests_passed": 0,
             "tests_failed": 0,
             "coverage": 0.0,
-            "issues": [
-                {"severity": "error", "message": f"Validation failed: {str(e)}"}
-            ],
-            "timestamp": "error",
+            "issues": [{"severity": "error", "message": f"Validation failed: {str(e)}"}],
+            "timestamp": "error"
         }
 
 
 def test_langgraph_integration(
-    task_id: str, outputs_dir: str, verbose: bool = False
-) -> dict:
+        task_id: str,
+        outputs_dir: str,
+        verbose: bool = False) -> dict:
     """Test LangGraph integration for QA state transitions"""
     logger = setup_cli_logger(verbose)
 
@@ -159,7 +157,8 @@ def test_langgraph_integration(
         qa_integration = LangGraphQAIntegration(outputs_dir)
 
         # Simulate QA_PENDING state handling
-        result = qa_integration.handle_qa_pending_state(task_id, {"agent": "test"})
+        result = qa_integration.handle_qa_pending_state(
+            task_id, {"agent": "test"})
 
         logger.info("LangGraph integration test completed")
         return result
@@ -170,7 +169,7 @@ def test_langgraph_integration(
             "task_id": task_id,
             "current_state": "QA_PENDING",
             "next_state": "ERROR",
-            "error": str(e),
+            "error": str(e)
         }
 
 
@@ -195,39 +194,44 @@ Examples:
 
   # Export report to JSON file
   python cli/qa_execution_cli.py --task BE-07 --export report.json
-        """,
+        """
     )
 
     # Required arguments
     parser.add_argument(
-        "--task", "-t", required=True, help="Task ID to validate (e.g., BE-07)"
+        "--task", "-t",
+        required=True,
+        help="Task ID to validate (e.g., BE-07)"
     )
 
     # Optional arguments
     parser.add_argument(
-        "--outputs-dir",
-        "-o",
+        "--outputs-dir", "-o",
         default="outputs",
-        help="Path to outputs directory (default: outputs)",
+        help="Path to outputs directory (default: outputs)"
     )
 
     parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Enable verbose output"
-    )
-
-    parser.add_argument(
-        "--test-langgraph",
-        "-l",
+        "--verbose", "-v",
         action="store_true",
-        help="Test LangGraph integration instead of standard QA validation",
+        help="Enable verbose output"
     )
 
-    parser.add_argument("--export", "-e", help="Export report to JSON file")
+    parser.add_argument(
+        "--test-langgraph", "-l",
+        action="store_true",
+        help="Test LangGraph integration instead of standard QA validation"
+    )
+
+    parser.add_argument(
+        "--export", "-e",
+        help="Export report to JSON file"
+    )
 
     parser.add_argument(
         "--no-display",
         action="store_true",
-        help="Skip display output (useful with --export)",
+        help="Skip display output (useful with --export)"
     )
 
     args = parser.parse_args()
@@ -245,8 +249,7 @@ Examples:
         # Execute appropriate validation
         if args.test_langgraph:
             result = test_langgraph_integration(
-                args.task, str(outputs_path), args.verbose
-            )
+                args.task, str(outputs_path), args.verbose)
             report_type = "LangGraph Integration Test"
         else:
             result = validate_task(args.task, str(outputs_path), args.verbose)
@@ -259,7 +262,7 @@ Examples:
                 print(f"Task: {result.get('task_id')}")
                 print(f"Current State: {result.get('current_state')}")
                 print(f"Next State: {result.get('next_state')}")
-                if "error" in result:
+                if 'error' in result:
                     print(f"Error: {result['error']}")
             else:
                 display_qa_report(result, args.verbose)
@@ -267,15 +270,16 @@ Examples:
         # Export to file if requested
         if args.export:
             export_path = Path(args.export)
-            with open(export_path, "w") as f:
+            with open(export_path, 'w') as f:
                 json.dump(result, f, indent=2)
             logger.info(f"Report exported to: {export_path}")
 
         # Exit with appropriate code
         if args.test_langgraph:
-            exit_code = 0 if result.get("next_state") != "ERROR" else 1
+            exit_code = 0 if result.get('next_state') != 'ERROR' else 1
         else:
-            exit_code = 0 if result.get("status") in ["PASSED", "WARNING"] else 1
+            exit_code = 0 if result.get('status') in [
+                'PASSED', 'WARNING'] else 1
 
         sys.exit(exit_code)
 

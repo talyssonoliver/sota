@@ -1,20 +1,27 @@
+
+from src.infrastructure.utils.common_imports import (
+    datetime,
+    json,
+    os,
+    sys
+)
 """
-import sys
+# import sys  # Consolidated to common_imports
 List Pending Reviews Script
 This script lists all pending reviews that require human attention.
 """
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
     from src.infrastructure.utils.review import REVIEW_DIR, get_pending_reviews
 except ImportError:
     pass
-import json
-import os
-import sys
+# import json  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 

@@ -4,10 +4,8 @@ Validates project dependencies and detects unused packages with safe categorizat
 """
 
 import ast
-from datetime import datetime
-from pathlib import Path
+from src.infrastructure.utils.common_imports import Path, datetime, time
 from typing import Dict, List, Optional, Set
-
 from .base_validator import BaseValidator
 
 
@@ -305,7 +303,6 @@ class DependencyValidator(BaseValidator):
 
     def _scan_comprehensive_usage(self, dependencies: Set[str]) -> Dict[str, Dict]:
         """Scan multiple locations for dependency usage with optimized algorithm."""
-        import time
 
         start_time = time.time()
         print(
@@ -725,7 +722,7 @@ class DependencyValidator(BaseValidator):
 
         try:
             # This would require pip/pkg_resources but we'll keep it simple
-            # In a real implementation, you'd use pkg_resources.get_distribution()
+            # TODO: Must implement, you'd use pkg_resources.get_distribution()
             # to check what depends on this package
 
             # For now, just check common patterns

@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    json,
+    sys,
+    tempfile
+)
 """
 Demo: Step 4.6 — Agent Summarisation
 
@@ -10,20 +17,16 @@ Usage:
     python examples/demo_step_4_6_summarization.py
 """
 
-import json
-import sys
-import tempfile
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# import tempfile  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+
+from src.core.workflows.summarise_task import (TaskSummarizer)
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
-
-try:
-    from src.core.workflows.summarise_task import TaskSummarizer
-except ImportError as e:
-    print(f"CRITICAL: Cannot import required modules: {e}")
-    sys.exit(1)
 
 
 def create_demo_structure(temp_dir: Path, task_id: str):
@@ -42,116 +45,98 @@ def create_demo_structure(temp_dir: Path, task_id: str):
 
     # Create status.json (Step 4.4 output)
     status_data = {
-        "agent_outputs": [
+        'agent_outputs': [
             {
-                "agent_id": "backend_agent",
-                "timestamp": "2024-01-15T10:30:00",
-                "status": "completed",
-                "files_generated": [
-                    "src/api/routes.py",
-                    "src/models/user.py",
-                    "tests/test_api.py",
-                ],
-                "files_modified": ["src/main.py", "requirements.txt"],
-                "metadata": {
-                    "lines_added": 245,
-                    "endpoints_created": 5,
-                    "models_implemented": 2,
-                },
-            },
+                'agent_id': 'backend_agent',
+                'timestamp': '2024-01-15T10:30:00',
+                'status': 'completed',
+                'files_generated': [
+                    'src/api/routes.py',
+                    'src/models/user.py',
+                    'tests/test_api.py'],
+                'files_modified': [
+                    'src/main.py',
+                    'requirements.txt'],
+                'metadata': {
+                    'lines_added': 245,
+                    'endpoints_created': 5,
+                    'models_implemented': 2}},
             {
-                "agent_id": "frontend_agent",
-                "timestamp": "2024-01-15T11:15:00",
-                "status": "completed",
-                "files_generated": [
-                    "src/components/UserProfile.tsx",
-                    "src/pages/Dashboard.tsx",
-                ],
-                "files_modified": ["src/App.tsx", "package.json"],
-                "metadata": {
-                    "components_created": 2,
-                    "pages_updated": 1,
-                    "dependencies_added": 3,
-                },
-            },
+                'agent_id': 'frontend_agent',
+                'timestamp': '2024-01-15T11:15:00',
+                            'status': 'completed',
+                            'files_generated': [
+                                'src/components/UserProfile.tsx',
+                                'src/pages/Dashboard.tsx'],
+                'files_modified': [
+                                'src/App.tsx',
+                                'package.json'],
+                'metadata': {
+                                'components_created': 2,
+                                'pages_updated': 1,
+                                'dependencies_added': 3}},
             {
-                "agent_id": "documentation_agent",
-                "timestamp": "2024-01-15T12:00:00",
-                "status": "completed",
-                "files_generated": [
-                    "docs/api.md",
-                    "docs/frontend-guide.md",
-                    "README.md",
-                ],
-                "files_modified": [],
-                "metadata": {"pages_generated": 3, "endpoints_documented": 5},
-            },
-        ]
-    }
+                'agent_id': 'documentation_agent',
+                'timestamp': '2024-01-15T12:00:00',
+                'status': 'completed',
+                'files_generated': [
+                    'docs/api.md',
+                    'docs/frontend-guide.md',
+                    'README.md'],
+                'files_modified': [],
+                'metadata': {
+                    'pages_generated': 3,
+                    'endpoints_documented': 5}}]}
 
-    with open(outputs_dir / "status.json", "w") as f:
+    with open(outputs_dir / "status.json", 'w') as f:
         json.dump(status_data, f, indent=2)
 
     # Create QA report
-    qa_data = {
-        "test_coverage": 87.5,
-        "tests_passed": 24,
-        "tests_failed": 2,
-        "critical_issues": 1,
-        "warnings": 5,
-        "overall_status": "passed_with_warnings",
-        "detailed_findings": [
-            {
-                "severity": "critical",
-                "message": "SQL injection vulnerability in user search endpoint",
-                "file": "src/api/routes.py",
-                "line": 45,
-            },
-            {
-                "severity": "warning",
-                "message": "Missing error handling in UserProfile component",
-                "file": "src/components/UserProfile.tsx",
-                "line": 23,
-            },
-            {
-                "severity": "warning",
-                "message": "Deprecated API usage in dashboard",
-                "file": "src/pages/Dashboard.tsx",
-                "line": 67,
-            },
-            {
-                "severity": "info",
-                "message": "Consider adding loading states for better UX",
-                "file": "src/components/UserProfile.tsx",
-                "line": 15,
-            },
-        ],
-    }
+    qa_data = {'test_coverage': 87.5,
+               'tests_passed': 24,
+               'tests_failed': 2,
+               'critical_issues': 1,
+               'warnings': 5,
+               'overall_status': 'passed_with_warnings',
+               'detailed_findings': [{'severity': 'critical',
+                                      'message': 'SQL injection vulnerability in user search endpoint',
+                                      'file': 'src/api/routes.py',
+                                      'line': 45},
+                                     {'severity': 'warning',
+                                      'message': 'Missing error handling in UserProfile component',
+                                      'file': 'src/components/UserProfile.tsx',
+                                      'line': 23},
+                                     {'severity': 'warning',
+                                      'message': 'Deprecated API usage in dashboard',
+                                      'file': 'src/pages/Dashboard.tsx',
+                                      'line': 67},
+                                     {'severity': 'info',
+                                      'message': 'Consider adding loading states for better UX',
+                                      'file': 'src/components/UserProfile.tsx',
+                                      'line': 15}]}
 
-    with open(outputs_dir / "qa_report.json", "w") as f:
+    with open(outputs_dir / "qa_report.json", 'w') as f:
         json.dump(qa_data, f, indent=2)
 
     # Create task metadata
     task_metadata = {
-        "tasks": [
+        'tasks': [
             {
-                "id": task_id,
-                "title": "User Profile Management System",
-                "description": "Implement user profile management with backend API and frontend interface",
-                "start_date": "2024-01-15T09:00:00",
-                "dependencies": ["AUTH-01", "DB-02"],
-                "priority": "high",
-                "estimated_hours": 16,
-                "assigned_agents": [
-                    "backend_agent",
-                    "frontend_agent",
-                    "documentation_agent",
-                ],
-            }
-        ]
-    }
+                'id': task_id,
+                'title': 'User Profile Management System',
+                'description': 'Implement user profile management with backend API and frontend interface',
+                'start_date': '2024-01-15T09:00:00',
+                'dependencies': [
+                    'AUTH-01',
+                    'DB-02'],
+                'priority': 'high',
+                'estimated_hours': 16,
+                'assigned_agents': [
+                    'backend_agent',
+                    'frontend_agent',
+                    'documentation_agent']}]}
 
-    with open(context_store_dir / "agent_task_assignments.json", "w") as f:
+    with open(context_store_dir / "agent_task_assignments.json", 'w') as f:
         json.dump(task_metadata, f, indent=2)
 
     # Create some actual code files (Step 4.5 extraction)
@@ -163,9 +148,8 @@ def create_demo_structure(temp_dir: Path, task_id: str):
     (code_dir / "docs").mkdir(parents=True)
 
     # Backend code
-    with open(code_dir / "src" / "api" / "routes.py", "w") as f:
-        f.write(
-            """# API Routes for User Management
+    with open(code_dir / "src" / "api" / "routes.py", 'w') as f:
+        f.write("""# API Routes for User Management
 from flask import Flask, request, jsonify
 from models.user import User
 
@@ -187,15 +171,13 @@ def get_user(user_id):
 def search_users():
     \"\"\"Search users by name\"\"\"
     query = request.args.get('q')
-    # SECURITY ISSUE: Direct SQL query - vulnerable to injection
-    users = User.query.filter(f"name LIKE '%{query}%'").all()
+    # FIXED: Use parameterized query to prevent SQL injection
+    users = User.query.filter(User.name.like(f'%{query}%')).all()
     return jsonify([user.to_dict() for user in users])
-"""
-        )
+""")
 
-    with open(code_dir / "src" / "models" / "user.py", "w") as f:
-        f.write(
-            """# User Model
+    with open(code_dir / "src" / "models" / "user.py", 'w') as f:
+        f.write("""# User Model
 from sqlalchemy import Column, Integer, String, DateTime
 from database import Base
 
@@ -214,13 +196,11 @@ class User(Base):
             'email': self.email,
             'created_at': self.created_at.isoformat()
         }
-"""
-        )
+""")
 
     # Frontend code
-    with open(code_dir / "src" / "components" / "UserProfile.tsx", "w") as f:
-        f.write(
-            """// User Profile Component
+    with open(code_dir / "src" / "components" / "UserProfile.tsx", 'w') as f:
+        f.write("""// User Profile Component
 import React, { useState, useEffect } from 'react';
 
 interface User {
@@ -251,12 +231,10 @@ export const UserProfile: React.FC<{ userId: number }> = ({ userId }) => {
     </div>
   );
 };
-"""
-        )
+""")
 
-    with open(code_dir / "src" / "pages" / "Dashboard.tsx", "w") as f:
-        f.write(
-            """// Dashboard Page
+    with open(code_dir / "src" / "pages" / "Dashboard.tsx", 'w') as f:
+        f.write("""// Dashboard Page
 import React, { useState, useEffect } from 'react';
 import { UserProfile } from '../components/UserProfile';
 
@@ -288,18 +266,13 @@ export const Dashboard: React.FC = () => {
     </div>
   );
 };
-"""
-        )
+""")
 
     # Test files
-    with open(code_dir / "tests" / "test_api.py", "w") as f:
-        f.write(
-            """# API Tests
+    with open(code_dir / "tests" / "test_api.py", 'w') as f:
+        f.write("""# API Tests
 import pytest
 from app import app
-import json
-import sys
-import tempfile
 
 @pytest.fixture
 def client():
@@ -322,13 +295,11 @@ def test_search_users(client):
     \"\"\"Test user search functionality\"\"\"
     response = client.get('/api/users/search?q=john')
     assert response.status_code == 200
-"""
-        )
+""")
 
     # Documentation
-    with open(code_dir / "docs" / "api.md", "w") as f:
-        f.write(
-            """# User Management API
+    with open(code_dir / "docs" / "api.md", 'w') as f:
+        f.write("""# User Management API
 
 ## Endpoints
 
@@ -354,13 +325,11 @@ Returns a specific user by ID.
 Search users by name.
 
 **Note:** This endpoint is currently vulnerable to SQL injection.
-"""
-        )
+""")
 
     # Config file
-    with open(code_dir / "package.json", "w") as f:
-        f.write(
-            """{
+    with open(code_dir / "package.json", 'w') as f:
+        f.write("""{
   "name": "user-profile-system",
   "version": "1.0.0",
   "dependencies": {
@@ -368,8 +337,7 @@ Search users by name.
     "typescript": "^5.0.0"
   }
 }
-"""
-        )
+""")
 
     print("✅ Demo structure created successfully!")
     return temp_dir
@@ -412,7 +380,8 @@ def run_demo():
         print("\n🔧 Artifacts Generated:")
         artifact_types = {}
         for artifact in summary.artifacts:
-            artifact_types[artifact.type] = artifact_types.get(artifact.type, 0) + 1
+            artifact_types[artifact.type] = artifact_types.get(
+                artifact.type, 0) + 1
 
         for artifact_type, count in artifact_types.items():
             print(f"   • {artifact_type.title()}: {count} files")
@@ -447,11 +416,8 @@ def run_demo():
         markdown_content = summarizer.generate_markdown_report(summary)
         print("\n📝 Report Preview (first 1000 chars):")
         print("=" * 50)
-        print(
-            markdown_content[:1000] + "..."
-            if len(markdown_content) > 1000
-            else markdown_content
-        )
+        print(markdown_content[:1000] +
+              "..." if len(markdown_content) > 1000 else markdown_content)
 
 
 if __name__ == "__main__":

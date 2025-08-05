@@ -97,7 +97,7 @@ class TestStep43CLIInterface:
                 patch('src.core.workflows.execute_graph.run_task_graph') as mock_run:
 
             mock_run.return_value = {
-                'result': 'Success', 'status': 'COMPLETED'}
+                'result': 'Success', 'status': TaskStatus.COMPLETED}
 
             with pytest.raises(SystemExit) as excinfo:
                 main()

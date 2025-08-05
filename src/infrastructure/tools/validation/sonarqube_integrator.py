@@ -1,15 +1,20 @@
+
 """
 SonarQube Integrator
 Integrates SonarQube analysis with the existing validation system.
 """
-
-import json
-import os
-import subprocess
-import time
-from pathlib import Path
-from typing import Any, Dict, List, Optional
-
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    json,
+    os,
+    requests,
+    subprocess,
+    time
+)
 from .core.base_validator import BaseValidator
 
 
@@ -68,13 +73,11 @@ class SonarQubeIntegrator(BaseValidator):
 
         # Check if SonarQube server is accessible
         try:
-            import requests
-
             response = requests.get(
                 f"{self.sonar_host_url}/api/system/status", timeout=5
             )
             return response.status_code == 200
-        except Exception:
+        except requests.exceptions.RequestException:
             return False
 
     def run_sonarqube_analysis(self) -> bool:
@@ -133,7 +136,7 @@ class SonarQubeIntegrator(BaseValidator):
             else:
                 print(f"⚠️ Coverage generation failed: {result.stderr}")
 
-        except Exception as e:
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
             print(f"⚠️ Could not generate coverage report: {e}")
 
     def _execute_sonar_scanner(self) -> bool:
@@ -189,7 +192,7 @@ class SonarQubeIntegrator(BaseValidator):
                 auto_fixable=False,
             )
             return False
-        except Exception as e:
+        except (subprocess.CalledProcessError, FileNotFoundError) as e:
             self.add_issue(
                 category="sonarqube",
                 issue_type="ANALYSIS_ERROR",
@@ -207,8 +210,6 @@ class SonarQubeIntegrator(BaseValidator):
             return
 
         try:
-            import requests
-
             # Get project issues
             issues_url = f"{self.sonar_host_url}/api/issues/search"
             params = {

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Any, Dict, Path
 """
 Unified Context Manager
 
@@ -7,11 +9,11 @@ Manages context information from memory-bank/ in unified structure.
 
 
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 try:
-    from typing import Any, Dict
+    from src.infrastructure.utils.common_imports import Any, Dict  
 except ImportError:
     pass
 

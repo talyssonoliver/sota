@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, re, sys
 """
 Global Import Fix Script - Updates all Python imports after architecture cleanup
 
@@ -12,9 +14,9 @@ Import Mappings:
 - handlers.* → src.infrastructure.tools.handlers.*
 """
 
-import re
-import sys
-from pathlib import Path
+# import re  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import List, Tuple
 
 # Define import mappings

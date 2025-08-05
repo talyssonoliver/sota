@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, datetime, sys
 """
 Unified Dashboard API Routes
 
@@ -12,16 +14,16 @@ with zero code duplication and optimized performance.
 """
 
 
-import sys
+# import sys  # Consolidated to common_imports
 
 from src.infrastructure.security.input_validator import validate_input
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 # Removed unused typing imports: Any, Dict, List not used in implementation

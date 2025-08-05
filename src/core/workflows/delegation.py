@@ -1,11 +1,20 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    datetime,
+    os
+)
 """
 Agent Delegation for the AI Agent System
 Provides utilities for dynamically delegating tasks to appropriate agents.
 """
 
-import os
-from datetime import datetime
-from typing import Any, Dict, List, Optional
+# import os  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 from src.core.workflows.registry import (create_agent_instance,
                                          get_agent_for_task)

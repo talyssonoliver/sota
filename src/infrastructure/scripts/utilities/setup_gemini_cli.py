@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    json,
+    os,
+    subprocess,
+    sys
+)
 """
 Gemini CLI Setup Script
 Automates the installation and configuration of Gemini CLI integration.
 """
 
-import json
-import os
-import subprocess
-import sys
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import subprocess  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 
 def check_prerequisites():

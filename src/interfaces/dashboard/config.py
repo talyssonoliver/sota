@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, dataclass, os
 """
 Dashboard Configuration Module
 
@@ -8,17 +10,17 @@ Supports environment-based configuration for different deployment scenarios.
 
 
 try:
-    from dataclasses import dataclass
+    from src.infrastructure.utils.common_imports import dataclass
 except ImportError:
     pass
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 # Optional import removed as unused
 # logging import removed as unused
 try:
-    import os
+    from src.infrastructure.utils.common_imports import os
 except ImportError:
     pass
 

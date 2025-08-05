@@ -1,3 +1,16 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Enum,
+    List,
+    Optional,
+    Path,
+    dataclass,
+    json,
+    re,
+    time
+)
 """
 Non-Functional Requirements (NFR) Validator
 Implements NFR validation for security, performance, maintainability, reliability,
@@ -5,13 +18,13 @@ usability, and portability based on ISO/IEC 25010.
 """
 
 import ast
-import json
-import re
-import time
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# import json  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 import psutil
 

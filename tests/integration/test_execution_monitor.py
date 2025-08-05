@@ -260,10 +260,10 @@ Tasks Executed: {', '.join(stats['tasks_executed'])}
                 execution_data = monitor.start_agent_execution(task_id, agent_name)
                 try:
                     result = func(*args, **kwargs)
-                    monitor.complete_agent_execution(execution_data, "COMPLETED", result)
+                    monitor.complete_agent_execution(execution_data, status="COMPLETED", output=result)
                     return result
                 except Exception as e:
-                    monitor.complete_agent_execution(execution_data, "FAILED", error=str(e))
+                    monitor.complete_agent_execution(execution_data, status="FAILED", error=str(e))
                     raise
             return wrapper
         return decorator

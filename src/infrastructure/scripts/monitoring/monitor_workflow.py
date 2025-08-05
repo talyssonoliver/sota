@@ -1,21 +1,32 @@
+
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    Path,
+    datetime,
+    json,
+    logging,
+    os,
+    sys,
+    time
+)
 """
 Real-time Workflow Monitoring CLI
 Provides a live view of LangGraph workflow execution progress.
 """
 
-import json
-import logging
-import os
-import sys
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 
 try:
-    import time
+    from src.infrastructure.utils.common_imports import time
 except ImportError:
     pass
 import argparse
-from datetime import datetime
-from enum import Enum
-from pathlib import Path
+# from datetime import datetime  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Optional
 
 try:
@@ -85,9 +96,9 @@ logger.setLevel(logging.INFO)
 def clear_screen():
     """Clear the terminal screen based on the operating system."""
     if os.name == "nt":  # For Windows
-        os.system("cls")
+        subprocess.run(["cls"], shell=False, check=False)
     else:  # For Linux/Mac
-        os.system("clear")
+        subprocess.run(["clear"], shell=False, check=False)
 
 
 class NodeStatus(str, Enum):

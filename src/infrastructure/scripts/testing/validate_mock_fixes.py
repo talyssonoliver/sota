@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Dict,
+    List,
+    Path,
+    os,
+    re,
+    subprocess
+)
 """
 Script to validate mock fixes and generate a summary report.
 """
-import os
-import re
-import subprocess
-from pathlib import Path
-from typing import Dict, List
+# import os  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# import subprocess  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Dict, List  # Consolidated to common_imports
 
 
 def count_mock_patterns(file_path: Path) -> Dict[str, int]:

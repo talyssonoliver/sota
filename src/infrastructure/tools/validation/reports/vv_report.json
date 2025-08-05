@@ -1,0 +1,68 @@
+{
+  "timestamp": "2025-08-03 01:40:24",
+  "validation_verification": {
+    "summary": {
+      "total_issues": 560,
+      "critical_issues": 0,
+      "warnings": 0,
+      "info": 0,
+      "files_analyzed": 31,
+      "validation_passed": true
+    },
+    "coding_standards": {
+      "total_violations": 0,
+      "auto_fixable": 0
+    },
+    "security_vulnerabilities": {
+      "total_vulnerabilities": 538,
+      "by_owasp_category": {
+        "A02:2021-Cryptographic Failures": 91,
+        "A08:2021-Software and Data Integrity Failures": 163,
+        "A01:2021-Broken Access Control": 276,
+        "A09:2021-Security Logging and Monitoring Failures": 8
+      }
+    },
+    "external_tools": {
+      "mypy": {
+        "returncode": 2,
+        "issues_found": 0
+      },
+      "black": {
+        "returncode": 2,
+        "issues_found": 0
+      },
+      "ruff": {
+        "returncode": 1,
+        "issues_found": 1
+      },
+      "bandit": {
+        "returncode": 0,
+        "issues_found": 0
+      }
+    },
+    "compliance": {
+      "owasp_top_10": {
+        "compliance_percentage": 60.0,
+        "compliant_categories": 6,
+        "total_categories": 10,
+        "status": "NON_COMPLIANT"
+      },
+      "pep8_compliance": {
+        "compliance_percentage": 100.0,
+        "files_compliant": 31,
+        "total_files": 31,
+        "total_violations": 0,
+        "status": "COMPLIANT"
+      }
+    }
+  },
+  "recommendations": [
+    "\ud83d\udd12 Address 538 security vulnerabilities immediately",
+    "  - A02:2021-Cryptographic Failures: 91 issues",
+    "  - A08:2021-Software and Data Integrity Failures: 163 issues",
+    "  - A01:2021-Broken Access Control: 276 issues",
+    "  - A09:2021-Security Logging and Monitoring Failures: 8 issues",
+    "\ud83d\udcca Improve code quality: 20 issues found",
+    "\ud83d\udee0\ufe0f Run ruff to fix 1 issues"
+  ]
+}

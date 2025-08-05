@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Path,
+    sys
+)
 """
 Centralized Import Utilities
 
@@ -7,8 +14,8 @@ of try/except ImportError patterns throughout the codebase.
 """
 
 import importlib
-import sys
-from typing import Any, Dict
+# import sys  # Consolidated to common_imports
+# from typing import Any, Dict  # Consolidated to common_imports
 
 
 def safe_import(module_name: str, fallback: Any = None) -> Any:
@@ -187,7 +194,7 @@ def check_common_dependencies() -> Dict[str, bool]:
 
 def ensure_path_setup():
     """Ensure proper path setup for imports (replaces sys.path.append patterns)."""
-    from pathlib import Path
+#     from pathlib import Path  # Consolidated to common_imports
     
     # Add project root to path if not already present
     project_root = Path(__file__).parent.parent.parent.parent

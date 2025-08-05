@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path
 """
 Dashboard Stability Verification - Phase 6 Critical Fix Validation
 
@@ -8,7 +10,7 @@ Tests API endpoints, resource management, and error handling.
 
 
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 def test_api_endpoints():

@@ -1,12 +1,14 @@
+
+from src.infrastructure.utils.common_imports import Path, re, time
 """
 Performance Validator
 Analyzes code performance patterns and suggests optimizations.
 """
 
 import ast
-import re
-import time
-from pathlib import Path
+# import re  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Dict, List, Optional, Set
 
 from .base_validator import BaseValidator
@@ -72,7 +74,7 @@ class PerformanceValidator(BaseValidator):
                         if complexity > max_complexity:
                             self.add_issue(
                                 category="performance",
-                                issue_type="HIGH_COMPLEXITY",
+                                issue_type=IssueType.HIGH_COMPLEXITY,
                                 file_path=str(file_path),
                                 message=f"Function '{node.name}' has high complexity ({complexity})",
                                 line=node.lineno,
@@ -84,7 +86,7 @@ class PerformanceValidator(BaseValidator):
                         if lines > max_lines:
                             self.add_issue(
                                 category="performance",
-                                issue_type="FUNCTION_TOO_LONG",
+                                issue_type=IssueType.FUNCTION_TOO_LONG,
                                 file_path=str(file_path),
                                 message=f"Function '{node.name}' is too long ({lines} lines)",
                                 line=node.lineno,
@@ -96,7 +98,7 @@ class PerformanceValidator(BaseValidator):
             except Exception as e:
                 self.add_issue(
                     category="performance",
-                    issue_type="ANALYSIS_ERROR",
+                    issue_type=IssueType.ANALYSIS_ERROR,
                     file_path=str(file_path),
                     message=f"Could not analyze complexity: {str(e)}",
                     severity="error",
@@ -142,7 +144,7 @@ class PerformanceValidator(BaseValidator):
                     if import_time > max_import_time:
                         self.add_issue(
                             category="performance",
-                            issue_type="PERFORMANCE_ISSUE",
+                            issue_type=IssueType.PERFORMANCE_ISSUE,
                             file_path=str(file_path),
                             message=f"Slow import: {import_name} ({import_time:.3f}s)",
                             severity="warning",
@@ -232,7 +234,7 @@ class PerformanceValidator(BaseValidator):
                         if re.search(pattern, line):
                             self.add_issue(
                                 category="performance",
-                                issue_type="PERFORMANCE_ISSUE",
+                                issue_type=IssueType.PERFORMANCE_ISSUE,
                                 file_path=str(file_path),
                                 message=f"Performance anti-pattern detected: {line.strip()}",
                                 line=i,
@@ -256,7 +258,7 @@ class PerformanceValidator(BaseValidator):
                 if line_count > max_file_lines:
                     self.add_issue(
                         category="performance",
-                        issue_type="STRUCTURE_ISSUE",
+                        issue_type=IssueType.STRUCTURE_ISSUE,
                         file_path=str(file_path),
                         message=f"File too large ({line_count} lines)",
                         severity="warning",
@@ -298,7 +300,7 @@ class PerformanceValidator(BaseValidator):
                         if re.search(pattern, line.strip()):
                             self.add_issue(
                                 category="performance",
-                                issue_type="PERFORMANCE_ISSUE",
+                                issue_type=IssueType.PERFORMANCE_ISSUE,
                                 file_path=str(file_path),
                                 message=f"Inefficient pattern: {line.strip()}",
                                 line=i,

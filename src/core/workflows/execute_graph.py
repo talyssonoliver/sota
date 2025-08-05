@@ -1,3 +1,14 @@
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    logging,
+    os,
+    sys,
+    time,
+    traceback
+)
 """
 Step 4.3 Implementation: Run LangGraph Workflow
 
@@ -22,20 +33,22 @@ Usage:
 """
 
 import argparse
-import json
-import logging
-import os
-import sys
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 import threading
-import time
-from datetime import datetime
+# import time  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+from typing import Any, Dict, Optional, Tuple
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    import logging
+#     import logging  # Consolidated to common_imports
 
     from pythonjsonlogger import jsonlogger
 except ImportError:
@@ -186,9 +199,8 @@ def build_task_state(task_id):
     except FileNotFoundError:
         # Fall back to the old method using agent_task_assignments.json
         # Get task details from agent_task_assignments.json
-        tasks_file = os.path.join(
-            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-            "context-store",
+        tasks_file = str(
+            Path(__file__).parent.parent / "context-store" /
             "agent_task_assignments.json",
         )
 
@@ -240,131 +252,155 @@ def build_task_state(task_id):
         }
 
 
-def run_task_graph(
-    task_id,
-    workflow_type="advanced",
-    dry_run=False,
-    output_dir=None,
-    enable_notifications=True,
-    enable_monitoring=True,
-):
-    """
-    Step 4.3: Enhanced LangGraph workflow execution with comprehensive agent flow.
-
-    Execution Flow:
-    1. Entry node: coordinator
-    2. Coordinator assigns task → backend
-    3. Backend executes based on generated prompt (Step 4.2 integration)
-    4. Result forwarded to qa agent
-    5. If QA passes → result forwarded to documentation
-    6. Final state written to tasks.json
-
+def _initialize_execution_monitoring(task_id: str, workflow_type: str, 
+                                     execution_id: str, dry_run: bool, 
+                                     enable_monitoring: bool) -> Tuple[Optional[Any], Optional[Any]]:
+    """Initialize execution monitoring for workflow.
+    
     Args:
-        task_id: The task identifier (e.g. BE-07)
-        workflow_type: Type of workflow ('advanced', 'dynamic', 'state', 'resilient')
-        dry_run: If True, only print the execution plan without running it
-        output_dir: Directory to save outputs to
-        enable_notifications: Enable Slack notifications for workflow events
-        enable_monitoring: Enable real-time monitoring and logging
-
+        task_id: The task identifier
+        workflow_type: Type of workflow being executed
+        execution_id: Unique execution identifier
+        dry_run: Whether this is a dry run
+        enable_monitoring: Whether monitoring is enabled
+        
     Returns:
-        The result of the workflow execution
-    """  # Initialize Step 4.3 execution logger
-    execution_id = f"{task_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-
-    # Step 4.8: Initialize execution monitoring
-    if enable_monitoring:
-        monitor = get_execution_monitor()
-        workflow_execution_data = monitor.start_agent_execution(
-            task_id,
-            "workflow",
-            {
-                "workflow_type": workflow_type,
-                "execution_id": execution_id,
-                "dry_run": dry_run,
-            },
-        )
-        monitor.log_event(
-            task_id,
-            "workflow_start",
-            {"workflow_type": workflow_type, "execution_id": execution_id},
-        )
-
-    logger.info(
-        "Starting Step 4.3 execution",
-        extra={
-            "event": "workflow_start",
-            "task_id": task_id,
+        Tuple of (monitor, workflow_execution_data) if enabled, (None, None) otherwise
+    """
+    if not enable_monitoring:
+        return None, None
+        
+    monitor = get_execution_monitor()
+    workflow_execution_data = monitor.start_agent_execution(
+        task_id,
+        "workflow",
+        {
             "workflow_type": workflow_type,
             "execution_id": execution_id,
+            "dry_run": dry_run,
         },
     )
+    monitor.log_event(
+        task_id,
+        "workflow_start",
+        {"workflow_type": workflow_type, "execution_id": execution_id},
+    )
+    return monitor, workflow_execution_data
 
+
+def _prepare_initial_state(task_id: str) -> Dict[str, Any]:
+    """Prepare and validate initial workflow state.
+    
+    Args:
+        task_id: The task identifier
+        
+    Returns:
+        Initial state dictionary with required fields
+    """
     # Build the initial state with MCP context
     initial_state = build_task_state(task_id)
-    # Step 4.2 Integration: Generate enhanced prompt with context
+    
+    # Defensive programming: ensure initial_state has required fields
+    if initial_state is None:
+        initial_state = {}
+    
+    # Ensure required fields exist with defaults
+    initial_state.setdefault("task_id", task_id)
+    initial_state.setdefault("title", f"Task {task_id}")
+    initial_state.setdefault("description", "")
+    initial_state.setdefault("status", TaskStatus.PLANNED)
+    initial_state.setdefault("dependencies", [])
+    initial_state.setdefault("priority", "MEDIUM")
+    initial_state.setdefault("estimation_hours", 0)
+    initial_state.setdefault("artefacts", [])
+    initial_state.setdefault("context", "")
+    
+    return initial_state
+
+
+def _generate_enhanced_prompt(task_id: str, initial_state: Dict[str, Any]) -> str:
+    """Generate enhanced prompt using Step 4.2 integration.
+    
+    Args:
+        task_id: The task identifier
+        initial_state: Initial state dictionary to update
+        
+    Returns:
+        Enhanced prompt string
+    """
     try:
         enhanced_prompt = generate_prompt(
             task_id=task_id,
-            agent_id="backend-agent",  # Default to backend agent for task execution
+            agent_type="backend-agent",  # Default to backend agent for task execution
             output_path=None,  # Let it use default path
         )
-        initial_state["enhanced_prompt"] = enhanced_prompt
-
+        
         logger.info(
             "Step 4.2 prompt generation completed",
             extra={
                 "event": "prompt_generated",
                 "task_id": task_id,
-                "workflow_type": workflow_type,
                 "agent": "prompt_generator",
                 "prompt_length": len(enhanced_prompt),
             },
         )
-
+        
+        return enhanced_prompt
+        
     except Exception as e:
-        logger.error(
-            f"Step 4.2 prompt generation failed: {e}",
-            extra={
-                "event": "prompt_generation_error",
-                "task_id": task_id,
-                "workflow_type": workflow_type,
-                "agent": "prompt_generator",
-            },
-        )
+        logger.error(f"Step 4.2 prompt generation failed: {e}")
         # Continue with basic prompt fallback
-        initial_state["enhanced_prompt"] = (
-            f"Complete task {task_id}: {initial_state['title']}"
-        )
+        return f"Complete task {task_id}: {initial_state.get('title', task_id)}"
 
-    if dry_run:
-        print("=== STEP 4.3 DRY RUN ===")
-        print(f"Task: {task_id}")
-        print(f"Title: {initial_state['title']}")
-        print(f"Workflow Type: {workflow_type}")
-        print(f"Initial Status: {initial_state['status']}")
-        print(f"Dependencies: {initial_state['dependencies']}")
-        print(f"Priority: {initial_state.get('priority', 'MEDIUM')}")
-        print(f"Estimation: {initial_state.get('estimation_hours', 0)} hours")
-        print(f"Artefacts: {initial_state.get('artefacts', [])}")
-        print(f"Context length: {len(initial_state['context'])} characters")
-        print(
-            f"Enhanced prompt length: {len(initial_state.get('enhanced_prompt', ''))} characters"
-        )
-        print("\n=== PLANNED EXECUTION FLOW ===")
-        print("1. Entry node: coordinator")
-        print("2. Coordinator assigns task → backend")
-        print("3. Backend executes based on generated prompt")
-        print("4. Result forwarded to qa agent")
-        print("5. If QA passes → result forwarded to documentation")
-        print("6. Final state written to tasks.json")
-        print("=== END DRY RUN ===")
-        return initial_state
 
-    print(f"Starting Step 4.3: LangGraph workflow execution for task {task_id}")
-    print(f"Workflow type: {workflow_type}")
-    print(f"Execution ID: {execution_id}")
+def _handle_dry_run(task_id: str, workflow_type: str, initial_state: Dict[str, Any]) -> Dict[str, Any]:
+    """Handle dry run execution by printing execution plan.
+    
+    Args:
+        task_id: The task identifier
+        workflow_type: Type of workflow
+        initial_state: Initial state dictionary
+        
+    Returns:
+        Initial state (for dry run, no actual execution)
+    """
+    print("=== STEP 4.3 DRY RUN ===")
+    print(f"Task: {task_id}")
+    print(f"Title: {initial_state.get('title', 'Unknown Task')}")
+    print(f"Workflow Type: {workflow_type}")
+    print(f"Initial Status: {initial_state.get('status', 'UNKNOWN')}")
+    print(f"Dependencies: {initial_state.get('dependencies', [])}")
+    print(f"Priority: {initial_state.get('priority', 'MEDIUM')}")
+    print(f"Estimation: {initial_state.get('estimation_hours', 0)} hours")
+    print(f"Artefacts: {initial_state.get('artefacts', [])}")
+    print(f"Context length: {len(initial_state.get('context', ''))} characters")
+    print(f"Enhanced prompt length: {len(initial_state.get('enhanced_prompt', ''))} characters")
+    print("\n=== PLANNED EXECUTION FLOW ===")
+    print("1. Entry node: coordinator")
+    print("2. Coordinator assigns task → backend")
+    print("3. Backend executes based on generated prompt")
+    print("4. Result forwarded to qa agent")
+    print("5. If QA passes → result forwarded to documentation")
+    print("6. Final state written to tasks.json")
+    print("=== END DRY RUN ===")
+    return initial_state
 
+
+def _build_and_configure_workflow(workflow_type: str, enable_notifications: bool, 
+                                  task_id: str) -> Any:
+    """Build workflow and configure notifications.
+    
+    Args:
+        workflow_type: Type of workflow to build
+        enable_notifications: Whether to enable notifications
+        task_id: Task identifier for logging
+        
+    Returns:
+        Configured workflow instance
+        
+    Raises:
+        ValueError: If workflow_type is unknown
+    """
     # Select and build the appropriate workflow graph
     workflow_builders = {
         "advanced": build_advanced_workflow_graph,
@@ -374,11 +410,17 @@ def run_task_graph(
     }
 
     if workflow_type not in workflow_builders:
-        raise ValueError(
-            f"Unknown workflow type: {workflow_type}. Available: {
-                list(
-                    workflow_builders.keys())}"
+        logger.warning(
+            f"Unknown workflow type: {workflow_type}. Falling back to 'advanced' workflow",
+            extra={
+                "event": "unknown_workflow_fallback",
+                "task_id": task_id,
+                "requested_type": workflow_type,
+                "fallback_type": "advanced",
+                "agent": "workflow_builder",
+            },
         )
+        workflow_type = "advanced"
 
     # Build the workflow
     workflow = workflow_builders[workflow_type]()
@@ -409,6 +451,81 @@ def run_task_graph(
                     "agent": "notification_system",
                 },
             )
+    
+    return workflow
+
+
+def run_task_graph(
+    task_id: str,
+    workflow_type: str = "advanced",
+    dry_run: bool = False,
+    output_dir: Optional[str] = None,
+    enable_notifications: bool = True,
+    enable_monitoring: bool = True,
+) -> Dict[str, Any]:
+    """
+    Step 4.3: Enhanced LangGraph workflow execution with comprehensive agent flow.
+
+    Execution Flow:
+    1. Entry node: coordinator
+    2. Coordinator assigns task → backend
+    3. Backend executes based on generated prompt (Step 4.2 integration)
+    4. Result forwarded to qa agent
+    5. If QA passes → result forwarded to documentation
+    6. Final state written to tasks.json
+
+    Args:
+        task_id: The task identifier (e.g. BE-07)
+        workflow_type: Type of workflow ('advanced', 'dynamic', 'state', 'resilient')
+        dry_run: If True, only print the execution plan without running it
+        output_dir: Directory to save outputs to
+        enable_notifications: Enable Slack notifications for workflow events
+        enable_monitoring: Enable real-time monitoring and logging
+
+    Returns:
+        The result of the workflow execution
+    """
+    # Initialize execution
+    execution_id = f"{task_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    
+    # Check environment variables for test mode
+    if os.getenv('DISABLE_WORKFLOW_MONITORING'):
+        enable_monitoring = False
+    
+    # Initialize monitoring
+    monitor, workflow_execution_data = _initialize_execution_monitoring(
+        task_id, workflow_type, execution_id, dry_run, enable_monitoring
+    )
+
+    logger.info(
+        "Starting Step 4.3 execution",
+        extra={
+            "event": "workflow_start",
+            "task_id": task_id,
+            "workflow_type": workflow_type,
+            "execution_id": execution_id,
+        },
+    )
+
+    # Prepare initial state
+    initial_state = _prepare_initial_state(task_id)
+    
+    # Generate enhanced prompt
+    enhanced_prompt = _generate_enhanced_prompt(task_id, initial_state)
+    initial_state["enhanced_prompt"] = enhanced_prompt
+
+    # Handle dry run
+    if dry_run:
+        return _handle_dry_run(task_id, workflow_type, initial_state)
+
+    print(f"Starting Step 4.3: LangGraph workflow execution for task {task_id}")
+    print(f"Workflow type: {workflow_type}")
+    print(f"Execution ID: {execution_id}")
+
+    # Build workflow and set up notifications
+    workflow = _build_and_configure_workflow(
+        workflow_type, enable_notifications, task_id
+    )
 
     # Start monitoring thread if enabled
     monitoring_thread = None
@@ -440,11 +557,14 @@ def run_task_graph(
     if enable_monitoring:
         langgraph_hook = create_langgraph_hook(task_id)
 
+        # Store original invoke method before replacing it
+        original_invoke = workflow.invoke
+        
         # Attach hook to workflow execution
         def monitored_workflow_invoke(state):
             langgraph_hook.on_workflow_start(state)
             try:
-                result = workflow.invoke(state)
+                result = original_invoke(state)
                 langgraph_hook.on_workflow_end(result)
                 return result
             except Exception as e:
@@ -547,7 +667,7 @@ def run_task_graph(
         os.makedirs(output_dir, exist_ok=True)
 
         # Save main result
-        output_path = os.path.join(output_dir, f"{task_id}_step_4_3_result.json")
+        output_path = str(Path(output_dir) / f"{task_id}_step_4_3_result.json")
         result_output = {
             **result,
             "execution_metadata": {
@@ -565,12 +685,12 @@ def run_task_graph(
             },
         }
 
-        with open(output_path, "w") as f:
-            json.dump(result_output, f, indent=2, default=str)
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump(result_output, f, indent=2, default=str, ensure_ascii=False)
 
         # Save execution log
-        log_path = os.path.join(output_dir, f"{task_id}_step_4_3_execution.log")
-        with open(log_path, "w") as f:
+        log_path = str(Path(output_dir) / f"{task_id}_step_4_3_execution.log")
+        with open(log_path, "w", encoding="utf-8") as f:
             f.write("Step 4.3 Execution Log\n")
             f.write(f"Task ID: {task_id}\n")
             f.write(f"Execution ID: {execution_id}\n")
@@ -591,7 +711,7 @@ def run_task_graph(
     print("STEP 4.3 EXECUTION SUMMARY")
     print("=" * 60)
     print(f"Task: {task_id}")
-    print(f"Title: {initial_state['title']}")
+    print(f"Title: {initial_state.get('title', task_id)}")
     print(f"Workflow Type: {workflow_type}")
     print(f"Execution ID: {execution_id}")
     print(f"Initial Status: {initial_state.get('status', 'Unknown')}")
@@ -674,7 +794,7 @@ def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
     Args:
         query: The query string
         k: Number of results to return
-        **kwargs: Additional arguments
+        **kwargs: Additional arguments (filtered for compatibility)
 
     Returns:
         Relevant context as a string
@@ -683,10 +803,20 @@ def get_relevant_context(query: str, k: int = 5, **kwargs) -> str:
         from src.infrastructure.memory import \
             get_relevant_context as memory_get_context
 
-        return memory_get_context(query, k=k, **kwargs)
+        # Filter kwargs to only include those supported by the underlying function
+        supported_kwargs = {'user'}  # Add other supported kwargs as needed
+        filtered_kwargs = {k: v for k, v in kwargs.items() if k in supported_kwargs}
+        
+        return memory_get_context(query, k=k, **filtered_kwargs)
     except ImportError:
-        # Fallback if memory system is not available
-        return ""
+        # Fallback to vector search if memory system is not available
+        return get_context_by_keys([query])
+    except (TypeError, AttributeError):
+        # Handle signature mismatch or NoneType errors by falling back to vector search
+        return get_context_by_keys([query])
+    except Exception:
+        # Catch any other errors and fallback to vector search
+        return get_context_by_keys([query])
 
 
 def main():
@@ -799,7 +929,7 @@ Workflow Types:
         logger.setLevel(logging.INFO)
 
     # Default output directory
-    output_dir = args.output or os.path.join("outputs", "step_4_3", args.task)
+    output_dir = args.output or str(Path("outputs") / "step_4_3" / args.task)
 
     # Enable/disable features based on arguments
     enable_notifications = args.notify and not args.no_notifications
@@ -941,7 +1071,7 @@ Workflow Types:
             print(f"✗ {error_msg}", file=sys.stderr)
 
         if args.verbose:
-            import traceback
+#             import traceback  # Consolidated to common_imports
 
             traceback.print_exc()
 

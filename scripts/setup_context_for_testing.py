@@ -291,7 +291,7 @@ export const validateCustomerInput = (data: unknown) => {
 
 def populate_memory_engine():
     """Populate the memory engine with context documents"""
-    from tools.memory_engine import (add_document_with_enhanced_chunking,
+    from src.infrastructure.memory import (add_document_with_enhanced_chunking,
                                      get_memory_engine)
 
     try:

@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Path,
+    json,
+    sys
+)
 """
 Validation Report Generator
 Generate reports and trend analysis from validation history.
 """
 
 import argparse
-import json
-import sys
-from pathlib import Path
-from typing import Any, Dict
 
 # Add src to path for proper imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
@@ -156,8 +160,8 @@ def print_metrics(tracker: ValidationHistoryTracker):
         try:
             with open(tracker.metrics_file, "r", encoding="utf-8") as f:
                 metrics_data = json.load(f)
-        except Exception:
-            print("❌ Failed to load metrics data")
+        except json.JSONDecodeError:
+            print("❌ Failed to load metrics data: Invalid JSON format")
             return
     else:
         print("📊 No metrics data available")

@@ -1,3 +1,0 @@
-# File Priority Analysis for Quality Fixes
-
-## Current Ruff Issues by File (Top 20)

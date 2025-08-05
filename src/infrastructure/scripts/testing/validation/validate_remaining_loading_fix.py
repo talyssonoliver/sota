@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import datetime, json
 """
 Complete validation of remaining dashboard loading issues fix.
 Tests all components that were still stuck on "Loading..." or "--" values.
@@ -6,11 +8,11 @@ Tests all components that were still stuck on "Loading..." or "--" values.
 
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    import json
+    from src.infrastructure.utils.common_imports import json
 except ImportError:
     pass
     pass

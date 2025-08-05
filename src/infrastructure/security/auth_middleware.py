@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import hashlib, time
 """
 Authentication Middleware for HITL API Security
 """
 
 import functools
-import hashlib
+# import hashlib  # Consolidated to common_imports
 import hmac
-import time
+# import time  # Consolidated to common_imports
 from typing import Optional, Tuple
 
 from flask import g, jsonify, request
+from src.infrastructure.utils.common_utils import EnvironmentConfig
 
 
 class AuthenticationError(Exception):
@@ -26,18 +29,7 @@ def get_default_auth():
     """Get or create default auth middleware instance."""
     global _default_auth
     if _default_auth is None:
-        import os
-
-        secret_key = os.environ.get("AI_SYSTEM_SECRET_KEY")
-        if not secret_key:
-            if os.environ.get("ENVIRONMENT", "").lower() == "production":
-                raise RuntimeError("AI_SYSTEM_SECRET_KEY is required in production")
-            secret_key = "dev-key-change-in-production"
-            import logging
-
-            logging.warning(
-                "Using default secret key in development. Set AI_SYSTEM_SECRET_KEY for production."
-            )
+        secret_key = EnvironmentConfig.get_secret_key()
         _default_auth = AuthMiddleware(secret_key)
     return _default_auth
 
@@ -56,8 +48,11 @@ def public_endpoint(f):
 class AuthMiddleware:
     """Authentication middleware for API endpoints."""
 
-    def __init__(self, secret_key: str = "dev-key-change-in-production"):
+    def __init__(self, secret_key: Optional[str] = None):
         """Initialize auth middleware with secret key."""
+        if secret_key is None:
+            secret_key = EnvironmentConfig.get_secret_key()
+        
         self.secret_key = secret_key.encode("utf-8")
         self.token_expiry = 3600  # 1 hour
 
@@ -74,10 +69,14 @@ class AuthMiddleware:
         """Verify authentication token and return (is_valid, user_id)."""
         try:
             parts = token.split(":")
-            if len(parts) != 3:
+            if len(parts) < 3:
                 return False, None
 
-            user_id, timestamp, signature = parts
+            # Last part is signature, second-to-last is timestamp
+            signature = parts[-1]
+            timestamp = parts[-2]
+            # Everything before timestamp is the user_id (may contain colons)
+            user_id = ":".join(parts[:-2])
 
             # Check token age
             token_time = int(timestamp)
@@ -164,4 +163,4 @@ class AuthMiddleware:
 
 
 # Global auth instance for easy import
-auth = AuthMiddleware()
+auth = get_default_auth()
