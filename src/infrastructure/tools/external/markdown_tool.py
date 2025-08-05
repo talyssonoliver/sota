@@ -18,7 +18,7 @@ Markdown Tool - Helps agents generate and format markdown documentation
 import frontmatter
 from pydantic import BaseModel, ValidationError
 
-from src.platform.tools.base_tool import ArtesanatoBaseTool
+from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool
 
 
 class MarkdownTool(ArtesanatoBaseTool):

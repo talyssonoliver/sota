@@ -1,13 +1,9 @@
-
-from src.infrastructure.utils.common_imports import json, requests
 """
 GitHub Tool - Allows agents to interact with GitHub repositories
 """
 
-# import json  # Consolidated to common_imports
+from src.infrastructure.utils.common_imports import json, requests
 from typing import Dict, Optional
-
-# import requests  # Consolidated to common_imports
 from pydantic import Field
 
 from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool

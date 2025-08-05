@@ -14,7 +14,7 @@ The validation system provides automated, comprehensive code quality analysis ba
 
 ### **Key Features**
 - **Unified Pipeline** - Single entry point for all validation activities
-- **Multi-Tool Integration** - SonarQube, MyPy, Black, Ruff, Bandit integration
+- **Multi-Tool Integration** - SonarQube Community, MyPy, Black, Ruff, Bandit integration
 - **Real-time Dashboard** - Management dashboard for engineering teams
 - **Incremental Analysis** - Pull request quality assessment
 - **Enterprise-Grade** - Scalable, secure, and production-ready

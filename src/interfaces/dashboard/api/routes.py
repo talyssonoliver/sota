@@ -298,8 +298,18 @@ def create_dashboard_app() -> Flask:
     return app
 
 
-def run_server(host="0.0.0.0", port=8080, debug=True):
+def run_server(host=None, port=8080, debug=None):
     """Run the unified dashboard server."""
+    import os
+    
+    # Secure host configuration
+    if host is None:
+        host = os.getenv('HOST', '127.0.0.1')
+    
+    # Secure debug mode - only enable if explicitly set via environment
+    if debug is None:
+        debug = os.getenv('DEBUG', 'False').lower() == 'true'
+    
     app = create_dashboard_app()
 
     print("🚀 Starting Unified Dashboard Server")
@@ -307,6 +317,7 @@ def run_server(host="0.0.0.0", port=8080, debug=True):
     print(f"🌐 Server URL: http://{host}:{port}")
     print(f"🔧 API Health: http://{host}:{port}/api/dashboard/health")
     print(f"📋 HITL Board: http://{host}:{port}/api/dashboard/hitl/kanban-data")
+    print(f"🐛 Debug mode: {debug}")
 
     app.run(host=host, port=port, debug=debug)
 
@@ -315,10 +326,10 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Unified Dashboard API Server")
-    parser.add_argument("--host", default="0.0.0.0", help="Host to bind to")
+    parser.add_argument("--host", default=None, help="Host to bind to (default: 127.0.0.1 or HOST env var)")
     parser.add_argument("--port", type=int, default=8080, help="Port to bind to")
     parser.add_argument("--no-debug", action="store_true", help="Disable debug mode")
 
     args = parser.parse_args()
 
-    run_server(host=args.host, port=args.port, debug=not args.no_debug)
+    run_server(host=args.host, port=args.port, debug=False if args.no_debug else None)

@@ -175,9 +175,11 @@ def test_api_server():
     
     try:
         # Start server in background
+        import os
+        test_host = os.getenv('TEST_HOST', '127.0.0.1')
         server_process = subprocess.Popen([
             sys.executable, "dashboard/unified_api_server.py", 
-            "--host", "127.0.0.1", "--port", "8081", "--no-debug"
+            "--host", test_host, "--port", "8081", "--no-debug"
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         
         # Give server time to start
@@ -189,7 +191,7 @@ def test_api_server():
             import urllib.request
 
             # Test status endpoint
-            response = urllib.request.urlopen("http://127.0.0.1:8081/api/hitl/status", timeout=5)
+            response = urllib.request.urlopen(f"http://{test_host}:8081/api/hitl/status", timeout=5)
             if response.getcode() == 200:
                 print("✅ API server status endpoint - SUCCESS")
                 data = json.loads(response.read().decode())
@@ -199,7 +201,7 @@ def test_api_server():
                 print("❌ API server status endpoint - FAILED")
             
             # Test kanban data endpoint
-            response = urllib.request.urlopen("http://127.0.0.1:8081/api/hitl/kanban-data", timeout=5)
+            response = urllib.request.urlopen(f"http://{test_host}:8081/api/hitl/kanban-data", timeout=5)
             if response.getcode() == 200:
                 print("✅ API server kanban data endpoint - SUCCESS")
                 data = json.loads(response.read().decode())

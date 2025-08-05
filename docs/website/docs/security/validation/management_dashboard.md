@@ -39,7 +39,7 @@ Management Dashboard
 - **Validation Results** - From unified validation pipeline
 - **Historical Data** - SQLite database with metrics history
 - **Real-time Analysis** - Live quality assessment
-- **External Tools** - SonarQube, coverage reports, static analysis
+- **External Tools** - SonarQube Community, coverage reports, static analysis
 
 ## 📊 Dashboard Sections
 

@@ -38,16 +38,9 @@ def load_tool_config() -> Dict[str, Any]:
         return _tool_config_cache
     
     try:
-        # Get project root directory
-        current_dir = Path(__file__).parent
-        project_root = current_dir
-        
-        # Navigate up to find the project root (where config/ exists)
-        while project_root.parent != project_root:
-            config_dir = project_root / "config"
-            if config_dir.exists():
-                break
-            project_root = project_root.parent
+        # Get project root directory - go up from src/infrastructure/tools/core/
+        current_dir = Path(__file__).parent  # tools/core/
+        project_root = current_dir.parent.parent.parent.parent  # Go up 4 levels: tools/ -> infrastructure/ -> src/ -> project_root/
         
         config_path = project_root / "config" / "tools.yaml"
         
@@ -81,16 +74,9 @@ def load_agent_config() -> Dict[str, Any]:
         return _agent_config_cache
     
     try:
-        # Get project root directory
-        current_dir = Path(__file__).parent
-        project_root = current_dir
-        
-        # Navigate up to find the project root (where config/ exists)
-        while project_root.parent != project_root:
-            config_dir = project_root / "config"
-            if config_dir.exists():
-                break
-            project_root = project_root.parent
+        # Get project root directory - go up from src/infrastructure/tools/core/
+        current_dir = Path(__file__).parent  # tools/core/
+        project_root = current_dir.parent.parent.parent.parent  # Go up 4 levels: tools/ -> infrastructure/ -> src/ -> project_root/
         
         config_path = project_root / "config" / "agents.yaml"
         

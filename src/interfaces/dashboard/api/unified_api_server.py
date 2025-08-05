@@ -2887,7 +2887,9 @@ def main():
     if args.port:
         config.port = args.port
     if args.debug:
-        config.debug = True
+        import os
+        # Secure debug mode - only enable if environment allows it
+        config.debug = os.getenv('DEBUG', 'False').lower() == 'true'
 
     # Create and start API server
     try:

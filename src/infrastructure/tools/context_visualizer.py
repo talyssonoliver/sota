@@ -27,7 +27,7 @@ Features:
 Usage:
 
     1. Import the main function:
-       >>> from src.platform.tools.context_visualizer import generate_context_coverage_report
+       >>> from src.infrastructure.tools.context_visualizer import generate_context_coverage_report
 
     2. Generate coverage report:
        >>> generate_context_coverage_report()

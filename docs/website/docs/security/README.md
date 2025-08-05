@@ -6,7 +6,7 @@ This directory contains comprehensive security documentation for the AI Agent Sy
 
 ### 🛡️ [Validation System](./validation/)
 Comprehensive code quality and security validation pipeline
-- **Unified Validation Pipeline** - Integrated SonarQube, MyPy, Black, Ruff validation
+- **Unified Validation Pipeline** - Integrated SonarQube Community, MyPy, Black, Ruff validation
 - **Quality Gates** - Automated quality enforcement with configurable thresholds
 - **Security Analysis** - OWASP Top 10 compliance and vulnerability detection
 - **NFR Validation** - ISO/IEC 25010 non-functional requirements compliance
@@ -55,7 +55,7 @@ Security incident handling and response procedures
 - **Quality Gates Engine** - Enforces quality thresholds and metrics
 - **V&V Validator** - Validation & Verification with OWASP compliance
 - **NFR Validator** - Non-Functional Requirements validation
-- **SonarQube Integrator** - External static analysis integration
+- **SonarQube Community Integrator** - External static analysis integration
 
 #### **Quality Metrics**
 - **Test Coverage** - Minimum 80% coverage requirement
@@ -170,7 +170,7 @@ dashboard_data = dashboard.generate_management_dashboard()
 # Install validation dependencies
 pip install sonarqube-api mypy black ruff bandit pytest-cov
 
-# Configure SonarQube (optional)
+# Configure SonarQube Community (optional)
 export SONAR_HOST_URL="http://localhost:9000"
 export SONAR_TOKEN="your_sonar_token"
 

@@ -9,7 +9,7 @@ This directory contains comprehensive documentation for the validation tools eco
 - **Quality Gates Engine** - Automated quality threshold enforcement
 - **V&V Validator** - Validation & Verification with security focus
 - **NFR Validator** - Non-Functional Requirements compliance
-- **SonarQube Integrator** - Enterprise static analysis integration
+- **SonarQube Community Integrator** - Enterprise static analysis integration
 
 ### 📊 Analysis Tools
 - **Incremental Analyzer** - Pull request quality assessment
@@ -18,7 +18,7 @@ This directory contains comprehensive documentation for the validation tools eco
 - **Compliance Checker** - ISO/IEC 25010 and OWASP compliance
 
 ### 🔍 External Tool Integrations
-- **SonarQube** - Static code analysis and quality gates
+- **SonarQube Community** - Static code analysis and quality gates ([Setup Guide](./sonarqube-integration.md))
 - **MyPy** - Static type checking for Python
 - **Black** - Code formatting and style enforcement
 - **Ruff** - Fast Python linter and code checker
@@ -103,7 +103,7 @@ Input Code → Preparation → Static Analysis → Quality Gates → Security Sc
 | **Quality Gates** | Threshold enforcement | Core | Pass/fail decisions |
 | **V&V Validator** | Security & standards | Core | OWASP compliance report |
 | **NFR Validator** | Non-functional reqs | Core | ISO/IEC 25010 compliance |
-| **SonarQube** | Static analysis | Optional | Detailed code analysis |
+| **SonarQube Community** | Static analysis | Optional | Detailed code analysis |
 | **MyPy** | Type checking | External | Type safety report |
 | **Black** | Code formatting | External | Style consistency |
 | **Ruff** | Fast linting | External | Code quality issues |

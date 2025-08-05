@@ -16,7 +16,7 @@ Main Components:
 - exceptions.py: Custom exception hierarchy
 
 Usage:
-    from src.platform.tools.memory import MemoryEngine, initialize_memory
+    from src.infrastructure.tools.memory import MemoryEngine, initialize_memory
     
     memory = MemoryEngine()
     context = memory.get_context("query", k=5)

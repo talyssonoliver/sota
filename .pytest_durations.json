@@ -1,8 +1,9 @@
 {
- "tests/unit/core/workflows/test_daily_cycle.py::TestDailyCycleOrchestrationIntegration::test_error_recovery_workflow": 0.3679316001944244,
- "tests/unit/core/workflows/test_task_lifecycle.py::TestMainFunction::test_main_function": 0.003099100198596716,
- "tests/unit/core/workflows/test_summarise_task.py::TestTaskSummary::test_task_summary_creation": 0.002337599638849497,
- "tests/unit/core/workflows/test_summarise_task.py::TestTaskSummary::test_task_summary_with_optional_fields": 0.002158599905669689,
- "tests/unit/core/workflows/test_timeline_method.py::test_timeline_method": 0.13053900003433228,
- "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationIntegration::test_real_task_declaration": 0.10430280026048422
+ "tests/unit/core/workflows/test_enhanced_eod_reporting.py::TestReportFormatting::test_should_generate_valid_progress_bars": 0.0017280997708439827,
+ "tests/unit/infrastructure/tools/validation/test_quality_gates.py::TestQualityGateIntegration::test_quality_gates_with_issues": 0.0015128999948501587,
+ "tests/unit/infrastructure/tools/validation/test_quality_gates.py::TestQualityGateIntegration::test_realistic_quality_evaluation": 0.0019772998057305813,
+ "tests/unit/core/workflows/test_daily_cycle.py::TestDailyCycleOrchestrationIntegration::test_complete_daily_workflow": 0.25742359971627593,
+ "tests/unit/core/workflows/test_daily_cycle.py::TestDailyCycleOrchestrationIntegration::test_error_recovery_workflow": 0.18391240015625954,
+ "tests/unit/infrastructure/security/test_input_validation.py::TestValidationIntegration::test_security_protection_integration": 0.0023291995748877525,
+ "tests/unit/infrastructure/security/test_input_validation.py::TestValidationIntegration::test_complete_validation_workflow": 0.0015843999572098255
 }
