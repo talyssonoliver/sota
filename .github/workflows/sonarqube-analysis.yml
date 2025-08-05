@@ -33,11 +33,11 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: '3.11'
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
+        python3 -m pip install --upgrade pip
         pip install -r requirements.txt
         
     - name: Wait for SonarQube to be ready
@@ -58,11 +58,11 @@ jobs:
         
     - name: Run custom validation system
       run: |
-        python src/infrastructure/tools/validation/validate.py --comprehensive --output validation-report.json
+        python3 src/infrastructure/tools/validation/validate.py --comprehensive --output validation-report.json
         
     - name: Generate test coverage
       run: |
-        python -m pytest --cov=src --cov-report=xml:coverage.xml --cov-report=term-missing tests/
+        python3 -m pytest --cov=src --cov-report=xml:coverage.xml --cov-report=term-missing tests/
         
     - name: Download and setup SonarScanner
       run: |
@@ -165,11 +165,11 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: '3.11'
         
     - name: Install security tools
       run: |
-        python -m pip install --upgrade pip
+        python3 -m pip install --upgrade pip
         pip install bandit safety
         
     - name: Run Bandit security scan
@@ -182,7 +182,7 @@ jobs:
         
     - name: Run custom business logic protection
       run: |
-        python -c "
+        python3 -c "
         from src.infrastructure.tools.validation.ai.business_logic_protector import BusinessLogicProtector
         protector = BusinessLogicProtector()
         protector.protect_business_logic()
