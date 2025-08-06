@@ -10,7 +10,7 @@ from typing import Dict, Optional
 # import requests  # Consolidated to common_imports
 from pydantic import Field
 
-from src.platform.tools.base_tool import ArtesanatoBaseTool
+from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool
 from src.infrastructure.utils.common_utils import safe_get_env
 
 
