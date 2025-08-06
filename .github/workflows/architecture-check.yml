@@ -89,7 +89,10 @@ jobs:
     - name: Test Collection Check
       run: |
         echo "🧪 Verifying all tests can be collected..."
+        # Install pytest and required dependencies
         python -m pip install pytest pytest-xdist pytest-timeout pytest-env pytest-asyncio
+        # Install minimal requirements needed for test collection
+        python -m pip install pyyaml requests
         
         # Check if tests can be collected successfully
         export PYTHONPATH=$PWD:$PYTHONPATH
