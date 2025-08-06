@@ -80,7 +80,8 @@
       "Bash(npx @docusaurus/mdx-loader:*)",
       "mcp__filesystem__read_text_file",
       "Bash(curl:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(gh api:*)"
     ],
     "deny": []
   },
