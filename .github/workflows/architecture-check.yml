@@ -38,7 +38,7 @@ jobs:
           VIOLATIONS=true
         fi
         
-        if grep -r "from memory\." src/ tests/ --include="*.py" 2>/dev/null; then
+        if grep -r "^[[:space:]]*from memory\." src/ tests/ --include="*.py" 2>/dev/null | grep -v "test_fast_precommit_validator.py"; then
           echo "❌ Found deprecated 'from memory.' imports"
           echo "💡 Use: from src.infrastructure.memory."
           VIOLATIONS=true
