@@ -318,14 +318,13 @@ def load_all_tools() -> List[ArtesanatoBaseTool]:
     return tools
 
 
-def load_tools_for_agent(agent_type: str, config: Optional[Dict[str, Any]] = None) -> List[ArtesanatoBaseTool]:
+def load_tools_for_agent(agent_type: str) -> List[ArtesanatoBaseTool]:
     """Load tools for specific agent type.
     
     This is an alias for get_tools_for_agent to maintain backward compatibility.
     
     Args:
         agent_type: Type/name of the agent
-        config: Optional configuration override
         
     Returns:
         List of instantiated tools for the agent type

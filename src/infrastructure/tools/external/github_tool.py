@@ -1,13 +1,14 @@
 
-from src.infrastructure.utils.common_imports import json, requests
 """
 GitHub Tool - Allows agents to interact with GitHub repositories
 """
 
 from typing import Dict, Optional
+
 from pydantic import Field
 
 from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool
+from src.infrastructure.utils.common_imports import json, requests
 from src.infrastructure.utils.common_utils import safe_get_env
 
 # Constants to avoid string duplication
@@ -540,9 +541,9 @@ class GitHubTool(ArtesanatoBaseTool):
             self.format_response(
                 data={
                     "name": "artesanato-ecommerce",
-                    "full_name": "artesanato-shop/artesanato-ecommerce",
+                    "full_name": DEFAULT_REPO,
                     "description": DEFAULT_DESCRIPTION,
-                    "html_url": "https://github.com/artesanato-shop/artesanato-ecommerce",
+                    "html_url": f"https://github.com/{DEFAULT_REPO}",
                     "stargazers_count": 42,
                     "forks_count": 12,
                     "open_issues_count": 5,
@@ -750,13 +751,13 @@ class GitHubTool(ArtesanatoBaseTool):
                 data={
                     "id": 1,
                     "name": "artesanato-ecommerce",
-                    "full_name": "artesanato-shop/artesanato-ecommerce",
+                    "full_name": DEFAULT_REPO,
                     "private": False,
                     "description": DEFAULT_DESCRIPTION,
                     "created_at": "2025-04-01T09:00:00Z",
                     "updated_at": TIMESTAMP_2025_05_05_09,
-                    "html_url": "https://github.com/artesanato-shop/artesanato-ecommerce",
-                    "clone_url": "https://github.com/artesanato-shop/artesanato-ecommerce.git",
+                    "html_url": f"https://github.com/{DEFAULT_REPO}",
+                    "clone_url": f"https://github.com/{DEFAULT_REPO}.git",
                     "default_branch": "main",
                     "open_issues_count": 10,
                     "forks_count": 5,
