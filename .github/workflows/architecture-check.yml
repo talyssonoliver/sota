@@ -89,9 +89,10 @@ jobs:
     - name: Test Collection Check
       run: |
         echo "🧪 Verifying all tests can be collected..."
-        python -m pip install pytest
+        python -m pip install pytest pytest-xdist pytest-timeout pytest-env pytest-asyncio
         
         # Check if tests can be collected successfully
+        export PYTHONPATH=$PWD:$PYTHONPATH
         if python -m pytest --collect-only --tb=short > /dev/null 2>&1; then
           echo "✅ All tests collect successfully"
           python -m pytest --collect-only --tb=short | tail -3
