@@ -93,7 +93,7 @@ jobs:
         python -m pip install pytest pytest-xdist pytest-timeout pytest-env pytest-asyncio
         # Install minimal requirements needed for test collection
         # Extract and install only the basic dependencies needed for imports
-        python -m pip install pyyaml requests flask flask-cors
+        python -m pip install pyyaml requests flask flask-cors psutil
         
         # Check if tests can be collected successfully
         export PYTHONPATH=$PWD:$PYTHONPATH
