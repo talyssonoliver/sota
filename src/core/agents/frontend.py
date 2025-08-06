@@ -1,8 +1,10 @@
+
+from src.infrastructure.utils.common_imports import logging
 """
 Frontend Engineer Agent for implementing user interfaces.
 """
 
-import logging
+# import logging  # Consolidated to common_imports
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type
 
 if TYPE_CHECKING:

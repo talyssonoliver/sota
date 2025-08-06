@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    dataclass,
+    field
+)
 """
 Unified Memory Configuration
 
 Consolidated configuration for all memory system components.
 """
 
-from typing import Any, Dict
+# from typing import Any, Dict  # Consolidated to common_imports
 
 try:
-    from dataclasses import dataclass, field
+    from src.infrastructure.utils.common_imports import dataclass, field
 except ImportError:
     pass
 # Logging removed - not used in this module

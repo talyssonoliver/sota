@@ -1,8 +1,10 @@
+
+from src.infrastructure.utils.common_imports import logging
 """
 Backend Engineer Agent for implementing Supabase services and API routes.
 """
 
-import logging
+# import logging  # Consolidated to common_imports
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 if TYPE_CHECKING:

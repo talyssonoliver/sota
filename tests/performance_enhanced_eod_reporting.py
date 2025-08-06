@@ -8,7 +8,6 @@ import time
 import asyncio
 import sys
 from pathlib import Path
-from typing import List, Dict, Any
 
 # Add project root to path for imports
 project_root = Path(__file__).parent.parent
@@ -22,7 +21,7 @@ from scripts.generate_task_report import (
     _generate_visual_progress_summary
 )
 from scripts.generate_progress_report import ProgressReportGenerator
-from orchestration.daily_cycle import DailyCycleOrchestrator
+from src.core.workflows.daily_cycle import DailyCycleOrchestrator
 from datetime import date
 
 

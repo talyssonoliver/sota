@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, datetime, sys
 """
 Unified Dashboard API Routes
 
@@ -12,16 +14,16 @@ with zero code duplication and optimized performance.
 """
 
 
-import sys
+# import sys  # Consolidated to common_imports
 
 from src.infrastructure.security.input_validator import validate_input
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 # Removed unused typing imports: Any, Dict, List not used in implementation
@@ -296,18 +298,8 @@ def create_dashboard_app() -> Flask:
     return app
 
 
-def run_server(host=None, port=8080, debug=None):
+def run_server(host="0.0.0.0", port=8080, debug=True):
     """Run the unified dashboard server."""
-    import os
-    
-    # Secure host configuration
-    if host is None:
-        host = os.getenv('HOST', '127.0.0.1')
-    
-    # Secure debug mode - only enable if explicitly set via environment
-    if debug is None:
-        debug = os.getenv('DEBUG', 'False').lower() == 'true'
-    
     app = create_dashboard_app()
 
     print("🚀 Starting Unified Dashboard Server")
@@ -323,10 +315,10 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Unified Dashboard API Server")
-    parser.add_argument("--host", default=None, help="Host to bind to (default: 127.0.0.1)")
+    parser.add_argument("--host", default="0.0.0.0", help="Host to bind to")
     parser.add_argument("--port", type=int, default=8080, help="Port to bind to")
-    parser.add_argument("--debug", action="store_true", help="Enable debug mode (insecure)")
+    parser.add_argument("--no-debug", action="store_true", help="Disable debug mode")
 
     args = parser.parse_args()
 
-    run_server(host=args.host, port=args.port, debug=args.debug if args.debug else None)
+    run_server(host=args.host, port=args.port, debug=not args.no_debug)

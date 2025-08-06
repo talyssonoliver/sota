@@ -1,16 +1,26 @@
+
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    Path,
+    dataclass,
+    json,
+    subprocess,
+    tempfile,
+    time
+)
 """
 Incremental Analysis for Pull Requests
 Provides incremental analysis focusing on changed files and new code,
 optimizing validation for pull request workflows.
 """
 
-import json
-import subprocess
-import tempfile
-import time
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import subprocess  # Consolidated to common_imports
+# import tempfile  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Any, Dict, List, Optional, Tuple
 
 from .base_validator import BaseValidator
@@ -249,14 +259,15 @@ class IncrementalAnalyzer(BaseValidator):
         changed_python_files = []
 
         for change in self.changes:
-            file_path = Path(self.root_path) / change.file_path
+            # Skip deleted files early
+            if change.change_type == ChangeType.DELETED:
+                continue
+                
+            # Resolve all paths to avoid false positives with relative paths
+            file_path = (Path(self.root_path) / change.file_path).resolve()
 
             # Only analyze existing Python files
-            if (
-                file_path.exists()
-                and file_path.suffix == ".py"
-                and change.change_type != ChangeType.DELETED
-            ):
+            if file_path.exists() and file_path.suffix == ".py":
                 changed_python_files.append(file_path)
 
         if not changed_python_files:

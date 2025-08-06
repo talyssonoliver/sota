@@ -1,6 +1,6 @@
 # Directory Structure
 
-Generated on: 2025-07-21 19:16:35
+Generated on: 2025-07-19 13:58:09
 
 ```
 ai-system/
@@ -15,7 +15,6 @@ ai-system/
 │   ├── dashboard/
 │   │   └── notifications/
 │   ├── runtime/
-│   │   └── logs/
 │   ├── storage/
 │   │   ├── cold/
 │   │   ├── hitl/
@@ -60,16 +59,6 @@ ai-system/
 │   │   └── validation/
 │   └── user-guides/
 │       └── demos/
-├── fix_tracking/
-│   ├── phase1/
-│   ├── phase2/
-│   ├── phase3/
-│   └── phase4/
-├── investigation_reports/
-│   ├── phase1_critical/
-│   ├── phase2_imports/
-│   ├── phase3_quality/
-│   └── phase4_docs/
 ├── outputs/
 │   ├── BE-01/
 │   ├── BE-02/
@@ -312,7 +301,7 @@ ai-system/
 
 ## Summary
 
-- **Total directories**: 304 (directories only - partial view)
+- **Total directories**: 293 (directories only - partial view)
 - **Generation method**: Depth-First Search (DFS) traversal
 - **Tree algorithm**: Recursive directory iteration with ASCII formatting
 
@@ -321,8 +310,8 @@ ai-system/
 📋 **For the complete tree structure including all files**, see: [`complete-directory-structure.md`](./complete-directory-structure.md)
 
 The complete structure includes:
-- **1,129 files** across the entire project
-- **304 directories** with full hierarchy
-- **246,122 total lines** of code and documentation
+- **1,369 files** across the entire project
+- **269 directories** with full hierarchy
+- **132,529 total lines** of code and documentation
 - **File sizes** in appropriate units (B/K/M)
 - **DFS traversal algorithm** with detailed insights

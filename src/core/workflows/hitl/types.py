@@ -1,10 +1,12 @@
+
+from src.infrastructure.utils.common_imports import Enum
 """
 HITL Engine Types
 
 Enumerations and type definitions for the HITL system.
 """
 
-from enum import Enum
+# from enum import Enum  # Consolidated to common_imports
 
 
 class CheckpointType(Enum):

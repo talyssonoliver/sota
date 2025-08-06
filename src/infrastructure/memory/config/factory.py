@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional
+)
 """
 factory.py - Unified Memory System
 
@@ -13,7 +20,7 @@ Provides factory functions for backward compatibility and easy initialization
 """
 
 try:
-    from typing import Any, Dict, List, Optional
+    from src.infrastructure.utils.common_imports import Any, Dict, List, Optional  
 except ImportError:
     pass
 

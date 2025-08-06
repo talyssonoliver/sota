@@ -1,9 +1,11 @@
+
+from src.infrastructure.utils.common_imports import logging, sys
 """
 Echo Tool - A simple tool for testing agent setup and configuration
 """
 
-import logging
-import sys
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 
 try:
     from langchain_core.tools import BaseTool

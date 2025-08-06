@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, subprocess
 """
 Quick Docker Build Test Script
 Tests the updated Dockerfiles with zero vulnerabilities
 """
 
-import subprocess
-from pathlib import Path
+# import subprocess  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 
 def run_command(cmd, description):

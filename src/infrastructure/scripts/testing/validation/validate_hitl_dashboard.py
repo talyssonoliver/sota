@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    subprocess,
+    sys,
+    time
+)
 """
 HITL Kanban Dashboard Validation Script
 
@@ -6,20 +15,20 @@ Tests all components of the HITL Kanban dashboard system to ensure
 everything works correctly.
 """
 
-import sys
+# import sys  # Consolidated to common_imports
 
 try:
-    import subprocess
+    from src.infrastructure.utils.common_imports import subprocess
 except ImportError:
     pass
-import json
+# import json  # Consolidated to common_imports
 
 try:
-    import time
+    from src.infrastructure.utils.common_imports import time
 except ImportError:
     pass
-from datetime import datetime
-from pathlib import Path
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 
 def cleanup_test_files():
@@ -64,7 +73,8 @@ def safe_print(text: str):
     except UnicodeEncodeError:
         # Strip emoji and unicode characters for Windows console
         try:
-            import re
+
+            from src.infrastructure.utils.common_imports import re
         except ImportError:
             pass
         safe_text = re.sub(r'[^\x00-\x7F]+', '', text)

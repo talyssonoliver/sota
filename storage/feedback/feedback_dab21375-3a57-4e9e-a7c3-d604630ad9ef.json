@@ -1,0 +1,16 @@
+{
+  "task_id": "BE-07",
+  "reviewer": "human.reviewer",
+  "approval_decision": true,
+  "feedback_categories": {
+    "code_quality": {
+      "score": 8,
+      "comments": "Good"
+    }
+  },
+  "comments": [],
+  "suggested_improvements": [],
+  "risk_level": "medium",
+  "timestamp": "2025-07-27T13:00:21.113742",
+  "feedback_id": "dab21375-3a57-4e9e-a7c3-d604630ad9ef"
+}

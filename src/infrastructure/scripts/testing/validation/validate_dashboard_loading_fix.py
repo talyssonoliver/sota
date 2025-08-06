@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import datetime, json
 """
 Complete Dashboard Loading Fix Validation
 Tests all aspects of the dashboard loading and data display.
@@ -6,11 +8,11 @@ Tests all aspects of the dashboard loading and data display.
 
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    import json
+    from src.infrastructure.utils.common_imports import json
 except ImportError:
     pass
     pass
@@ -178,7 +180,7 @@ def test_complete_dashboard_loading():
     with open("c:\\taly\\ai-system\\dashboard_loading_fix_validation.json", "w") as f:
         json.dump(validation_data, f, indent=2)
     
-    print(f"\n💾 Results saved to: dashboard_loading_fix_validation.json")
+    print("\n💾 Results saved to: dashboard_loading_fix_validation.json")
     
     return overall_pass
 

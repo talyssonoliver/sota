@@ -1,13 +1,12 @@
+
 """
 Shared File Collector - Performance Optimization
 Eliminates redundant directory traversals in validation pipeline.
 """
 
-import os
-import time
-from pathlib import Path
+from src.infrastructure.utils.common_imports import Path, os, time
 from threading import Lock
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 
 class SharedFileCollector:
@@ -26,6 +25,7 @@ class SharedFileCollector:
         if cls._instance is None:
             with cls._lock:
                 if cls._instance is None:
+                    # Assign _instance before recursion to prevent UnboundLocalError
                     cls._instance = super().__new__(cls)
         return cls._instance
 
@@ -41,12 +41,20 @@ class SharedFileCollector:
                 ".mypy_cache",
                 ".tox",
                 "venv",
+                ".venv",  # Added missing .venv exclusion
                 "env",
+                ".env",   # Added .env exclusion for consistency
                 "node_modules",
                 ".next",
                 ".nuxt",
                 "backup",
+                "archives",  # Added archives directory
+                "test_outputs",  # Added test outputs
+                ".coverage",  # Added coverage directory
             }
+            # Clear any existing cache since exclusions changed
+            self._file_cache.clear()
+            self._cache_timestamps.clear()
             self._initialized = True
 
     def get_files(
@@ -143,7 +151,7 @@ class SharedFileCollector:
                 self._file_cache.clear()
                 self._cache_timestamps.clear()
 
-    def get_cache_stats(self) -> Dict[str, any]:
+    def get_cache_stats(self) -> Dict[str, Any]:
         """Get cache statistics."""
         with self._lock:
             stats = {

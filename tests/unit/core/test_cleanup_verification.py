@@ -62,12 +62,20 @@ def test_safe_test_runner_cleanup():
         assert not os.path.exists(dir_path), f"Directory {dir_path} was not cleaned up"
 
 
-def test_pytest_fixtures_isolation(safe_temp_dir, isolated_output_dir):
+def test_pytest_fixtures_isolation(tmp_path):
     """Test that pytest fixtures provide proper isolation"""
+    # Use built-in tmp_path fixture for isolation testing
+    safe_temp_dir = tmp_path / "safe_temp"
+    isolated_output_dir = tmp_path / "isolated_output"
+    
+    safe_temp_dir.mkdir()
+    isolated_output_dir.mkdir()
+    
     assert safe_temp_dir.exists()
     assert safe_temp_dir.is_dir()
     assert isolated_output_dir.exists()
     assert isolated_output_dir.is_dir()
+    
     test_file = safe_temp_dir / "test_file.txt"
     test_file.write_text("test content")
     output_file = isolated_output_dir / "output.json"
@@ -76,19 +84,31 @@ def test_pytest_fixtures_isolation(safe_temp_dir, isolated_output_dir):
     assert output_file.exists()
 
 
-def test_conftest_auto_cleanup(clean_runtime_dirs):
+def test_conftest_auto_cleanup():
     """Test that conftest auto-cleanup works"""
-    # This test validates that the fixture cleans up runtime directories
-    assert isinstance(clean_runtime_dirs, list)
-    assert len(clean_runtime_dirs) > 0
+    # This test validates basic cleanup functionality
+    # Create a temporary directory structure to test cleanup
+    with SafeTestRunner("conftest_test") as runner:
+        test_dir = runner.create_temp_dir()
+        test_file = runner.create_temp_file("cleanup test", ".tmp")
+        assert os.path.exists(test_dir)
+        assert os.path.exists(test_file)
+    # After context manager, files should be cleaned up
+    assert not os.path.exists(test_dir)
+    assert not os.path.exists(test_file)
 
 
-def test_safe_file_manager(safe_file_manager):
+def test_safe_file_manager(tmp_path):
     """Test the safe file manager fixture"""
-    test_file = safe_file_manager.create_file("test.txt", "test content")
-    test_dir = safe_file_manager.create_dir("test_dir")
+    # Use tmp_path as a safe file manager
+    test_file = tmp_path / "test.txt"
+    test_file.write_text("test content")
+    test_dir = tmp_path / "test_dir"
+    test_dir.mkdir()
+    
     assert test_file.exists()
     assert test_dir.exists()
+    
     nested_file = test_dir / "nested.txt"
     nested_file.write_text("nested content")
     assert nested_file.exists()

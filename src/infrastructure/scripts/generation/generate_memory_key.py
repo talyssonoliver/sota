@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, sys
 """
 from cryptography.fernet import Fernet
 Generate Memory Engine Encryption Key
 Creates a secure encryption key for the Memory Engine system.
 """
 
-import sys
-from pathlib import Path
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 from cryptography.fernet import Fernet
 

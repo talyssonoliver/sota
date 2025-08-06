@@ -38,8 +38,11 @@ class TestGeminiCLI:
             "api_key": "test-api-key",
         }
 
-    def test_init_with_config(self):
+    @patch('src.interfaces.cli.gemini_cli.ChatGoogleGenerativeAI')
+    def test_init_with_config(self, mock_chat_model):
         """Test GeminiCLI initialization with configuration."""
+        mock_chat_model.return_value = Mock()
+        
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             json.dump(self.test_config, f)
             config_file = f.name
@@ -52,8 +55,11 @@ class TestGeminiCLI:
         finally:
             os.unlink(config_file)
 
-    def test_init_without_config(self):
+    @patch('src.interfaces.cli.gemini_cli.ChatGoogleGenerativeAI')
+    def test_init_without_config(self, mock_chat_model):
         """Test GeminiCLI initialization without configuration file."""
+        mock_chat_model.return_value = Mock()
+        
         cli = GeminiCLI()
         assert cli.config["model"] == "gemini-2.0-flash-lite"
         assert cli.config["temperature"] == 0.7
@@ -62,19 +68,28 @@ class TestGeminiCLI:
         )  # SystemIntegrationTool, MemoryTool, CodeAnalysisTool
 
     @patch.dict(os.environ, {"GEMINI_API_KEY": "test-env-key"})
-    def test_environment_variable_override(self):
+    @patch('src.interfaces.cli.gemini_cli.ChatGoogleGenerativeAI')
+    def test_environment_variable_override(self, mock_chat_model):
         """Test that environment variables override config file."""
+        mock_chat_model.return_value = Mock()
+        
         cli = GeminiCLI()
         assert cli.config.get("api_key") == "test-env-key"
 
-    def test_process_file_nonexistent(self):
+    @patch('src.interfaces.cli.gemini_cli.ChatGoogleGenerativeAI')
+    def test_process_file_nonexistent(self, mock_chat_model):
         """Test processing a non-existent file."""
+        mock_chat_model.return_value = Mock()
+        
         cli = GeminiCLI()
         with pytest.raises(GeminiCLIError, match="File not found"):
             cli.process_file("nonexistent.py", "Analyze this file")
 
-    def test_process_file_success(self):
+    @patch('src.interfaces.cli.gemini_cli.ChatGoogleGenerativeAI')
+    def test_process_file_success(self, mock_chat_model):
         """Test successful file processing."""
+        mock_chat_model.return_value = Mock()
+        
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write("# Test Python file\nprint('Hello, World!')")
             test_file = f.name
@@ -95,14 +110,20 @@ class TestGeminiCLI:
         finally:
             os.unlink(test_file)
 
-    def test_analyze_codebase_nonexistent_path(self):
+    @patch('src.interfaces.cli.gemini_cli.ChatGoogleGenerativeAI')
+    def test_analyze_codebase_nonexistent_path(self, mock_chat_model):
         """Test codebase analysis with non-existent path."""
+        mock_chat_model.return_value = Mock()
+        
         cli = GeminiCLI()
         with pytest.raises(GeminiCLIError, match="Project path not found"):
             cli.analyze_codebase("/nonexistent/path")
 
-    def test_analyze_codebase_success(self):
+    @patch('src.interfaces.cli.gemini_cli.ChatGoogleGenerativeAI')
+    def test_analyze_codebase_success(self, mock_chat_model):
         """Test successful codebase analysis."""
+        mock_chat_model.return_value = Mock()
+        
         # Mock codebase analysis for performance
         mock_analysis = {
             "project_path": "/test/path",
@@ -122,8 +143,11 @@ class TestGeminiCLI:
             assert isinstance(analysis["patterns"], list)
             assert isinstance(analysis["recommendations"], list)
 
-    def test_generate_code_without_output_file(self):
+    @patch('src.interfaces.cli.gemini_cli.ChatGoogleGenerativeAI')
+    def test_generate_code_without_output_file(self, mock_chat_model):
         """Test code generation without saving to file."""
+        mock_chat_model.return_value = Mock()
+        
         cli = GeminiCLI()
         with patch.object(cli, "model", Mock()) as mock_model:
             mock_response = Mock()
@@ -134,8 +158,11 @@ class TestGeminiCLI:
             assert "def hello_world" in result
             mock_model.invoke.assert_called_once()
 
-    def test_generate_code_with_output_file(self):
+    @patch('src.interfaces.cli.gemini_cli.ChatGoogleGenerativeAI')
+    def test_generate_code_with_output_file(self, mock_chat_model):
         """Test code generation with saving to file."""
+        mock_chat_model.return_value = Mock()
+        
         with tempfile.TemporaryDirectory() as temp_dir:
             output_file = Path(temp_dir) / "generated.py"
 
@@ -295,8 +322,10 @@ class TestAsyncOperations:
         mock_create_agent.return_value = mock_agent
 
         # Create CLI with mocked model
-        cli = GeminiCLI()
-        cli.model = Mock()  # Mock model to bypass API requirements
+        with patch('src.interfaces.cli.gemini_cli.ChatGoogleGenerativeAI') as mock_chat_model:
+            mock_chat_model.return_value = Mock()
+            cli = GeminiCLI()
+            cli.model = Mock()  # Mock model to bypass API requirements
 
         # Run chat (should exit after 'exit' input)
         import asyncio

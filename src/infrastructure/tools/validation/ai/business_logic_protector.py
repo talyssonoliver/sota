@@ -1,14 +1,22 @@
+
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    Path,
+    dataclass,
+    json,
+    re
+)
 """
 Business Logic Protector
 Protects critical business logic from harmful modifications and ensures compliance.
 """
 
 import ast
-import json
-import re
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Any, Dict, List, Optional, Set
 
 from ..core.base_validator import BaseValidator

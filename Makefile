@@ -80,17 +80,17 @@ test: clean-coverage lint ## Run full test suite
 test-quick: ## Fast validation (no coverage, optimal speed)
 	@$(MAKE) lint --no-print-directory
 	@echo "$(BLUE)🧪 Running quick tests (no coverage for speed)...$(NC)"
-	@$(VENV_PYTHON) -m pytest -n auto --dist loadscope --tb=line --maxfail=5 -x tests/
+	@$(VENV_PYTHON) -m pytest -n 4 --dist loadscope --tb=line --maxfail=5 -x tests/
 	@$(MAKE) smart-cleanup --no-print-directory
 
 test-dev: ## Development testing (no coverage, minimal cleanup)
 	@echo "$(BLUE)🧪 Running development tests...$(NC)"
-	@$(VENV_PYTHON) -m pytest -n auto --dist loadscope --tb=short --maxfail=10 tests/
+	@$(VENV_PYTHON) -m pytest -n 4 --dist loadscope --tb=short --maxfail=10 tests/
 	@$(MAKE) smart-cleanup --no-print-directory
 
 test-ultra-fast: ## Ultra-fast unit tests only (immediate feedback)
 	@echo "$(BLUE)⚡ Running ultra-fast unit tests...$(NC)"
-	@$(VENV_PYTHON) -m pytest -m unit -n auto --dist loadscope --tb=line --maxfail=3 -x --disable-warnings
+	@$(VENV_PYTHON) -m pytest -m unit -n 4 --dist loadscope --tb=line --maxfail=3 -x --disable-warnings
 	@echo "$(GREEN)✅ Ultra-fast tests completed$(NC)"
 
 test-adaptive: ## Adaptive testing (prioritize tests for changed files)
@@ -108,20 +108,20 @@ test-agents: ## Multi-agent tests
 
 test-unit: ## Fast unit tests only
 	@echo "$(BLUE)⚡ Running unit tests...$(NC)"
-	@$(VENV_PYTHON) -m pytest -m unit -n auto --dist loadscope --tb=line
+	@$(VENV_PYTHON) -m pytest -m unit -n 4 --dist loadscope --tb=line
 
 test-integration: ## Integration tests only
 	@echo "$(BLUE)🔗 Running integration tests...$(NC)"
-	@$(VENV_PYTHON) -m pytest -m integration -n auto --dist loadscope --tb=short
+	@$(VENV_PYTHON) -m pytest -m integration -n 4 --dist loadscope --tb=short
 
 test-parallel: ## Full parallel test suite with optimal settings
 	@echo "$(BLUE)🚀 Running full test suite in parallel...$(NC)"
-	@$(VENV_PYTHON) -m pytest -n auto --dist loadscope tests/ --tb=line
+	@$(VENV_PYTHON) -m pytest -n 4 --dist loadscope tests/ --tb=line
 
 test-parallel-with-lint: ## Parallel testing with concurrent linting
 	@echo "$(BLUE)🚀 Running tests and linting in parallel...$(NC)"
 	@$(MAKE) lint & \
-	$(VENV_PYTHON) -m pytest -n auto --dist loadscope --tb=line tests/ & \
+	$(VENV_PYTHON) -m pytest -n 4 --dist loadscope --tb=line tests/ & \
 	wait
 	@$(MAKE) smart-cleanup --no-print-directory
 	@echo "$(GREEN)✅ Parallel testing and linting completed$(NC)"
@@ -214,7 +214,7 @@ perf-monitor: ## Show performance trends
 	@$(VENV_PYTHON) scripts/performance_monitor.py --trends
 
 perf-test-quick: ## Run test-quick with performance monitoring
-	@$(VENV_PYTHON) scripts/performance_monitor.py $(VENV_PYTHON) -m pytest -n auto --dist loadscope --tb=line --maxfail=5 -x tests/
+	@$(VENV_PYTHON) scripts/performance_monitor.py $(VENV_PYTHON) -m pytest -n 4 --dist loadscope --tb=line --maxfail=5 -x tests/
 
 perf-test-adaptive: ## Run adaptive tests with performance monitoring
 	@$(VENV_PYTHON) scripts/performance_monitor.py $(VENV_PYTHON) scripts/adaptive_test_runner.py

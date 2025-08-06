@@ -1,12 +1,12 @@
 {
-  "timestamp": "2025-07-23 21:14:41",
+  "timestamp": "2025-08-02 21:50:16",
   "validation_verification": {
     "summary": {
-      "total_issues": 4200,
+      "total_issues": 11349,
       "critical_issues": 0,
       "warnings": 0,
       "info": 0,
-      "files_analyzed": 456,
+      "files_analyzed": 1026,
       "validation_passed": true
     },
     "coding_standards": {
@@ -14,16 +14,33 @@
       "auto_fixable": 0
     },
     "security_vulnerabilities": {
-      "total_vulnerabilities": 3809,
+      "total_vulnerabilities": 8870,
       "by_owasp_category": {
-        "A02:2021-Cryptographic Failures": 810,
-        "A08:2021-Software and Data Integrity Failures": 1925,
-        "A01:2021-Broken Access Control": 1027,
-        "A09:2021-Security Logging and Monitoring Failures": 45,
-        "A05:2021-Security Misconfiguration": 2
+        "A02:2021-Cryptographic Failures": 2412,
+        "A08:2021-Software and Data Integrity Failures": 3695,
+        "A01:2021-Broken Access Control": 2497,
+        "A09:2021-Security Logging and Monitoring Failures": 124,
+        "A05:2021-Security Misconfiguration": 7
       }
     },
-    "external_tools": {},
+    "external_tools": {
+      "mypy": {
+        "returncode": 2,
+        "issues_found": 0
+      },
+      "black": {
+        "returncode": 2,
+        "issues_found": 0
+      },
+      "ruff": {
+        "returncode": 1,
+        "issues_found": 752
+      },
+      "bandit": {
+        "returncode": 1,
+        "issues_found": 135
+      }
+    },
     "compliance": {
       "owasp_top_10": {
         "compliance_percentage": 50.0,
@@ -33,20 +50,22 @@
       },
       "pep8_compliance": {
         "compliance_percentage": 100.0,
-        "files_compliant": 456,
-        "total_files": 456,
+        "files_compliant": 1026,
+        "total_files": 1026,
         "total_violations": 0,
         "status": "COMPLIANT"
       }
     }
   },
   "recommendations": [
-    "\ud83d\udd12 Address 3809 security vulnerabilities immediately",
-    "  - A02:2021-Cryptographic Failures: 810 issues",
-    "  - A08:2021-Software and Data Integrity Failures: 1925 issues",
-    "  - A01:2021-Broken Access Control: 1027 issues",
-    "  - A09:2021-Security Logging and Monitoring Failures: 45 issues",
-    "  - A05:2021-Security Misconfiguration: 2 issues",
-    "\ud83d\udcca Improve code quality: 181 issues found"
+    "\ud83d\udd12 Address 8870 security vulnerabilities immediately",
+    "  - A02:2021-Cryptographic Failures: 2412 issues",
+    "  - A08:2021-Software and Data Integrity Failures: 3695 issues",
+    "  - A01:2021-Broken Access Control: 2497 issues",
+    "  - A09:2021-Security Logging and Monitoring Failures: 124 issues",
+    "  - A05:2021-Security Misconfiguration: 7 issues",
+    "\ud83d\udcca Improve code quality: 1178 issues found",
+    "\ud83d\udee0\ufe0f Run ruff to fix 752 issues",
+    "\ud83d\udee0\ufe0f Run bandit to fix 135 issues"
   ]
 }

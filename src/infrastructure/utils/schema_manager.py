@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    json,
+    logging,
+    os,
+    re,
+    sys,
+    traceback,
+    yaml
+)
 """
 Consolidated Schema Management Utility
 
@@ -14,18 +25,18 @@ This utility can:
 """
 
 
-import yaml
+# import yaml  # Consolidated to common_imports
 
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 try:
     import argparse
-    import json
-    import logging
-    import os
-    import sys
+#     import json  # Consolidated to common_imports
+#     import logging  # Consolidated to common_imports
+#     import os  # Consolidated to common_imports
+#     import sys  # Consolidated to common_imports
     from typing import Any, Dict, List  # Removed unused Optional, Tuple
 except ImportError:
     pass
@@ -174,7 +185,7 @@ class SchemaManager:
             return
 
         # Check for existing schema directive
-        import re
+#         import re  # Consolidated to common_imports
 
         existing_directive_pattern = r"# yaml-language-server: \$schema=[^\n]*"
         has_existing_directive = re.search(existing_directive_pattern, content)
@@ -455,7 +466,7 @@ Examples:
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
         if args.verbose:
-            import traceback
+#             import traceback  # Consolidated to common_imports
 
             traceback.print_exc()
         sys.exit(1)

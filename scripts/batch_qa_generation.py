@@ -6,7 +6,6 @@ Generates QA reports for all completed tasks that don't have QA reports yet.
 This addresses the critical issue where only 1/105 tasks have QA reports.
 """
 
-import json
 import sys
 from pathlib import Path
 from typing import List, Dict, Any
@@ -15,7 +14,7 @@ from typing import List, Dict, Any
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
-from orchestration.qa_validation import QAValidationEngine
+from src.core.workflows.qa_validation import QAValidationEngine
 from utils.completion_metrics import CompletionMetricsCalculator
 
 
@@ -32,7 +31,7 @@ def find_tasks_needing_qa() -> List[str]:
             
         task_id = task_dir.name
         qa_report_file = task_dir / "qa_report.json"
-        status_file = task_dir / "status.json"
+        task_dir / "status.json"
         
         # Check if task is completed and lacks QA report
         has_completion_artifacts = any([
@@ -121,7 +120,7 @@ def update_dashboard_after_qa_generation():
         qa_pass_rate = team_metrics["qa_pass_rate"]
         qa_tasks = [t for t in metrics["task_metrics"] if t["qa_status"] is not None]
         
-        print(f"  ✅ Dashboard updated")
+        print("  ✅ Dashboard updated")
         print(f"  📈 QA Pass Rate: {qa_pass_rate:.1f}%")
         print(f"  🧪 Tasks with QA: {len(qa_tasks)}/{len(metrics['task_metrics'])}")
         
@@ -152,7 +151,7 @@ def main():
     results = batch_generate_qa_reports(args.max_tasks)
     
     # Display results
-    print(f"\n🎉 Batch QA generation complete!")
+    print("\n🎉 Batch QA generation complete!")
     print(f"  ✅ Successful: {results['successful']}")
     print(f"  ❌ Failed: {results['failed']}")
     print(f"  📊 Success rate: {results['successful']/results['total_tasks']*100:.1f}%")
@@ -163,7 +162,7 @@ def main():
     # Update dashboard
     update_dashboard_after_qa_generation()
     
-    print(f"\n✨ QA automation complete! Check dashboard for updated metrics.")
+    print("\n✨ QA automation complete! Check dashboard for updated metrics.")
 
 
 if __name__ == "__main__":

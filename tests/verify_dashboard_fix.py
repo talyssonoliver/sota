@@ -5,7 +5,6 @@ Tests the unified dashboard to ensure all widgets display real data instead of p
 """
 
 import requests
-import json
 import sys
 from datetime import datetime
 

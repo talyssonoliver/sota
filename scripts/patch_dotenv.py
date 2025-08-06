@@ -7,8 +7,6 @@ to prevent Unicode decoding errors from breaking test execution.
 
 import os
 import sys
-from functools import wraps
-from pathlib import Path
 
 
 def patch_dotenv():

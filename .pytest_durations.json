@@ -1,0 +1,8 @@
+{
+ "tests/unit/core/workflows/test_daily_cycle.py::TestDailyCycleOrchestrationIntegration::test_error_recovery_workflow": 0.3679316001944244,
+ "tests/unit/core/workflows/test_task_lifecycle.py::TestMainFunction::test_main_function": 0.003099100198596716,
+ "tests/unit/core/workflows/test_summarise_task.py::TestTaskSummary::test_task_summary_creation": 0.002337599638849497,
+ "tests/unit/core/workflows/test_summarise_task.py::TestTaskSummary::test_task_summary_with_optional_fields": 0.002158599905669689,
+ "tests/unit/core/workflows/test_timeline_method.py::test_timeline_method": 0.13053900003433228,
+ "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationIntegration::test_real_task_declaration": 0.10430280026048422
+}

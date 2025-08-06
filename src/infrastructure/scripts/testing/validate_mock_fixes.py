@@ -1,12 +1,21 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Dict,
+    List,
+    Path,
+    os,
+    re,
+    subprocess
+)
 """
 Script to validate mock fixes and generate a summary report.
 """
-import os
-import re
-import subprocess
-from pathlib import Path
-from typing import Dict, List, Tuple
+# import os  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# import subprocess  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Dict, List  # Consolidated to common_imports
 
 
 def count_mock_patterns(file_path: Path) -> Dict[str, int]:
@@ -59,14 +68,14 @@ def run_test_sample(test_files: List[Path]) -> Dict[str, bool]:
             cmd = ['python3', '-m', 'pytest', str(test_file), '-v', '-x']
             result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
             results[str(test_file)] = result.returncode == 0
-        except Exception as e:
+        except Exception:
             results[str(test_file)] = False
     
     return results
 
 def generate_report():
     """Generate a comprehensive report of mock fixes."""
-    test_dir = Path('tests')
+    Path('tests')
     
     # Files we've fixed
     fixed_files = [

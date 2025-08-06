@@ -1,0 +1,14 @@
+{
+  "/tmp/test_auth_doc.md_0": {
+    "tier": "hot",
+    "size_bytes": 760,
+    "created_at": "2025-07-25T18:16:28.970574",
+    "last_accessed": "2025-07-25T18:16:28.970574",
+    "access_count": 1,
+    "file_path": "/tmp/test_auth_doc.md_0.dat",
+    "metadata": {
+      "total_chunks": 1,
+      "chunk_method": "semantic"
+    }
+  }
+}

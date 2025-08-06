@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    os,
+    sys,
+    tempfile
+)
 """
 Step 4.4 — Register Agent Output Demo
 
@@ -14,24 +23,17 @@ Demo Scenarios:
 5. Multi-agent workflow demonstration
 """
 
-import json
-import os
+# import json  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
 import shutil
-import sys
-import tempfile
+# import sys  # Consolidated to common_imports
+# import tempfile  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
-try:
-    from datetime import datetime
-except ImportError:
-    pass
-try:
-    from pathlib import Path
-except ImportError:
-    pass
-try:
-    from src.core.workflows.register_output import AgentOutputRegistry
-except ImportError:
-    pass
+from src.core.workflows.register_output import AgentOutputRegistry
+
+# Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
@@ -39,7 +41,7 @@ def print_section(title: str):
     """Print a formatted section header."""
     print(f"\n{'=' * 60}")
     print(f"📋 {title}")
-    print("=" * 60)
+    print('=' * 60)
 
 
 def print_success(message: str):
@@ -65,14 +67,8 @@ Successfully implemented comprehensive CRUD operations for the Supabase service 
 
 ```typescript
 // filename: lib/services/customerService.ts
-try:
-    import { supabase } from '../supabase/client';
-except ImportError:
-    pass
-try:
-    import { Customer, CreateCustomerData, UpdateCustomerData } from '../types/customer';
-except ImportError:
-    pass
+import { supabase } from '../supabase/client';
+import { Customer, CreateCustomerData, UpdateCustomerData } from '../types/customer';
 
 export class CustomerService {
   /**
@@ -143,19 +139,8 @@ export const customerService = new CustomerService();
 
 ```typescript
 // filename: lib/services/orderService.ts
-try:
-    import { supabase } from '../supabase/client';
-except ImportError:
-    pass
-try:
-    import { Order, CreateOrderData, OrderStatus } from '../types/order';
-except ImportError:
-    pass
-import json
-import logging
-import os
-import sys
-import tempfile
+import { supabase } from '../supabase/client';
+import { Order, CreateOrderData, OrderStatus } from '../types/order';
 
 export class OrderService {
   /**
@@ -356,112 +341,76 @@ The implemented service functions are ready for integration with:
 
 def create_realistic_qa_report() -> dict:
     """Create a realistic QA report for demonstration."""
-    return {
-        "task_id": "BE-07",
-        "agent_id": "qa",
-        "qa_session_id": "qa_BE-07_20250525_143000",
-        "timestamp": datetime.now().isoformat(),
-        "analysis_summary": {
-            "overall_status": "PASSED_WITH_RECOMMENDATIONS",
-            "confidence_score": 94,
-            "critical_issues": 0,
-            "warnings": 3,
-            "recommendations": 5,
-            "code_quality_score": 92,
-        },
-        "code_analysis": {
-            "files_analyzed": [
-                "lib/services/customerService.ts",
-                "lib/services/orderService.ts",
-                "schema/service_layer_schema.sql",
-                "lib/types/service.ts",
-            ],
-            "total_lines": 425,
-            "complexity_score": "MEDIUM",
-            "maintainability_index": 88,
-            "test_coverage_estimate": "87%",
-        },
-        "security_analysis": {
-            "rls_compliance": "EXCELLENT",
-            "input_validation": "GOOD",
-            "sql_injection_protection": "SUPABASE_HANDLED",
-            "authentication_required": True,
-            "data_encryption": "TRANSPORT_LAYER",
-        },
-        "performance_analysis": {
-            "query_efficiency": "EXCELLENT",
-            "indexing_strategy": "WELL_IMPLEMENTED",
-            "pagination_support": True,
-            "caching_opportunities": [
-                "Customer lookup caching",
-                "Order status aggregations",
-            ],
-        },
-        "detailed_findings": [
-            {
-                "type": "WARNING",
-                "severity": "LOW",
-                "location": "customerService.ts:createCustomer",
-                "issue": "Email validation not implemented",
-                "recommendation": "Add email format validation before database insert",
-            },
-            {
-                "type": "WARNING",
-                "severity": "LOW",
-                "location": "orderService.ts:calculateTotal",
-                "issue": "Private method lacks input validation",
-                "recommendation": "Add validation for item structure and numeric values",
-            },
-            {
-                "type": "WARNING",
-                "severity": "MEDIUM",
-                "location": "Both services",
-                "issue": "Audit logging not implemented",
-                "recommendation": "Consider adding audit trails for compliance",
-            },
-            {
-                "type": "RECOMMENDATION",
-                "severity": "INFO",
-                "location": "customerService.ts",
-                "issue": "Cache opportunities for customer lookups",
-                "recommendation": "Implement Redis caching for frequently accessed customers",
-            },
-            {
-                "type": "RECOMMENDATION",
-                "severity": "INFO",
-                "location": "orderService.ts",
-                "issue": "Batch operations support",
-                "recommendation": "Add bulk order creation for better performance",
-            },
-        ],
-        "test_recommendations": [
-            {
-                "type": "UNIT_TEST",
-                "priority": "HIGH",
-                "description": "Test all CRUD operations with valid and invalid data",
-                "estimated_effort": "4 hours",
-            },
-            {
-                "type": "INTEGRATION_TEST",
-                "priority": "HIGH",
-                "description": "Test RLS policies and authentication flows",
-                "estimated_effort": "3 hours",
-            },
-            {
-                "type": "PERFORMANCE_TEST",
-                "priority": "MEDIUM",
-                "description": "Load test with realistic data volumes",
-                "estimated_effort": "2 hours",
-            },
-        ],
-        "approval_status": "APPROVED_WITH_MINOR_FIXES",
-        "next_actions": [
-            "Implement email validation in customer service",
-            "Add input validation to private methods",
-            "Create comprehensive test suite",
-            "Document API usage examples",
-        ],
-    }
+    return {"task_id": "BE-07",
+            "agent_id": "qa",
+            "qa_session_id": "qa_BE-07_20250525_143000",
+            "timestamp": datetime.now().isoformat(),
+            "analysis_summary": {"overall_status": "PASSED_WITH_RECOMMENDATIONS",
+                                 "confidence_score": 94,
+                                 "critical_issues": 0,
+                                 "warnings": 3,
+                                 "recommendations": 5,
+                                 "code_quality_score": 92},
+            "code_analysis": {"files_analyzed": ["lib/services/customerService.ts",
+                                                 "lib/services/orderService.ts",
+                                                 "schema/service_layer_schema.sql",
+                                                 "lib/types/service.ts"],
+                              "total_lines": 425,
+                              "complexity_score": "MEDIUM",
+                              "maintainability_index": 88,
+                              "test_coverage_estimate": "87%"},
+            "security_analysis": {"rls_compliance": "EXCELLENT",
+                                  "input_validation": "GOOD",
+                                  "sql_injection_protection": "SUPABASE_HANDLED",
+                                  "authentication_required": True,
+                                  "data_encryption": "TRANSPORT_LAYER"},
+            "performance_analysis": {"query_efficiency": "EXCELLENT",
+                                     "indexing_strategy": "WELL_IMPLEMENTED",
+                                     "pagination_support": True,
+                                     "caching_opportunities": ["Customer lookup caching",
+                                                               "Order status aggregations"]},
+            "detailed_findings": [{"type": "WARNING",
+                                   "severity": "LOW",
+                                   "location": "customerService.ts:createCustomer",
+                                   "issue": "Email validation not implemented",
+                                   "recommendation": "Add email format validation before database insert"},
+                                  {"type": "WARNING",
+                                   "severity": "LOW",
+                                   "location": "orderService.ts:calculateTotal",
+                                   "issue": "Private method lacks input validation",
+                                   "recommendation": "Add validation for item structure and numeric values"},
+                                  {"type": "WARNING",
+                                   "severity": "MEDIUM",
+                                   "location": "Both services",
+                                   "issue": "Audit logging not implemented",
+                                   "recommendation": "Consider adding audit trails for compliance"},
+                                  {"type": "RECOMMENDATION",
+                                   "severity": "INFO",
+                                   "location": "customerService.ts",
+                                   "issue": "Cache opportunities for customer lookups",
+                                   "recommendation": "Implement Redis caching for frequently accessed customers"},
+                                  {"type": "RECOMMENDATION",
+                                   "severity": "INFO",
+                                   "location": "orderService.ts",
+                                   "issue": "Batch operations support",
+                                   "recommendation": "Add bulk order creation for better performance"}],
+            "test_recommendations": [{"type": "UNIT_TEST",
+                                      "priority": "HIGH",
+                                      "description": "Test all CRUD operations with valid and invalid data",
+                                      "estimated_effort": "4 hours"},
+                                     {"type": "INTEGRATION_TEST",
+                                      "priority": "HIGH",
+                                      "description": "Test RLS policies and authentication flows",
+                                      "estimated_effort": "3 hours"},
+                                     {"type": "PERFORMANCE_TEST",
+                                      "priority": "MEDIUM",
+                                      "description": "Load test with realistic data volumes",
+                                      "estimated_effort": "2 hours"}],
+            "approval_status": "APPROVED_WITH_MINOR_FIXES",
+            "next_actions": ["Implement email validation in customer service",
+                             "Add input validation to private methods",
+                             "Create comprehensive test suite",
+                             "Document API usage examples"]}
 
 
 def demo_step_4_4():
@@ -469,9 +418,7 @@ def demo_step_4_4():
     print("🚀 Step 4.4 — Register Agent Output Demo")
     print("=" * 60)
     print("This demo showcases the complete agent output registration system")
-    print(
-        "for storing, tracking, and preparing agent outputs for downstream processing."
-    )
+    print("for storing, tracking, and preparing agent outputs for downstream processing.")
 
     # Create temporary demo environment
     demo_dir = tempfile.mkdtemp(prefix="step_4_4_demo_")
@@ -483,12 +430,13 @@ def demo_step_4_4():
         print_success("Agent output registry initialized")
 
         # Demo 1: Register Backend Agent Output
-        print_section("Demo 1: Backend Agent Output Registration with Code Extraction")
+        print_section(
+            "Demo 1: Backend Agent Output Registration with Code Extraction")
 
         # Create backend output file
         backend_content = create_realistic_backend_output()
         backend_file = Path(demo_dir) / "backend_output_BE-07.md"
-        backend_file.write_text(backend_content, encoding="utf-8")
+        backend_file.write_text(backend_content, encoding='utf-8')
 
         print_info(f"Created backend output file: {backend_file.name}")
         print_info(f"File size: {len(backend_content):,} characters")
@@ -504,16 +452,16 @@ def demo_step_4_4():
                 "execution_time": 125.4,
                 "model": "gpt-4",
                 "tokens_used": 2847,
-                "agent_version": "1.2.0",
-            },
+                "agent_version": "1.2.0"
+            }
         )
 
         print_success("Backend output registered successfully")
         print_info(f"  📄 Output file: {backend_registration.output_path}")
         print_info(
-            f"  📦 Extracted {len(backend_registration.extracted_artifacts)} code artifacts"
-        )
-        print_info(f"  ⏰ Registration time: {backend_registration.registration_time}")
+            f"  📦 Extracted {len(backend_registration.extracted_artifacts)} code artifacts")
+        print_info(
+            f"  ⏰ Registration time: {backend_registration.registration_time}")
 
         # Show extracted artifacts
         if backend_registration.extracted_artifacts:
@@ -529,14 +477,14 @@ def demo_step_4_4():
         # Create QA report
         qa_data = create_realistic_qa_report()
         qa_file = Path(demo_dir) / "qa_report_BE-07.json"
-        qa_file.write_text(json.dumps(qa_data, indent=2), encoding="utf-8")
+        qa_file.write_text(json.dumps(qa_data, indent=2), encoding='utf-8')
 
         print_info(f"Created QA report file: {qa_file.name}")
-        print_info(f"QA Status: {qa_data['analysis_summary']['overall_status']}")
+        print_info(
+            f"QA Status: {qa_data['analysis_summary']['overall_status']}")
         print_info(
             f"Quality Score: {
-                qa_data['analysis_summary']['code_quality_score']}/100"
-        )
+                qa_data['analysis_summary']['code_quality_score']}/100")
 
         # Register QA output
         qa_registration = registry.register_output(
@@ -547,16 +495,15 @@ def demo_step_4_4():
             metadata={
                 "analysis_duration": 45.2,
                 "qa_agent_version": "2.1.0",
-                "checks_performed": 23,
-            },
+                "checks_performed": 23
+            }
         )
 
         print_success("QA output registered successfully")
         print_info(f"  📊 Report file: {qa_registration.output_path}")
         print_info(
             f"  🔍 Analysis complete with {
-                qa_data['analysis_summary']['warnings']} warnings"
-        )
+                qa_data['analysis_summary']['warnings']} warnings")
 
         # Demo 3: Status Tracking
         print_section("Demo 3: Task Status Tracking")
@@ -566,39 +513,36 @@ def demo_step_4_4():
         print_info(f"Last Updated: {task_status['last_updated']}")
         print_info(f"Agent Outputs: {len(task_status['agent_outputs'])}")
 
-        for agent_id, agent_info in task_status["agent_outputs"].items():
+        for agent_id, agent_info in task_status['agent_outputs'].items():
             print(f"  🤖 {agent_id.upper()} Agent:")
             print(f"     Status: {agent_info['status']}")
             print(f"     File: {agent_info['output_file']}")
             print(f"     Size: {agent_info['file_size']:,} bytes")
-            if agent_info["extracted_artifacts"] > 0:
+            if agent_info['extracted_artifacts'] > 0:
                 print(
                     f"     Artifacts: {
-                        agent_info['extracted_artifacts']} files"
-                )
+                        agent_info['extracted_artifacts']} files")
 
         # Demo 4: QA Input Preparation
         print_section("Demo 4: QA Input Preparation for Downstream Agents")
 
         qa_input = registry.prepare_qa_input("BE-07")
         print_info(f"Prepared QA input for task: {qa_input['task_id']}")
-        print_info(f"Primary outputs: {len(qa_input['primary_outputs'])} files")
+        print_info(
+            f"Primary outputs: {len(qa_input['primary_outputs'])} files")
         print_info(f"Code artifacts: {len(qa_input['code_artifacts'])} files")
 
         print_info("📄 Primary Outputs:")
-        for output in qa_input["primary_outputs"]:
-            output_file = Path(output["file"]).name
-            content_preview = (
-                output["content"][:100] + "..."
-                if len(output["content"]) > 100
-                else output["content"]
-            )
+        for output in qa_input['primary_outputs']:
+            output_file = Path(output['file']).name
+            content_preview = output['content'][:100] + \
+                "..." if len(output['content']) > 100 else output['content']
             print(f"   - {output_file}")
             print(f"     Preview: {content_preview}")
 
         print_info("🔧 Code Artifacts:")
-        for artifact in qa_input["code_artifacts"]:
-            artifact_file = Path(artifact["file"]).name
+        for artifact in qa_input['code_artifacts']:
+            artifact_file = Path(artifact['file']).name
             print(f"   - {artifact_file} ({artifact['language']})")
             print(f"     Size: {len(artifact['content'])} characters")
 
@@ -629,7 +573,7 @@ def demo_step_4_4():
             "qa_analysis": "✅ Complete",
             "code_artifacts": f"✅ {len(qa_input['code_artifacts'])} files ready",
             "status_tracking": "✅ Active",
-            "downstream_ready": "✅ All inputs prepared",
+            "downstream_ready": "✅ All inputs prepared"
         }
 
         print_info("🎯 Integration Readiness:")
@@ -640,18 +584,18 @@ def demo_step_4_4():
         print_section("Demo Summary: Step 4.4 Implementation Complete")
 
         summary_stats = {
-            "Total Outputs Registered": len(task_status["agent_outputs"]),
-            "Code Artifacts Extracted": len(backend_registration.extracted_artifacts),
+            "Total Outputs Registered": len(
+                task_status['agent_outputs']),
+            "Code Artifacts Extracted": len(
+                backend_registration.extracted_artifacts),
             "QA Analysis Complete": "✅ PASSED_WITH_RECOMMENDATIONS",
             "Status Tracking": "✅ Active",
             "Downstream Integration": "✅ Ready",
             "File Management": "✅ Organized",
-            "Metadata Tracking": "✅ Complete",
-        }
+            "Metadata Tracking": "✅ Complete"}
 
         print_success(
-            "Step 4.4 — Register Agent Output implementation validated successfully!"
-        )
+            "Step 4.4 — Register Agent Output implementation validated successfully!")
         print_info("📊 Demo Results:")
         for metric, value in summary_stats.items():
             print(f"   {metric}: {value}")
@@ -665,7 +609,7 @@ def demo_step_4_4():
             "qa_registration": qa_registration,
             "task_status": task_status,
             "qa_input": qa_input,
-            "summary_stats": summary_stats,
+            "summary_stats": summary_stats
         }
 
     except Exception as e:

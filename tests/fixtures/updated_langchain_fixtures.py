@@ -85,7 +85,6 @@ class LangChainMockFixture:
             return {"answer": f"Mock answer for: {question}"}
 
         # Set .invoke as MagicMock with side_effect for proper test assertions
-        from unittest.mock import MagicMock
         self.mock_qa_chain.invoke = MagicMock(side_effect=qa_invoke)
         self.mock_conv_chain.invoke = MagicMock(side_effect=conv_invoke)
 

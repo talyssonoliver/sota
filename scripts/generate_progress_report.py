@@ -6,12 +6,10 @@ Generates daily, weekly, and task-specific progress reports for team visibility
 and project tracking. Integrates with completion metrics and QA results.
 """
 
-import json
-import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 # Add project root to path for imports
 project_root = Path(__file__).parent.parent

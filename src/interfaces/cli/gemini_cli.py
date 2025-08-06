@@ -1,4 +1,19 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    asyncio,
+    datetime,
+    json,
+    logging,
+    os,
+    sys,
+    traceback
+)
 """
 Gemini CLI Integration for AI Agent System
 Provides command-line interface for Google Gemini AI integration with LangChain, LangGraph, and MCP support.
@@ -6,19 +21,19 @@ Based on Google's official Gemini CLI (June 2025) with custom integrations for t
 """
 
 import argparse
-import asyncio
-import json
-import os
-import sys
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# import asyncio  # Consolidated to common_imports
+# import json  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 # Configure logging
-import logging
+# import logging  # Consolidated to common_imports
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -567,7 +582,7 @@ Examples:
     except Exception as e:
         print(f"❌ Unexpected error: {e}")
         if args.verbose:
-            import traceback
+#             import traceback  # Consolidated to common_imports
 
             traceback.print_exc()
         sys.exit(1)

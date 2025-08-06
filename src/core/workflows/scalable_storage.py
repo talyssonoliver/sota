@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Dict,
+    List,
+    Path,
+    dataclass,
+    datetime,
+    time,
+    timedelta
+)
 """
 Scalable Storage Manager for High-Volume Task Processing
 
@@ -9,14 +19,13 @@ Addresses scalability concerns for systems handling thousands of tasks:
 - Performance monitoring
 """
 
-import random
 import shutil
 import threading
-import time
-from dataclasses import dataclass
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Dict, List
+# import time  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from datetime import datetime, timedelta  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Dict, List  # Consolidated to common_imports
 
 
 @dataclass
@@ -188,10 +197,11 @@ def benchmark_storage_performance(storage: ScalableTaskStorage, num_tasks: int =
         storage.get_task_directory(task_id)
     creation_time = time.time() - start_time
 
-    # Test random access
+    # Test random access (using secrets for cryptographically secure random)
+    import secrets
     start_time = time.time()
     for _ in range(100):
-        random_task = random.choice(task_ids)
+        random_task = secrets.choice(task_ids)
         storage.get_task_directory(random_task)
     access_time = time.time() - start_time
 

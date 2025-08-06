@@ -1,4 +1,18 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    Union,
+    datetime,
+    logging,
+    os,
+    re,
+    tempfile
+)
 """
 engine.py - Unified Memory System
 
@@ -12,11 +26,11 @@ Memory Engine Main Orchestrator
 Simplified, focused memory engine that coordinates all components
 """
 
-import logging
-import os
-import re
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Union
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional, Union  # Consolidated to common_imports
 
 try:
     from .caching import CacheManager
@@ -262,7 +276,7 @@ class MemoryEngine:
 
     def _create_storage_directories(self):
         """Create required storage directories for tests and normal operation."""
-        from pathlib import Path
+#         from pathlib import Path  # Consolidated to common_imports
 
         # Define storage paths based on the storage configuration
         storage_dirs = [
@@ -311,7 +325,7 @@ class MemoryEngine:
 
             # Check for API keys based on migration status
             openai_api_key = os.environ.get("OPENAI_API_KEY")
-            claude_api_key = os.environ.get("CLAUDE_API_KEY")
+            os.environ.get("CLAUDE_API_KEY")
             
             # Try to get embeddings instance (Claude or OpenAI based on feature flags)
             self._embeddings = _get_embeddings_instance(embedding_model, openai_api_key)
@@ -355,6 +369,135 @@ class MemoryEngine:
             self._vector_store = None
             self._embeddings = None
 
+    def _validate_document_access(self, user: str, file_path: str) -> None:
+        """Validate user access to document.
+        
+        Args:
+            user: User requesting access
+            file_path: Path to the document
+            
+        Raises:
+            SecurityError: If access is denied
+            FileNotFoundError: If document doesn't exist
+        """
+        # Security check
+        if self.security_manager and not self.security_manager.check_access(
+            user, file_path, "write"
+        ):
+            raise SecurityError(f"Access denied for user {user}")
+
+        # Existence check
+        if not os.path.exists(file_path):
+            raise FileNotFoundError(f"Document not found: {file_path}")
+
+    def _read_and_sanitize_content(self, file_path: str) -> str:
+        """Read document content and sanitize it.
+        
+        Args:
+            file_path: Path to the document
+            
+        Returns:
+            Sanitized document content
+        """
+        with open(file_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Sanitize content
+        if self.security_manager:
+            content = self.security_manager.sanitize_text(content)
+        
+        return content
+
+    def _chunk_document_content(self, content: str, file_path: str, 
+                               content_type: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Chunk document content using appropriate chunker.
+        
+        Args:
+            content: Document content to chunk
+            file_path: Path to the document
+            content_type: Optional content type for adaptive chunking
+            
+        Returns:
+            List of chunk dictionaries
+        """
+        # Chunk the document
+        if content_type and self.adaptive_chunker:
+            chunks = self.adaptive_chunker.chunk(content, file_path, content_type)
+        elif self.chunker:
+            chunks = self.chunker.chunk(content, file_path)
+        else:
+            # Fallback chunking
+            chunks = [
+                {
+                    "text": content,
+                    "metadata": {"source": file_path},
+                    "chunk_index": 0,
+                }
+            ]
+        
+        return chunks
+
+    def _store_document_chunk(self, chunk: Dict[str, Any], file_path: str, user: str) -> None:
+        """Store a single document chunk in storage systems.
+        
+        Args:
+            chunk: Chunk dictionary containing text and metadata
+            file_path: Path to source document
+            user: User storing the document
+        """
+        chunk_key = f"{file_path}_{chunk['chunk_index']}"
+
+        # Encrypt chunk data
+        if self.security_manager:
+            encrypted_data = self.security_manager.encrypt_data(chunk["text"])
+        else:
+            encrypted_data = chunk["text"]
+
+        # Store in tiered storage if available
+        if self.storage_manager:
+            self.storage_manager.store_data(
+                chunk_key, encrypted_data, chunk["metadata"]
+            )
+
+        # Add to vector store if available
+        if self.vector_store:
+            try:
+                self.vector_store.add_texts(
+                    texts=[chunk["text"]],
+                    metadatas=[
+                        {
+                            "source": file_path,
+                            "chunk_index": chunk["chunk_index"],
+                            "user": user,
+                        }
+                    ],
+                    ids=[chunk_key],
+                )
+            except Exception as e:
+                logger.warning(f"Failed to add to vector store: {e}")
+
+    def _track_document_metadata(self, file_path: str, user: str, content_type: Optional[str], 
+                                chunks_count: int) -> None:
+        """Track document metadata and audit log.
+        
+        Args:
+            file_path: Path to the document
+            user: User who added the document
+            content_type: Document content type
+            chunks_count: Number of chunks created
+        """
+        # Track document
+        self.documents[file_path] = {
+            "chunks": chunks_count,
+            "added_by": user,
+            "added_at": datetime.now().isoformat(),
+            "content_type": content_type,
+        }
+        
+        # Audit log
+        if self.audit_logger:
+            self.audit_logger.log_data_operation(user, "add_document", file_path)
+
     def add_document(
         self,
         file_path: str,
@@ -375,81 +518,21 @@ class MemoryEngine:
             True if successful, False otherwise
         """
         try:
-            # Security check
-            if self.security_manager and not self.security_manager.check_access(
-                user, file_path, "write"
-            ):
-                raise SecurityError(f"Access denied for user {user}")
+            # Validate access and existence
+            self._validate_document_access(user, file_path)
 
-            # Read document content
-            if not os.path.exists(file_path):
-                raise FileNotFoundError(f"Document not found: {file_path}")
-
-            with open(file_path, "r", encoding="utf-8") as f:
-                content = f.read()
-
-            # Sanitize content
-            if self.security_manager:
-                content = self.security_manager.sanitize_text(content)
+            # Read and sanitize content
+            content = self._read_and_sanitize_content(file_path)
 
             # Chunk the document
-            if content_type and self.adaptive_chunker:
-                chunks = self.adaptive_chunker.chunk(content, file_path, content_type)
-            elif self.chunker:
-                chunks = self.chunker.chunk(content, file_path)
-            else:
-                # Fallback chunking
-                chunks = [
-                    {
-                        "text": content,
-                        "metadata": {"source": file_path},
-                        "chunk_index": 0,
-                    }
-                ]
+            chunks = self._chunk_document_content(content, file_path, content_type)
 
-            # Store chunks
+            # Store all chunks
             for chunk in chunks:
-                chunk_key = f"{file_path}_{chunk['chunk_index']}"
+                self._store_document_chunk(chunk, file_path, user)
 
-                # Encrypt chunk data
-                if self.security_manager:
-                    encrypted_data = self.security_manager.encrypt_data(chunk["text"])
-                else:
-                    encrypted_data = chunk["text"]
-
-                # Store in tiered storage if available
-                if self.storage_manager:
-                    self.storage_manager.store_data(
-                        chunk_key, encrypted_data, chunk["metadata"]
-                    )
-
-                # Add to vector store if available
-                if self.vector_store:
-                    try:
-                        self.vector_store.add_texts(
-                            texts=[chunk["text"]],
-                            metadatas=[
-                                {
-                                    "source": file_path,
-                                    "chunk_index": chunk["chunk_index"],
-                                    "user": user,
-                                }
-                            ],
-                            ids=[chunk_key],
-                        )
-                    except Exception as e:
-                        logger.warning(f"Failed to add to vector store: {e}")
-
-            # Track document
-            self.documents[file_path] = {
-                "chunks": len(chunks),
-                "added_by": user,
-                "added_at": datetime.now().isoformat(),
-                "content_type": content_type,
-            }
-            # Audit log
-            if self.audit_logger:
-                self.audit_logger.log_data_operation(user, "add_document", file_path)
+            # Track metadata and audit
+            self._track_document_metadata(file_path, user, content_type, len(chunks))
 
             logger.info(f"Added document {file_path} with {len(chunks)} chunks")
             return True
@@ -638,8 +721,8 @@ class MemoryEngine:
 
             # Store document using existing add_document functionality
             # Create a temporary file-like approach for context storage
-            import os
-            import tempfile
+#             import os  # Consolidated to common_imports
+#             import tempfile  # Consolidated to common_imports
 
             with tempfile.NamedTemporaryFile(
                 mode="w", suffix=".txt", delete=False

@@ -1,7 +1,9 @@
 #!/usr/bin/env python
+
+from src.infrastructure.utils.common_imports import sys
 """Simple workflow validator placeholder."""
 
-import sys
+# import sys  # Consolidated to common_imports
 
 
 def main() -> int:

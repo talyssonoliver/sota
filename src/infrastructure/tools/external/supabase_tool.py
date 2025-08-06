@@ -2,9 +2,7 @@
 Supabase Tool - Provides database querying and schema information
 """
 
-import json
-import logging
-import os
+from src.infrastructure.utils.common_imports import json, logging, os
 from typing import Any, Dict, Optional
 
 # External dependencies with error handling
@@ -541,7 +539,7 @@ class SupabaseTool(ArtesanatoBaseTool):
         try:
             # Parse the query to extract table and conditions
             # This is a simplified parser for demonstration
-            # In a real implementation, you would use a more robust SQL parser
+            # TODO: Must implement, you would use a more robust SQL parser
             query_lower = query.lower()
 
             # Extract table name and fields

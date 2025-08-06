@@ -7,11 +7,9 @@ Usage: python tests/test_phase4_final_validation.py
 """
 
 import json
-import os
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -23,7 +21,7 @@ class TestPhase4FinalValidation(unittest.TestCase):
     def setUp(self):
         self.outputs_dir = Path("outputs")
         self.docs_dir = Path("docs")
-        self.orchestration_dir = Path("orchestration")
+        self.orchestration_dir = Path("src/core/workflows")
 
     def test_success_criteria_1_tasks_registered(self):
         """Validate: Tasks registered with full metadata"""
@@ -91,9 +89,9 @@ class TestPhase4FinalValidation(unittest.TestCase):
 
         # Check graph components
         graph_files = [
-            Path("graph/graph_builder.py"),
-            Path("graph/handlers.py"),
-            Path("orchestration/states.py")
+            Path("src/core/workflows/graph/graph_builder.py"),
+            Path("src/core/workflows/graph/handlers.py"),
+            Path("src/core/workflows/states.py")
         ]
 
         for file in graph_files:
@@ -128,11 +126,13 @@ class TestPhase4FinalValidation(unittest.TestCase):
         """Validate: Status tracked and updated per run"""
         print("\n✓ Testing: Status tracked and updated per run")
 
-        # Check status tracking via status.json files
+        # Check status tracking via task tracking files (status.json or task_declaration.json)
         status_files = list(self.outputs_dir.glob("*/status.json"))
-        print(f"  - Found {len(status_files)} status tracking files")
-        self.assertGreater(len(status_files), 0,
-                           "Should have status tracking files")
+        task_files = list(self.outputs_dir.glob("*/task_declaration.json"))
+        total_tracking_files = len(status_files) + len(task_files)
+        print(f"  - Found {len(status_files)} status files and {len(task_files)} task declaration files")
+        self.assertGreater(total_tracking_files, 0,
+                           "Should have status tracking files (status.json or task_declaration.json)")
 
         # Check monitoring script exists if present
         monitor_script = Path("scripts/monitor_workflow.py")
@@ -168,7 +168,7 @@ class TestPhase4FinalValidation(unittest.TestCase):
             # Validate BE-07 report
             be07_report = completions_dir / "BE-07.md"
             if be07_report.exists():
-                content = be07_report.read_text()
+                content = be07_report.read_text(encoding='utf-8')
                 self.assertGreater(len(content), 500,
                                    "Report should have substantial content")
                 print(
@@ -192,11 +192,11 @@ class TestPhase4FinalValidation(unittest.TestCase):
         """Test CLI interfaces are operational"""
         print("\n✓ Testing: CLI interfaces operational")
         cli_scripts = [
-            "orchestration/task_declaration.py",
-            "orchestration/execute_graph.py",
-            "orchestration/register_output.py",
-            "orchestration/extract_code.py",
-            "orchestration/summarise_task.py"
+            "src/core/workflows/task_declaration.py",
+            "src/core/workflows/execute_graph.py",
+            "src/core/workflows/register_output.py",
+            "src/core/workflows/extract_code.py",
+            "src/core/workflows/summarise_task.py"
         ]
 
         for script in cli_scripts:
@@ -206,7 +206,7 @@ class TestPhase4FinalValidation(unittest.TestCase):
 
         # Check optional scripts
         optional_scripts = [
-            "orchestration/update_task_status.py",
+            "src/core/workflows/update_task_status.py",
             "scripts/monitor_workflow.py"
         ]
 

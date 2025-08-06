@@ -14,7 +14,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from scripts.generate_task_report import generate_end_of_day_report
-from orchestration.daily_cycle import DailyCycleOrchestrator
+from src.core.workflows.daily_cycle import DailyCycleOrchestrator
 
 
 async def test_enhanced_eod_integration():

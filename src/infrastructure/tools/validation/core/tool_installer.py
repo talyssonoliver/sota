@@ -1,11 +1,13 @@
+
+from src.infrastructure.utils.common_imports import Path, subprocess, sys
 """
 Tool Installation and Detection System
 Automatically detects and installs missing validation tools.
 """
 
-import subprocess
-import sys
-from pathlib import Path
+# import subprocess  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Dict, List, Optional, Tuple
 
 

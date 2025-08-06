@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import datetime, json
 """
 Canvas Height Fix Validation Script
 Validates that the dashboard canvas height issue has been resolved.
@@ -6,11 +8,11 @@ Validates that the dashboard canvas height issue has been resolved.
 
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    import json
+    from src.infrastructure.utils.common_imports import json
 except ImportError:
     pass
     pass
@@ -110,7 +112,7 @@ def generate_summary_report():
     dashboard_status = test_dashboard_accessibility() 
     js_status = check_javascript_fixes()
     
-    print(f"\n📊 RESULTS:")
+    print("\n📊 RESULTS:")
     print(f"API Endpoints: {'✅ PASS' if api_status else '❌ FAIL'}")
     print(f"Dashboard Access: {'✅ PASS' if dashboard_status else '❌ FAIL'}")
     print(f"JavaScript Fixes: {'✅ PASS' if js_status else '❌ FAIL'}")
@@ -150,7 +152,7 @@ def generate_summary_report():
     with open("c:\\taly\\ai-system\\canvas_height_fix_validation.json", "w") as f:
         json.dump(validation_data, f, indent=2)
     
-    print(f"\n💾 Validation results saved to: canvas_height_fix_validation.json")
+    print("\n💾 Validation results saved to: canvas_height_fix_validation.json")
     
     return overall_status
 

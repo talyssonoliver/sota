@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    dataclass,
+    datetime,
+    json,
+    os,
+    sys
+)
 """
 Documentation Agent for Phase 5
 
@@ -6,12 +19,12 @@ Automated documentation generation and task completion reporting.
 Creates comprehensive reports for completed tasks with artifacts,
 summaries, and next steps.
 """
-import json
-import sys
-from dataclasses import dataclass
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# import json  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 
 @dataclass
@@ -465,14 +478,32 @@ class DocumentationAgent:
         pr_links = []
 
         try:
+            # Check if GitHub token is available
+#             import os  # Consolidated to common_imports
+            if not os.getenv('GITHUB_TOKEN'):
+                # Return fallback entry when GitHub integration is not available
+                return [{
+                    "type": "github_pr",
+                    "title": "GitHub PR (manual entry needed)",
+                    "url": "#"
+                }]
+            
             # GitHub integration not available - skipping PR collection
             # Note: GitHub integration can be implemented when tools.github_tool is available
-            return []
+            return [{
+                "type": "github_pr", 
+                "title": "GitHub PR (manual entry needed)",
+                "url": "#"
+            }]
 
         except OSError as e:
             print(f"Warning: Could not fetch GitHub PR links: {e}")
-            # Return empty list when GitHub integration unavailable
-            return []
+            # Return fallback entry when GitHub integration unavailable
+            return [{
+                "type": "github_pr",
+                "title": "GitHub PR (manual entry needed)", 
+                "url": "#"
+            }]
 
         return pr_links
 

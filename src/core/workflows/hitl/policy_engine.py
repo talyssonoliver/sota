@@ -1,21 +1,31 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    datetime,
+    logging,
+    yaml
+)
 """
 HITL Policy Engine
 
 Core policy engine for managing checkpoints and approvals.
 """
 
-import logging
-from datetime import datetime
-from typing import Any, Dict, List, Optional
+# import logging  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 try:
-    import yaml
+#     import yaml  # Consolidated to common_imports
 
     YAML_AVAILABLE = True
 except ImportError:
     YAML_AVAILABLE = False
 
-from .models import HITLCheckpoint
+from .models import HITLCheckpoint, HITLReviewDecision, HITLAuditEntry
 from .types import CheckpointStatus, RiskLevel
 
 logger = logging.getLogger(__name__)
@@ -176,70 +186,101 @@ class HITLPolicyEngine:
                         }
                     )
         return pending
+    
+    def _assess_risk(self, task_type: str, risk_factors: List[str]) -> RiskLevel:
+        """Assess risk level based on task type and risk factors"""
+        # High risk factors
+        high_risk_indicators = [
+            "complex_logic", "external_dependency", "security_sensitive",
+            "data_modification", "system_critical", "user_facing"
+        ]
+        
+        # Medium risk factors  
+        medium_risk_indicators = [
+            "configuration_change", "moderate_complexity", "internal_api"
+        ]
+        
+        # Count high and medium risk factors
+        high_risk_count = sum(1 for factor in risk_factors if factor in high_risk_indicators)
+        medium_risk_count = sum(1 for factor in risk_factors if factor in medium_risk_indicators)
+        
+        # Determine risk level
+        if high_risk_count >= 2 or (high_risk_count >= 1 and medium_risk_count >= 2):
+            return RiskLevel.HIGH
+        elif high_risk_count >= 1 or medium_risk_count >= 2:
+            return RiskLevel.MEDIUM
+        else:
+            return RiskLevel.LOW
 
     def create_checkpoint(
         self,
         task_id: str,
         checkpoint_type: str,
+        task_type: Optional[str] = None,
+        content: Optional[Dict[str, Any]] = None,
+        risk_factors: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+    ) -> HITLCheckpoint:
         """Create a new checkpoint"""
         checkpoint_id = f"checkpoint_{task_id}_{len(self.checkpoints)}"
 
         if metadata is None:
             metadata = {}
+        
+        # Use provided parameters with fallbacks
+        actual_task_type = task_type or "generic"
+        actual_content = content or {}
+        actual_risk_factors = risk_factors or []
+        
+        # Assess risk level based on risk factors
+        risk_level = self._assess_risk(actual_task_type, actual_risk_factors)
+        
+        # Store risk factors in metadata if provided
+        if risk_factors:
+            metadata['risk_factors'] = risk_factors
 
         checkpoint = HITLCheckpoint(
             checkpoint_id=checkpoint_id,
             task_id=task_id,
             checkpoint_type=checkpoint_type,
-            task_type="generic",
-            content={},
-            risk_level=RiskLevel.MEDIUM,
+            task_type=actual_task_type,
+            content=actual_content,
+            risk_level=risk_level,
             status=CheckpointStatus.PENDING,
             created_at=datetime.now(),
+            risk_factors=actual_risk_factors,
             metadata=metadata or {},
         )
 
         self.checkpoints[checkpoint_id] = checkpoint
 
         # Add to audit log
-        self.audit_log.append(
-            {
-                "action": "checkpoint_created",
-                "checkpoint_id": checkpoint_id,
+        audit_entry = HITLAuditEntry(
+            timestamp=checkpoint.created_at,
+            checkpoint_id=checkpoint_id,
+            action="created",
+            user_id="system",
+            details={
                 "task_id": task_id,
-                "timestamp": checkpoint.created_at,
-                "metadata": metadata,
-            }
+                "checkpoint_type": checkpoint_type,
+                "task_type": actual_task_type
+            },
+            metadata=metadata
         )
+        self.audit_log.append(audit_entry)
 
-        return {
-            "id": checkpoint_id,
-            "task_id": task_id,
-            "status": "pending",
-            "created_at": checkpoint.created_at,
-        }
+        return checkpoint
 
-    def get_checkpoint(self, checkpoint_id: str) -> Optional[Dict[str, Any]]:
+    def get_checkpoint(self, checkpoint_id: str) -> Optional[HITLCheckpoint]:
         """Get checkpoint details"""
-        checkpoint = self.checkpoints.get(checkpoint_id)
-        if checkpoint:
-            return {
-                "id": checkpoint_id,
-                "task_id": checkpoint.task_id,
-                "status": checkpoint.status,
-                "created_at": checkpoint.created_at,
-                "metadata": checkpoint.metadata,
-            }
-        return None
+        return self.checkpoints.get(checkpoint_id)
 
-    def get_checkpoint_audit_log(self, checkpoint_id: str) -> List[Dict[str, Any]]:
+    def get_checkpoint_audit_log(self, checkpoint_id: str) -> List[HITLAuditEntry]:
         """Get audit log for a checkpoint"""
         return [
             entry
             for entry in self.audit_log
-            if entry.get("checkpoint_id") == checkpoint_id
+            if entry.checkpoint_id == checkpoint_id
         ]
 
     def process_decision(
@@ -330,13 +371,13 @@ class HITLPolicyEngine:
 
     def get_audit_trail(
         self, task_id: Optional[str] = None, checkpoint_id: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
+    ) -> List[HITLAuditEntry]:
         """Get audit trail"""
         if checkpoint_id:
             return self.get_checkpoint_audit_log(checkpoint_id)
         elif task_id:
             return [
-                entry for entry in self.audit_log if entry.get("task_id") == task_id
+                entry for entry in self.audit_log if entry.details.get("task_id") == task_id
             ]
         else:
             return self.audit_log.copy()
@@ -436,3 +477,86 @@ class HITLPolicyEngine:
             )
 
         return notifications
+
+    async def process_decision(self, decision: 'HITLReviewDecision') -> bool:
+        """Process a review decision for a checkpoint"""
+        checkpoint = self.checkpoints.get(decision.checkpoint_id)
+        if not checkpoint:
+            return False
+
+        # Update checkpoint status based on decision
+        if decision.decision == "approve":
+            checkpoint.status = CheckpointStatus.APPROVED
+            checkpoint.resolved_at = decision.reviewed_at
+            checkpoint.approvals.append({
+                "reviewer_id": decision.reviewer_id,
+                "comments": decision.comments,
+                "reviewed_at": decision.reviewed_at.isoformat(),
+                "metadata": decision.metadata
+            })
+        elif decision.decision == "reject":
+            checkpoint.status = CheckpointStatus.REJECTED
+            checkpoint.resolved_at = decision.reviewed_at
+            checkpoint.rejections.append({
+                "reviewer_id": decision.reviewer_id,
+                "comments": decision.comments,
+                "reviewed_at": decision.reviewed_at.isoformat(),
+                "metadata": decision.metadata
+            })
+        elif decision.decision == "escalate":
+            checkpoint.status = CheckpointStatus.ESCALATED
+            checkpoint.escalation_level += 1
+
+        # Add to audit log - convert decision to past tense for audit action
+        action_mapping = {
+            "approve": "approved",
+            "reject": "rejected", 
+            "escalate": "escalated"
+        }
+        audit_action = action_mapping.get(decision.decision, decision.decision)
+        
+        audit_entry = HITLAuditEntry(
+            timestamp=decision.reviewed_at,
+            checkpoint_id=decision.checkpoint_id,
+            action=audit_action,
+            user_id=decision.reviewer_id,
+            details={
+                "decision": decision.decision,
+                "comments": decision.comments
+            },
+            metadata=decision.metadata
+        )
+        self.audit_log.append(audit_entry)
+
+        return True
+
+    def process_timeouts(self) -> List[HITLCheckpoint]:
+        """Process checkpoints that have timed out"""
+        timed_out_checkpoints = []
+        current_time = datetime.now()
+
+        for checkpoint in self.checkpoints.values():
+            if (checkpoint.status == CheckpointStatus.PENDING and 
+                checkpoint.timeout_at and 
+                current_time > checkpoint.timeout_at):
+                
+                # Escalate timed out checkpoint
+                checkpoint.status = CheckpointStatus.ESCALATED
+                checkpoint.escalation_level += 1
+                
+                # Add to audit log
+                audit_entry = HITLAuditEntry(
+                    timestamp=current_time,
+                    checkpoint_id=checkpoint.checkpoint_id,
+                    action="checkpoint_timeout",
+                    user_id="system",
+                    details={
+                        "timeout_at": checkpoint.timeout_at.isoformat(),
+                        "escalation_level": checkpoint.escalation_level
+                    }
+                )
+                self.audit_log.append(audit_entry)
+                
+                timed_out_checkpoints.append(checkpoint)
+
+        return timed_out_checkpoints

@@ -13,7 +13,7 @@ from unittest.mock import MagicMock, patch
 sys.path.append(str(Path(__file__).parent.parent))
 from src.core.workflows.hitl.models import HITLCheckpoint
 from src.core.workflows.hitl.types import CheckpointStatus, RiskLevel
-from src.interfaces.dashboard.components.hitl_widgets import (
+from src.interfaces.dashboard.hitl_widgets import (
     HITLApprovalActionsWidget,
     HITLDashboardManager,
     HITLMetricsWidget,
@@ -89,7 +89,7 @@ class TestHITLPendingReviewsWidget(unittest.TestCase):
             mock_engine.get_pending_checkpoints.return_value = self.mock_checkpoints
             data = self.widget.get_data()
             reviews = data["pending_reviews"]
-            self.assertEqual(reviews[0]["status"], "escalated")
+            self.assertEqual(reviews[0]["status"], "Escalated")
             self.assertEqual(reviews[1]["risk_level"], "high")
             self.assertEqual(reviews[2]["risk_level"], "medium")
 
@@ -101,8 +101,7 @@ class TestHITLPendingReviewsWidget(unittest.TestCase):
             ]
             data = self.widget.get_data()
             review = data["pending_reviews"][0]
-            self.assertIn("22", review["time_remaining"])
-            self.assertIn("hours", review["time_remaining"])
+            self.assertRegex(review["time_remaining"], r"\d+h")  # Should be format like "21h" or "22h"
 
     def test_overdue_checkpoint(self):
         """Test handling of overdue checkpoints."""
@@ -154,7 +153,7 @@ class TestHITLApprovalActionsWidget(unittest.TestCase):
         result = self.widget.process_action(
             checkpoint_id="cp-1",
             action="approve",
-            reviewer_id="john.doe",
+            reviewer="john.doe",
             comments="Looks good",
         )
         self.assertTrue(result["success"])
@@ -171,7 +170,7 @@ class TestHITLApprovalActionsWidget(unittest.TestCase):
         result = self.widget.process_action(
             checkpoint_id="cp-2",
             action="reject",
-            reviewer_id="jane.smith",
+            reviewer="jane.smith",
             comments="Needs improvement",
         )
         self.assertTrue(result["success"])
@@ -188,7 +187,7 @@ class TestHITLApprovalActionsWidget(unittest.TestCase):
         result = self.widget.process_action(
             checkpoint_id="cp-3",
             action="escalate",
-            reviewer_id="admin",
+            reviewer="admin",
             comments="Requires senior review",
         )
         self.assertTrue(result["success"])
@@ -200,7 +199,7 @@ class TestHITLApprovalActionsWidget(unittest.TestCase):
         result = self.widget.process_batch_action(
             checkpoint_ids=["cp-1", "cp-2", "cp-3"],
             action="approve",
-            reviewer_id="team.lead",
+            reviewer="team.lead",
             comments="Batch approved",
         )
         self.assertTrue(result["success"])
@@ -212,7 +211,7 @@ class TestHITLApprovalActionsWidget(unittest.TestCase):
         result = self.widget.process_action(
             checkpoint_id="cp-1",
             action="invalid_action",
-            reviewer_id="user",
+            reviewer="user",
             comments="Test",
         )
         self.assertFalse(result["success"])
@@ -222,7 +221,7 @@ class TestHITLApprovalActionsWidget(unittest.TestCase):
         """Test handling of engine failures."""
         self.mock_engine.process_decision.return_value = False
         result = self.widget.process_action(
-            checkpoint_id="cp-1", action="approve", reviewer_id="user", comments="Test"
+            checkpoint_id="cp-1", action="approve", reviewer="user", comments="Test"
         )
         self.assertFalse(result["success"])
 

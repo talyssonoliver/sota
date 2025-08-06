@@ -1,11 +1,13 @@
+
+from src.infrastructure.utils.common_imports import os, sys
 """
 Workflow Visualization Utility
 Generates visual representations of the LangGraph workflow.
 """
 
 import argparse
-import os
-import sys
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

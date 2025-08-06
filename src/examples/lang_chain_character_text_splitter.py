@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, sys
 """
 Simple Step 3.6 Chunking Test
 
@@ -7,8 +9,8 @@ by directly testing the LangChain CharacterTextSplitter integration
 without access control checks.
 """
 
-import sys
-from pathlib import Path
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 try:
     pass

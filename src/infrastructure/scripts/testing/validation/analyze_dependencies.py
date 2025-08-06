@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, json
 """
 Dependency Analysis Script
 Analyzes import dependencies between duplicated modules to determine safe migration order.
 """
 
 import ast
-import json
+# import json  # Consolidated to common_imports
 from collections import defaultdict
-from pathlib import Path
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Dict, List, Set
 
 

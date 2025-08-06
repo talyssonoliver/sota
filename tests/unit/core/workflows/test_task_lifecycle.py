@@ -8,13 +8,11 @@ cleanup, and storage optimization functions.
 import json
 import os
 import shutil
-import tarfile
 import tempfile
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-import pytest
 
 from src.core.workflows.task_lifecycle import (
     TaskArchiveMetadata,
@@ -255,7 +253,7 @@ class TestTaskLifecycleManager:
         task_dir.mkdir()
         
         test_file = task_dir / "test.txt"
-        test_file.write_text("test content")
+        test_file.write_text("test content", encoding='utf-8')
         
         # Set file modification time to 2 days ago
         two_days_ago = datetime.now().timestamp() - (2 * 24 * 3600)
@@ -276,7 +274,7 @@ class TestTaskLifecycleManager:
         task_dir.mkdir()
         
         test_file = task_dir / "test.txt"
-        test_file.write_text("test content")
+        test_file.write_text("test content", encoding='utf-8')
         
         should_archive = self.manager.should_archive_task("YOUNG-TASK")
         assert should_archive is False
@@ -312,11 +310,11 @@ class TestTaskLifecycleManager:
         task_dir.mkdir()
         
         test_file = task_dir / "test.txt"
-        test_file.write_text("test content for archiving")
+        test_file.write_text("test content for archiving", encoding='utf-8')
         
         # Create QA file
         qa_file = task_dir / "qa_summary.md"
-        qa_file.write_text("✅ PASSED - All tests successful")
+        qa_file.write_text("[PASSED] - All tests successful", encoding='utf-8')
         
         metadata = self.manager.archive_task("ARCHIVE-TEST")
         
@@ -406,7 +404,7 @@ class TestTaskLifecycleManager:
         task_dir.mkdir()
         
         test_file = task_dir / "test.txt"
-        test_file.write_text("content")
+        test_file.write_text("content", encoding='utf-8')
         
         # Make it old
         old_time = datetime.now().timestamp() - (5 * 24 * 3600)
@@ -448,7 +446,7 @@ class TestTaskLifecycleManager:
             task_dir.mkdir()
             
             test_file = task_dir / "test.txt"
-            test_file.write_text(f"content for task {i}")
+            test_file.write_text(f"content for task {i}", encoding='utf-8')
         
         stats = self.manager.get_storage_statistics()
         
@@ -466,7 +464,7 @@ class TestTaskLifecycleManager:
         """Test moving task from warm to cold storage."""
         # Create mock warm archive file
         warm_file = self.manager.warm_dir / "test_warm.tar.gz"
-        warm_file.write_text("mock archive content")
+        warm_file.write_text("mock archive content", encoding='utf-8')
         
         metadata = TaskArchiveMetadata(
             task_id="COLD-TEST",
@@ -493,7 +491,7 @@ class TestTaskLifecycleManager:
         """Test task purging."""
         # Create mock archive file
         archive_file = self.manager.cold_dir / "purge_test.tar.gz"
-        archive_file.write_text("mock archive content")
+        archive_file.write_text("mock archive content", encoding='utf-8')
         
         metadata = TaskArchiveMetadata(
             task_id="PURGE-TEST",
@@ -574,7 +572,7 @@ class TestTaskLifecycleIntegration:
         task_dir.mkdir()
         
         test_file = task_dir / "data.txt"
-        test_file.write_text("test data for lifecycle")
+        test_file.write_text("test data for lifecycle", encoding='utf-8')
         
         status_file = task_dir / "status.json"
         with open(status_file, "w") as f:
@@ -627,7 +625,7 @@ class TestTaskLifecycleIntegration:
         for file_path, content in files_data.items():
             full_path = task_dir / file_path
             full_path.parent.mkdir(parents=True, exist_ok=True)
-            full_path.write_text(content)
+            full_path.write_text(content, encoding='utf-8')
         
         # Archive task
         metadata = self.manager.archive_task("PRESERVE-TEST")
@@ -657,7 +655,7 @@ class TestTaskLifecycleIntegration:
             task_dir.mkdir()
             
             test_file = task_dir / "test.txt"
-            test_file.write_text(f"content for {task_id}")
+            test_file.write_text(f"content for {task_id}", encoding='utf-8')
             
             if is_complete:
                 status_file = task_dir / "status.json"

@@ -3,6 +3,7 @@ Test suite for Incremental Analyzer using TDD approach.
 """
 
 import json
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -20,28 +21,48 @@ from src.infrastructure.tools.validation.core.incremental_analyzer import (
 
 class TestIncrementalAnalyzer:
     """Test incremental analyzer for pull request validation."""
+    
+    @classmethod
+    def setup_class(cls):
+        """Set up class-level fixtures to reduce overhead."""
+        # Mock subprocess calls for performance
+        cls.subprocess_patcher = patch("subprocess.run")
+        cls.mock_subprocess = cls.subprocess_patcher.start()
+        
+        cls.temp_dir = tempfile.mkdtemp()
+        cls.root_path = Path(cls.temp_dir)
+        cls.create_test_git_repo()
 
     def setup_method(self):
         """Set up test fixtures."""
-        self.temp_dir = tempfile.mkdtemp()
-        self.root_path = Path(self.temp_dir)
-
-        # Create test git repository
-        self.create_test_git_repo()
+        # Use class-level temp directory and files
+        self.temp_dir = self.__class__.temp_dir
+        self.root_path = self.__class__.root_path
 
         self.analyzer = IncrementalAnalyzer(self.root_path, base_branch="main")
+    
+    @classmethod
+    def teardown_class(cls):
+        """Clean up class-level fixtures."""
+        # Stop subprocess mocking
+        if hasattr(cls, 'subprocess_patcher'):
+            cls.subprocess_patcher.stop()
+            
+        if hasattr(cls, 'temp_dir') and Path(cls.temp_dir).exists():
+            shutil.rmtree(cls.temp_dir, ignore_errors=True)
 
-    def create_test_git_repo(self):
+    @classmethod
+    def create_test_git_repo(cls):
         """Create a test git repository with history."""
         # Initialize git repo
-        subprocess.run(["git", "init"], cwd=self.root_path, capture_output=True)
+        subprocess.run(["git", "init"], cwd=cls.root_path, capture_output=True)
         subprocess.run(
-            ["git", "config", "user.email", "test@example.com"], cwd=self.root_path
+            ["git", "config", "user.email", "test@example.com"], cwd=cls.root_path
         )
-        subprocess.run(["git", "config", "user.name", "Test User"], cwd=self.root_path)
+        subprocess.run(["git", "config", "user.name", "Test User"], cwd=cls.root_path)
 
         # Create initial files
-        main_file = self.root_path / "main.py"
+        main_file = cls.root_path / "main.py"
         main_file.write_text(
             """
 '''Main module.'''
@@ -56,7 +77,7 @@ def add_numbers(a, b):
 """
         )
 
-        utils_file = self.root_path / "utils.py"
+        utils_file = cls.root_path / "utils.py"
         utils_file.write_text(
             """
 '''Utility functions.'''
@@ -74,15 +95,15 @@ def divide(a, b):
         )
 
         # Add and commit initial files
-        subprocess.run(["git", "add", "."], cwd=self.root_path)
-        subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=self.root_path)
+        subprocess.run(["git", "add", "."], cwd=cls.root_path)
+        subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=cls.root_path)
 
         # Create main branch
-        subprocess.run(["git", "branch", "main"], cwd=self.root_path)
-        subprocess.run(["git", "checkout", "main"], cwd=self.root_path)
+        subprocess.run(["git", "branch", "main"], cwd=cls.root_path)
+        subprocess.run(["git", "checkout", "main"], cwd=cls.root_path)
 
         # Create feature branch with changes
-        subprocess.run(["git", "checkout", "-b", "feature-branch"], cwd=self.root_path)
+        subprocess.run(["git", "checkout", "-b", "feature-branch"], cwd=cls.root_path)
 
         # Modify existing file
         main_file.write_text(
@@ -106,7 +127,7 @@ def subtract_numbers(a, b):
         )
 
         # Add new file
-        new_file = self.root_path / "new_module.py"
+        new_file = cls.root_path / "new_module.py"
         new_file.write_text(
             """
 '''New module with additional functionality.'''
@@ -129,8 +150,8 @@ def factorial(n):
         )
 
         # Commit changes
-        subprocess.run(["git", "add", "."], cwd=self.root_path)
-        subprocess.run(["git", "commit", "-m", "Add new features"], cwd=self.root_path)
+        subprocess.run(["git", "add", "."], cwd=cls.root_path)
+        subprocess.run(["git", "commit", "-m", "Add new features"], cwd=cls.root_path)
 
     def test_initialization(self):
         """Test analyzer initialization."""
@@ -569,6 +590,10 @@ class TestIncrementalAnalyzerIntegration:
 
     def setup_method(self):
         """Set up test fixtures."""
+        # Mock subprocess calls for performance
+        self.subprocess_patcher = patch("subprocess.run")
+        self.mock_subprocess = self.subprocess_patcher.start()
+        
         self.temp_dir = tempfile.mkdtemp()
         self.root_path = Path(self.temp_dir)
 
@@ -576,6 +601,16 @@ class TestIncrementalAnalyzerIntegration:
         self.create_comprehensive_test_project()
 
         self.analyzer = IncrementalAnalyzer(self.root_path)
+
+    def teardown_method(self):
+        """Clean up after each test."""
+        # Stop subprocess mocking
+        if hasattr(self, 'subprocess_patcher'):
+            self.subprocess_patcher.stop()
+        
+        # Clean up temp directory
+        if hasattr(self, 'temp_dir') and Path(self.temp_dir).exists():
+            shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def create_comprehensive_test_project(self):
         """Create a comprehensive test project with git history."""
@@ -781,7 +816,12 @@ class TestUtils:
         """Test full incremental analysis workflow."""
         with patch.object(
             self.analyzer.unified_validator, "run_validation"
-        ) as mock_validate:
+        ) as mock_validate, patch('subprocess.run') as mock_subprocess:
+            # Mock git diff to return changed files
+            mock_subprocess.return_value.returncode = 0
+            mock_subprocess.return_value.stdout = "M\tapp.py\nA\ttest.py\n"
+            mock_subprocess.return_value.stderr = ""
+            
             # Mock current validation
             mock_validate.return_value = {
                 "detailed_issues": [

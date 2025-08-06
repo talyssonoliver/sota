@@ -46,7 +46,6 @@ Thumbs.db
 cache/
 archives/
 logs/
-outputs/
 chroma_db/
 mock-api-key/
 progress_reports/
@@ -101,3 +100,28 @@ CLAUDE.md
 
 # Memory engine files
 .memory_engine_key
+
+# ───── Test & runtime artefacts ─────
+outputs/**
+src/**/outputs/**
+tests/outputs/**
+build/**/logs/**
+logs/**
+runtime/cache/**
+*.jsonl
+
+# ───── CI reports ─────
+coverage.json
+bandit-report.json
+security_scan.json
+validation_report*.json
+
+# ───── Archives & backups ─────
+archives/**
+*.tar.gz
+*.backup
+*_backup.*
+
+# ───── Generated docs/visuals ─────
+*.html
+*.sql

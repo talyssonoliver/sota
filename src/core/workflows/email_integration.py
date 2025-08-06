@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    datetime,
+    json,
+    logging,
+    sys
+)
 """
 Email Integration System - Phase 6 Step 6.6
 
@@ -6,29 +18,27 @@ Automated email distribution for briefings and reports with HTML templates,
 recipient management, and delivery scheduling.
 """
 
-try:
-    import asyncio
-except ImportError:
-    pass
-import json
-import logging
-import sys
-
-try:
-    import smtplib
-except ImportError:
-    pass
-from datetime import datetime
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
-try:
-    from jinja2 import Template
-except ImportError:
+# Use centralized import utilities to eliminate duplication
+from src.infrastructure.utils.import_utils import conditional_import, safe_import
+
+# Conditionally import optional dependencies
+asyncio = safe_import('asyncio')
+smtplib = safe_import('smtplib')
+
+# Import jinja2 with fallback
+jinja2_Template = conditional_import('jinja2', 'Template')
+if not jinja2_Template:
     # Fallback template class
     class Template:
         def __init__(self, template_string):
@@ -467,7 +477,8 @@ class EmailIntegration:
         """Convert HTML to plain text."""
         # Simple HTML to text conversion
         try:
-            import re
+
+            from src.infrastructure.utils.common_imports import re
         except ImportError:
             pass
 
@@ -582,7 +593,10 @@ async def main():
         smtp_port = input("SMTP Port (default: 587): ").strip()
         smtp_port = int(smtp_port) if smtp_port else 587
         username = input("Username: ").strip()
-        password = input("Password: ").strip()
+        
+        # Use secure password input
+        import getpass
+        password = getpass.getpass("Password: ").strip()
         from_address = input("From Address: ").strip()
 
         if username and password and from_address:

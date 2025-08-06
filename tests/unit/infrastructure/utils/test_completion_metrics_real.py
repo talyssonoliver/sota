@@ -3,7 +3,7 @@ Real test for completion metrics that actually executes source code.
 This test demonstrates how to achieve proper test coverage.
 """
 
-import pytest
+from pathlib import Path
 from src.infrastructure.utils.completion_metrics import CompletionMetrics, CompletionMetricsCalculator
 
 
@@ -71,9 +71,13 @@ class TestCompletionMetricsReal:
         calculator = CompletionMetricsCalculator()
         assert calculator is not None
         
-        # Test with dashboard_dir parameter
-        calculator_with_dir = CompletionMetricsCalculator(dashboard_dir="/test/path")
-        assert calculator_with_dir is not None
+        # Test with dashboard_dir parameter using temporary directory
+        import tempfile
+        with tempfile.TemporaryDirectory() as temp_dir:
+            test_path = Path(temp_dir) / "test_dashboard"
+            calculator_with_dir = CompletionMetricsCalculator(dashboard_dir=str(test_path))
+            assert calculator_with_dir is not None
+            assert test_path.exists()
 
     def test_calculate_completion_rate_edge_cases(self):
         """Test edge cases for completion rate calculation."""

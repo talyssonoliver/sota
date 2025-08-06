@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Dict,
+    List,
+    Path,
+    sys
+)
 """Generate minimal documentation for Python modules.
 
 This utility scans all `.py` files in the repository and extracts
@@ -7,19 +14,19 @@ created for each module under the specified output directory.
 """
 
 import ast
-import sys
+# import sys  # Consolidated to common_imports
 
 try:
     pass
 except ImportError:
     pass
-from pathlib import Path
+# from pathlib import Path  # Consolidated to common_imports
 
 try:
     pass
 except ImportError:
     pass
-from typing import Dict, List
+# from typing import Dict, List  # Consolidated to common_imports
 
 try:
     pass

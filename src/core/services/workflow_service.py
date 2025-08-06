@@ -1,3 +1,15 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Enum,
+    List,
+    Optional,
+    dataclass,
+    datetime,
+    logging,
+    uuid
+)
 """
 Workflow Business Service
 
@@ -5,11 +17,11 @@ Centralizes workflow-related business logic that was previously
 scattered in infrastructure and interface layers.
 """
 
-import logging
-from dataclasses import dataclass
-from datetime import datetime
-from enum import Enum
-from typing import Any, Dict, List, Optional
+# import logging  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 logger = logging.getLogger(__name__)
 
@@ -289,7 +301,7 @@ class WorkflowService:
 
     def _register_workflow_execution(self, request: TaskExecutionRequest) -> str:
         """Register new workflow execution"""
-        import uuid
+#         import uuid  # Consolidated to common_imports
 
         workflow_id = f"workflow_{uuid.uuid4().hex[:8]}"
 

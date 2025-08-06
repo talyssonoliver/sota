@@ -91,22 +91,35 @@ def get_memory_system():
 
 def initialize_memory(config=None):
     """Initialize memory engine."""
-    if config is None:
-        # Import here to avoid circular imports
-        try:
-            from .config.memory_config import MemoryEngineConfig
+    try:
+        if config is None:
+            # Import here to avoid circular imports
+            try:
+                from .config.memory_config import MemoryEngineConfig
 
-            config = MemoryEngineConfig()
-        except ImportError:
-            # Fallback to basic config
-            config = {}
-    return MemoryEngine(config)
+                config = MemoryEngineConfig()
+            except ImportError:
+                # Fallback to basic config
+                config = {}
+        return MemoryEngine(config)
+    except Exception:
+        # Return fallback memory engine if initialization fails
+        return MemoryEngine({})
 
 
 def get_relevant_context(query, k=5, user="system"):
     """Get relevant context for a query."""
-    memory_engine = get_memory_instance()
-    return memory_engine.get_context(query, k=k, user=user)
+    try:
+        memory_engine = get_memory_instance()
+        if memory_engine is None:
+            return "Context unavailable: Memory engine not initialized"
+        
+        if not hasattr(memory_engine, 'get_context'):
+            return "Context unavailable: Memory engine does not support get_context"
+            
+        return memory_engine.get_context(query, k=k, user=user)
+    except Exception as e:
+        return f"Context unavailable: {str(e)}"
 
 
 __all__ = [

@@ -1,17 +1,13 @@
 #!/usr/bin/env python3
+
 """
 Validation CLI Entry Point
 Modern validation system with unified architecture.
 """
-
-import sys
-from pathlib import Path
-
-# Add project root to path for proper imports
+from src.infrastructure.tools.validation.core.validation_cli import ValidationCLI
+from src.infrastructure.utils.common_imports import Path, sys
 project_root = Path(__file__).parent.parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
-
-from src.infrastructure.tools.validation.core.validation_cli import ValidationCLI  # noqa: E402
 
 
 def main():

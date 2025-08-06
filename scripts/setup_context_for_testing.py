@@ -7,7 +7,6 @@ the context topics used in tasks, enabling proper testing of the
 Step 3.5 and 3.6 implementations.
 """
 
-import os
 import sys
 from pathlib import Path
 
@@ -292,13 +291,13 @@ export const validateCustomerInput = (data: unknown) => {
 
 def populate_memory_engine():
     """Populate the memory engine with context documents"""
-    from tools.memory_engine import (add_document_with_enhanced_chunking,
+    from src.infrastructure.memory import (add_document_with_enhanced_chunking,
                                      get_memory_engine)
 
     try:
         print("\n🔧 Initializing memory engine...")
         # Initialize memory engine
-        memory_engine = get_memory_engine()
+        get_memory_engine()
 
         print("📚 Adding context documents to memory engine...")
 

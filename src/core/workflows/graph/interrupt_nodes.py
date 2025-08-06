@@ -1,4 +1,13 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    logging,
+    sys,
+    timedelta
+)
 """
 LangGraph Interrupt Nodes - Phase 7 Step 7.3 Implementation
 
@@ -7,12 +16,12 @@ and approval-based workflow continuation in the AI Agent System.
 """
 
 
-import json
-import logging
-import sys
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timedelta
-from pathlib import Path
+# from datetime import datetime, timedelta  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Any, Callable, Dict, List, Optional
 
 logger = logging.getLogger(__name__)

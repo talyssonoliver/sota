@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, re
 """
 Script to systematically fix mock issues in test files.
 Adds spec=True to Mock objects and ensures proper mock verification.
 """
-import re
-from pathlib import Path
+# import re  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import List, Tuple
 
 

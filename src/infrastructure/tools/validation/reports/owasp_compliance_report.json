@@ -1,0 +1,136 @@
+{
+  "timestamp": 1754181621.5738876,
+  "total_vulnerabilities": 538,
+  "categories": {
+    "A01:2021-Broken Access Control": {
+      "issues_count": 276,
+      "status": "NON_COMPLIANT",
+      "severity_breakdown": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "error": 0,
+        "warning": 0,
+        "info": 0
+      }
+    },
+    "A02:2021-Cryptographic Failures": {
+      "issues_count": 91,
+      "status": "NON_COMPLIANT",
+      "severity_breakdown": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "error": 0,
+        "warning": 0,
+        "info": 0
+      }
+    },
+    "A03:2021-Injection": {
+      "issues_count": 0,
+      "status": "COMPLIANT",
+      "severity_breakdown": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "error": 0,
+        "warning": 0,
+        "info": 0
+      }
+    },
+    "A04:2021-Insecure Design": {
+      "issues_count": 0,
+      "status": "COMPLIANT",
+      "severity_breakdown": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "error": 0,
+        "warning": 0,
+        "info": 0
+      }
+    },
+    "A05:2021-Security Misconfiguration": {
+      "issues_count": 0,
+      "status": "COMPLIANT",
+      "severity_breakdown": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "error": 0,
+        "warning": 0,
+        "info": 0
+      }
+    },
+    "A06:2021-Vulnerable and Outdated Components": {
+      "issues_count": 0,
+      "status": "COMPLIANT",
+      "severity_breakdown": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "error": 0,
+        "warning": 0,
+        "info": 0
+      }
+    },
+    "A07:2021-Identification and Authentication Failures": {
+      "issues_count": 0,
+      "status": "COMPLIANT",
+      "severity_breakdown": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "error": 0,
+        "warning": 0,
+        "info": 0
+      }
+    },
+    "A08:2021-Software and Data Integrity Failures": {
+      "issues_count": 163,
+      "status": "NON_COMPLIANT",
+      "severity_breakdown": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "error": 0,
+        "warning": 0,
+        "info": 0
+      }
+    },
+    "A09:2021-Security Logging and Monitoring Failures": {
+      "issues_count": 8,
+      "status": "NON_COMPLIANT",
+      "severity_breakdown": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "error": 0,
+        "warning": 0,
+        "info": 0
+      }
+    },
+    "A10:2021-Server-Side Request Forgery": {
+      "issues_count": 0,
+      "status": "COMPLIANT",
+      "severity_breakdown": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "error": 0,
+        "warning": 0,
+        "info": 0
+      }
+    }
+  }
+}

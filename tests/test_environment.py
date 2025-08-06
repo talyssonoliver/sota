@@ -5,8 +5,7 @@ This module sets up the testing environment to prevent validation errors.
 
 import builtins
 import os
-import sys
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 # Set the TESTING environment variable to '1'
 # This needs to be imported before any agent modules

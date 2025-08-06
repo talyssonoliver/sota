@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    asyncio,
+    datetime,
+    logging
+)
 """
 HITL Dashboard Widgets - Phase 7 Integration
 
@@ -6,9 +16,9 @@ Dashboard widgets for Human-in-the-Loop checkpoint management,
 review interfaces, and approval workflows.
 """
 
-import logging
-from datetime import datetime
-from typing import Any, Dict, List, Optional
+# import logging  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 from src.core.workflows.hitl.models import HITLCheckpoint
 from src.core.workflows.hitl_engine import HITLPolicyEngine
@@ -370,7 +380,7 @@ class HITLApprovalActionsWidget(HITLDashboardWidget):
                 )
                 # For async compatibility, try both sync and async calls
                 try:
-                    import asyncio
+#                     import asyncio  # Consolidated to common_imports
 
                     if asyncio.iscoroutinefunction(self.hitl_engine.process_decision):
                         # Try to get running loop, but don't create new one in tests
