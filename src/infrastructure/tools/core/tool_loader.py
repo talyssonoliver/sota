@@ -260,7 +260,7 @@ def get_tools_for_agent(agent_name: str) -> List[ArtesanatoBaseTool]:
                 continue
             
             # Instantiate tool
-            tool_instance = instantiate_tool(tool_name, tool_class, tool_cfg, agent_info)
+            tool_instance = instantiate_tool(tool_name, tool_class, tool_cfg)
             if tool_instance:
                 tools.append(tool_instance)
                 logger.debug(f"Loaded tool {tool_name} for agent {agent_name}")
@@ -330,7 +330,7 @@ def load_tools_for_agent(agent_type: str, config: Optional[Dict[str, Any]] = Non
     Returns:
         List of instantiated tools for the agent type
     """
-    return get_tools_for_agent(agent_type, config)
+    return get_tools_for_agent(agent_type)
 
 
 def get_available_tools() -> List[str]:

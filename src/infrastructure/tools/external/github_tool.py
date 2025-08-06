@@ -557,7 +557,7 @@ class GitHubTool(ArtesanatoBaseTool):
                     "title": MISSING_SERVICE_FUNCTIONS_TITLE,
                     "state": "open",
                     "body": MISSING_SERVICE_FUNCTIONS_BODY,
-                    "created_at": "2025-04-02T10:00:00Z",
+                    "created_at": TIMESTAMP_2025_04_02_10,
                     "user": {"login": "backend-engineer"},
                     "labels": ["backend", "service-layer", "BE-07"]
                 },
@@ -609,8 +609,8 @@ class GitHubTool(ArtesanatoBaseTool):
                 "state": "open",
                 "assignee": "backend-engineer",
                 "labels": ["backend", "service-layer", "BE-07"],
-                "created_at": "2025-04-02T10:00:00Z",
-                "updated_at": "2025-04-02T10:00:00Z",
+                "created_at": TIMESTAMP_2025_04_02_10,
+                "updated_at": TIMESTAMP_2025_04_02_10,
                 "html_url": f"https://github.com/{self.repo}/issues/{issue_num}"
             }
         ))
@@ -627,7 +627,7 @@ class GitHubTool(ArtesanatoBaseTool):
                 "state": "closed",
                 "assignee": "backend-engineer",
                 "labels": ["backend", "service-layer", "BE-07", "completed"],
-                "created_at": "2025-04-02T10:00:00Z",
+                "created_at": TIMESTAMP_2025_04_02_10,
                 "updated_at": "2025-05-05T15:00:00Z",
                 "html_url": f"https://github.com/{self.repo}/issues/{issue_num}"
             }
@@ -645,8 +645,8 @@ class GitHubTool(ArtesanatoBaseTool):
                     "user": {"login": "backend-engineer"},
                     "base": {"ref": "main"},
                     "head": {"ref": FEATURE_BRANCH},
-                    "created_at": "2025-04-02T15:30:00Z",
-                    "updated_at": "2025-04-02T15:30:00Z",
+                    "created_at": TIMESTAMP_2025_04_02_15_30,
+                    "updated_at": TIMESTAMP_2025_04_02_15_30,
                     "html_url": f"https://github.com/{self.repo}/pull/14"
                 },
                 {
@@ -700,8 +700,8 @@ class GitHubTool(ArtesanatoBaseTool):
                 "user": {"login": "backend-engineer"},
                 "base": {"ref": "main"},
                 "head": {"ref": FEATURE_BRANCH},
-                "created_at": "2025-04-02T15:30:00Z",
-                "updated_at": "2025-04-02T15:30:00Z",
+                "created_at": TIMESTAMP_2025_04_02_15_30,
+                "updated_at": TIMESTAMP_2025_04_02_15_30,
                 "html_url": f"https://github.com/{self.repo}/pull/{pr_num}"
             }
         ))
@@ -720,7 +720,7 @@ class GitHubTool(ArtesanatoBaseTool):
                 "user": {"login": "backend-engineer"},
                 "base": {"ref": "main"},
                 "head": {"ref": FEATURE_BRANCH},
-                "created_at": "2025-04-02T15:30:00Z",
+                "created_at": TIMESTAMP_2025_04_02_15_30,
                 "updated_at": "2025-05-05T16:30:00Z",
                 "merged_at": "2025-05-05T16:30:00Z",
                 "html_url": f"https://github.com/{self.repo}/pull/{pr_num}"
@@ -738,8 +738,8 @@ class GitHubTool(ArtesanatoBaseTool):
                     "full_name": f"artesanato-shop/{repo_name}",
                     "private": False,
                     "description": description or DEFAULT_DESCRIPTION,
-                    "created_at": "2025-05-05T09:00:00Z",
-                    "updated_at": "2025-05-05T09:00:00Z",
+                    "created_at": TIMESTAMP_2025_05_05_09,
+                    "updated_at": TIMESTAMP_2025_05_05_09,
                     "html_url": f"https://github.com/artesanato-shop/{repo_name}",
                     "clone_url": f"https://github.com/artesanato-shop/{repo_name}.git"}))
 
@@ -754,7 +754,7 @@ class GitHubTool(ArtesanatoBaseTool):
                     "private": False,
                     "description": DEFAULT_DESCRIPTION,
                     "created_at": "2025-04-01T09:00:00Z",
-                    "updated_at": "2025-05-05T09:00:00Z",
+                    "updated_at": TIMESTAMP_2025_05_05_09,
                     "html_url": "https://github.com/artesanato-shop/artesanato-ecommerce",
                     "clone_url": "https://github.com/artesanato-shop/artesanato-ecommerce.git",
                     "default_branch": "main",
@@ -832,7 +832,7 @@ class GitHubTool(ArtesanatoBaseTool):
                         "author": {
                             "name": BACKEND_ENGINEER,
                             "email": BACKEND_EMAIL,
-                            "date": "2025-04-02T16:00:00Z"
+                            "date": TIMESTAMP_2025_04_02_16
                         }
                     },
                     "author": {"login": "backend-engineer"},
@@ -865,12 +865,12 @@ class GitHubTool(ArtesanatoBaseTool):
                     "author": {
                         "name": BACKEND_ENGINEER,
                         "email": BACKEND_EMAIL,
-                        "date": "2025-04-02T16:00:00Z"
+                        "date": TIMESTAMP_2025_04_02_16
                     },
                     "committer": {
                         "name": BACKEND_ENGINEER,
                         "email": BACKEND_EMAIL,
-                        "date": "2025-04-02T16:00:00Z"
+                        "date": TIMESTAMP_2025_04_02_16
                     }
                 },
                 "author": {"login": "backend-engineer"},
