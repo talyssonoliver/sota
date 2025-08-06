@@ -6,6 +6,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   sonarqube-analysis:
     name: SonarQube Community Analysis with Custom Validation
@@ -138,42 +143,53 @@ jobs:
     - name: Comment PR with results
       if: github.event_name == 'pull_request'
       uses: actions/github-script@v6
+      continue-on-error: true
       with:
         script: |
           const fs = require('fs');
           
-          let comment = '## 🔍 Code Quality Analysis Results\n\n';
-          
-          // Read validation report if available
-          if (fs.existsSync('validation-report.json')) {
-            const report = JSON.parse(fs.readFileSync('validation-report.json', 'utf8'));
-            comment += `### Custom Validation System\n`;
-            comment += `- **Total Issues**: ${report.total_issues || 0}\n`;
-            comment += `- **Errors**: ${report.errors || 0}\n`;
-            comment += `- **Warnings**: ${report.warnings || 0}\n\n`;
-          }
-          
-          // Read integrated report if available
-          if (fs.existsSync('integrated-report.json')) {
-            const report = JSON.parse(fs.readFileSync('integrated-report.json', 'utf8'));
-            if (report.sonarqube_integration) {
-              comment += `### SonarQube Integration\n`;
-              comment += `- **Enabled**: ${report.sonarqube_integration.enabled ? '✅' : '❌'}\n`;
-              comment += `- **Issues Found**: ${report.sonarqube_integration.issues_count || 0}\n\n`;
+          try {
+            let comment = '## 🔍 Code Quality Analysis Results\n\n';
+            
+            // Read validation report if available
+            if (fs.existsSync('validation-report.json')) {
+              const report = JSON.parse(fs.readFileSync('validation-report.json', 'utf8'));
+              comment += `### Custom Validation System\n`;
+              comment += `- **Total Issues**: ${report.total_issues || 0}\n`;
+              comment += `- **Errors**: ${report.errors || 0}\n`;
+              comment += `- **Warnings**: ${report.warnings || 0}\n\n`;
             }
+            
+            // Read integrated report if available
+            if (fs.existsSync('integrated-report.json')) {
+              const report = JSON.parse(fs.readFileSync('integrated-report.json', 'utf8'));
+              if (report.sonarqube_integration) {
+                comment += `### SonarQube Integration\n`;
+                comment += `- **Enabled**: ${report.sonarqube_integration.enabled ? '✅' : '❌'}\n`;
+                comment += `- **Issues Found**: ${report.sonarqube_integration.issues_count || 0}\n\n`;
+              }
+            }
+            
+            comment += '### Next Steps\n';
+            comment += '1. Review and address any critical issues\n';
+            comment += '2. Check the full reports in the artifacts\n';
+            comment += '3. Ensure quality gates pass before merging\n';
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+            
+            console.log('✅ Successfully posted comment to PR');
+            
+          } catch (error) {
+            console.log('⚠️  Unable to post comment to PR (permissions issue)');
+            console.log('📊 Analysis results are available in the workflow artifacts');
+            console.log(`Error: ${error.message}`);
+            // Don't fail the workflow due to comment permission issues
           }
-          
-          comment += '### Next Steps\n';
-          comment += '1. Review and address any critical issues\n';
-          comment += '2. Check the full reports in the artifacts\n';
-          comment += '3. Ensure quality gates pass before merging\n';
-          
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: comment
-          });
 
   security-scan:
     name: Security Analysis
