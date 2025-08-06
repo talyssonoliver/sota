@@ -169,14 +169,13 @@ def get_tool_class(tool_name: str, tool_config: Dict[str, Any]) -> Optional[Type
 
 
 def instantiate_tool(tool_name: str, tool_class: Type[ArtesanatoBaseTool], 
-                    tool_config: Dict[str, Any], agent_config: Optional[Dict[str, Any]] = None) -> Optional[ArtesanatoBaseTool]:
+                    tool_config: Dict[str, Any]) -> Optional[ArtesanatoBaseTool]:
     """Instantiate a tool with proper configuration.
     
     Args:
         tool_name: Name of the tool
         tool_class: Tool class to instantiate
         tool_config: Tool configuration dictionary
-        agent_config: Optional agent configuration for context
         
     Returns:
         Instantiated tool or None if instantiation fails
@@ -214,7 +213,7 @@ def instantiate_tool(tool_name: str, tool_class: Type[ArtesanatoBaseTool],
         return None
 
 
-def get_tools_for_agent(agent_name: str, config: Optional[Dict[str, Any]] = None) -> List[ArtesanatoBaseTool]:
+def get_tools_for_agent(agent_name: str) -> List[ArtesanatoBaseTool]:
     """Get tools for a specific agent.
     
     Args:
