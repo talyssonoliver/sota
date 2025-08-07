@@ -57,102 +57,113 @@ class GitHubTool(ArtesanatoBaseTool):
     def _run(self, query: str) -> str:
         """Execute a query against the GitHub API."""
         try:
-            # Parse query to determine what GitHub action to perform
             query_lower = query.lower()
 
-            # Issue operations
+            # Use dispatch method to reduce complexity
             if "issue" in query_lower:
-                if "list issues" in query_lower:
-                    return self._list_issues()
-                elif "create issue" in query_lower:
-                    title = self._extract_param(query, "title")
-                    body = self._extract_param(query, "body")
-                    return self._create_issue(title, body)
-                elif "update issue" in query_lower or "close issue" in query_lower:
-                    issue_number = self._extract_param(query, "number")
-                    state = "closed" if "close" in query_lower else self._extract_param(
-                        query, "state") or "open"
-                    return self._update_issue(issue_number, state)
-                else:
-                    issue_number = self._extract_param(query, "number")
-                    if issue_number:
-                        return self._get_issue(issue_number)
-                    return self._list_issues()
-
-            # Pull request operations
+                return self._handle_issue_operations(query, query_lower)
             elif "pull request" in query_lower or "pr" in query_lower:
-                if "list pull requests" in query_lower or "list prs" in query_lower:
-                    return self._list_pull_requests()
-                elif "create pull request" in query_lower or "create pr" in query_lower:
-                    title = self._extract_param(query, "title")
-                    body = self._extract_param(query, "body")
-                    head = self._extract_param(
-                        query, "head") or self._extract_param(query, "branch")
-                    base = self._extract_param(query, "base") or "main"
-                    return self._create_pull_request(title, body, head, base)
-                elif "merge pull request" in query_lower or "merge pr" in query_lower:
-                    pr_number = self._extract_param(query, "number")
-                    return self._merge_pull_request(pr_number)
-                else:
-                    pr_number = self._extract_param(query, "number")
-                    if pr_number:
-                        return self._get_pull_request(pr_number)
-                    return self._list_pull_requests()
-
-            # Repository operations
+                return self._handle_pull_request_operations(query, query_lower)
             elif "repo" in query_lower or "repository" in query_lower:
-                if "create repository" in query_lower or "create repo" in query_lower:
-                    name = self._extract_param(query, "name")
-                    description = self._extract_param(query, "description")
-                    private = "private" in query_lower
-                    return self._create_repository(name, description, private)
-                else:
-                    return self._get_repo_info()
-
-            # Branch operations
+                return self._handle_repository_operations(query, query_lower)
             elif "branch" in query_lower:
-                if "create branch" in query_lower or "new branch" in query_lower:
-                    branch_name = self._extract_param(query, "name")
-                    base = self._extract_param(query, "base") or "main"
-                    return self._create_branch(branch_name, base)
-                elif "list branches" in query_lower:
-                    return self._list_branches()
-                else:
-                    branch_name = self._extract_param(query, "name")
-                    if branch_name:
-                        return self._get_branch(branch_name)
-                    return self._list_branches()
-
-            # Commit operations
+                return self._handle_branch_operations(query, query_lower)
             elif "commit" in query_lower:
-                if "list commits" in query_lower:
-                    return self._list_commits()
-                else:
-                    commit_sha = self._extract_param(
-                        query, "sha") or self._extract_param(query, "hash")
-                    if commit_sha:
-                        return self._get_commit(commit_sha)
-                    return self._list_commits()
-
-            # Default operations based on keywords
-            elif "list issues" in query_lower:
-                return self._list_issues()
-            elif "create issue" in query_lower:
-                title = self._extract_param(query, "title")
-                body = self._extract_param(query, "body")
-                return self._create_issue(title, body)
-            elif "get repo" in query_lower:
-                return self._get_repo_info()
-            elif "list pull requests" in query_lower or "list prs" in query_lower:
-                return self._list_pull_requests()
+                return self._handle_commit_operations(query, query_lower)
             else:
-                return json.dumps(
-                    self.format_response(
-                        data=None,
-                        error="Unsupported GitHub operation. Supported operations: list/create/update issues, list/create/merge pull requests, get/create repositories, list/create/get branches, list/get commits"))
+                return self._handle_fallback_operations(query, query_lower)
 
         except Exception as e:
             return json.dumps(self.handle_error(e, {"method": "GitHubTool._run", "query": query}))
+
+    def _handle_issue_operations(self, query: str, query_lower: str) -> str:
+        """Handle issue-related operations."""
+        if "list issues" in query_lower:
+            return self._list_issues()
+        elif "create issue" in query_lower:
+            title = self._extract_param(query, "title")
+            body = self._extract_param(query, "body")
+            return self._create_issue(title, body)
+        elif "update issue" in query_lower or "close issue" in query_lower:
+            issue_number = self._extract_param(query, "number")
+            state = "closed" if "close" in query_lower else self._extract_param(query, "state") or "open"
+            return self._update_issue(issue_number, state)
+        else:
+            issue_number = self._extract_param(query, "number")
+            if issue_number:
+                return self._get_issue(issue_number)
+            return self._list_issues()
+
+    def _handle_pull_request_operations(self, query: str, query_lower: str) -> str:
+        """Handle pull request operations."""
+        if "list pull requests" in query_lower or "list prs" in query_lower:
+            return self._list_pull_requests()
+        elif "create pull request" in query_lower or "create pr" in query_lower:
+            title = self._extract_param(query, "title")
+            body = self._extract_param(query, "body")
+            head = self._extract_param(query, "head") or self._extract_param(query, "branch")
+            base = self._extract_param(query, "base") or "main"
+            return self._create_pull_request(title, body, head, base)
+        elif "merge pull request" in query_lower or "merge pr" in query_lower:
+            pr_number = self._extract_param(query, "number")
+            return self._merge_pull_request(pr_number)
+        else:
+            pr_number = self._extract_param(query, "number")
+            if pr_number:
+                return self._get_pull_request(pr_number)
+            return self._list_pull_requests()
+
+    def _handle_repository_operations(self, query: str, query_lower: str) -> str:
+        """Handle repository operations."""
+        if "create repository" in query_lower or "create repo" in query_lower:
+            name = self._extract_param(query, "name")
+            description = self._extract_param(query, "description")
+            private = "private" in query_lower
+            return self._create_repository(name, description, private)
+        else:
+            return self._get_repo_info()
+
+    def _handle_branch_operations(self, query: str, query_lower: str) -> str:
+        """Handle branch operations."""
+        if "create branch" in query_lower or "new branch" in query_lower:
+            branch_name = self._extract_param(query, "name")
+            base = self._extract_param(query, "base") or "main"
+            return self._create_branch(branch_name, base)
+        elif "list branches" in query_lower:
+            return self._list_branches()
+        else:
+            branch_name = self._extract_param(query, "name")
+            if branch_name:
+                return self._get_branch(branch_name)
+            return self._list_branches()
+
+    def _handle_commit_operations(self, query: str, query_lower: str) -> str:
+        """Handle commit operations."""
+        if "list commits" in query_lower:
+            return self._list_commits()
+        else:
+            commit_sha = self._extract_param(query, "sha") or self._extract_param(query, "hash")
+            if commit_sha:
+                return self._get_commit(commit_sha)
+            return self._list_commits()
+
+    def _handle_fallback_operations(self, query: str, query_lower: str) -> str:
+        """Handle fallback operations for unmatched queries."""
+        if "list issues" in query_lower:
+            return self._list_issues()
+        elif "create issue" in query_lower:
+            title = self._extract_param(query, "title")
+            body = self._extract_param(query, "body")
+            return self._create_issue(title, body)
+        elif "get repo" in query_lower:
+            return self._get_repo_info()
+        elif "list pull requests" in query_lower or "list prs" in query_lower:
+            return self._list_pull_requests()
+        else:
+            return json.dumps(
+                self.format_response(
+                    data=None,
+                    error="Unsupported GitHub operation. Supported operations: list/create/update issues, list/create/merge pull requests, get/create repositories, list/create/get branches, list/get commits"))
 
     def _extract_param(self, query: str, param_name: str) -> str:
         """Extract a parameter value from the query string."""

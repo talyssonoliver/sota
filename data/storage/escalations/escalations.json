@@ -1,5 +1,90 @@
 [
   {
+    "task_id": "CONCURRENT-0",
+    "trigger": "manual",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-08-07T00:34:22.655429",
+    "triggered_by": "user_0",
+    "context": {
+      "description": "Concurrent test event 0"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "CONCURRENT-1",
+    "trigger": "manual",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-08-07T00:34:22.656567",
+    "triggered_by": "user_1",
+    "context": {
+      "description": "Concurrent test event 1"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "CONCURRENT-2",
+    "trigger": "manual",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-08-07T00:34:22.657570",
+    "triggered_by": "user_2",
+    "context": {
+      "description": "Concurrent test event 2"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "CONCURRENT-3",
+    "trigger": "manual",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-08-07T00:34:22.660647",
+    "triggered_by": "user_3",
+    "context": {
+      "description": "Concurrent test event 3"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "CONCURRENT-4",
+    "trigger": "manual",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-08-07T00:34:22.667770",
+    "triggered_by": "user_4",
+    "context": {
+      "description": "Concurrent test event 4"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
     "task_id": "FE-666",
     "trigger": "manual",
     "level": {
@@ -7,7 +92,7 @@
       "value": 2,
       "timeout_hours": 6
     },
-    "triggered_at": "2025-08-04T22:34:53.741801",
+    "triggered_at": "2025-08-07T00:34:41.526385",
     "triggered_by": "cli_user",
     "context": {
       "reason": "urgent_deadline",
@@ -17,9 +102,9 @@
     "resolved_at": null,
     "resolution": null,
     "notifications_sent": [
-      "email_2025-08-04T22:34:53.741801",
-      "slack_2025-08-04T22:34:53.741801",
-      "dashboard_2025-08-04T22:34:53.741801"
+      "email_2025-08-07T00:34:41.527385",
+      "slack_2025-08-07T00:34:41.527385",
+      "dashboard_2025-08-07T00:34:41.527385"
     ]
   },
   {
@@ -30,7 +115,7 @@
       "value": 1,
       "timeout_hours": 2
     },
-    "triggered_at": "2025-08-04T22:34:53.905353",
+    "triggered_at": "2025-08-07T00:34:41.854716",
     "triggered_by": "system",
     "context": {
       "timeout_duration": "unknown",
@@ -41,8 +126,8 @@
     "resolved_at": null,
     "resolution": null,
     "notifications_sent": [
-      "email_2025-08-04T22:34:53.905353",
-      "slack_2025-08-04T22:34:53.905353"
+      "email_2025-08-07T00:34:41.854716",
+      "slack_2025-08-07T00:34:41.854716"
     ]
   },
   {
@@ -53,7 +138,7 @@
       "value": 2,
       "timeout_hours": 6
     },
-    "triggered_at": "2025-08-04T22:34:53.908010",
+    "triggered_at": "2025-08-07T00:34:41.860464",
     "triggered_by": "system",
     "context": {
       "timeout_duration": "unknown",
@@ -64,9 +149,9 @@
     "resolved_at": null,
     "resolution": null,
     "notifications_sent": [
-      "email_2025-08-04T22:34:53.908135",
-      "slack_2025-08-04T22:34:53.908135",
-      "dashboard_2025-08-04T22:34:53.908135"
+      "email_2025-08-07T00:34:41.860464",
+      "slack_2025-08-07T00:34:41.860464",
+      "dashboard_2025-08-07T00:34:41.860464"
     ]
   },
   {
@@ -77,7 +162,7 @@
       "value": 3,
       "timeout_hours": 12
     },
-    "triggered_at": "2025-08-04T22:34:55.424857",
+    "triggered_at": "2025-08-07T00:34:41.987366",
     "triggered_by": "reviewer",
     "context": {
       "rejection_count": 3,
@@ -89,80 +174,10 @@
     "resolved_at": null,
     "resolution": null,
     "notifications_sent": [
-      "email_2025-08-04T22:34:55.424857",
-      "slack_2025-08-04T22:34:55.424857",
-      "dashboard_2025-08-04T22:34:55.424857",
-      "phone_2025-08-04T22:34:55.424857"
-    ]
-  },
-  {
-    "task_id": "QA-999",
-    "trigger": "timeout",
-    "level": {
-      "name": "Team Lead Review",
-      "value": 1,
-      "timeout_hours": 2
-    },
-    "triggered_at": "2025-08-04T22:34:55.576586",
-    "triggered_by": "system",
-    "context": {
-      "timeout_duration": "unknown",
-      "reviewer": "unknown",
-      "task_type": "qa",
-      "risk_level": "high"
-    },
-    "resolved_at": null,
-    "resolution": null,
-    "notifications_sent": [
-      "email_2025-08-04T22:34:55.576586",
-      "slack_2025-08-04T22:34:55.576586"
-    ]
-  },
-  {
-    "task_id": "QA-999",
-    "trigger": "timeout",
-    "level": {
-      "name": "Management Review",
-      "value": 2,
-      "timeout_hours": 6
-    },
-    "triggered_at": "2025-08-04T22:34:55.581380",
-    "triggered_by": "system",
-    "context": {
-      "timeout_duration": "unknown",
-      "reviewer": "unknown",
-      "task_type": "qa",
-      "risk_level": "high"
-    },
-    "resolved_at": null,
-    "resolution": null,
-    "notifications_sent": [
-      "email_2025-08-04T22:34:55.582378",
-      "slack_2025-08-04T22:34:55.582378",
-      "dashboard_2025-08-04T22:34:55.582378"
-    ]
-  },
-  {
-    "task_id": "FE-666",
-    "trigger": "manual",
-    "level": {
-      "name": "Management Review",
-      "value": 2,
-      "timeout_hours": 6
-    },
-    "triggered_at": "2025-08-04T22:34:55.904413",
-    "triggered_by": "cli_user",
-    "context": {
-      "reason": "urgent_deadline",
-      "manual_trigger": true,
-      "cli_initiated": true
-    },
-    "resolved_at": null,
-    "resolution": null,
-    "notifications_sent": [
-      "email_2025-08-04T22:34:55.904413",
-      "slack_2025-08-04T22:34:55.904413",
-      "dashboard_2025-08-04T22:34:55.904413"
+      "email_2025-08-07T00:34:41.987366",
+      "slack_2025-08-07T00:34:41.987366",
+      "dashboard_2025-08-07T00:34:41.987366",
+      "phone_2025-08-07T00:34:41.987366"
     ]
   }
 ]

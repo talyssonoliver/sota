@@ -41,7 +41,7 @@ class TestVercelToolUnified:
 
     def test_project_command_routing(self):
         """Test project command routing."""
-        from src.platform.tools.vercel_tool_unified import ProjectCommand
+        from src.infrastructure.tools.external.vercel_tool import ProjectCommand
         
         command = ProjectCommand(self.tool)
         
@@ -53,7 +53,7 @@ class TestVercelToolUnified:
 
     def test_deployment_command_routing(self):
         """Test deployment command routing."""
-        from src.platform.tools.vercel_tool_unified import DeploymentCommand
+        from src.infrastructure.tools.external.vercel_tool import DeploymentCommand
         
         command = DeploymentCommand(self.tool)
         
@@ -64,7 +64,7 @@ class TestVercelToolUnified:
 
     def test_deploy_hook_command_routing(self):
         """Test deploy hook command routing."""
-        from src.platform.tools.vercel_tool_unified import DeployHookCommand
+        from src.infrastructure.tools.external.vercel_tool import DeployHookCommand
         
         command = DeployHookCommand(self.tool)
         
@@ -76,7 +76,7 @@ class TestVercelToolUnified:
 
     def test_git_integration_command_routing(self):
         """Test Git integration command routing."""
-        from src.platform.tools.vercel_tool_unified import GitIntegrationCommand
+        from src.infrastructure.tools.external.vercel_tool import GitIntegrationCommand
         
         command = GitIntegrationCommand(self.tool)
         

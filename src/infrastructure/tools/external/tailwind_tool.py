@@ -12,7 +12,7 @@ from src.infrastructure.utils.common_imports import (
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, ValidationError
 
-from src.platform.tools.base_tool import ArtesanatoBaseTool
+from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool
 
 load_dotenv()
 

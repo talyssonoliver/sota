@@ -9,7 +9,7 @@ from src.infrastructure.utils.common_imports import (
     os,
     re
 )
-from src.platform.tools.base_tool import ArtesanatoBaseTool
+from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool
 
 
 class JestTool(ArtesanatoBaseTool):
