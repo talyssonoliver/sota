@@ -1,15 +1,12 @@
-
-from src.infrastructure.utils.common_imports import Any, Dict
 """
 Design System Tool - Provides utilities for working with the Artesanato design system
 """
 
-# from typing import Any, Dict  # Consolidated to common_imports
-
 from dotenv import load_dotenv
 from pydantic import BaseModel, ValidationError
 
-from src.platform.tools.base_tool import ArtesanatoBaseTool
+from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool
+from src.infrastructure.utils.common_imports import Any, Dict
 
 load_dotenv()
 

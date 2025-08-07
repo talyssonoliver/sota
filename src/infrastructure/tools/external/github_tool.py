@@ -1,17 +1,29 @@
 
-from src.infrastructure.utils.common_imports import json, requests
 """
 GitHub Tool - Allows agents to interact with GitHub repositories
 """
 
-# import json  # Consolidated to common_imports
 from typing import Dict, Optional
 
-# import requests  # Consolidated to common_imports
 from pydantic import Field
 
-from src.platform.tools.base_tool import ArtesanatoBaseTool
+from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool
+from src.infrastructure.utils.common_imports import json, requests
 from src.infrastructure.utils.common_utils import safe_get_env
+
+# Constants to avoid string duplication
+DEFAULT_REPO = "artesanato-shop/artesanato-ecommerce"
+DEFAULT_DESCRIPTION = "E-commerce platform for Brazilian artisanal products"
+MISSING_SERVICE_FUNCTIONS_TITLE = "Implement Missing Service Functions"
+MISSING_SERVICE_FUNCTIONS_BODY = "Create service layer for orders and customers using Supabase"
+CLOSES_42 = "Closes #42"
+FEATURE_BRANCH = "feature/missing-service-functions"
+BACKEND_ENGINEER = "Backend Engineer"
+BACKEND_EMAIL = "backend@example.com"
+TIMESTAMP_2025_04_02_10 = "2025-04-02T10:00:00Z"
+TIMESTAMP_2025_04_02_15_30 = "2025-04-02T15:30:00Z"
+TIMESTAMP_2025_05_05_09 = "2025-05-05T09:00:00Z"
+TIMESTAMP_2025_04_02_16 = "2025-04-02T16:00:00Z"
 
 
 class GitHubTool(ArtesanatoBaseTool):
@@ -20,7 +32,7 @@ class GitHubTool(ArtesanatoBaseTool):
     name: str = "github_tool"
     description: str = "Tool for interacting with GitHub repositories, issues, pull requests, branches, and commits."
     token: Optional[str] = Field(default=None)
-    repo: str = Field(default="artesanato-shop/artesanato-ecommerce")
+    repo: str = Field(default=DEFAULT_REPO)
     api_base_url: str = Field(default="https://api.github.com")
     headers: Dict[str, str] = Field(default_factory=dict)
 
@@ -30,7 +42,7 @@ class GitHubTool(ArtesanatoBaseTool):
         self.api_base_url = "https://api.github.com"
         self.token = safe_get_env("GITHUB_TOKEN")
         self.repo = kwargs.get("repo", safe_get_env(
-            "GITHUB_REPOSITORY", "artesanato-shop/artesanato-ecommerce"))
+            "GITHUB_REPOSITORY", DEFAULT_REPO))
         self.headers = {
             "Authorization": f"token {self.token}" if self.token else "",
             "Accept": "application/vnd.github.v3+json"
@@ -45,102 +57,113 @@ class GitHubTool(ArtesanatoBaseTool):
     def _run(self, query: str) -> str:
         """Execute a query against the GitHub API."""
         try:
-            # Parse query to determine what GitHub action to perform
             query_lower = query.lower()
 
-            # Issue operations
+            # Use dispatch method to reduce complexity
             if "issue" in query_lower:
-                if "list issues" in query_lower:
-                    return self._list_issues()
-                elif "create issue" in query_lower:
-                    title = self._extract_param(query, "title")
-                    body = self._extract_param(query, "body")
-                    return self._create_issue(title, body)
-                elif "update issue" in query_lower or "close issue" in query_lower:
-                    issue_number = self._extract_param(query, "number")
-                    state = "closed" if "close" in query_lower else self._extract_param(
-                        query, "state")
-                    return self._update_issue(issue_number, state)
-                else:
-                    issue_number = self._extract_param(query, "number")
-                    if issue_number:
-                        return self._get_issue(issue_number)
-                    return self._list_issues()
-
-            # Pull request operations
+                return self._handle_issue_operations(query, query_lower)
             elif "pull request" in query_lower or "pr" in query_lower:
-                if "list pull requests" in query_lower or "list prs" in query_lower:
-                    return self._list_pull_requests()
-                elif "create pull request" in query_lower or "create pr" in query_lower:
-                    title = self._extract_param(query, "title")
-                    body = self._extract_param(query, "body")
-                    head = self._extract_param(
-                        query, "head") or self._extract_param(query, "branch")
-                    base = self._extract_param(query, "base") or "main"
-                    return self._create_pull_request(title, body, head, base)
-                elif "merge pull request" in query_lower or "merge pr" in query_lower:
-                    pr_number = self._extract_param(query, "number")
-                    return self._merge_pull_request(pr_number)
-                else:
-                    pr_number = self._extract_param(query, "number")
-                    if pr_number:
-                        return self._get_pull_request(pr_number)
-                    return self._list_pull_requests()
-
-            # Repository operations
+                return self._handle_pull_request_operations(query, query_lower)
             elif "repo" in query_lower or "repository" in query_lower:
-                if "create repository" in query_lower or "create repo" in query_lower:
-                    name = self._extract_param(query, "name")
-                    description = self._extract_param(query, "description")
-                    private = "private" in query_lower
-                    return self._create_repository(name, description, private)
-                else:
-                    return self._get_repo_info()
-
-            # Branch operations
+                return self._handle_repository_operations(query, query_lower)
             elif "branch" in query_lower:
-                if "create branch" in query_lower or "new branch" in query_lower:
-                    branch_name = self._extract_param(query, "name")
-                    base = self._extract_param(query, "base") or "main"
-                    return self._create_branch(branch_name, base)
-                elif "list branches" in query_lower:
-                    return self._list_branches()
-                else:
-                    branch_name = self._extract_param(query, "name")
-                    if branch_name:
-                        return self._get_branch(branch_name)
-                    return self._list_branches()
-
-            # Commit operations
+                return self._handle_branch_operations(query, query_lower)
             elif "commit" in query_lower:
-                if "list commits" in query_lower:
-                    return self._list_commits()
-                else:
-                    commit_sha = self._extract_param(
-                        query, "sha") or self._extract_param(query, "hash")
-                    if commit_sha:
-                        return self._get_commit(commit_sha)
-                    return self._list_commits()
-
-            # Default operations based on keywords
-            elif "list issues" in query_lower:
-                return self._list_issues()
-            elif "create issue" in query_lower:
-                title = self._extract_param(query, "title")
-                body = self._extract_param(query, "body")
-                return self._create_issue(title, body)
-            elif "get repo" in query_lower:
-                return self._get_repo_info()
-            elif "list pull requests" in query_lower or "list prs" in query_lower:
-                return self._list_pull_requests()
+                return self._handle_commit_operations(query, query_lower)
             else:
-                return json.dumps(
-                    self.format_response(
-                        data=None,
-                        error="Unsupported GitHub operation. Supported operations: list/create/update issues, list/create/merge pull requests, get/create repositories, list/create/get branches, list/get commits"))
+                return self._handle_fallback_operations(query, query_lower)
 
         except Exception as e:
-            return json.dumps(self.handle_error(e, "GitHubTool._run"))
+            return json.dumps(self.handle_error(e, {"method": "GitHubTool._run", "query": query}))
+
+    def _handle_issue_operations(self, query: str, query_lower: str) -> str:
+        """Handle issue-related operations."""
+        if "list issues" in query_lower:
+            return self._list_issues()
+        elif "create issue" in query_lower:
+            title = self._extract_param(query, "title")
+            body = self._extract_param(query, "body")
+            return self._create_issue(title, body)
+        elif "update issue" in query_lower or "close issue" in query_lower:
+            issue_number = self._extract_param(query, "number")
+            state = "closed" if "close" in query_lower else self._extract_param(query, "state") or "open"
+            return self._update_issue(issue_number, state)
+        else:
+            issue_number = self._extract_param(query, "number")
+            if issue_number:
+                return self._get_issue(issue_number)
+            return self._list_issues()
+
+    def _handle_pull_request_operations(self, query: str, query_lower: str) -> str:
+        """Handle pull request operations."""
+        if "list pull requests" in query_lower or "list prs" in query_lower:
+            return self._list_pull_requests()
+        elif "create pull request" in query_lower or "create pr" in query_lower:
+            title = self._extract_param(query, "title")
+            body = self._extract_param(query, "body")
+            head = self._extract_param(query, "head") or self._extract_param(query, "branch")
+            base = self._extract_param(query, "base") or "main"
+            return self._create_pull_request(title, body, head, base)
+        elif "merge pull request" in query_lower or "merge pr" in query_lower:
+            pr_number = self._extract_param(query, "number")
+            return self._merge_pull_request(pr_number)
+        else:
+            pr_number = self._extract_param(query, "number")
+            if pr_number:
+                return self._get_pull_request(pr_number)
+            return self._list_pull_requests()
+
+    def _handle_repository_operations(self, query: str, query_lower: str) -> str:
+        """Handle repository operations."""
+        if "create repository" in query_lower or "create repo" in query_lower:
+            name = self._extract_param(query, "name")
+            description = self._extract_param(query, "description")
+            private = "private" in query_lower
+            return self._create_repository(name, description, private)
+        else:
+            return self._get_repo_info()
+
+    def _handle_branch_operations(self, query: str, query_lower: str) -> str:
+        """Handle branch operations."""
+        if "create branch" in query_lower or "new branch" in query_lower:
+            branch_name = self._extract_param(query, "name")
+            base = self._extract_param(query, "base") or "main"
+            return self._create_branch(branch_name, base)
+        elif "list branches" in query_lower:
+            return self._list_branches()
+        else:
+            branch_name = self._extract_param(query, "name")
+            if branch_name:
+                return self._get_branch(branch_name)
+            return self._list_branches()
+
+    def _handle_commit_operations(self, query: str, query_lower: str) -> str:
+        """Handle commit operations."""
+        if "list commits" in query_lower:
+            return self._list_commits()
+        else:
+            commit_sha = self._extract_param(query, "sha") or self._extract_param(query, "hash")
+            if commit_sha:
+                return self._get_commit(commit_sha)
+            return self._list_commits()
+
+    def _handle_fallback_operations(self, query: str, query_lower: str) -> str:
+        """Handle fallback operations for unmatched queries."""
+        if "list issues" in query_lower:
+            return self._list_issues()
+        elif "create issue" in query_lower:
+            title = self._extract_param(query, "title")
+            body = self._extract_param(query, "body")
+            return self._create_issue(title, body)
+        elif "get repo" in query_lower:
+            return self._get_repo_info()
+        elif "list pull requests" in query_lower or "list prs" in query_lower:
+            return self._list_pull_requests()
+        else:
+            return json.dumps(
+                self.format_response(
+                    data=None,
+                    error="Unsupported GitHub operation. Supported operations: list/create/update issues, list/create/merge pull requests, get/create repositories, list/create/get branches, list/get commits"))
 
     def _extract_param(self, query: str, param_name: str) -> str:
         """Extract a parameter value from the query string."""
@@ -179,7 +202,7 @@ class GitHubTool(ArtesanatoBaseTool):
         except Exception as e:
             return json.dumps(
                 self.handle_error(
-                    e, "GitHubTool._get_repo_info"))
+                    e, {"method": "_get_repo_info"}))
 
     def _list_issues(self) -> str:
         """List open issues in the repository."""
@@ -195,7 +218,7 @@ class GitHubTool(ArtesanatoBaseTool):
                 data=response.json()
             ))
         except Exception as e:
-            return json.dumps(self.handle_error(e, "GitHubTool._list_issues"))
+            return json.dumps(self.handle_error(e, {"method": "_list_issues"}))
 
     def _create_issue(self, title: str, body: str) -> str:
         """Create a new issue in the repository. Idempotent: will not create duplicate issues with the same title and body."""
@@ -233,7 +256,7 @@ class GitHubTool(ArtesanatoBaseTool):
                 data=response.json()
             ))
         except Exception as e:
-            return json.dumps(self.handle_error(e, "GitHubTool._create_issue"))
+            return json.dumps(self.handle_error(e, {"method": "_create_issue", "title": title, "body": body}))
 
     def _get_issue(self, issue_number: str) -> str:
         """Get a specific issue by number."""
@@ -249,9 +272,9 @@ class GitHubTool(ArtesanatoBaseTool):
                 data=response.json()
             ))
         except Exception as e:
-            return json.dumps(self.handle_error(e, "GitHubTool._get_issue"))
+            return json.dumps(self.handle_error(e, {"method": "_get_issue", "issue_number": issue_number}))
 
-    def _update_issue(self, issue_number: str, state: str = None) -> str:
+    def _update_issue(self, issue_number: str, state: Optional[str] = None) -> str:
         """Update an issue (e.g., close it)."""
         if not self.token or not issue_number:
             return self._mock_update_issue(issue_number)
@@ -270,7 +293,7 @@ class GitHubTool(ArtesanatoBaseTool):
                 data=response.json()
             ))
         except Exception as e:
-            return json.dumps(self.handle_error(e, "GitHubTool._update_issue"))
+            return json.dumps(self.handle_error(e, {"method": "_update_issue", "issue_number": issue_number}))
 
     # Pull request operations
 
@@ -290,7 +313,7 @@ class GitHubTool(ArtesanatoBaseTool):
         except Exception as e:
             return json.dumps(
                 self.handle_error(
-                    e, "GitHubTool._list_pull_requests"))
+                    e, {"method": "_list_pull_requests"}))
 
     def _create_pull_request(
             self,
@@ -338,7 +361,7 @@ class GitHubTool(ArtesanatoBaseTool):
         except Exception as e:
             return json.dumps(
                 self.handle_error(
-                    e, "GitHubTool._create_pull_request"))
+                    e, {"method": "_create_pull_request", "title": title, "head": head, "base": base}))
 
     def _get_pull_request(self, pr_number: str) -> str:
         """Get a specific pull request by number."""
@@ -356,7 +379,7 @@ class GitHubTool(ArtesanatoBaseTool):
         except Exception as e:
             return json.dumps(
                 self.handle_error(
-                    e, "GitHubTool._get_pull_request"))
+                    e, {"method": "_get_pull_request", "pr_number": pr_number}))
 
     def _merge_pull_request(self, pr_number: str) -> str:
         """Merge a pull request."""
@@ -376,7 +399,7 @@ class GitHubTool(ArtesanatoBaseTool):
         except Exception as e:
             return json.dumps(
                 self.handle_error(
-                    e, "GitHubTool._merge_pull_request"))
+                    e, {"method": "_merge_pull_request", "pr_number": pr_number}))
 
     # Repository operations
 
@@ -412,7 +435,7 @@ class GitHubTool(ArtesanatoBaseTool):
         except Exception as e:
             return json.dumps(
                 self.handle_error(
-                    e, "GitHubTool._create_repository"))
+                    e, {"method": "_create_repository", "name": name}))
 
     # Branch operations
 
@@ -432,7 +455,7 @@ class GitHubTool(ArtesanatoBaseTool):
         except Exception as e:
             return json.dumps(
                 self.handle_error(
-                    e, "GitHubTool._list_branches"))
+                    e, {"method": "_list_branches"}))
 
     def _create_branch(self, branch_name: str, base: str = "main") -> str:
         """Create a new branch in the repository. Idempotent: will not create duplicate branches with the same name."""
@@ -470,7 +493,7 @@ class GitHubTool(ArtesanatoBaseTool):
         except Exception as e:
             return json.dumps(
                 self.handle_error(
-                    e, "GitHubTool._create_branch"))
+                    e, {"method": "_create_branch", "branch_name": branch_name}))
 
     def _get_branch(self, branch_name: str) -> str:
         """Get information about a specific branch."""
@@ -486,7 +509,7 @@ class GitHubTool(ArtesanatoBaseTool):
                 data=response.json()
             ))
         except Exception as e:
-            return json.dumps(self.handle_error(e, "GitHubTool._get_branch"))
+            return json.dumps(self.handle_error(e, {"method": "_get_branch", "branch_name": branch_name}))
 
     # Commit operations
 
@@ -504,7 +527,7 @@ class GitHubTool(ArtesanatoBaseTool):
                 data=response.json()
             ))
         except Exception as e:
-            return json.dumps(self.handle_error(e, "GitHubTool._list_commits"))
+            return json.dumps(self.handle_error(e, {"method": "_list_commits"}))
 
     def _get_commit(self, commit_sha: str) -> str:
         """Get information about a specific commit."""
@@ -520,7 +543,7 @@ class GitHubTool(ArtesanatoBaseTool):
                 data=response.json()
             ))
         except Exception as e:
-            return json.dumps(self.handle_error(e, "GitHubTool._get_commit"))
+            return json.dumps(self.handle_error(e, {"method": "_get_commit", "commit_sha": commit_sha}))
 
     # Mock responses for when GitHub token is unavailable
     def _mock_repo_info(self) -> str:
@@ -529,9 +552,9 @@ class GitHubTool(ArtesanatoBaseTool):
             self.format_response(
                 data={
                     "name": "artesanato-ecommerce",
-                    "full_name": "artesanato-shop/artesanato-ecommerce",
-                    "description": "E-commerce platform for Brazilian artisanal products",
-                    "html_url": "https://github.com/artesanato-shop/artesanato-ecommerce",
+                    "full_name": DEFAULT_REPO,
+                    "description": DEFAULT_DESCRIPTION,
+                    "html_url": f"https://github.com/{DEFAULT_REPO}",
                     "stargazers_count": 42,
                     "forks_count": 12,
                     "open_issues_count": 5,
@@ -543,10 +566,10 @@ class GitHubTool(ArtesanatoBaseTool):
             data=[
                 {
                     "number": 42,
-                    "title": "Implement Missing Service Functions",
+                    "title": MISSING_SERVICE_FUNCTIONS_TITLE,
                     "state": "open",
-                    "body": "Create service layer for orders and customers using Supabase",
-                    "created_at": "2025-04-02T10:00:00Z",
+                    "body": MISSING_SERVICE_FUNCTIONS_BODY,
+                    "created_at": TIMESTAMP_2025_04_02_10,
                     "user": {"login": "backend-engineer"},
                     "labels": ["backend", "service-layer", "BE-07"]
                 },
@@ -593,13 +616,13 @@ class GitHubTool(ArtesanatoBaseTool):
             data={
                 "id": 1,
                 "number": int(issue_num),
-                "title": "Implement Missing Service Functions",
-                "body": "Create service layer for orders and customers using Supabase",
+                "title": MISSING_SERVICE_FUNCTIONS_TITLE,
+                "body": MISSING_SERVICE_FUNCTIONS_BODY,
                 "state": "open",
                 "assignee": "backend-engineer",
                 "labels": ["backend", "service-layer", "BE-07"],
-                "created_at": "2025-04-02T10:00:00Z",
-                "updated_at": "2025-04-02T10:00:00Z",
+                "created_at": TIMESTAMP_2025_04_02_10,
+                "updated_at": TIMESTAMP_2025_04_02_10,
                 "html_url": f"https://github.com/{self.repo}/issues/{issue_num}"
             }
         ))
@@ -611,12 +634,12 @@ class GitHubTool(ArtesanatoBaseTool):
             data={
                 "id": 1,
                 "number": int(issue_num),
-                "title": "Implement Missing Service Functions",
-                "body": "Create service layer for orders and customers using Supabase",
+                "title": MISSING_SERVICE_FUNCTIONS_TITLE,
+                "body": MISSING_SERVICE_FUNCTIONS_BODY,
                 "state": "closed",
                 "assignee": "backend-engineer",
                 "labels": ["backend", "service-layer", "BE-07", "completed"],
-                "created_at": "2025-04-02T10:00:00Z",
+                "created_at": TIMESTAMP_2025_04_02_10,
                 "updated_at": "2025-05-05T15:00:00Z",
                 "html_url": f"https://github.com/{self.repo}/issues/{issue_num}"
             }
@@ -628,14 +651,14 @@ class GitHubTool(ArtesanatoBaseTool):
             data=[
                 {
                     "number": 14,
-                    "title": "Implement Missing Service Functions",
+                    "title": MISSING_SERVICE_FUNCTIONS_TITLE,
                     "state": "open",
-                    "body": "Closes #42",
+                    "body": CLOSES_42,
                     "user": {"login": "backend-engineer"},
                     "base": {"ref": "main"},
-                    "head": {"ref": "feature/missing-service-functions"},
-                    "created_at": "2025-04-02T15:30:00Z",
-                    "updated_at": "2025-04-02T15:30:00Z",
+                    "head": {"ref": FEATURE_BRANCH},
+                    "created_at": TIMESTAMP_2025_04_02_15_30,
+                    "updated_at": TIMESTAMP_2025_04_02_15_30,
                     "html_url": f"https://github.com/{self.repo}/pull/14"
                 },
                 {
@@ -683,14 +706,14 @@ class GitHubTool(ArtesanatoBaseTool):
             data={
                 "id": 1,
                 "number": int(pr_num),
-                "title": "Implement Missing Service Functions",
-                "body": "Closes #42",
+                "title": MISSING_SERVICE_FUNCTIONS_TITLE,
+                "body": CLOSES_42,
                 "state": "open",
                 "user": {"login": "backend-engineer"},
                 "base": {"ref": "main"},
-                "head": {"ref": "feature/missing-service-functions"},
-                "created_at": "2025-04-02T15:30:00Z",
-                "updated_at": "2025-04-02T15:30:00Z",
+                "head": {"ref": FEATURE_BRANCH},
+                "created_at": TIMESTAMP_2025_04_02_15_30,
+                "updated_at": TIMESTAMP_2025_04_02_15_30,
                 "html_url": f"https://github.com/{self.repo}/pull/{pr_num}"
             }
         ))
@@ -702,14 +725,14 @@ class GitHubTool(ArtesanatoBaseTool):
             data={
                 "id": 1,
                 "number": int(pr_num),
-                "title": "Implement Missing Service Functions",
-                "body": "Closes #42",
+                "title": MISSING_SERVICE_FUNCTIONS_TITLE,
+                "body": CLOSES_42,
                 "state": "closed",
                 "merged": True,
                 "user": {"login": "backend-engineer"},
                 "base": {"ref": "main"},
-                "head": {"ref": "feature/missing-service-functions"},
-                "created_at": "2025-04-02T15:30:00Z",
+                "head": {"ref": FEATURE_BRANCH},
+                "created_at": TIMESTAMP_2025_04_02_15_30,
                 "updated_at": "2025-05-05T16:30:00Z",
                 "merged_at": "2025-05-05T16:30:00Z",
                 "html_url": f"https://github.com/{self.repo}/pull/{pr_num}"
@@ -726,9 +749,9 @@ class GitHubTool(ArtesanatoBaseTool):
                     "name": repo_name,
                     "full_name": f"artesanato-shop/{repo_name}",
                     "private": False,
-                    "description": description or "E-commerce platform for Brazilian artisanal products",
-                    "created_at": "2025-05-05T09:00:00Z",
-                    "updated_at": "2025-05-05T09:00:00Z",
+                    "description": description or DEFAULT_DESCRIPTION,
+                    "created_at": TIMESTAMP_2025_05_05_09,
+                    "updated_at": TIMESTAMP_2025_05_05_09,
                     "html_url": f"https://github.com/artesanato-shop/{repo_name}",
                     "clone_url": f"https://github.com/artesanato-shop/{repo_name}.git"}))
 
@@ -739,13 +762,13 @@ class GitHubTool(ArtesanatoBaseTool):
                 data={
                     "id": 1,
                     "name": "artesanato-ecommerce",
-                    "full_name": "artesanato-shop/artesanato-ecommerce",
+                    "full_name": DEFAULT_REPO,
                     "private": False,
-                    "description": "E-commerce platform for Brazilian artisanal products",
+                    "description": DEFAULT_DESCRIPTION,
                     "created_at": "2025-04-01T09:00:00Z",
-                    "updated_at": "2025-05-05T09:00:00Z",
-                    "html_url": "https://github.com/artesanato-shop/artesanato-ecommerce",
-                    "clone_url": "https://github.com/artesanato-shop/artesanato-ecommerce.git",
+                    "updated_at": TIMESTAMP_2025_05_05_09,
+                    "html_url": f"https://github.com/{DEFAULT_REPO}",
+                    "clone_url": f"https://github.com/{DEFAULT_REPO}.git",
                     "default_branch": "main",
                     "open_issues_count": 10,
                     "forks_count": 5,
@@ -764,7 +787,7 @@ class GitHubTool(ArtesanatoBaseTool):
                     "protected": True
                 },
                 {
-                    "name": "feature/missing-service-functions",
+                    "name": FEATURE_BRANCH,
                     "commit": {
                         "sha": "abcdef123456789",
                         "url": f"https://api.github.com/repos/{self.repo}/commits/abcdef123456789"
@@ -798,7 +821,7 @@ class GitHubTool(ArtesanatoBaseTool):
 
     def _mock_get_branch(self, branch_name: str) -> str:
         """Return mock response for getting a branch."""
-        name = branch_name or "feature/missing-service-functions"
+        name = branch_name or FEATURE_BRANCH
         return json.dumps(self.format_response(
             data={
                 "name": name,
@@ -819,9 +842,9 @@ class GitHubTool(ArtesanatoBaseTool):
                     "commit": {
                         "message": "Implement customer service functions",
                         "author": {
-                            "name": "Backend Engineer",
-                            "email": "backend@example.com",
-                            "date": "2025-04-02T16:00:00Z"
+                            "name": BACKEND_ENGINEER,
+                            "email": BACKEND_EMAIL,
+                            "date": TIMESTAMP_2025_04_02_16
                         }
                     },
                     "author": {"login": "backend-engineer"},
@@ -852,14 +875,14 @@ class GitHubTool(ArtesanatoBaseTool):
                 "commit": {
                     "message": "Implement customer service functions",
                     "author": {
-                        "name": "Backend Engineer",
-                        "email": "backend@example.com",
-                        "date": "2025-04-02T16:00:00Z"
+                        "name": BACKEND_ENGINEER,
+                        "email": BACKEND_EMAIL,
+                        "date": TIMESTAMP_2025_04_02_16
                     },
                     "committer": {
-                        "name": "Backend Engineer",
-                        "email": "backend@example.com",
-                        "date": "2025-04-02T16:00:00Z"
+                        "name": BACKEND_ENGINEER,
+                        "email": BACKEND_EMAIL,
+                        "date": TIMESTAMP_2025_04_02_16
                     }
                 },
                 "author": {"login": "backend-engineer"},

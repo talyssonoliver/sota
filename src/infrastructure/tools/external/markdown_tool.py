@@ -1,4 +1,11 @@
+"""
+Markdown Tool - Helps agents generate and format markdown documentation
+"""
 
+import frontmatter
+from pydantic import BaseModel, ValidationError
+
+from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool
 from src.infrastructure.utils.common_imports import (
     Any,
     Dict,
@@ -6,19 +13,6 @@ from src.infrastructure.utils.common_imports import (
     json,
     re
 )
-"""
-Markdown Tool - Helps agents generate and format markdown documentation
-"""
-
-# import json  # Consolidated to common_imports
-# import re  # Consolidated to common_imports
-# from datetime import datetime  # Consolidated to common_imports
-# from typing import Any, Dict  # Consolidated to common_imports
-
-import frontmatter
-from pydantic import BaseModel, ValidationError
-
-from src.platform.tools.base_tool import ArtesanatoBaseTool
 
 
 class MarkdownTool(ArtesanatoBaseTool):

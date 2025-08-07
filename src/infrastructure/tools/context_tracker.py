@@ -20,7 +20,7 @@ task run and stores the information under /outputs/[TASK-ID]/context_log.json.
 Usage:
 
     1. Import the functions you need:
-       >>> from src.platform.tools.context_tracker import track_context_usage, get_context_log
+       >>> from src.infrastructure.tools.context_tracker import track_context_usage, get_context_log
 
     2. Track context usage for a task:
        >>> track_context_usage(

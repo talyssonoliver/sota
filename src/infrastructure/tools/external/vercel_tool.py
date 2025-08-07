@@ -8,7 +8,7 @@ from typing import Dict, Optional
 from pydantic import BaseModel, ValidationError
 
 from src.infrastructure.utils.common_imports import json, os, requests
-from src.platform.tools.base_tool import ArtesanatoBaseTool
+from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool
 
 
 class VercelCommand(ABC):

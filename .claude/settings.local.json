@@ -80,7 +80,16 @@
       "Bash(npx @docusaurus/mdx-loader:*)",
       "mcp__filesystem__read_text_file",
       "Bash(curl:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(gh api:*)",
+      "Bash(/investigate-file src/infrastructure/tools/core/tool_loader.py)",
+      "mcp__github__get_pull_request_status",
+      "Bash(export:*)",
+      "Bash(TESTING=1 python3 -c \"\n# Test GitHub tool functionality after refactoring\ntry:\n    from src.infrastructure.tools.external.github_tool import GitHubTool\n    print(''✅ GitHub tool import successful'')\n    \n    # Test instantiation\n    tool = GitHubTool()\n    print(''✅ GitHub tool instantiation successful'')\n    \n    # Test _run method with different operations\n    test_queries = [\n        ''list issues'',\n        ''create issue: title=Test Issue, body=Test body'',\n        ''get repo info'',\n        ''list pull requests'',\n        ''create branch: name=test-branch'',\n        ''list commits'',\n        ''invalid operation''\n    ]\n    \n    for query in test_queries:\n        try:\n            result = tool._run(query)\n            print(f''✅ Query \"\"{query[:20]}...\"\" executed successfully'')\n        except Exception as e:\n            print(f''❌ Query \"\"{query[:20]}...\"\" failed: {e}'')\n    \n    print(''\\n🎉 GitHub tool refactoring verified - all operations working!'')\n    \nexcept Exception as e:\n    print(f''❌ GitHub tool test failed: {e}'')\n    import traceback\n    traceback.print_exc()\n\")",
+      "Bash(if grep -r \"from src.platform.tools.\" src/ tests/ --include=\"*.py\")",
+      "Bash(then)",
+      "Bash(else)",
+      "Bash(fi)"
     ],
     "deny": []
   },

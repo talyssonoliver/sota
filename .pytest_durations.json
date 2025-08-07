@@ -1,8 +1,21 @@
 {
- "tests/unit/core/workflows/test_daily_cycle.py::TestDailyCycleOrchestrationIntegration::test_error_recovery_workflow": 0.3679316001944244,
- "tests/unit/core/workflows/test_task_lifecycle.py::TestMainFunction::test_main_function": 0.003099100198596716,
- "tests/unit/core/workflows/test_summarise_task.py::TestTaskSummary::test_task_summary_creation": 0.002337599638849497,
- "tests/unit/core/workflows/test_summarise_task.py::TestTaskSummary::test_task_summary_with_optional_fields": 0.002158599905669689,
- "tests/unit/core/workflows/test_timeline_method.py::test_timeline_method": 0.13053900003433228,
- "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationIntegration::test_real_task_declaration": 0.10430280026048422
+ "tests/unit/core/agents/test_enhanced_qa_agent.py::TestCreateEnhancedQAWorkflow::test_create_enhanced_qa_workflow_success": 0.0036174410488456488,
+ "tests/unit/core/agents/test_enhanced_test_generator.py::TestQAValidationEngine::test_comprehensive_test_generation_validation": 0.01226464007049799,
+ "tests/unit/core/agents/test_enhanced_qa.py::TestQAWorkflow::test_workflow_integration": 0.004913654993288219,
+ "tests/unit/core/agents/test_enhanced_test_generator.py::TestQAExecutionEngine::test_qa_execution_engine_initialization": 0.003032635082490742,
+ "tests/unit/core/agents/test_enhanced_test_generator.py::TestQAExecutionEngine::test_qa_workflow_execution": 0.025631591910496354,
+ "tests/unit/core/agents/test_qa_agent_decisions.py::TestQAAgentDecisions::test_qa_agent_default_behavior": 0.04969476396217942,
+ "tests/unit/core/agents/test_qa_agent_decisions.py::TestQAAgentDecisions::test_qa_agent_preserves_input_state": 0.05553743103519082,
+ "tests/unit/core/tasks/test_update_task_status.py::test_update_task_status_sets_done": 0.015090971952304244,
+ "tests/unit/core/agents/test_human_agents.py::TestHITLIntegration::test_hitl_checkpoint_integration": 0.5236345489975065,
+ "tests/unit/core/agents/test_human_agents.py::TestHITLIntegration::test_notification_integration": 0.0037041420582681894,
+ "tests/unit/core/agents/test_qa_validation.py::test_qa_report_exists": 0.019475321052595973,
+ "tests/unit/core/tasks/test_task_declaration.py::test_module_imports": 0.0029434330062940717,
+ "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationManager::test_declare_task": 0.004953756928443909,
+ "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationIntegration::test_real_task_declaration": 2.6504578810418025,
+ "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationCLI::test_cli_summary_command": 0.003741841996088624,
+ "tests/unit/core/agents/test_qa_agent_decisions.py::TestQAAgentMockIntegration::test_qa_agent_in_workflow": 0.0038425440434366465,
+ "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationManager::test_prepare_task_for_execution": 0.024387673009186983,
+ "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationManager::test_get_preparation_summary_empty": 0.002154423971660435,
+ "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationManager::test_get_tasks_ready_for_execution": 0.008741897065192461
 }

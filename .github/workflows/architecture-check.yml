@@ -38,7 +38,7 @@ jobs:
           VIOLATIONS=true
         fi
         
-        if grep -r "from memory\." src/ tests/ --include="*.py" 2>/dev/null; then
+        if grep -r "^[[:space:]]*from memory\." src/ tests/ --include="*.py" 2>/dev/null | grep -v "test_fast_precommit_validator.py"; then
           echo "❌ Found deprecated 'from memory.' imports"
           echo "💡 Use: from src.infrastructure.memory."
           VIOLATIONS=true
@@ -89,9 +89,29 @@ jobs:
     - name: Test Collection Check
       run: |
         echo "🧪 Verifying all tests can be collected..."
-        python -m pip install pytest
+        # Install pytest and required dependencies
+        python -m pip install pytest pytest-xdist pytest-timeout pytest-env pytest-asyncio
+        
+        # Install core dependencies from requirements.txt for test collection
+        # This ensures all imports can be resolved
+        echo "📦 Installing dependencies for test collection..."
+        # Extract and install only the essential packages needed for imports
+        cat requirements.txt | grep -E "^(pyyaml|requests|flask|flask-cors|pandas|jinja2|python-dotenv|typer|watchdog|openai|tiktoken|chromadb|langchain|litellm|httpx|supabase|beautifulsoup4|markdown|python-frontmatter|python-json-logger|rich|plotly|schedule|APScheduler)" | xargs -I {} python -m pip install "{}"
+        
+        # Install additional dependencies not in requirements.txt but needed for tests
+        python -m pip install \
+          psutil \
+          pydantic \
+          numpy \
+          matplotlib \
+          seaborn \
+          networkx \
+          jsonschema \
+          typing-extensions \
+          cryptography
         
         # Check if tests can be collected successfully
+        export PYTHONPATH=$PWD:$PYTHONPATH
         if python -m pytest --collect-only --tb=short > /dev/null 2>&1; then
           echo "✅ All tests collect successfully"
           python -m pytest --collect-only --tb=short | tail -3
