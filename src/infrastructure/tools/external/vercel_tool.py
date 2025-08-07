@@ -10,6 +10,14 @@ from pydantic import BaseModel, ValidationError
 from src.infrastructure.utils.common_imports import json, os, requests
 from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool
 
+# Constants to avoid string duplication
+GITHUB_URL = "https://github.com/"
+DATE_FORMAT = "%Y-%m-%dT%H:%M:%S.%fZ"
+DEFAULT_PROJECT = "user/artesanato-ecommerce"
+DEFAULT_DOMAIN = "artesanato-ecommerce-git-main.vercel.app"
+CUSTOM_DOMAIN = "artesanato-ecommerce.com"
+REDACTED = "[REDACTED]"
+
 
 class VercelCommand(ABC):
     """Base class for Vercel API commands."""
@@ -329,7 +337,8 @@ class VercelTool(ArtesanatoBaseTool):
         remaining = query[param_start:]
         
         # Match until we find a space followed by word: pattern, or end of string
-        match = re.match(r'([^\s]+(?:\s+[^:]+)*?)(?:\s+\w+:|$)', remaining)
+        # Fixed: removed reluctant quantifier that was causing issues
+        match = re.match(r'([^\s]+(?:\s+[^:]+)*)(?:\s+\w+:|$)', remaining)
         if match:
             value = match.group(1).strip()
             return value if value else None
@@ -493,7 +502,7 @@ class VercelTool(ArtesanatoBaseTool):
                 params["teamId"] = self.team_id
 
             # Extract repository info from URL
-            repo_parts = repo_url.replace("https://github.com/", "").split("/")
+            repo_parts = repo_url.replace(GITHUB_URL, "").split("/")
             if len(repo_parts) >= 2:
                 owner = repo_parts[0]
                 repo_name = repo_parts[1].replace(".git", "")
@@ -663,7 +672,7 @@ class VercelTool(ArtesanatoBaseTool):
             
             # Add Git integration if provided
             if git_repo:
-                repo_parts = git_repo.replace("https://github.com/", "").split("/")
+                repo_parts = git_repo.replace(GITHUB_URL, "").split("/")
                 if len(repo_parts) >= 2:
                     owner = repo_parts[0]
                     repo_name = repo_parts[1].replace(".git", "")
@@ -1085,8 +1094,8 @@ class VercelTool(ArtesanatoBaseTool):
                 "url": f"https://api.vercel.com/v1/integrations/deploy-hooks/hook_abc123def456/{project_id}",
                 "projectId": project_id,
                 "ref": branch,
-                "created": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-                "updatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                "created": datetime.now().strftime(DATE_FORMAT),
+                "updatedAt": datetime.now().strftime(DATE_FORMAT)
             }
         ))
 
@@ -1102,7 +1111,7 @@ class VercelTool(ArtesanatoBaseTool):
                         "url": f"https://api.vercel.com/v1/integrations/deploy-hooks/hook_abc123def456/{project_id}",
                         "projectId": project_id,
                         "ref": "main",
-                        "created": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                        "created": datetime.now().strftime(DATE_FORMAT)
                     },
                     {
                         "id": "hook_def456ghi789",
@@ -1110,7 +1119,7 @@ class VercelTool(ArtesanatoBaseTool):
                         "url": f"https://api.vercel.com/v1/integrations/deploy-hooks/hook_def456ghi789/{project_id}",
                         "projectId": project_id,
                         "ref": "develop",
-                        "created": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                        "created": datetime.now().strftime(DATE_FORMAT)
                     }
                 ]
             }
@@ -1126,8 +1135,8 @@ class VercelTool(ArtesanatoBaseTool):
                 "url": f"https://api.vercel.com/v1/integrations/deploy-hooks/{hook_id}/{project_id}",
                 "projectId": project_id,
                 "ref": "main",
-                "created": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-                "updatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                "created": datetime.now().strftime(DATE_FORMAT),
+                "updatedAt": datetime.now().strftime(DATE_FORMAT)
             }
         ))
 
@@ -1167,7 +1176,7 @@ class VercelTool(ArtesanatoBaseTool):
                     "id": project_id,
                     "link": {
                         "type": "github",
-                        "repo": repo_url.replace("https://github.com/", ""),
+                        "repo": repo_url.replace(GITHUB_URL, ""),
                         "gitSource": {
                             "type": "github",
                             "ref": branch,
@@ -1194,11 +1203,11 @@ class VercelTool(ArtesanatoBaseTool):
             data={
                 "connected": True,
                 "provider": "github",
-                "repository": "user/artesanato-ecommerce",
+                "repository": DEFAULT_PROJECT,
                 "branch": "main",
                 "integration": {
                     "type": "github",
-                    "repo": "user/artesanato-ecommerce",
+                    "repo": DEFAULT_PROJECT,
                     "gitSource": {
                         "type": "github",
                         "ref": "main",
@@ -1224,8 +1233,8 @@ class VercelTool(ArtesanatoBaseTool):
                 "installCommand": None,
                 "outputDirectory": None,
                 "publicSource": False,
-                "created": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-                "updatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                "created": datetime.now().strftime(DATE_FORMAT),
+                "updatedAt": datetime.now().strftime(DATE_FORMAT)
             }
         ))
 
@@ -1272,14 +1281,14 @@ class VercelTool(ArtesanatoBaseTool):
                     "latestDeployments": [
                         {
                             "id": "dpl_123abc456def",
-                            "url": "artesanato-ecommerce-git-main.vercel.app",
+                            "url": "DEFAULT_DOMAIN",
                             "created": (datetime.now() - timedelta(days=1)).isoformat() + "Z",
                             "state": "READY"
                         }
                     ],
                     "link": {
                         "type": "github",
-                        "repo": "user/artesanato-ecommerce",
+                        "repo": DEFAULT_PROJECT,
                         "gitSource": {
                             "type": "github",
                             "ref": "main",
@@ -1315,16 +1324,16 @@ class VercelTool(ArtesanatoBaseTool):
                 },
                 "target": "production" if branch == "main" else "preview",
                 "state": "READY",
-                "created": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                "created": datetime.now().strftime(DATE_FORMAT)
             }
         ))
 
     def _mock_list_deployments(self) -> str:
         """Return mock list of deployments."""
         from datetime import datetime
-        now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        now = datetime.now().strftime(DATE_FORMAT)
         yesterday = datetime.now().replace(day=datetime.now().day -
-                                           1).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                                           1).strftime(DATE_FORMAT)
 
         return json.dumps(self.format_response(
             data={
@@ -1332,7 +1341,7 @@ class VercelTool(ArtesanatoBaseTool):
                     {
                         "uid": "dpl_123abc456def",
                         "name": "artesanato-ecommerce",
-                        "url": "artesanato-ecommerce-git-main.vercel.app",
+                        "url": "DEFAULT_DOMAIN",
                         "created": now,
                         "state": "READY",
                         "target": "production",
@@ -1358,13 +1367,13 @@ class VercelTool(ArtesanatoBaseTool):
     def _mock_get_deployment(self, deployment_id: str) -> str:
         """Return mock deployment information."""
         from datetime import datetime
-        now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        now = datetime.now().strftime(DATE_FORMAT)
 
         return json.dumps(
             self.format_response(
                 data={
                     "id": deployment_id or "dpl_123abc456def",
-                    "url": "artesanato-ecommerce-git-main.vercel.app",
+                    "url": "DEFAULT_DOMAIN",
                     "name": "artesanato-ecommerce",
                     "project": "prj_abc123def456",
                     "meta": {
@@ -1376,19 +1385,19 @@ class VercelTool(ArtesanatoBaseTool):
                     "created": now,
                     "ready": datetime.now().replace(
                         minute=datetime.now().minute +
-                        2).strftime("%Y-%m-%dT%H:%M:%S.%fZ")}))
+                        2).strftime(DATE_FORMAT)}))
 
     def _mock_add_domain(self, project_id: str, domain: str) -> str:
         """Return mock response for adding a domain."""
         from datetime import datetime
-        domain_name = domain or "artesanato-ecommerce.com"
+        domain_name = domain or CUSTOM_DOMAIN
         return json.dumps(self.format_response(
             data={
                 "name": domain_name,
                 "projectId": project_id,
                 "verified": True,
-                "created": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-                "updatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                "created": datetime.now().strftime(DATE_FORMAT),
+                "updatedAt": datetime.now().strftime(DATE_FORMAT)
             }
         ))
 
@@ -1400,24 +1409,24 @@ class VercelTool(ArtesanatoBaseTool):
                 data={
                     "domains": [
                         {
-                            "name": "artesanato-ecommerce.com",
+                            "name": CUSTOM_DOMAIN,
                             "projectId": project_id,
                             "verified": True,
                             "created": datetime.now().replace(
                                 day=datetime.now().day -
-                                5).strftime("%Y-%m-%dT%H:%M:%S.%fZ")},
+                                5).strftime(DATE_FORMAT)},
                         {
-                            "name": "www.artesanato-ecommerce.com",
+                            "name": f"www.{CUSTOM_DOMAIN}",
                             "projectId": project_id,
                             "verified": True,
                             "created": datetime.now().replace(
                                 day=datetime.now().day -
-                                5).strftime("%Y-%m-%dT%H:%M:%S.%fZ")}]}))
+                                5).strftime(DATE_FORMAT)}]}))
 
     def _mock_get_domain(self, project_id: str, domain: str) -> str:
         """Return mock domain information."""
         from datetime import datetime
-        domain_name = domain or "artesanato-ecommerce.com"
+        domain_name = domain or CUSTOM_DOMAIN
         return json.dumps(
             self.format_response(
                 data={
@@ -1426,10 +1435,10 @@ class VercelTool(ArtesanatoBaseTool):
                     "verified": True,
                     "created": datetime.now().replace(
                         day=datetime.now().day -
-                        5).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+                        5).strftime(DATE_FORMAT),
                     "updatedAt": datetime.now().replace(
                         day=datetime.now().day -
-                        5).strftime("%Y-%m-%dT%H:%M:%S.%fZ")}))
+                        5).strftime(DATE_FORMAT)}))
 
     def _mock_remove_domain(self, project_id: str, domain: str) -> str:
         """Return mock response for removing a domain."""
@@ -1448,7 +1457,7 @@ class VercelTool(ArtesanatoBaseTool):
                     {
                         "id": "env_abc123def456",
                         "key": "NEXT_PUBLIC_SUPABASE_URL",
-                        "value": "[REDACTED]",
+                        "value": REDACTED,
                         "type": "plain",
                         "target": ["production", "preview", "development"],
                         "gitBranch": ""
@@ -1456,7 +1465,7 @@ class VercelTool(ArtesanatoBaseTool):
                     {
                         "id": "env_def456ghi789",
                         "key": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-                        "value": "[REDACTED]",
+                        "value": REDACTED,
                         "type": "secret",
                         "target": ["production", "preview", "development"],
                         "gitBranch": ""
@@ -1464,7 +1473,7 @@ class VercelTool(ArtesanatoBaseTool):
                     {
                         "id": "env_ghi789jkl012",
                         "key": "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
-                        "value": "[REDACTED]",
+                        "value": REDACTED,
                         "type": "secret",
                         "target": ["production", "preview", "development"],
                         "gitBranch": ""
@@ -1485,12 +1494,12 @@ class VercelTool(ArtesanatoBaseTool):
             data={
                 "id": "env_abc123def456",
                 "key": name,
-                "value": "[REDACTED]" if is_secret else value,
+                "value": REDACTED if is_secret else value,
                 "type": "secret" if is_secret else "plain",
                 "target": ["production", "preview", "development"],
                 "projectId": project_id,
-                "created": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-                "updatedAt": datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                "created": datetime.now().strftime(DATE_FORMAT),
+                "updatedAt": datetime.now().strftime(DATE_FORMAT)
             }
         ))
 
@@ -1502,7 +1511,7 @@ class VercelTool(ArtesanatoBaseTool):
                 data={
                     "id": "env_abc123def456",
                     "key": name or "NEXT_PUBLIC_SUPABASE_URL",
-                    "value": "[REDACTED]",
+                    "value": REDACTED,
                     "type": "plain",
                     "target": [
                         "production",
@@ -1511,10 +1520,10 @@ class VercelTool(ArtesanatoBaseTool):
                     "projectId": project_id,
                     "created": datetime.now().replace(
                         day=datetime.now().day -
-                        10).strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+                        10).strftime(DATE_FORMAT),
                     "updatedAt": datetime.now().replace(
                         day=datetime.now().day -
-                        10).strftime("%Y-%m-%dT%H:%M:%S.%fZ")}))
+                        10).strftime(DATE_FORMAT)}))
 
     def _mock_remove_env_variable(self, project_id: str, name: str) -> str:
         """Return mock response for removing an environment variable."""
@@ -1528,10 +1537,10 @@ class VercelTool(ArtesanatoBaseTool):
     def _mock_get_logs(self, deployment_id: str) -> str:
         """Return mock deployment logs."""
         from datetime import datetime
-        now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+        now = datetime.now().strftime(DATE_FORMAT)
         one_min_ago = datetime.now().replace(
             minute=datetime.now().minute -
-            1).strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            1).strftime(DATE_FORMAT)
 
         return json.dumps(self.format_response(
             data={

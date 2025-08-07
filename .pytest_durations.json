@@ -17,5 +17,15 @@
  "tests/unit/core/agents/test_qa_agent_decisions.py::TestQAAgentMockIntegration::test_qa_agent_in_workflow": 0.0038425440434366465,
  "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationManager::test_prepare_task_for_execution": 0.024387673009186983,
  "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationManager::test_get_preparation_summary_empty": 0.002154423971660435,
- "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationManager::test_get_tasks_ready_for_execution": 0.008741897065192461
+ "tests/unit/core/tasks/test_task_declaration.py::TestTaskDeclarationManager::test_get_tasks_ready_for_execution": 0.008741897065192461,
+ "tests/unit/infrastructure/tools/test_vercel_tool_unified.py::TestVercelToolUnified::test_input_validation": 0.00036550406366586685,
+ "tests/unit/infrastructure/tools/test_vercel_tool_unified.py::TestVercelToolUnified::test_project_command_routing": 0.00048600498121231794,
+ "tests/unit/infrastructure/tools/test_vercel_tool_unified.py::TestVercelToolBackwardCompatibility::test_original_queries_still_work": 0.00134671397972852,
+ "tests/unit/infrastructure/tools/test_vercel_tool_unified.py::TestVercelToolBackwardCompatibility::test_tool_attributes_unchanged": 0.0004151039756834507,
+ "tests/unit/infrastructure/tools/test_vercel_tool_unified.py::TestVercelToolUnified::test_init_with_token": 0.0006171059794723988,
+ "tests/unit/infrastructure/tools/test_vercel_tool_unified.py::TestVercelToolUnified::test_extract_param": 0.0006422059377655387,
+ "tests/unit/infrastructure/tools/test_vercel_tool_unified.py::TestVercelToolUnified::test_deployment_command_routing": 0.0005711059784516692,
+ "tests/unit/infrastructure/tools/test_vercel_tool_unified.py::TestVercelToolUnified::test_deploy_hook_command_routing": 0.0004156039794906974,
+ "tests/unit/infrastructure/tools/test_vercel_tool_unified.py::TestVercelToolUnified::test_git_integration_command_routing": 0.000600005965679884,
+ "tests/unit/infrastructure/tools/test_vercel_tool_unified.py::TestVercelToolUnified::test_create_deploy_hook_success": 0.0012534139677882195
 }

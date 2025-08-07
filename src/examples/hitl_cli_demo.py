@@ -8,20 +8,21 @@ Creates sample checkpoints, performs review actions, and validates the system.
 """
 
 # Add project root to path
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.infrastructure.utils.common_imports import (
-    Path,
     asyncio,
     json,
-    sys,
     tempfile,
     traceback,
     uuid
 )
-sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.core.workflows.hitl_engine import HITLPolicyEngine
 from src.core.workflows.hitl_task_metadata import HITLTaskMetadataManager
-from cli.hitl_cli import HITLCLIManager
+from src.interfaces.cli.hitl_cli import HITLCLIManager
 
 
 class HITLCLIIntegrationDemo:

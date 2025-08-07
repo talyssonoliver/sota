@@ -376,12 +376,11 @@ class TestVercelToolUnified:
 
     def test_input_validation(self):
         """Test input validation for query parameter."""
-        with pytest.raises(Exception):
-            # This should trigger a ValidationError which gets handled
-            result = self.tool._run("")  # Empty query
-            # The error should be handled gracefully and return an error response
-            result_data = json.loads(result)
-            assert result_data["success"] is False
+        # Empty query should be handled gracefully and return an error response
+        result = self.tool._run("")  # Empty query
+        result_data = json.loads(result)
+        assert result_data["success"] is False
+        assert "error" in result_data
 
     def test_unsupported_operation(self):
         """Test handling of unsupported operations."""

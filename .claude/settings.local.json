@@ -89,7 +89,8 @@
       "Bash(if grep -r \"from src.platform.tools.\" src/ tests/ --include=\"*.py\")",
       "Bash(then)",
       "Bash(else)",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(git fetch:*)"
     ],
     "deny": []
   },
