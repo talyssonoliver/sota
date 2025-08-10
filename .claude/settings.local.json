@@ -90,7 +90,9 @@
       "Bash(then)",
       "Bash(else)",
       "Bash(fi)",
-      "Bash(git fetch:*)"
+      "Bash(git fetch:*)",
+      "Bash(make:*)",
+      "Bash(TESTING=1 python3 -c \"\n# Test that base tool changes work correctly\ntry:\n    from src.infrastructure.tools.core.base_tool import ArtesanatoBaseTool\n    \n    # Test format_response with no error and no data\n    tool = ArtesanatoBaseTool(name=''test_tool'')\n    response = tool.format_response()\n    \n    print(''✅ Base tool format_response test:'')\n    print(f''   success: {response[\"\"success\"\"]}'')\n    print(f''   data: {response[\"\"data\"\"]}'')  \n    print(f''   error: {response[\"\"error\"\"]}'')\n    \n    # Test with data\n    response_with_data = tool.format_response(data={''test'': ''value''})\n    print(f''✅ With data - data: {response_with_data[\"\"data\"\"]}'')\n    print(f''   error: {response_with_data[\"\"error\"\"]}'')\n    \n    # Test with error  \n    response_with_error = tool.format_response(error=''test error'')\n    print(f''✅ With error - data: {response_with_error[\"\"data\"\"]}'')\n    print(f''   error: {response_with_error[\"\"error\"\"]}'')\n    print(f''   success: {response_with_error[\"\"success\"\"]}'')\n    \n    print(''\\n🎉 Base tool changes working correctly!'')\n    \nexcept Exception as e:\n    print(f''❌ Base tool test failed: {e}'')\n    import traceback\n    traceback.print_exc()\n\")"
     ],
     "deny": []
   },

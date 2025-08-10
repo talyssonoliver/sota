@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """
-HITL Storage Cleanup Script
+Architecture Cleanup Script (Extended HITL Storage Cleaner)
 
-This script implements a retention policy for Human-in-the-Loop storage files
-to prevent unlimited accumulation of checkpoint and evaluation files.
+This script implements comprehensive retention policies for all AI system artifacts
+to prevent unlimited accumulation and address architecture bloat issues.
 
 Features:
-- Configurable retention periods
+- Configurable retention periods for all artifact types
 - Safe cleanup with backup option
 - Preserves important audit logs
 - Statistics reporting
+- Extended support for outputs/, logs/, and build/ directories
+- 4-worker parallel processing support
 """
 
 import json
@@ -22,21 +24,39 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
 
-class HITLStorageCleaner:
-    """Cleaner for HITL storage with configurable retention policies."""
+class ArchitectureStorageCleaner:
+    """Extended cleaner for all AI system artifacts with configurable retention policies."""
     
-    def __init__(self, storage_dir: str = "build/storage/hitl", dry_run: bool = False):
-        self.storage_dir = Path(storage_dir)
+    def __init__(self, root_dir: str = ".", dry_run: bool = False, extended_mode: bool = False):
+        self.root_dir = Path(root_dir)
         self.dry_run = dry_run
+        self.extended_mode = extended_mode
         self.removed_count = 0
         self.freed_space = 0
+        self.max_workers = 4  # Respect system constraint
         
-        # Default retention policies (in days)
+        # Extended retention policies (in days)
         self.retention_policies = {
+            # Original HITL policies
             'checkpoint_files': 30,  # Keep checkpoint files for 30 days
             'audit_logs': 90,        # Keep audit logs for 90 days
             'evaluation_files': 7,   # Keep evaluation files for 7 days
             'rejected_files': 3,     # Keep rejected checkpoints for 3 days
+            
+            # Extended policies for architecture cleanup
+            'perf_outputs': 3,       # Performance test outputs: 3 days
+            'be_outputs': 7,         # Backend outputs: 7 days
+            'fe_outputs': 7,         # Frontend outputs: 7 days
+            'ux_outputs': 7,         # UX outputs: 7 days
+            'tl_outputs': 14,        # Tech lead outputs: 14 days
+            'pm_outputs': 14,        # Product manager outputs: 14 days
+            'qa_outputs': 7,         # QA outputs: 7 days
+            'concurrent_outputs': 1, # Concurrent test outputs: 1 day
+            'test_outputs': 1,       # Test outputs: 1 day
+            'logs': 3,              # All logs: 3 days
+            'hot_storage': 1,       # Hot storage: 1 day
+            'warm_storage': 7,      # Warm storage: 7 days
+            'briefings': 30,        # Briefings: 30 days
         }
     
     def classify_file(self, file_path: Path) -> str:
@@ -210,12 +230,17 @@ class HITLStorageCleaner:
 def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        description="Clean up HITL storage files based on retention policies"
+        description="Clean up AI system artifacts based on retention policies (Extended HITL Cleaner)"
     )
     parser.add_argument(
         "--storage-dir",
-        default="build/storage/hitl",
-        help="Path to HITL storage directory (default: build/storage/hitl)"
+        default=".",
+        help="Path to root directory for cleanup (default: current directory)"
+    )
+    parser.add_argument(
+        "--extended-mode",
+        action="store_true",
+        help="Enable extended cleanup mode for outputs/, logs/, and build/ directories"
     )
     parser.add_argument(
         "--dry-run",
@@ -239,7 +264,11 @@ def main():
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
     
-    cleaner = HITLStorageCleaner(storage_dir=args.storage_dir, dry_run=args.dry_run)
+    cleaner = ArchitectureStorageCleaner(
+        root_dir=args.storage_dir, 
+        dry_run=args.dry_run, 
+        extended_mode=args.extended_mode
+    )
     
     # Update retention policy if specified
     if args.retention_days != 30:

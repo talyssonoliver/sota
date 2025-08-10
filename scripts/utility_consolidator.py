@@ -1107,8 +1107,10 @@ def iterate_files(
                     f.write('\n'.join(modified_lines))
                 
                 self.files_modified.append(str(file_path))
-                print(f"✅ Removed {len(duplicates_found)} duplicate functions from {file_path}")
-                return len(duplicates_found)
+                # Return number of functions processed, not number of lines commented
+                functions_processed = len(visitor.utility_functions_found)
+                print(f"✅ Removed {functions_processed} duplicate functions from {file_path}")
+                return functions_processed
             
         except SyntaxError as e:
             print(f"Syntax error in {file_path}: {e}")

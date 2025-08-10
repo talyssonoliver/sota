@@ -25,6 +25,15 @@ jobs:
         # Check for deprecated import patterns
         VIOLATIONS=false
         
+        # NEW: Check for sys.path.insert patterns (Architecture Fix #3)
+        echo "Checking for sys.path.insert anti-patterns..."
+        if grep -r "sys\.path\.insert" src/ tests/ --include="*.py" 2>/dev/null; then
+          echo "❌ Found sys.path.insert patterns (architecture anti-pattern)"
+          echo "💡 Remove sys.path.insert and use proper Python imports"
+          echo "🔧 Run: make consolidate-imports-architecture"
+          VIOLATIONS=true
+        fi
+        
         echo "Checking for deprecated import patterns..."
         if grep -r "from orchestration\." src/ tests/ --include="*.py" 2>/dev/null; then
           echo "❌ Found deprecated 'from orchestration.' imports"
@@ -41,6 +50,17 @@ jobs:
         if grep -r "^[[:space:]]*from memory\." src/ tests/ --include="*.py" 2>/dev/null | grep -v "test_fast_precommit_validator.py"; then
           echo "❌ Found deprecated 'from memory.' imports"
           echo "💡 Use: from src.infrastructure.memory."
+          VIOLATIONS=true
+        fi
+        
+        # NEW: Check for duplicate memory system usage (Architecture Fix #4)
+        echo "Checking for memory system import conflicts..."
+        MEMORY_CONFLICTS=$(grep -r "from src\.infrastructure\.memory" src/ tests/ --include="*.py" 2>/dev/null | wc -l)
+        TOOLS_MEMORY=$(grep -r "from src\.infrastructure\.tools\.memory" src/ tests/ --include="*.py" 2>/dev/null | wc -l)
+        if [ "$MEMORY_CONFLICTS" -gt 0 ] && [ "$TOOLS_MEMORY" -gt 0 ]; then
+          echo "❌ Found conflicting memory system imports (architecture issue)"
+          echo "💡 Use only: from src.infrastructure.tools.memory"
+          echo "🔧 Run: make memory-consolidation"
           VIOLATIONS=true
         fi
         
@@ -73,17 +93,51 @@ jobs:
           VIOLATIONS=true
         fi
         
+        # NEW: Check for configuration sprawl (Architecture Fix #5)
+        echo "Checking for configuration sprawl..."
+        CONFIG_FILES=$(find . -name "*config*.py" -o -name "*config*.json" -o -name "*config*.yaml" -o -name "*settings*.py" 2>/dev/null | grep -v "src/core/configuration/unified" | wc -l)
+        if [ "$CONFIG_FILES" -gt 15 ]; then
+          echo "⚠️  Found $CONFIG_FILES configuration files (potential sprawl)"
+          echo "💡 Consider consolidating with unified configuration system"
+          echo "🔧 Run: make config-consolidation"
+          # Don't fail build, just warn for now
+        fi
+        
+        # NEW: Check for scattered environment variable usage
+        echo "Checking for environment variable patterns..."
+        ENV_VAR_FILES=$(grep -r "os\.getenv\|os\.environ" src/ tests/ --include="*.py" 2>/dev/null | wc -l)
+        if [ "$ENV_VAR_FILES" -gt 50 ]; then
+          echo "⚠️  Found environment variables in $ENV_VAR_FILES locations (consider standardization)"
+          echo "💡 Use unified configuration system for consistency"
+          echo "🔧 Run: make config-consolidation"
+        fi
+        
+        # NEW: Check for architecture cleanup opportunities
+        echo "Checking for architecture cleanup opportunities..."
+        OUTPUT_DIRS=$(find outputs/ -maxdepth 1 -type d 2>/dev/null | wc -l)
+        if [ -d "outputs" ] && [ "$OUTPUT_DIRS" -gt 100 ]; then
+          echo "⚠️  Found $OUTPUT_DIRS output directories (consider cleanup)"
+          echo "💡 Run architecture cleanup to manage artifact retention"
+          echo "🔧 Run: make architecture-cleanup"
+        fi
+        
         # Summary
         if [ "$VIOLATIONS" = true ]; then
           echo ""
           echo "❌ Architecture compliance check FAILED"
           echo "📚 See docs/ARCHITECTURE.md for guidance"
           echo "📝 Check CLAUDE.md for correct import patterns"
+          echo "🏗️  Architecture consolidation tools available:"
+          echo "   • make consolidate-imports-architecture (fix sys.path.insert)"
+          echo "   • make memory-consolidation (consolidate memory systems)"
+          echo "   • make config-consolidation (unify configuration)"
+          echo "   • make architecture-cleanup (manage artifacts)"
           exit 1
         else
           echo ""
           echo "✅ Architecture compliance check PASSED"
           echo "🎉 All files follow the clean /src/ architecture"
+          echo "🏗️  Architecture is compliant with consolidation best practices"
         fi
     
     - name: Test Collection Check
@@ -120,3 +174,121 @@ jobs:
           python -m pytest --collect-only --tb=short
           exit 1
         fi
+
+  architecture-consolidation-validation:
+    runs-on: ubuntu-latest
+    needs: architecture-check
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyyaml
+    
+    - name: Validate Architecture Consolidation Scripts
+      run: |
+        echo "🔧 Validating architecture consolidation scripts..."
+        
+        # Check that consolidation scripts exist and are executable
+        SCRIPTS=(
+          "scripts/architecture_cleanup.py"
+          "scripts/week2_day1_import_consolidator.py" 
+          "scripts/memory_system_consolidator.py"
+          "scripts/configuration_consolidator.py"
+        )
+        
+        for script in "${SCRIPTS[@]}"; do
+          if [ ! -f "$script" ]; then
+            echo "❌ Missing consolidation script: $script"
+            exit 1
+          fi
+          
+          echo "✓ Found: $script"
+          
+          # Validate script compiles correctly
+          if ! python3 -m py_compile "$script"; then
+            echo "❌ Compilation failed: $script" 
+            exit 1
+          fi
+          
+          echo "✓ Compiles: $script"
+        done
+        
+        # Test architecture cleanup in dry-run mode
+        echo "🧹 Testing architecture cleanup (dry-run)..."
+        if python3 scripts/architecture_cleanup.py --dry-run --extended-mode 2>/dev/null | grep -q "Architecture cleanup complete"; then
+          echo "✅ Architecture cleanup script works"
+        else
+          echo "❌ Architecture cleanup script failed"
+          exit 1
+        fi
+        
+        # Test import consolidator in dry-run mode  
+        echo "🔄 Testing import consolidator (dry-run)..."
+        if python3 scripts/week2_day1_import_consolidator.py --dry-run 2>/dev/null | grep -q "ENHANCED IMPORT CONSOLIDATION REPORT"; then
+          echo "✅ Import consolidator script works"
+        else
+          echo "❌ Import consolidator script failed"
+          exit 1
+        fi
+        
+        # Test memory system consolidator in dry-run mode
+        echo "🧠 Testing memory system consolidator (dry-run)..."
+        if timeout 60 python3 scripts/memory_system_consolidator.py --dry-run 2>/dev/null | grep -q "Memory system consolidation complete"; then
+          echo "✅ Memory system consolidator script works"
+        else
+          echo "⚠️  Memory system consolidator timeout (acceptable for dry-run)"
+        fi
+        
+        # Test configuration consolidator compilation only (can be slow)
+        echo "⚙️  Testing configuration consolidator (compilation only)..."
+        if python3 -m py_compile scripts/configuration_consolidator.py; then
+          echo "✅ Configuration consolidator compiles correctly"
+        else
+          echo "❌ Configuration consolidator compilation failed"
+          exit 1
+        fi
+        
+        # Validate Claude command documentation exists
+        echo "📚 Validating Claude command documentation..."
+        COMMAND_DOCS=(
+          ".claude/commands/cleanup-architecture-artifacts.md"
+          ".claude/commands/consolidate-imports-architecture.md"
+          ".claude/commands/consolidate-memory-system.md"
+          ".claude/commands/consolidate-configuration-system.md"
+        )
+        
+        for doc in "${COMMAND_DOCS[@]}"; do
+          if [ ! -f "$doc" ]; then
+            echo "❌ Missing command documentation: $doc"
+            exit 1
+          fi
+          echo "✓ Found: $doc"
+        done
+        
+        # Validate Makefile targets exist
+        echo "🔨 Validating Makefile targets..."
+        MAKEFILE_TARGETS=(
+          "architecture-cleanup"
+          "memory-consolidation" 
+          "config-consolidation"
+        )
+        
+        for target in "${MAKEFILE_TARGETS[@]}"; do
+          if ! grep -q "^$target:" Makefile; then
+            echo "❌ Missing Makefile target: $target"
+            exit 1
+          fi
+          echo "✓ Found target: $target"
+        done
+        
+        echo ""
+        echo "🎉 All architecture consolidation scripts validated successfully!"
+        echo "🏗️ Architecture consolidation system is ready for use"

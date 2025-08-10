@@ -15,9 +15,12 @@ from typing import Dict, Any, Optional
 
 def load_task_metadata(task_id: str) -> Dict[str, Any]:
     """Load task metadata from YAML file."""
-    task_file = Path(f"tasks/{task_id}.yaml")
+    # Try new architecture first, then fallback to old location
+    task_file = Path(f"src/core/tasks/{task_id}.yaml")
     if not task_file.exists():
-        raise FileNotFoundError(f"Task metadata file not found for {task_id}")
+        task_file = Path(f"tasks/{task_id}.yaml")  # Fallback for backward compatibility
+        if not task_file.exists():
+            raise FileNotFoundError(f"Task metadata file not found for {task_id}")
     
     with open(task_file, 'r', encoding='utf-8') as f:
         return yaml.safe_load(f)

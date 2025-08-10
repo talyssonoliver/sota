@@ -11,6 +11,7 @@ import tempfile
 from pathlib import Path
 
 import pytest
+import yaml
 
 try:
     from src.core.workflows.generate_prompt import (
@@ -39,11 +40,78 @@ class TestPromptGenerationE2E:
         self.temp_dir = tempfile.mkdtemp()
         self.test_task_id = "BE-07"
         self.test_agent_type = "backend"
+        
+        # Create src/core/tasks directory structure for test files
+        self.tasks_dir = Path(self.temp_dir) / "src" / "core" / "tasks"
+        self.tasks_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Create prompts directory for template files
+        self.prompts_dir = Path(self.temp_dir) / "prompts"
+        self.prompts_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Store original working directory
+        import os
+        self.original_cwd = os.getcwd()
+        # Change to temp directory so relative paths work
+        os.chdir(self.temp_dir)
 
     def teardown_method(self):
         """Clean up test fixtures."""
         import shutil
+        import os
+        # Restore original working directory
+        os.chdir(self.original_cwd)
+        # Clean up temporary files
         shutil.rmtree(self.temp_dir, ignore_errors=True)
+
+    def create_test_task_file(self, task_id: str, agent_type: str = "backend"):
+        """Create a temporary test task file."""
+        task_data = {
+            "agent_id": f"{agent_type}_engineer",
+            "artefacts": [f"test_{agent_type}_service.py"],
+            "assignee": f"{agent_type}-agent", 
+            "complexity": "low",
+            "context_topics": ["test-patterns"],
+            "created_date": "2025-01-01",
+            "dependencies": [],
+            "description": f"Test {agent_type} functionality for prompt generation",
+            "estimate": "1h",
+            "estimation_hours": 1,
+            "id": task_id,
+            "owner": agent_type,
+            "priority": "LOW",
+            "sprint": 0,
+            "state": "IN_PROGRESS",
+            "task_id": task_id,
+            "title": f"Test {agent_type.title()} Task"
+        }
+        
+        task_file = self.tasks_dir / f"{task_id}.yaml"
+        with open(task_file, 'w', encoding='utf-8') as f:
+            yaml.dump(task_data, f, default_flow_style=False)
+            
+        # Also create a basic prompt template for this agent type
+        template_file = self.prompts_dir / f"{agent_type}.md"
+        if not template_file.exists():
+            template_content = f"""# {agent_type.title()} Agent Prompt Template
+
+Task ID: {{task_id}}
+Agent Type: {{agent_type}}
+
+Description: This is a test template for {agent_type} agent.
+
+Task Details:
+- Title: {{title}}
+- Description: {{description}}
+- Priority: {{priority}}
+
+Context:
+{{context}}
+"""
+            with open(template_file, 'w', encoding='utf-8') as f:
+                f.write(template_content)
+        
+        return task_file
 
     def test_complete_prompt_generation_workflow(self):
         """Test complete prompt generation workflow from start to finish."""
@@ -63,6 +131,10 @@ class TestPromptGenerationE2E:
         """Test prompt generation for different agent types."""
         agent_types = ["backend", "frontend", "qa", "documentation", "coordinator"]
         
+        # Create test task files for each agent type
+        for agent_type in agent_types:
+            self.create_test_task_file(f"TEST-{agent_type}", agent_type)
+        
         results = []
         for agent_type in agent_types:
             result = generate_prompt(
@@ -79,6 +151,9 @@ class TestPromptGenerationE2E:
 
     def test_prompt_generation_without_output_path(self):
         """Test prompt generation without specifying output path."""
+        # Create test task file
+        self.create_test_task_file("TEST-01", "qa")
+        
         result = generate_prompt(
             task_id="TEST-01",
             agent_type="qa"
@@ -232,6 +307,82 @@ class TestPromptGenerationE2E:
 class TestPromptGenerationScenarios:
     """Test various prompt generation scenarios."""
 
+    def setup_method(self):
+        """Set up test fixtures."""
+        self.temp_dir = tempfile.mkdtemp()
+        
+        # Create src/core/tasks directory structure for test files
+        self.tasks_dir = Path(self.temp_dir) / "src" / "core" / "tasks"
+        self.tasks_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Create prompts directory for template files
+        self.prompts_dir = Path(self.temp_dir) / "prompts"
+        self.prompts_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Store original working directory
+        import os
+        self.original_cwd = os.getcwd()
+        # Change to temp directory so relative paths work
+        os.chdir(self.temp_dir)
+
+    def teardown_method(self):
+        """Clean up test fixtures."""
+        import shutil
+        import os
+        # Restore original working directory
+        os.chdir(self.original_cwd)
+        # Clean up temporary files
+        shutil.rmtree(self.temp_dir, ignore_errors=True)
+
+    def create_test_task_file(self, task_id: str, agent_type: str = "backend"):
+        """Create a temporary test task file."""
+        task_data = {
+            "agent_id": f"{agent_type}_engineer",
+            "artefacts": [f"test_{agent_type}_service.py"],
+            "assignee": f"{agent_type}-agent", 
+            "complexity": "low",
+            "context_topics": ["test-patterns"],
+            "created_date": "2025-01-01",
+            "dependencies": [],
+            "description": f"Test {agent_type} functionality for prompt generation",
+            "estimate": "1h",
+            "estimation_hours": 1,
+            "id": task_id,
+            "owner": agent_type,
+            "priority": "LOW",
+            "sprint": 0,
+            "state": "IN_PROGRESS",
+            "task_id": task_id,
+            "title": f"Test {agent_type.title()} Task"
+        }
+        
+        task_file = self.tasks_dir / f"{task_id}.yaml"
+        with open(task_file, 'w', encoding='utf-8') as f:
+            yaml.dump(task_data, f, default_flow_style=False)
+            
+        # Also create a basic prompt template for this agent type
+        template_file = self.prompts_dir / f"{agent_type}.md"
+        if not template_file.exists():
+            template_content = f"""# {agent_type.title()} Agent Prompt Template
+
+Task ID: {{task_id}}
+Agent Type: {{agent_type}}
+
+Description: This is a test template for {agent_type} agent.
+
+Task Details:
+- Title: {{title}}
+- Description: {{description}}
+- Priority: {{priority}}
+
+Context:
+{{context}}
+"""
+            with open(template_file, 'w', encoding='utf-8') as f:
+                f.write(template_content)
+        
+        return task_file
+
     def test_batch_prompt_generation(self):
         """Test generating prompts for multiple tasks."""
         if generate_prompt is None:
@@ -273,6 +424,10 @@ class TestPromptGenerationScenarios:
             "TASK.004"
         ]
         
+        # Create test task files
+        for task_id in special_task_ids:
+            self.create_test_task_file(task_id, "backend")
+        
         for task_id in special_task_ids:
             result = generate_prompt(task_id, "backend")
             assert result["task_id"] == task_id
@@ -283,6 +438,10 @@ class TestPromptGenerationScenarios:
             pytest.skip("generate_prompt not available")
             
         from concurrent.futures import ThreadPoolExecutor
+        
+        # Create test task files for concurrent tests
+        for i in range(10):
+            self.create_test_task_file(f"CONCURRENT-{i}", "backend")
         
         def generate_task_prompt(task_num):
             return generate_prompt(f"CONCURRENT-{task_num}", "backend")

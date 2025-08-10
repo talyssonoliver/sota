@@ -151,6 +151,35 @@ quick-cleanup: ## Quick cleanup (caches and Python artifacts only)
 smart-cleanup: ## Smart cleanup (only clean when needed for minimal overhead)
 	@$(VENV_PYTHON) scripts/smart_cleanup.py
 
+architecture-cleanup: ## Clean architecture artifacts with retention policies (dry-run)
+	@$(VENV_PYTHON) scripts/architecture_cleanup.py --extended-mode --dry-run
+
+architecture-cleanup-force: ## Clean architecture artifacts with retention policies (REAL cleanup)
+	@echo "$(RED)⚠️  This will ACTUALLY delete files based on retention policies!$(NC)"
+	@echo "$(YELLOW)Press Ctrl+C to cancel or wait 10 seconds...$(NC)"
+	@sleep 10
+	@$(VENV_PYTHON) scripts/architecture_cleanup.py --extended-mode
+
+memory-consolidation: ## Analyze memory system consolidation opportunities (dry-run)
+	@$(VENV_PYTHON) scripts/memory_system_consolidator.py --dry-run --verbose
+
+memory-consolidation-force: ## Consolidate duplicate memory system implementations (REAL changes)
+	@echo "$(RED)⚠️  This will ACTUALLY consolidate memory systems and remove duplicates!$(NC)"
+	@echo "$(YELLOW)This affects 32 files with 49 import changes and removes 6 files (1,809 lines)$(NC)"
+	@echo "$(YELLOW)Press Ctrl+C to cancel or wait 15 seconds...$(NC)"
+	@sleep 15
+	@$(VENV_PYTHON) scripts/memory_system_consolidator.py
+
+config-consolidation: ## Analyze configuration system consolidation opportunities (dry-run)
+	@$(VENV_PYTHON) scripts/configuration_consolidator.py --dry-run
+
+config-consolidation-force: ## Consolidate scattered configuration system (REAL changes)
+	@echo "$(RED)⚠️  This will ACTUALLY consolidate configuration systems!$(NC)"
+	@echo "$(YELLOW)This affects 63+ configuration files with environment variable standardization$(NC)"
+	@echo "$(YELLOW)Press Ctrl+C to cancel or wait 15 seconds...$(NC)"
+	@sleep 15
+	@$(VENV_PYTHON) scripts/configuration_consolidator.py
+
 test-coverage: clean-coverage ## Run tests with coverage collection
 	@echo "$(BLUE)🎯 Running tests with coverage (single-threaded to prevent DB corruption)...$(NC)"
 	@$(VENV_PYTHON) -m pytest tests/ -n 1 --dist no --cov=src --cov-report=html --cov-report=xml --cov-report=term-missing

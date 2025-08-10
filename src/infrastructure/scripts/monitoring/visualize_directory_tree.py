@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from src.infrastructure.utils.common_imports import Path, datetime
 """
 Directory Tree Visualization Utility
 Generates comprehensive directory tree including files, sizes, and line counts
@@ -14,9 +13,8 @@ Enhanced to include:
 """
 
 import argparse
-# from datetime import datetime  # Consolidated to common_imports
-# from pathlib import Path  # Consolidated to common_imports
 from typing import List, Optional, Set, Tuple, Union, cast
+from src.infrastructure.utils.common_imports import Path, datetime
 
 
 def count_lines_in_file(file_path: Path) -> Optional[int]:

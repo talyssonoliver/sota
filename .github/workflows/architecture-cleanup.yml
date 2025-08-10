@@ -1,0 +1,246 @@
+name: Architecture Cleanup Automation
+
+on:
+  schedule:
+    # Run every Sunday at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode (no actual deletion)'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      extended_mode:
+        description: 'Enable extended cleanup mode'
+        required: false
+        default: 'true'
+        type: boolean
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  architecture-cleanup:
+    name: Clean Architecture Artifacts
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        # Install only essential dependencies for cleanup script
+        pip install pathlib
+    
+    - name: Run Architecture Cleanup Analysis
+      id: cleanup_analysis
+      run: |
+        echo "🧹 Running architecture cleanup analysis..."
+        
+        # Set parameters based on inputs
+        DRY_RUN="${{ github.event.inputs.dry_run || 'true' }}"
+        EXTENDED_MODE="${{ github.event.inputs.extended_mode || 'true' }}"
+        
+        echo "dry_run=$DRY_RUN" >> $GITHUB_OUTPUT
+        echo "extended_mode=$EXTENDED_MODE" >> $GITHUB_OUTPUT
+        
+        # Run cleanup in analysis mode
+        if [ "$EXTENDED_MODE" = "true" ]; then
+          EXTENDED_FLAG="--extended-mode"
+        else
+          EXTENDED_FLAG=""
+        fi
+        
+        if [ "$DRY_RUN" = "true" ]; then
+          DRY_RUN_FLAG="--dry-run"
+        else
+          DRY_RUN_FLAG=""
+        fi
+        
+        # Capture cleanup output
+        python scripts/architecture_cleanup.py $EXTENDED_FLAG $DRY_RUN_FLAG --verbose > cleanup_output.txt 2>&1
+        
+        # Extract key metrics
+        TOTAL_FILES=$(grep "Initial state:" cleanup_output.txt | sed -n 's/.*: \([0-9]*\) files.*/\1/p')
+        TOTAL_DIRS=$(grep "Initial state:" cleanup_output.txt | sed -n 's/.*, \([0-9]*\) dirs.*/\1/p')
+        TOTAL_SIZE=$(grep "Initial state:" cleanup_output.txt | sed -n 's/.*, \([0-9.]*\) MB/\1/p')
+        FILES_PROCESSED=$(grep "Files processed:" cleanup_output.txt | sed -n 's/.*: \([0-9]*\)/\1/p')
+        SPACE_FREED=$(grep "Space freed:" cleanup_output.txt | sed -n 's/.*: \([0-9.]*\) MB/\1/p')
+        
+        echo "total_files=${TOTAL_FILES:-0}" >> $GITHUB_OUTPUT
+        echo "total_dirs=${TOTAL_DIRS:-0}" >> $GITHUB_OUTPUT
+        echo "total_size=${TOTAL_SIZE:-0.0}" >> $GITHUB_OUTPUT
+        echo "files_processed=${FILES_PROCESSED:-0}" >> $GITHUB_OUTPUT
+        echo "space_freed=${SPACE_FREED:-0.0}" >> $GITHUB_OUTPUT
+        
+        # Save full output for comment
+        echo "cleanup_output<<EOF" >> $GITHUB_OUTPUT
+        cat cleanup_output.txt >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+    
+    - name: Check Storage Thresholds
+      id: check_thresholds
+      run: |
+        echo "🔍 Checking storage thresholds..."
+        
+        # Check if outputs directory is too large (> 500MB)
+        if [ -d "outputs" ]; then
+          OUTPUTS_SIZE=$(du -sm outputs/ | cut -f1)
+          echo "outputs_size=$OUTPUTS_SIZE" >> $GITHUB_OUTPUT
+          
+          if [ "$OUTPUTS_SIZE" -gt 500 ]; then
+            echo "outputs_warning=true" >> $GITHUB_OUTPUT
+            echo "⚠️ outputs/ directory is ${OUTPUTS_SIZE}MB (threshold: 500MB)"
+          else
+            echo "outputs_warning=false" >> $GITHUB_OUTPUT
+            echo "✅ outputs/ directory size OK: ${OUTPUTS_SIZE}MB"
+          fi
+        else
+          echo "outputs_size=0" >> $GITHUB_OUTPUT
+          echo "outputs_warning=false" >> $GITHUB_OUTPUT
+        fi
+        
+        # Check total number of output directories
+        if [ -d "outputs" ]; then
+          OUTPUT_DIRS=$(find outputs -maxdepth 1 -type d | wc -l)
+          echo "output_dirs=$OUTPUT_DIRS" >> $GITHUB_OUTPUT
+          
+          if [ "$OUTPUT_DIRS" -gt 200 ]; then
+            echo "dirs_warning=true" >> $GITHUB_OUTPUT
+            echo "⚠️ Too many output directories: $OUTPUT_DIRS (threshold: 200)"
+          else
+            echo "dirs_warning=false" >> $GITHUB_OUTPUT
+            echo "✅ Output directory count OK: $OUTPUT_DIRS"
+          fi
+        else
+          echo "output_dirs=0" >> $GITHUB_OUTPUT
+          echo "dirs_warning=false" >> $GITHUB_OUTPUT
+        fi
+    
+    - name: Create Issue for High Storage Usage
+      if: steps.check_thresholds.outputs.outputs_warning == 'true' || steps.check_thresholds.outputs.dirs_warning == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { outputs_size, output_dirs, files_processed, space_freed } = ${{ toJson(steps.check_thresholds.outputs) }};
+          const { dry_run, extended_mode } = ${{ toJson(steps.cleanup_analysis.outputs) }};
+          
+          const title = `🚨 Architecture Storage Alert: High Usage Detected`;
+          
+          const body = `## 🚨 Storage Usage Alert
+          
+          The architecture cleanup automation has detected high storage usage that requires attention.
+          
+          ### 📊 Current Status
+          - **Outputs Directory Size**: ${outputs_size}MB (threshold: 500MB)
+          - **Output Directories Count**: ${output_dirs} (threshold: 200)
+          - **Files Processed**: ${files_processed}
+          - **Space that could be freed**: ${space_freed}MB
+          
+          ### 🔧 Recommended Actions
+          
+          ${outputs_size > 500 ? '⚠️ **High Storage Usage**: Run \`make architecture-cleanup-force\` to free space' : ''}
+          ${output_dirs > 200 ? '⚠️ **Too Many Directories**: Consider increasing cleanup frequency' : ''}
+          
+          ### 🤖 Automation Details
+          - **Extended Mode**: ${extended_mode}
+          - **Dry Run**: ${dry_run}
+          - **Triggered**: ${context.eventName === 'schedule' ? 'Scheduled cleanup' : 'Manual trigger'}
+          
+          ### 💡 How to Resolve
+          
+          1. **Review what will be cleaned**: \`make architecture-cleanup\`
+          2. **Run actual cleanup**: \`make architecture-cleanup-force\`
+          3. **Monitor results**: Check this workflow for success
+          
+          ---
+          *This issue was automatically created by the Architecture Cleanup workflow.*
+          `;
+          
+          // Check if similar issue already exists
+          const issues = await github.rest.issues.listForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            labels: 'architecture,storage,automated',
+            state: 'open'
+          });
+          
+          if (issues.data.length === 0) {
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['architecture', 'storage', 'automated', 'priority-medium']
+            });
+            
+            console.log('✅ Created storage alert issue');
+          } else {
+            console.log('ℹ️ Storage alert issue already exists, skipping creation');
+          }
+    
+    - name: Comment on PR with Cleanup Results
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { total_files, total_dirs, total_size, files_processed, space_freed, cleanup_output } = ${{ toJson(steps.cleanup_analysis.outputs) }};
+          
+          const comment = `## 🧹 Architecture Cleanup Analysis
+          
+          ### 📊 Storage Overview
+          - **Total Files Analyzed**: ${total_files}
+          - **Total Directories**: ${total_dirs}
+          - **Total Size**: ${total_size}MB
+          - **Files Processed**: ${files_processed}
+          - **Space Freed**: ${space_freed}MB
+          
+          ### 🔍 Detailed Output
+          <details>
+          <summary>Click to view full cleanup log</summary>
+          
+          \`\`\`
+          ${cleanup_output}
+          \`\`\`
+          </details>
+          
+          ${files_processed > 0 ? '✅ Architecture cleanup will free up space when run' : 'ℹ️ No files need cleanup at this time'}
+          `;
+          
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            body: comment
+          });
+    
+    - name: Summary
+      run: |
+        echo "## 📋 Architecture Cleanup Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Files Analyzed**: ${{ steps.cleanup_analysis.outputs.total_files }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Directories**: ${{ steps.cleanup_analysis.outputs.total_dirs }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Total Size**: ${{ steps.cleanup_analysis.outputs.total_size }}MB" >> $GITHUB_STEP_SUMMARY
+        echo "- **Files Processed**: ${{ steps.cleanup_analysis.outputs.files_processed }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Space Freed**: ${{ steps.cleanup_analysis.outputs.space_freed }}MB" >> $GITHUB_STEP_SUMMARY
+        echo "- **Mode**: Extended=${{ steps.cleanup_analysis.outputs.extended_mode }}, DryRun=${{ steps.cleanup_analysis.outputs.dry_run }}" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ steps.check_thresholds.outputs.outputs_warning }}" = "true" ] || [ "${{ steps.check_thresholds.outputs.dirs_warning }}" = "true" ]; then
+          echo "- **⚠️ Storage Alert**: High usage detected, issue created" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "- **✅ Storage OK**: Within normal thresholds" >> $GITHUB_STEP_SUMMARY
+        fi

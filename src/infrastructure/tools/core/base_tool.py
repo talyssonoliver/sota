@@ -154,13 +154,9 @@ class ArtesanatoBaseTool(LangChainBaseTool):
             "success": error is None,
             "timestamp": time.time(),
             "tool": self.name,
+            "data": data,    # Always include data key (None if no data)
+            "error": error,  # Always include error key (None if no error)
         }
-
-        if data is not None:
-            response["data"] = data
-
-        if error:
-            response["error"] = error
 
         if metadata:
             response["metadata"] = metadata
