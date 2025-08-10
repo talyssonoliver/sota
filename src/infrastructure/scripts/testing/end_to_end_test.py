@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    os,
+    subprocess,
+    sys,
+    tempfile
+)
 """
-import sys
+# import sys  # Consolidated to common_imports
 End-to-End Command Sequence Test for Phase 4
 
 Tests the complete workflow from prompt generation to task completion
@@ -17,12 +25,12 @@ This validates the complete Phase 4 implementation.
 """
 
 
-import os
+# import os  # Consolidated to common_imports
 import shutil
-import subprocess
-import sys
-import tempfile
-from pathlib import Path
+# import subprocess  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# import tempfile  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 from src.core.workflows.states import TaskStatus
 from src.infrastructure.utils.execution_monitor import get_execution_monitor

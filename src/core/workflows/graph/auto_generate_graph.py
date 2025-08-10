@@ -4,22 +4,24 @@ Auto Graph Generator
 Scans task YAML files and dynamically generates a LangGraph workflow based on task dependencies.
 """
 
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    json,
+    logging,
+    os,
+    yaml
+)
 import importlib
 import inspect
-import json
-import logging
-# Note: workflow is created dynamically as StateGraph in generate_workflow function
-import os
 from glob import glob
-from typing import Any, Dict, List, Optional
 
 try:
     from typing_extensions import TypedDict
 except ImportError:
     from typing import TypedDict
-
-import yaml
-
 # LangGraph imports with error handling
 try:
     from langgraph.constants import END
@@ -36,28 +38,29 @@ except ImportError as e:
             self.nodes = {}
             self.edges = []
             self.entry_points = []
-        
+
         def add_node(self, name, action):
             self.nodes[name] = action
             return self
-            
+
         def add_edge(self, start, end):
             self.edges.append((start, end))
             return self
-            
+
         def add_conditional_edges(self, start, condition, mapping):
             # Mock implementation
             return self
-            
+
         def set_entry_point(self, node):
             self.entry_points.append(node)
             return self
-            
+
         def compile(self):
             # Return a mock compiled graph
             class MockCompiledGraph:
                 def run(self, *args, **kwargs):
                     return {"result": "mocked"}
+
             return MockCompiledGraph()
 
     END = "END"
@@ -75,11 +78,13 @@ except ImportError as e:
         if LANGGRAPH_AVAILABLE:
             # We need to create a minimal WorkflowState for the fallback
             from typing import TypedDict
+
             class FallbackState(TypedDict, total=False):
                 task_id: str
                 agent: str
                 output: str
                 status: str
+
             return StateGraph(FallbackState)
         else:
             return MockStateGraph()
@@ -321,20 +326,20 @@ def build_auto_generated_workflow_graph():
                 def handler(state: Dict[str, Any]) -> Dict[str, Any]:
                     role = state.get("agent", "unknown")
                     agent = get_agent(role)
-                    
+
                     # Handle the agent execution properly - get_agent returns dict
                     if isinstance(agent, dict):
                         # For dictionary-based agents, create a simple result
                         result: Dict[str, Any] = {
                             "output": f"Processed by {role} agent",
                             "status": "completed",
-                            "agent_type": agent.get("type", role)
+                            "agent_type": agent.get("type", role),
                         }
                     else:
                         # Fallback for unknown agent types
                         result: Dict[str, Any] = {
                             "output": f"Processed by {role} agent",
-                            "status": "completed"
+                            "status": "completed",
                         }
 
                     # Ensure result is a dictionary

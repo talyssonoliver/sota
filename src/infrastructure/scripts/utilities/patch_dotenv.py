@@ -1,3 +1,5 @@
+
+from src.infrastructure.utils.common_imports import os
 """
 Comprehensive patch for dotenv loading issues.
 
@@ -5,7 +7,7 @@ This script patches multiple places where dotenv files are loaded
 to prevent Unicode decoding errors from breaking test execution.
 """
 
-import os
+# import os  # Consolidated to common_imports
 
 
 def patch_dotenv():

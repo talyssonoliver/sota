@@ -1,23 +1,32 @@
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    re,
+    subprocess
+)
 """
 Auto Fixer
 Automatic code fixing capabilities for validation issues.
 """
 
-import re
+# import re  # Consolidated to common_imports
 import shutil
-import subprocess
-from datetime import datetime
-from pathlib import Path
-from typing import Dict, List, Optional
+# import subprocess  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+from typing import Dict, List, Optional, Any
 
-from .issue_model import ValidationIssue
+from src.infrastructure.utils.base_classes import BaseComponent
+from .issue_model import ValidationIssue, IssueType
 
 
-class AutoFixer:
+class AutoFixer(BaseComponent):
     """Handles automatic fixing of validation issues."""
 
     def __init__(self, root_path: Path, create_backup: bool = True):
         """Initialize auto fixer."""
+        super().__init__(name="AutoFixer")
         self.root_path = root_path
         self.create_backup = create_backup
         self.fixes_applied: List[Dict] = []
@@ -52,17 +61,17 @@ class AutoFixer:
             return False
 
         # Check if we have the required tools for specific fixes
-        if issue.issue_type == "CODE_FORMATTING":
+        if issue.issue_type == IssueType.CODE_FORMATTING:
             return self.available_tools["black"] or self.available_tools["ruff"]
-        elif issue.issue_type == "IMPORT_SORTING":
+        elif issue.issue_type == IssueType.IMPORT_SORTING:
             return self.available_tools["isort"]
         elif issue.issue_type in [
-            "UNUSED_IMPORT",
-            "EMPTY_DIRECTORY",
-            "FORBIDDEN_PATTERN",
+            IssueType.UNUSED_IMPORT,
+            IssueType.EMPTY_DIRECTORY,
+            IssueType.FORBIDDEN_PATTERN,
         ]:
             return True  # These don't require external tools
-        elif str(issue.issue_type).endswith("_NAMING_CONVENTION"):
+        elif issue.issue_type.value.endswith("_naming_convention"):
             return True  # Basic naming fixes
 
         return False
@@ -75,23 +84,26 @@ class AutoFixer:
         # Create backup if requested
         file_path = Path(issue.file_path)
         backup_path = None
-        if self.create_backup and file_path.exists():
+        
+        # Only create backup for files, not for directories or empty directories
+        if (self.create_backup and file_path.exists() and 
+            file_path.is_file() and issue.issue_type != IssueType.EMPTY_DIRECTORY):
             backup_path = self._create_backup(file_path)
 
         fix_applied = False
 
         try:
-            if issue.issue_type == "CODE_FORMATTING":
+            if issue.issue_type == IssueType.CODE_FORMATTING:
                 fix_applied = self._apply_code_formatting(issue)
-            elif issue.issue_type == "IMPORT_SORTING":
+            elif issue.issue_type == IssueType.IMPORT_SORTING:
                 fix_applied = self._apply_import_sorting(issue)
-            elif issue.issue_type == "UNUSED_IMPORT":
+            elif issue.issue_type == IssueType.UNUSED_IMPORT:
                 fix_applied = self._remove_unused_import(issue)
-            elif issue.issue_type == "EMPTY_DIRECTORY":
+            elif issue.issue_type == IssueType.EMPTY_DIRECTORY:
                 fix_applied = self._remove_empty_directory(issue)
-            elif issue.issue_type == "FORBIDDEN_PATTERN":
+            elif issue.issue_type == IssueType.FORBIDDEN_PATTERN:
                 fix_applied = self._remove_forbidden_pattern(issue)
-            elif str(issue.issue_type).endswith("_NAMING_CONVENTION"):
+            elif issue.issue_type.value.endswith("_naming_convention"):
                 fix_applied = self._fix_naming_convention(issue)
 
             if fix_applied:
@@ -214,7 +226,7 @@ class AutoFixer:
             file_path = Path(issue.file_path)
 
             # Simple case: fix file names
-            if issue.issue_type == "FILE_NAMING_CONVENTION" and issue.expected_pattern:
+            if issue.issue_type.value == "file_naming_convention" and issue.expected_pattern:
                 # Convert CamelCase to snake_case
                 if file_path.name.endswith(".py"):
                     new_name = (
@@ -228,9 +240,9 @@ class AutoFixer:
                         return True
 
             # Handle class and function naming fixes with AST manipulation
-            elif issue.issue_type == "CLASS_NAMING_CONVENTION":
+            elif issue.issue_type == IssueType.NAMING_CONVENTION:
                 return self._fix_class_naming(issue)
-            elif issue.issue_type == "FUNCTION_NAMING_CONVENTION":
+            elif issue.issue_type == IssueType.FUNCTION_NAMING_CONVENTION:
                 return self._fix_function_naming(issue)
 
         except Exception:
@@ -373,17 +385,17 @@ class AutoFixer:
 📋 FIX STRATEGY:
 """
 
-        if issue.issue_type == "CODE_FORMATTING":
+        if issue.issue_type == IssueType.CODE_FORMATTING:
             preview += "   - Run code formatter (Black/Ruff)\n"
-        elif issue.issue_type == "IMPORT_SORTING":
+        elif issue.issue_type == IssueType.IMPORT_SORTING:
             preview += "   - Sort imports using isort\n"
-        elif issue.issue_type == "UNUSED_IMPORT":
+        elif issue.issue_type == IssueType.UNUSED_IMPORT:
             preview += f"   - Remove unused import on line {issue.line}\n"
-        elif issue.issue_type == "EMPTY_DIRECTORY":
+        elif issue.issue_type == IssueType.EMPTY_DIRECTORY:
             preview += "   - Remove empty directory\n"
-        elif issue.issue_type == "FORBIDDEN_PATTERN":
+        elif issue.issue_type == IssueType.FORBIDDEN_PATTERN:
             preview += f"   - Remove forbidden pattern on line {issue.line}\n"
-        elif str(issue.issue_type).endswith("_NAMING_CONVENTION"):
+        elif issue.issue_type.value.endswith("_naming_convention"):
             preview += "   - Rename to follow naming convention\n"
 
         if issue.offending_line:
@@ -397,7 +409,15 @@ class AutoFixer:
 
     def get_fixes_applied(self) -> List[Dict]:
         """Get list of all fixes that have been applied."""
-        return self.fixes_applied.copy()
+        return self.fixes_applied
+    
+    def _get_default_config(self) -> Dict[str, Any]:
+        """Get default configuration for auto fixer."""
+        return {
+            "create_backup": True,
+            "max_fixes": 1000,
+            "dry_run": False
+        }.copy()
 
     def install_missing_tools(self) -> bool:
         """Attempt to install missing auto-fix tools."""

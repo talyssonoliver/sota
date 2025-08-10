@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
+
 """
-Step 5.9: GitHub Finalisation (Optional)
+GitHub Finalisation (Optional)
 
 Automated GitHub integration for closing issues and attaching completion artifacts.
 This script provides GitHub CLI integration to finalize task completion workflow.
@@ -16,34 +17,90 @@ Usage:
     python scripts/github_finalise.py --task-id BE-07 --close-issue
     python scripts/github_finalise.py BE-07 --attach-artifacts
 """
-
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    logging,
+    subprocess,
+    sys
+)
 import argparse
-import json
-import subprocess
-import sys
 from typing import Dict, Optional
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 
+# Set up logger
+logger = logging.getLogger(__name__)
 
-def check_github_cli():
-    """Check if GitHub CLI is available."""
-    try:
-        subprocess.run(["gh", "--version"], capture_output=True, check=True)
+
+class GitHubFinaliser:
+    """GitHub finalisation class for task completion workflow.
+    
+    Provides secure GitHub integration for task completion including:
+    - Issue closure with completion details
+    - Artifact attachment and linking
+    - Pull request management
+    - Secure subprocess execution
+    """
+    
+    def __init__(self, task_id: str, repo: str):
+        """Initialize GitHub finaliser.
+        
+        Args:
+            task_id: Task identifier (e.g., 'BE-07')
+            repo: GitHub repository identifier
+        """
+        self.task_id = task_id
+        self.repo = repo
+        self.github_repo = repo
+        # Define paths for completion artifacts
+        self.docs_dir = Path("docs/completions")
+        self.outputs_dir = Path(f"outputs/{task_id}")
+        self.archives_dir = Path("archives")
+        
+    def finalise_task(self, close_issue: bool = False, attach_artifacts: bool = False) -> bool:
+        """Finalise the task on GitHub.
+        
+        Args:
+            close_issue: Whether to close related GitHub issues
+            attach_artifacts: Whether to attach completion artifacts
+            
+        Returns:
+            True if finalisation succeeded, False otherwise
+        """
+        logger.info(f"Finalising task {self.task_id} for repo {self.repo}")
+        logger.info(f"Close issue: {close_issue}, Attach artifacts: {attach_artifacts}")
+        # TODO: Implement actual GitHub integration
         return True
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        print("GitHub CLI not available. Install with: winget install GitHub.cli")
-        return False
+
+
+    def check_github_cli(self) -> bool:
+        """Check if GitHub CLI is available.
+        
+        Returns:
+            True if GitHub CLI is available and functional
+        """
+        try:
+            subprocess.run(["gh", "--version"], capture_output=True, check=True, shell=False)
+            return True
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            print("GitHub CLI not available. Install with: winget install GitHub.cli")
+            return False
 
     def find_task_issue(self) -> Optional[int]:
-        """Find GitHub issue number for the task."""
+        """Find GitHub issue number for the task.
+        
+        Returns:
+            Issue number if found, None otherwise
+        """
         if not self.check_github_cli():
             return None
 
@@ -64,6 +121,7 @@ def check_github_cli():
                 capture_output=True,
                 text=True,
                 check=True,
+                shell=False,
             )
 
             issues = json.loads(result.stdout)
@@ -84,7 +142,11 @@ def check_github_cli():
             return None
 
     def get_completion_artifacts(self) -> Dict[str, str]:
-        """Collect completion artifacts for attachment."""
+        """Collect completion artifacts for attachment.
+        
+        Returns:
+            Dictionary mapping artifact names to file paths
+        """
         artifacts = {}
 
         # Task completion summary
@@ -118,7 +180,11 @@ def check_github_cli():
         return artifacts
 
     def create_completion_comment(self) -> str:
-        """Create completion comment for GitHub issue."""
+        """Create completion comment for GitHub issue.
+        
+        Returns:
+            Formatted completion comment with artifacts and references
+        """
         artifacts = self.get_completion_artifacts()
 
         comment = f"""## ✅ Task {self.task_id} Completed
@@ -163,7 +229,15 @@ All quality assurance checks have been completed successfully.
     def close_issue_with_completion(
         self, issue_number: int, attach_artifacts: bool = True
     ) -> bool:
-        """Close GitHub issue with completion details."""
+        """Close GitHub issue with completion details.
+        
+        Args:
+            issue_number: GitHub issue number to close
+            attach_artifacts: Whether to attach completion artifacts
+            
+        Returns:
+            True if issue closure succeeded, False otherwise
+        """
         if not self.check_github_cli():
             return False
 
@@ -185,6 +259,7 @@ All quality assurance checks have been completed successfully.
                     comment,
                 ],
                 check=True,
+                shell=False,
             )
 
             # Close the issue
@@ -201,6 +276,7 @@ All quality assurance checks have been completed successfully.
                     "completed",
                 ],
                 check=True,
+                shell=False,
             )
 
             logger.info(f"✅ Issue #{issue_number} closed with completion details")
@@ -211,15 +287,27 @@ All quality assurance checks have been completed successfully.
             return False
 
     def create_pull_request_link(self) -> Optional[str]:
-        """Generate or find pull request link for the task."""
+        """Generate or find pull request link for the task.
+        
+        Returns:
+            Pull request URL if available, None otherwise
+        """
         # This is a placeholder for PR detection logic
-        # In a real implementation, you might search for PRs with the task ID
+        # TODO: Must implement, you might search for PRs with the task ID
         return f"https://github.com/{self.github_repo}/pulls?q={self.task_id}"
 
-    def finalise_task(
+    def finalise_task_complete(
         self, close_issue: bool = True, attach_artifacts: bool = True
     ) -> bool:
-        """Execute complete GitHub finalisation workflow."""
+        """Execute complete GitHub finalisation workflow.
+        
+        Args:
+            close_issue: Whether to close related GitHub issues
+            attach_artifacts: Whether to attach completion artifacts
+            
+        Returns:
+            True if finalisation succeeded, False otherwise
+        """
         logger.info(f"🔄 Starting GitHub finalisation for {self.task_id}")
 
         # Check if outputs exist

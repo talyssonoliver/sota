@@ -11,7 +11,7 @@ PYTHON := python3
 PIP := pip3
 PYTEST := pytest
 VENV_DIR := .venv
-DOCKER_COMPOSE := docker-compose -f docker-compose.dev.yml
+DOCKER_COMPOSE := DOCKER_BUILDKIT=1 docker-compose -f docker-compose.dev.yml
 PROJECT_NAME := sota
 
 # Check if venv exists, use it if available, otherwise use system Python
@@ -43,15 +43,28 @@ setup: ## Complete environment setup
 	@$(VENV_DIR)/bin/pip install --upgrade pip setuptools wheel
 	@$(VENV_DIR)/bin/pip install -r requirements.txt
 	@$(VENV_DIR)/bin/pip install -r requirements-dev.txt 2>/dev/null || echo "$(YELLOW)No dev requirements$(NC)"
-	@cp githooks/pre-commit .git/hooks/pre-commit 2>/dev/null || true
-	@cp githooks/post-commit .git/hooks/post-commit 2>/dev/null || true
+	@cp githooks/pre-commit .git/hooks/pre-commit 2>/dev/null || echo "$(YELLOW)Git hooks not installed - not a git repo$(NC)"
+	@cp githooks/post-commit .git/hooks/post-commit 2>/dev/null || echo "$(YELLOW)Git hooks not installed - not a git repo$(NC)"
 	@chmod +x .git/hooks/pre-commit .git/hooks/post-commit 2>/dev/null || true
+	@echo "$(GREEN)✅ Git hooks installed for automatic cleanup$(NC)"
 	@$(DOCKER_COMPOSE) build --parallel 2>/dev/null || echo "$(YELLOW)Docker build skipped$(NC)"
 	@echo "$(GREEN)Setup completed! Run 'make dev'$(NC)"
 
-dev: setup ## Start development environment
-	@$(DOCKER_COMPOSE) up -d
+dev: setup ## Start development environment (full profile)
+	@$(DOCKER_COMPOSE) --profile full up -d
 	@$(DOCKER_COMPOSE) ps
+
+dev-minimal: setup ## Start minimal development environment (app + chromadb only)
+	@echo "$(BLUE)🚀 Starting minimal development environment...$(NC)"
+	@$(DOCKER_COMPOSE) --profile minimal up -d
+	@$(DOCKER_COMPOSE) ps
+	@echo "$(GREEN)✅ Minimal environment ready (1-2GB RAM usage)$(NC)"
+
+dev-testing: setup ## Start testing environment (app + chromadb + redis)
+	@echo "$(BLUE)🧪 Starting testing development environment...$(NC)"
+	@$(DOCKER_COMPOSE) --profile testing up -d
+	@$(DOCKER_COMPOSE) ps
+	@echo "$(GREEN)✅ Testing environment ready (2-3GB RAM usage)$(NC)"
 
 dev-setup: setup dev ## Setup and start services
 	@echo "$(GREEN)Full development environment ready!$(NC)"
@@ -59,18 +72,35 @@ dev-setup: setup dev ## Setup and start services
 dev-reset: clean dev-setup ## Reset environment
 	@echo "$(GREEN)Environment reset completed!$(NC)"
 
-test: lint ## Run full test suite
+test: clean-coverage lint ## Run full test suite
 	@echo "$(BLUE)🧪 Running full test suite...$(NC)"
 	@$(VENV_PYTHON) -m pytest tests/ -v
-	@echo "$(BLUE)🧹 Cleaning up coverage files...$(NC)"
-	@rm -f .coverage.*
+	@$(MAKE) clean-artifacts --no-print-directory
 
-test-quick: ## Fast validation
+test-quick: ## Fast validation (no coverage, optimal speed)
 	@$(MAKE) lint --no-print-directory
-	@echo "$(BLUE)🧪 Running quick tests...$(NC)"
-	@$(VENV_PYTHON) -m pytest -n 2 --dist loadfile --tb=line --maxfail=5 -x tests/
-	@echo "$(BLUE)🧹 Cleaning up coverage files...$(NC)"
-	@rm -f .coverage.*
+	@echo "$(BLUE)🧪 Running quick tests (no coverage for speed)...$(NC)"
+	@$(VENV_PYTHON) -m pytest -n 4 --dist loadscope --tb=line --maxfail=5 -x tests/
+	@$(MAKE) smart-cleanup --no-print-directory
+
+test-dev: ## Development testing (no coverage, minimal cleanup)
+	@echo "$(BLUE)🧪 Running development tests...$(NC)"
+	@$(VENV_PYTHON) -m pytest -n 4 --dist loadscope --tb=short --maxfail=10 tests/
+	@$(MAKE) smart-cleanup --no-print-directory
+
+test-ultra-fast: ## Ultra-fast unit tests only (immediate feedback)
+	@echo "$(BLUE)⚡ Running ultra-fast unit tests...$(NC)"
+	@$(VENV_PYTHON) -m pytest -m unit -n 4 --dist loadscope --tb=line --maxfail=3 -x --disable-warnings
+	@echo "$(GREEN)✅ Ultra-fast tests completed$(NC)"
+
+test-adaptive: ## Adaptive testing (prioritize tests for changed files)
+	@echo "$(BLUE)🧠 Running adaptive tests...$(NC)"
+	@$(VENV_PYTHON) scripts/adaptive_test_runner.py
+	@$(MAKE) smart-cleanup --no-print-directory
+
+test-adaptive-quick: ## Quick adaptive testing (changed files only)
+	@echo "$(BLUE)⚡🧠 Running quick adaptive tests...$(NC)"
+	@$(VENV_PYTHON) scripts/adaptive_test_runner.py --quick
 
 test-agents: ## Multi-agent tests
 	@echo "$(BLUE)🤖 Running agent tests...$(NC)"
@@ -78,15 +108,92 @@ test-agents: ## Multi-agent tests
 
 test-unit: ## Fast unit tests only
 	@echo "$(BLUE)⚡ Running unit tests...$(NC)"
-	@$(VENV_PYTHON) -m pytest -m unit -n auto --dist loadscope --tb=line
+	@$(VENV_PYTHON) -m pytest -m unit -n 4 --dist loadscope --tb=line
 
 test-integration: ## Integration tests only
 	@echo "$(BLUE)🔗 Running integration tests...$(NC)"
-	@$(VENV_PYTHON) -m pytest -m integration -n auto --dist loadscope --tb=short
+	@$(VENV_PYTHON) -m pytest -m integration -n 4 --dist loadscope --tb=short
 
 test-parallel: ## Full parallel test suite with optimal settings
 	@echo "$(BLUE)🚀 Running full test suite in parallel...$(NC)"
-	@$(VENV_PYTHON) -m pytest -n auto --dist loadscope tests/ --tb=line
+	@$(VENV_PYTHON) -m pytest -n 4 --dist loadscope tests/ --tb=line
+
+test-parallel-with-lint: ## Parallel testing with concurrent linting
+	@echo "$(BLUE)🚀 Running tests and linting in parallel...$(NC)"
+	@$(MAKE) lint & \
+	$(VENV_PYTHON) -m pytest -n 4 --dist loadscope --tb=line tests/ & \
+	wait
+	@$(MAKE) smart-cleanup --no-print-directory
+	@echo "$(GREEN)✅ Parallel testing and linting completed$(NC)"
+
+clean-coverage: ## Clean all coverage data
+	@echo "$(BLUE)🧹 Cleaning coverage data...$(NC)"
+	@./scripts/clean_coverage.sh
+
+clean-artifacts: ## Clean all generated artifacts (caches, reports, etc.)
+	@echo "$(BLUE)🧹 Cleaning generated artifacts...$(NC)"
+	@$(VENV_PYTHON) scripts/manage_reports.py --emergency-cleanup
+	@rm -rf .ruff_cache/ .mypy_cache/ .pytest_cache/
+	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@echo "$(GREEN)✅ Artifacts cleaned$(NC)"
+
+manage-reports: ## Run report retention policies
+	@echo "$(BLUE)🗂️  Managing reports with retention policies...$(NC)"
+	@$(VENV_PYTHON) scripts/manage_reports.py
+
+enhanced-cleanup: ## Run comprehensive cleanup with analysis
+	@$(VENV_PYTHON) scripts/enhanced_cleanup.py
+
+quick-cleanup: ## Quick cleanup (caches and Python artifacts only)
+	@$(VENV_PYTHON) scripts/enhanced_cleanup.py --quick
+
+smart-cleanup: ## Smart cleanup (only clean when needed for minimal overhead)
+	@$(VENV_PYTHON) scripts/smart_cleanup.py
+
+architecture-cleanup: ## Clean architecture artifacts with retention policies (dry-run)
+	@$(VENV_PYTHON) scripts/architecture_cleanup.py --extended-mode --dry-run
+
+architecture-cleanup-force: ## Clean architecture artifacts with retention policies (REAL cleanup)
+	@echo "$(RED)⚠️  This will ACTUALLY delete files based on retention policies!$(NC)"
+	@echo "$(YELLOW)Press Ctrl+C to cancel or wait 10 seconds...$(NC)"
+	@sleep 10
+	@$(VENV_PYTHON) scripts/architecture_cleanup.py --extended-mode
+
+memory-consolidation: ## Analyze memory system consolidation opportunities (dry-run)
+	@$(VENV_PYTHON) scripts/memory_system_consolidator.py --dry-run --verbose
+
+memory-consolidation-force: ## Consolidate duplicate memory system implementations (REAL changes)
+	@echo "$(RED)⚠️  This will ACTUALLY consolidate memory systems and remove duplicates!$(NC)"
+	@echo "$(YELLOW)This affects 32 files with 49 import changes and removes 6 files (1,809 lines)$(NC)"
+	@echo "$(YELLOW)Press Ctrl+C to cancel or wait 15 seconds...$(NC)"
+	@sleep 15
+	@$(VENV_PYTHON) scripts/memory_system_consolidator.py
+
+config-consolidation: ## Analyze configuration system consolidation opportunities (dry-run)
+	@$(VENV_PYTHON) scripts/configuration_consolidator.py --dry-run
+
+config-consolidation-force: ## Consolidate scattered configuration system (REAL changes)
+	@echo "$(RED)⚠️  This will ACTUALLY consolidate configuration systems!$(NC)"
+	@echo "$(YELLOW)This affects 63+ configuration files with environment variable standardization$(NC)"
+	@echo "$(YELLOW)Press Ctrl+C to cancel or wait 15 seconds...$(NC)"
+	@sleep 15
+	@$(VENV_PYTHON) scripts/configuration_consolidator.py
+
+test-coverage: clean-coverage ## Run tests with coverage collection
+	@echo "$(BLUE)🎯 Running tests with coverage (single-threaded to prevent DB corruption)...$(NC)"
+	@$(VENV_PYTHON) -m pytest tests/ -n 1 --dist no --cov=src --cov-report=html --cov-report=xml --cov-report=term-missing
+
+coverage-report: ## Generate and view coverage report  
+	@echo "$(BLUE)📊 Generating coverage report...$(NC)"
+	@$(VENV_PYTHON) -m coverage html
+	@echo "$(GREEN)Coverage report generated in htmlcov/$(NC)"
+	@which xdg-open >/dev/null 2>&1 && xdg-open htmlcov/index.html || echo "Open htmlcov/index.html in your browser"
+
+coverage-combine: ## Manually combine parallel coverage data
+	@echo "$(BLUE)🔄 Combining parallel coverage data...$(NC)"
+	@$(VENV_PYTHON) -m coverage combine --strict
+	@$(VENV_PYTHON) -m coverage report
 
 lint: ## Code quality checks
 	@echo "$(BLUE)🔍 Running linting checks...$(NC)"
@@ -100,11 +207,9 @@ format: ## Auto-format codebase
 docs: ## Build documentation
 	@if [ -d "docs/" ]; then cd docs && make html || true; else $(VENV_DIR)/bin/pydoc-markdown || true; fi
 
-clean: ## Remove artifacts
-	@find . -type f -name "*.pyc" -delete
-	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+clean: clean-artifacts ## Remove artifacts
 	@$(DOCKER_COMPOSE) down --volumes --remove-orphans 2>/dev/null || true
-	@rm -rf build/ dist/ .coverage htmlcov/ .pytest_cache/ .mypy_cache/ .ruff_cache/
+	@rm -rf build/ dist/
 
 clean-generated: ## Clean generated files (coverage, HITL test files, etc)
 	@echo "$(BLUE)🧹 Cleaning generated files...$(NC)"
@@ -132,6 +237,16 @@ install: ## Production install
 benchmark: ## Performance tests
 	@$(VENV_DIR)/bin/$(PYTHON) scripts/benchmark_agents.py 2>/dev/null || echo "$(YELLOW)Benchmark script missing$(NC)"
 	@$(VENV_DIR)/bin/$(PYTEST) tests/ -k "benchmark" --benchmark-only 2>/dev/null || true
+
+perf-monitor: ## Show performance trends
+	@echo "$(BLUE)📊 Performance Monitoring Dashboard$(NC)"
+	@$(VENV_PYTHON) scripts/performance_monitor.py --trends
+
+perf-test-quick: ## Run test-quick with performance monitoring
+	@$(VENV_PYTHON) scripts/performance_monitor.py $(VENV_PYTHON) -m pytest -n 4 --dist loadscope --tb=line --maxfail=5 -x tests/
+
+perf-test-adaptive: ## Run adaptive tests with performance monitoring
+	@$(VENV_PYTHON) scripts/performance_monitor.py $(VENV_PYTHON) scripts/adaptive_test_runner.py
 
 security: ## Security scanning
 	@$(VENV_DIR)/bin/bandit -r . -f json 2>/dev/null || ($(VENV_DIR)/bin/pip install bandit && $(VENV_DIR)/bin/bandit -r . -f json)

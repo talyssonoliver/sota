@@ -1,3 +1,14 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    asyncio,
+    dataclass,
+    datetime,
+    logging
+)
 """
 Checkpoint Business Service
 
@@ -5,10 +16,10 @@ Centralizes all checkpoint-related business logic and operations.
 Extracted from API routes to follow clean architecture principles.
 """
 
-import logging
-from dataclasses import dataclass
-from datetime import datetime
-from typing import Any, Dict, List, Optional
+# import logging  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 from ..workflows.hitl.models import HITLCheckpoint
 from ..workflows.hitl.policy_engine import HITLPolicyEngine
@@ -101,7 +112,7 @@ class CheckpointService:
 
             # Perform approval (note: hitl_engine methods may be async)
             try:
-                import asyncio
+#                 import asyncio  # Consolidated to common_imports
 
                 success = asyncio.run(
                     self.hitl_engine.approve_checkpoint(
@@ -178,7 +189,7 @@ class CheckpointService:
 
             # Perform rejection (note: hitl_engine methods may be async)
             try:
-                import asyncio
+#                 import asyncio  # Consolidated to common_imports
 
                 success = asyncio.run(
                     self.hitl_engine.reject_checkpoint(

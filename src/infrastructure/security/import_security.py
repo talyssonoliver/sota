@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Enum, dataclass, logging
 """
 Import Security Module
 
@@ -12,10 +14,10 @@ Security Features:
 - Runtime dependency verification
 """
 
-import logging
+# import logging  # Consolidated to common_imports
 import warnings
-from dataclasses import dataclass
-from enum import Enum
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
 from typing import Any, Callable, Dict, List, Optional, Set
 
 logger = logging.getLogger(__name__)

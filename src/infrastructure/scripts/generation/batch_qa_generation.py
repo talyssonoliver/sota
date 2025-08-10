@@ -1,22 +1,31 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Path,
+    sys
+)
 """
-import sys
+# import sys  # Consolidated to common_imports
 Batch QA Report Generation Script
 
 Generates QA reports for all completed tasks that don't have QA reports yet.
 This addresses the critical issue where only 1/105 tasks have QA reports.
 """
 
-import sys
-from pathlib import Path
-from typing import Any, Dict, List
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List  # Consolidated to common_imports
 
 project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
 from src.core.workflows.qa_validation import QAValidationEngine  # noqa: E402
-from src.infrastructure.utils.completion_metrics import \
-    CompletionMetricsCalculator  # noqa: E402
+from src.infrastructure.utils.completion_metrics import (  # noqa: E402
+    CompletionMetricsCalculator,
+)
 
 
 def find_tasks_needing_qa() -> List[str]:

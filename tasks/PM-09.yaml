@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=./task-schema.json
+id: PM-09
+title: Prepare Stakeholder Kick-off Presentation
+owner: product
+depends_on:
+  - PM-01
+  - PM-02
+  - PM-03
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task PM-09: Prepare Stakeholder Kick-off Presentation"
+artefacts:
+  - docs/product/stakeholder-presentation.md
+  - stakeholder-kickoff.pptx
+context_topics:
+  - project-overview

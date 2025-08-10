@@ -1,0 +1,334 @@
+C:\taly\ai-system\pytest_run.log:54:tests/unit/core/workflows/test_generate_briefing.py::TestBriefingGeneratorStep62::test_error_handling_missing_metrics 
+C:\taly\ai-system\pytest_run.log:56:[gw0] PASSED tests/unit/core/workflows/test_generate_briefing.py::TestBriefingGeneratorStep62::test_error_handling_missing_metrics 
+C:\taly\ai-system\pytest_run.log:59:tests/unit/infrastructure/utils/test_base_classes.py::TestBaseWorkflow::test_workflow_continue_on_error 
+C:\taly\ai-system\pytest_run.log:63:[gw1] PASSED tests/unit/infrastructure/utils/test_base_classes.py::TestBaseWorkflow::test_workflow_continue_on_error 
+C:\taly\ai-system\pytest_run.log:68:tests/unit/infrastructure/tools/validation/test_syntax_validator.py::TestSyntaxValidator::test_ast_parse_error_vs_syntax_error 
+C:\taly\ai-system\pytest_run.log:73:tests/unit/infrastructure/utils/test_base_classes.py::TestBaseValidator::test_validation_error_handling 
+C:\taly\ai-system\pytest_run.log:74:[gw2] PASSED tests/unit/infrastructure/tools/validation/test_syntax_validator.py::TestSyntaxValidator::test_ast_parse_error_vs_syntax_error 
+C:\taly\ai-system\pytest_run.log:78:[gw1] PASSED tests/unit/infrastructure/utils/test_base_classes.py::TestBaseValidator::test_validation_error_handling 
+C:\taly\ai-system\pytest_run.log:96:tests/unit/core/workflows/test_generate_briefing.py::TestBriefingGeneratorStep62::test_error_handling_invalid_day 
+C:\taly\ai-system\pytest_run.log:100:[gw0] PASSED tests/unit/core/workflows/test_generate_briefing.py::TestBriefingGeneratorStep62::test_error_handling_invalid_day 
+C:\taly\ai-system\pytest_run.log:119:tests/unit/infrastructure/tools/validation/test_syntax_validator.py::TestSyntaxValidator::test_has_syntax_errors 
+C:\taly\ai-system\pytest_run.log:122:[gw2] PASSED tests/unit/infrastructure/tools/validation/test_syntax_validator.py::TestSyntaxValidator::test_has_syntax_errors 
+C:\taly\ai-system\pytest_run.log:139:tests/unit/infrastructure/tools/validation/test_syntax_validator.py::TestSyntaxValidator::test_extract_imports_with_error 
+C:\taly\ai-system\pytest_run.log:146:[gw2] PASSED tests/unit/infrastructure/tools/validation/test_syntax_validator.py::TestSyntaxValidator::test_extract_imports_with_error 
+C:\taly\ai-system\pytest_run.log:155:tests/unit/infrastructure/utils/test_base_classes.py::TestBaseTool::test_tool_execution_error_handling 
+C:\taly\ai-system\pytest_run.log:156:[gw1] PASSED tests/unit/infrastructure/utils/test_base_classes.py::TestBaseTool::test_tool_execution_error_handling 
+C:\taly\ai-system\pytest_run.log:189:tests/unit/infrastructure/tools/validation/test_vv_validator.py::TestVVValidator::test_error_handling 
+C:\taly\ai-system\pytest_run.log:190:[gw1] PASSED tests/unit/infrastructure/tools/validation/test_vv_validator.py::TestVVValidator::test_error_handling 
+C:\taly\ai-system\pytest_run.log:217:tests/integration/test_execution_monitor.py::TestExecutionMonitorStep48::test_error_handling_in_monitoring 
+C:\taly\ai-system\pytest_run.log:218:[gw1] PASSED tests/integration/test_execution_monitor.py::TestExecutionMonitorStep48::test_error_handling_in_monitoring 
+C:\taly\ai-system\pytest_run.log:222:[gw3] FAILED tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgentIntegration::test_full_qa_workflow_integration 
+C:\taly\ai-system\pytest_run.log:224:[gw3] FAILED tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgentIntegration::test_qa_agent_with_various_file_types 
+C:\taly\ai-system\pytest_run.log:226:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_determine_test_framework_python 
+C:\taly\ai-system\pytest_run.log:228:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_calculate_quality_metrics_empty_files 
+C:\taly\ai-system\pytest_run.log:230:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_backwards_compatibility_methods 
+C:\taly\ai-system\pytest_run.log:232:[gw0] FAILED tests/e2e/workflows/test_phase6_automation.py::TestRealTimeDashboard::test_dashboard_api_integration 
+C:\taly\ai-system\pytest_run.log:233:[gw2] FAILED tests/unit/infrastructure/tools/validation/test_syntax_validator.py::TestSyntaxValidator::test_validate_all_imports_sequential_with_timeout 
+C:\taly\ai-system\pytest_run.log:238:[gw0] FAILED tests/e2e/workflows/test_phase6_automation.py::TestRealTimeDashboard::test_dashboard_content 
+C:\taly\ai-system\pytest_run.log:266:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_fallback_integration_analyzer_creation 
+C:\taly\ai-system\pytest_run.log:274:[gw2] FAILED tests/unit/core/workflows/test_task_lifecycle.py::TestTaskLifecycleIntegration::test_archive_and_restore_preserves_data 
+C:\taly\ai-system\pytest_run.log:282:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_determine_test_framework_javascript 
+C:\taly\ai-system\pytest_run.log:286:[gw2] FAILED tests/unit/core/workflows/test_task_lifecycle.py::TestTaskLifecycleIntegration::test_full_lifecycle_workflow 
+C:\taly\ai-system\pytest_run.log:296:[gw0] FAILED tests/e2e/workflows/test_phase6_automation.py::TestEmailIntegration::test_html_to_text_conversion 
+C:\taly\ai-system\pytest_run.log:299:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_fallback_coverage_analyzer_creation 
+C:\taly\ai-system\pytest_run.log:320:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_enhanced_qa_agent_with_invalid_config 
+C:\taly\ai-system\pytest_run.log:332:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_validate_quality_gates_passing 
+C:\taly\ai-system\pytest_run.log:340:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_fallback_test_generator_creation 
+C:\taly\ai-system\pytest_run.log:344:[gw2] FAILED tests/unit/core/workflows/test_task_lifecycle.py::TestTaskLifecycleManager::test_archive_task_success 
+C:\taly\ai-system\pytest_run.log:352:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_get_test_file_path_jest 
+C:\taly\ai-system\pytest_run.log:364:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_get_test_file_path_pytest 
+C:\taly\ai-system\pytest_run.log:374:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_quality_metrics_calculation_integration 
+C:\taly\ai-system\pytest_run.log:386:[gw1] FAILED tests/integration/test_execution_monitor.py::TestExecutionMonitorDecorator::test_decorator_failure 
+C:\taly\ai-system\pytest_run.log:387:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_generate_recommendations_with_good_metrics 
+C:\taly\ai-system\pytest_run.log:392:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_enhanced_qa_agent_with_config_path 
+C:\taly\ai-system\pytest_run.log:394:[gw1] FAILED tests/integration/test_execution_monitor.py::TestExecutionMonitorDecorator::test_decorator_success 
+C:\taly\ai-system\pytest_run.log:398:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_calculate_overall_quality_score 
+C:\taly\ai-system\pytest_run.log:400:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_discover_source_files 
+C:\taly\ai-system\pytest_run.log:402:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_enhanced_qa_agent_initialization 
+C:\taly\ai-system\pytest_run.log:404:[gw2] FAILED tests/integration/test_data_flow_integration.py::TestDataFlowIntegration::test_agent_to_workflow_data_flow 
+C:\taly\ai-system\pytest_run.log:406:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_calculate_overall_quality_score_with_results 
+C:\taly\ai-system\pytest_run.log:422:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_generate_recommendations_with_metrics 
+C:\taly\ai-system\pytest_run.log:440:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_calculate_quality_metrics_with_source_files 
+C:\taly\ai-system\pytest_run.log:471:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_generate_comprehensive_tests_empty_files 
+C:\taly\ai-system\pytest_run.log:482:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_generate_comprehensive_tests_success 
+C:\taly\ai-system\pytest_run.log:484:[gw2] FAILED tests/integration/test_hitl_engine_integration.py::TestHITLEngineIntegration::test_risk_pattern_detection 
+C:\taly\ai-system\pytest_run.log:488:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_generate_comprehensive_tests_auto_discovery 
+C:\taly\ai-system\pytest_run.log:490:[gw2] FAILED tests/integration/test_hitl_engine_integration.py::TestHITLEngineIntegration::test_concurrent_checkpoint_handling 
+C:\taly\ai-system\pytest_run.log:494:[gw2] FAILED tests/integration/test_hitl_engine_integration.py::TestHITLEngineIntegration::test_checkpoint_retry_mechanism 
+C:\taly\ai-system\pytest_run.log:496:[gw3] ERROR tests/unit/core/agents/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_validate_quality_gates_failing 
+C:\taly\ai-system\pytest_run.log:500:[gw3] FAILED tests/unit/core/agents/test_enhanced_qa_agent.py::TestCreateEnhancedQAWorkflow::test_create_enhanced_qa_workflow_success 
+C:\taly\ai-system\pytest_run.log:506:[gw3] FAILED tests/unit/core/agents/test_enhanced_qa_agent.py::TestCreateEnhancedQAWorkflow::test_create_enhanced_qa_workflow_with_config 
+C:\taly\ai-system\pytest_run.log:508:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_trend_analysis 
+C:\taly\ai-system\pytest_run.log:510:[gw2] FAILED tests/integration/test_hitl_engine_integration.py::TestHITLEngineIntegration::test_batch_checkpoint_processing 
+C:\taly\ai-system\pytest_run.log:512:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_trend_analysis 
+C:\taly\ai-system\pytest_run.log:513:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_severity_classification 
+C:\taly\ai-system\pytest_run.log:516:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_severity_classification 
+C:\taly\ai-system\pytest_run.log:517:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_metadata_extraction 
+C:\taly\ai-system\pytest_run.log:520:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_metadata_extraction 
+C:\taly\ai-system\pytest_run.log:521:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_custom_classification_rules 
+C:\taly\ai-system\pytest_run.log:524:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_custom_classification_rules 
+C:\taly\ai-system\pytest_run.log:525:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_category_classification 
+C:\taly\ai-system\pytest_run.log:530:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_category_classification 
+C:\taly\ai-system\pytest_run.log:531:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_fingerprinting 
+C:\taly\ai-system\pytest_run.log:533:[gw2] FAILED tests/integration/test_hitl_engine_integration.py::TestHITLEngineIntegration::test_task_status_integration 
+C:\taly\ai-system\pytest_run.log:534:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryDecorator::test_async_function_decorator 
+C:\taly\ai-system\pytest_run.log:535:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_fingerprinting 
+C:\taly\ai-system\pytest_run.log:537:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_analysis 
+C:\taly\ai-system\pytest_run.log:538:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorClassifier::test_error_analysis 
+C:\taly\ai-system\pytest_run.log:539:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_recovery_context 
+C:\taly\ai-system\pytest_run.log:540:[gw3] FAILED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_recovery_context 
+C:\taly\ai-system\pytest_run.log:541:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_recovery_with_fallback 
+C:\taly\ai-system\pytest_run.log:544:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryDecorator::test_async_function_decorator 
+C:\taly\ai-system\pytest_run.log:545:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryDecorator::test_decorator_with_fallback 
+C:\taly\ai-system\pytest_run.log:546:[gw2] FAILED tests/integration/test_hitl_engine_integration.py::TestHITLEngineIntegration::test_disabled_checkpoint_types 
+C:\taly\ai-system\pytest_run.log:550:[gw3] FAILED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_recovery_with_fallback 
+C:\taly\ai-system\pytest_run.log:552:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_recovery_strategy_registration 
+C:\taly\ai-system\pytest_run.log:557:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryDecorator::test_decorator_with_fallback 
+C:\taly\ai-system\pytest_run.log:559:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryDecorator::test_decorator_with_config 
+C:\taly\ai-system\pytest_run.log:560:[gw3] FAILED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_recovery_strategy_registration 
+C:\taly\ai-system\pytest_run.log:561:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_recovery_execution 
+C:\taly\ai-system\pytest_run.log:564:[gw2] FAILED tests/integration/test_hitl_engine_integration.py::TestHITLEngineIntegration::test_infrastructure_high_risk_default 
+C:\taly\ai-system\pytest_run.log:569:[gw3] FAILED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_recovery_execution 
+C:\taly\ai-system\pytest_run.log:571:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryDecorator::test_decorator_with_config 
+C:\taly\ai-system\pytest_run.log:572:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_recovery_strategy_hierarchy 
+C:\taly\ai-system\pytest_run.log:573:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryDecorator::test_sync_function_decorator 
+C:\taly\ai-system\pytest_run.log:578:[gw3] FAILED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_recovery_strategy_hierarchy 
+C:\taly\ai-system\pytest_run.log:580:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_async_recovery 
+C:\taly\ai-system\pytest_run.log:582:[gw2] FAILED tests/integration/test_hitl_engine_integration.py::TestHITLEngineIntegration::test_notification_template_rendering 
+C:\taly\ai-system\pytest_run.log:584:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryDecorator::test_sync_function_decorator 
+C:\taly\ai-system\pytest_run.log:587:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_sync_operation 
+C:\taly\ai-system\pytest_run.log:590:[gw3] FAILED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorRecoveryManager::test_async_recovery 
+C:\taly\ai-system\pytest_run.log:593:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorSystemIntegration::test_error_boundary_with_classification 
+C:\taly\ai-system\pytest_run.log:595:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorSystemIntegration::test_error_boundary_with_classification 
+C:\taly\ai-system\pytest_run.log:597:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorSystemIntegration::test_performance_under_load 
+C:\taly\ai-system\pytest_run.log:601:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorSystemIntegration::test_performance_under_load 
+C:\taly\ai-system\pytest_run.log:603:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorSystemIntegration::test_async_error_integration 
+C:\taly\ai-system\pytest_run.log:606:[gw3] FAILED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorSystemIntegration::test_async_error_integration 
+C:\taly\ai-system\pytest_run.log:607:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorSystemIntegration::test_complete_error_flow 
+C:\taly\ai-system\pytest_run.log:608:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_sync_operation 
+C:\taly\ai-system\pytest_run.log:609:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_fail_safe_mode_with_fallback 
+C:\taly\ai-system\pytest_run.log:614:[gw3] FAILED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorSystemIntegration::test_complete_error_flow 
+C:\taly\ai-system\pytest_run.log:615:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorContextManagement::test_context_metadata_isolation 
+C:\taly\ai-system\pytest_run.log:616:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorContextManagement::test_context_metadata_isolation 
+C:\taly\ai-system\pytest_run.log:617:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorContextManagement::test_context_stack 
+C:\taly\ai-system\pytest_run.log:618:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_fail_safe_mode_with_fallback 
+C:\taly\ai-system\pytest_run.log:619:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_retry_mode_success_after_retry 
+C:\taly\ai-system\pytest_run.log:622:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorContextManagement::test_context_stack 
+C:\taly\ai-system\pytest_run.log:623:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_context_preservation 
+C:\taly\ai-system\pytest_run.log:624:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_context_preservation 
+C:\taly\ai-system\pytest_run.log:625:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_fail_safe_mode 
+C:\taly\ai-system\pytest_run.log:626:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_fail_safe_mode 
+C:\taly\ai-system\pytest_run.log:627:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_circuit_breaker_recovery 
+C:\taly\ai-system\pytest_run.log:629:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_retry_mode_success_after_retry 
+C:\taly\ai-system\pytest_run.log:631:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_successful_execution 
+C:\taly\ai-system\pytest_run.log:634:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_successful_execution 
+C:\taly\ai-system\pytest_run.log:635:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_circuit_breaker_recovery 
+C:\taly\ai-system\pytest_run.log:636:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_fail_fast_mode 
+C:\taly\ai-system\pytest_run.log:637:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_circuit_breaker_mode 
+C:\taly\ai-system\pytest_run.log:638:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_fail_fast_mode 
+C:\taly\ai-system\pytest_run.log:639:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_retry_mode_exhausted 
+C:\taly\ai-system\pytest_run.log:641:tests/unit/interfaces/api/test_hitl_api_routes.py::TestHITLAPIRoutes::test_error_handling 
+C:\taly\ai-system\pytest_run.log:642:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_circuit_breaker_mode 
+C:\taly\ai-system\pytest_run.log:643:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_retry_mode_max_retries_exceeded 
+C:\taly\ai-system\pytest_run.log:644:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_retry_mode_exhausted 
+C:\taly\ai-system\pytest_run.log:645:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_retry_mode 
+C:\taly\ai-system\pytest_run.log:646:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_retry_mode 
+C:\taly\ai-system\pytest_run.log:647:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_fail_safe_with_fallback_function 
+C:\taly\ai-system\pytest_run.log:648:[gw0] PASSED tests/unit/interfaces/api/test_hitl_api_routes.py::TestHITLAPIRoutes::test_error_handling 
+C:\taly\ai-system\pytest_run.log:649:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_retry_mode_max_retries_exceeded 
+C:\taly\ai-system\pytest_run.log:651:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_fail_safe_mode_without_fallback 
+C:\taly\ai-system\pytest_run.log:652:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_fail_safe_with_fallback_function 
+C:\taly\ai-system\pytest_run.log:653:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_async_operation_support 
+C:\taly\ai-system\pytest_run.log:654:[gw3] PASSED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_async_operation_support 
+C:\taly\ai-system\pytest_run.log:655:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_circuit_breaker_mode 
+C:\taly\ai-system\pytest_run.log:656:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_fail_safe_mode_without_fallback 
+C:\taly\ai-system\pytest_run.log:658:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_boundary_reset 
+C:\taly\ai-system\pytest_run.log:660:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_boundary_reset 
+C:\taly\ai-system\pytest_run.log:661:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_custom_error_classifier 
+C:\taly\ai-system\pytest_run.log:664:[gw3] FAILED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorBoundary::test_circuit_breaker_mode 
+C:\taly\ai-system\pytest_run.log:665:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorHandlerChain::test_handler_chain_termination 
+C:\taly\ai-system\pytest_run.log:666:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_custom_error_classifier 
+C:\taly\ai-system\pytest_run.log:667:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_fail_fast_mode 
+C:\taly\ai-system\pytest_run.log:670:[gw3] FAILED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorHandlerChain::test_handler_chain_termination 
+C:\taly\ai-system\pytest_run.log:671:tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorHandlerChain::test_handler_chain_execution 
+C:\taly\ai-system\pytest_run.log:672:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundary::test_fail_fast_mode 
+C:\taly\ai-system\pytest_run.log:674:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryIntegration::test_nested_boundaries 
+C:\taly\ai-system\pytest_run.log:676:[gw3] FAILED tests/unit/core/error_handling/test_error_system_comprehensive.py::TestErrorHandlerChain::test_handler_chain_execution 
+C:\taly\ai-system\pytest_run.log:679:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryIntegration::test_nested_boundaries 
+C:\taly\ai-system\pytest_run.log:681:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryIntegration::test_boundary_with_real_system_error 
+C:\taly\ai-system\pytest_run.log:684:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryIntegration::test_boundary_with_real_system_error 
+C:\taly\ai-system\pytest_run.log:685:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryIntegration::test_boundary_metrics_collection 
+C:\taly\ai-system\pytest_run.log:688:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryIntegration::test_boundary_metrics_collection 
+C:\taly\ai-system\pytest_run.log:689:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_duplicate_boundary_creation 
+C:\taly\ai-system\pytest_run.log:690:[gw1] PASSED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_duplicate_boundary_creation 
+C:\taly\ai-system\pytest_run.log:691:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_remove_boundary 
+C:\taly\ai-system\pytest_run.log:692:[gw1] PASSED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_remove_boundary 
+C:\taly\ai-system\pytest_run.log:693:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_reset_all_boundaries 
+C:\taly\ai-system\pytest_run.log:696:[gw1] PASSED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_reset_all_boundaries 
+C:\taly\ai-system\pytest_run.log:697:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_create_boundary 
+C:\taly\ai-system\pytest_run.log:698:[gw1] PASSED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_create_boundary 
+C:\taly\ai-system\pytest_run.log:699:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_get_all_stats 
+C:\taly\ai-system\pytest_run.log:700:[gw1] PASSED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_get_all_stats 
+C:\taly\ai-system\pytest_run.log:701:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_get_unhealthy_boundaries 
+C:\taly\ai-system\pytest_run.log:704:[gw1] FAILED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_get_unhealthy_boundaries 
+C:\taly\ai-system\pytest_run.log:705:tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_get_boundary 
+C:\taly\ai-system\pytest_run.log:706:[gw1] PASSED tests/unit/core/error_handling/test_error_boundary.py::TestErrorBoundaryManager::test_get_boundary 
+C:\taly\ai-system\pytest_run.log:714:    + FullyQualifiedErrorId : NativeCommandError
+C:\taly\ai-system\pytest_run.log:847:tests/unit/core/test_patches.py::TestPatchesIntegration::test_import_error_logging 
+C:\taly\ai-system\pytest_run.log:848:[gw1] PASSED tests/unit/core/test_patches.py::TestPatchesIntegration::test_import_error_logging 
+C:\taly\ai-system\pytest_run.log:852:[gw2] FAILED tests/integration/test_escalation_integration.py::TestEscalationEngine::test_concurrent_escalation_handling 
+C:\taly\ai-system\pytest_run.log:855:[gw0] FAILED tests/unit/interfaces/api/test_hitl_api_routes.py::TestHITLAPIRoutes::test_task_dashboard_data_endpoint 
+C:\taly\ai-system\pytest_run.log:864:tests/unit/core/test_patches.py::TestChromaDBTelemetryPatch::test_patched_init_import_error_fallback 
+C:\taly\ai-system\pytest_run.log:867:[gw1] PASSED tests/unit/core/test_patches.py::TestChromaDBTelemetryPatch::test_patched_init_import_error_fallback 
+C:\taly\ai-system\pytest_run.log:878:tests/unit/core/test_patches.py::TestChromaDBTelemetryPatch::test_apply_patch_import_error 
+C:\taly\ai-system\pytest_run.log:880:[gw1] PASSED tests/unit/core/test_patches.py::TestChromaDBTelemetryPatch::test_apply_patch_import_error 
+C:\taly\ai-system\pytest_run.log:892:tests/unit/core/test_patches.py::TestPatchesInit::test_apply_all_patches_import_error 
+C:\taly\ai-system\pytest_run.log:893:[gw1] PASSED tests/unit/core/test_patches.py::TestPatchesInit::test_apply_all_patches_import_error 
+C:\taly\ai-system\pytest_run.log:907:[gw0] FAILED tests/unit/interfaces/api/test_hitl_api_routes.py::TestHITLAPIRoutes::test_batch_with_partial_failures 
+C:\taly\ai-system\pytest_run.log:916:tests/unit/core/agents/test_qa_execution.py::TestQAExecutionEngine::test_generate_qa_report_failed 
+C:\taly\ai-system\pytest_run.log:917:[gw0] PASSED tests/unit/core/agents/test_qa_execution.py::TestQAExecutionEngine::test_generate_qa_report_failed 
+C:\taly\ai-system\pytest_run.log:918:tests/unit/core/agents/test_qa_execution.py::TestQAExecutionEngine::test_create_error_report 
+C:\taly\ai-system\pytest_run.log:919:[gw0] PASSED tests/unit/core/agents/test_qa_execution.py::TestQAExecutionEngine::test_create_error_report 
+C:\taly\ai-system\pytest_run.log:955:tests/unit/core/dependency_injection/test_container.py::TestDependencyContainer::test_unregistered_service_error 
+C:\taly\ai-system\pytest_run.log:957:[gw1] PASSED tests/unit/core/dependency_injection/test_container.py::TestDependencyContainer::test_unregistered_service_error 
+C:\taly\ai-system\pytest_run.log:984:tests/unit/core/agents/test_qa_execution.py::TestLangGraphQAIntegration::test_handle_qa_pending_state_failed 
+C:\taly\ai-system\pytest_run.log:985:[gw0] PASSED tests/unit/core/agents/test_qa_execution.py::TestLangGraphQAIntegration::test_handle_qa_pending_state_failed 
+C:\taly\ai-system\pytest_run.log:990:tests/unit/infrastructure/tools/validation/test_performance_validator.py::TestPerformanceValidator::test_has_errors_integration 
+C:\taly\ai-system\pytest_run.log:991:[gw0] PASSED tests/unit/infrastructure/tools/validation/test_performance_validator.py::TestPerformanceValidator::test_has_errors_integration 
+C:\taly\ai-system\pytest_run.log:1026:tests/unit/infrastructure/tools/validation/test_performance_validator.py::TestPerformanceValidator::test_error_handling_syntax_errors 
+C:\taly\ai-system\pytest_run.log:1029:[gw0] PASSED tests/unit/infrastructure/tools/validation/test_performance_validator.py::TestPerformanceValidator::test_error_handling_syntax_errors 
+C:\taly\ai-system\pytest_run.log:1064:tests/integration/dashboard/test_dashboard_widgets_js.py::TestDashboardWidgetsIntegration::test_widget_error_handling_scenarios 
+C:\taly\ai-system\pytest_run.log:1067:[gw0] PASSED tests/integration/dashboard/test_dashboard_widgets_js.py::TestDashboardWidgetsIntegration::test_widget_error_handling_scenarios 
+C:\taly\ai-system\pytest_run.log:1155:[gw1] FAILED tests/unit/infrastructure/security/test_auth_middleware.py::TestAuthMiddlewareEdgeCases::test_generate_token_special_characters 
+C:\taly\ai-system\pytest_run.log:1157:[gw0] FAILED tests/unit/core/workflows/test_enhanced_workflow.py::TestEnhancedWorkflow::test_notification_integration 
+C:\taly\ai-system\pytest_run.log:1171:[gw3] FAILED tests/integration/test_escalation_system.py::TestEscalationCLI::test_cli_manual_escalation 
+C:\taly\ai-system\pytest_run.log:1244:tests/unit/infrastructure/security/test_auth_middleware.py::TestAuthenticationError::test_authentication_error_creation 
+C:\taly\ai-system\pytest_run.log:1247:[gw1] PASSED tests/unit/infrastructure/security/test_auth_middleware.py::TestAuthenticationError::test_authentication_error_creation 
+C:\taly\ai-system\pytest_run.log:1248:tests/unit/infrastructure/security/test_auth_middleware.py::TestAuthenticationError::test_authentication_error_inheritance 
+C:\taly\ai-system\pytest_run.log:1249:[gw1] PASSED tests/unit/infrastructure/security/test_auth_middleware.py::TestAuthenticationError::test_authentication_error_inheritance 
+C:\taly\ai-system\pytest_run.log:1271:[gw1] FAILED tests/unit/infrastructure/security/test_auth_middleware.py::TestAuthMiddleware::test_token_consistency 
+C:\taly\ai-system\pytest_run.log:1274:[gw1] FAILED tests/unit/infrastructure/security/test_auth_middleware.py::TestAuthMiddleware::test_initialization_without_env_var_development 
+C:\taly\ai-system\pytest_run.log:1280:[gw3] FAILED tests/unit/platform/tools/test_tool_loader.py::test_load_tool_config 
+C:\taly\ai-system\pytest_run.log:1286:[gw1] FAILED tests/unit/infrastructure/security/test_auth_middleware.py::TestAuthMiddleware::test_initialization_without_env_var_production 
+C:\taly\ai-system\pytest_run.log:1305:[gw3] FAILED tests/unit/interfaces/dashboard/test_hitl_cli_comprehensive.py::TestHITLCLIManager::test_export_checkpoint_data_yaml 
+C:\taly\ai-system\pytest_run.log:1356:tests/unit/interfaces/dashboard/test_hitl_cli_comprehensive.py::TestHITLCLIIntegration::test_error_handling_workflow 
+C:\taly\ai-system\pytest_run.log:1357:[gw3] PASSED tests/unit/interfaces/dashboard/test_hitl_cli_comprehensive.py::TestHITLCLIIntegration::test_error_handling_workflow 
+C:\taly\ai-system\pytest_run.log:1377:[gw3] FAILED tests/unit/interfaces/dashboard/test_hitl_cli_comprehensive.py::TestHITLCLICommands::test_setup_logging_verbose 
+C:\taly\ai-system\pytest_run.log:1384:tests/integration/test_agent_factory_integration.py::TestAgentFactoryIntegration::test_error_propagation_during_agent_creation 
+C:\taly\ai-system\pytest_run.log:1385:[gw3] PASSED tests/integration/test_agent_factory_integration.py::TestAgentFactoryIntegration::test_error_propagation_during_agent_creation 
+C:\taly\ai-system\pytest_run.log:1391:[gw3] FAILED tests/integration/test_agent_factory_integration.py::TestAgentFactoryIntegration::test_agent_to_workflow_handoff 
+C:\taly\ai-system\pytest_run.log:1439:[gw3] FAILED tests/unit/interfaces/dashboard/test_hitl_cli.py::TestHITLCLICommands::test_cmd_list_checkpoints_with_data 
+C:\taly\ai-system\pytest_run.log:1449:[gw3] ERROR tests/unit/infrastructure/tools/validation/test_incremental_analyzer.py::TestIncrementalAnalyzer::test_determine_focus_areas 
+C:\taly\ai-system\pytest_run.log:1451:[gw3] ERROR tests/unit/infrastructure/tools/validation/test_incremental_analyzer.py::TestIncrementalAnalyzer::test_assess_impact 
+C:\taly\ai-system\pytest_run.log:1453:[gw3] ERROR tests/unit/infrastructure/tools/validation/test_incremental_analyzer.py::TestIncrementalAnalyzer::test_generate_pr_comment 
+C:\taly\ai-system\pytest_run.log:1457:[gw3] ERROR tests/unit/infrastructure/tools/validation/test_incremental_analyzer.py::TestIncrementalAnalyzer::test_get_merge_recommendation 
+C:\taly\ai-system\pytest_run.log:1470:[gw4] FAILED tests/integration/test_escalation_integration.py::TestEscalationEngine::test_complete_escalation_workflow 
+C:\taly\ai-system\pytest_run.log:1500:tests/unit/infrastructure/tools/validation/test_dependency_validator.py::TestDependencyValidator::test_has_errors 
+C:\taly\ai-system\pytest_run.log:1501:[gw1] PASSED tests/unit/infrastructure/tools/validation/test_dependency_validator.py::TestDependencyValidator::test_has_errors 
+C:\taly\ai-system\pytest_run.log:1508:tests/unit/infrastructure/tools/validation/test_dependency_validator.py::TestDependencyValidator::test_find_used_imports_with_syntax_error 
+C:\taly\ai-system\pytest_run.log:1509:[gw1] PASSED tests/unit/infrastructure/tools/validation/test_dependency_validator.py::TestDependencyValidator::test_find_used_imports_with_syntax_error 
+C:\taly\ai-system\pytest_run.log:1629:[gw1] FAILED tests/unit/core/workflows/test_generate_briefing_comprehensive.py::TestBriefingGenerator::test_load_briefing_template 
+C:\taly\ai-system\pytest_run.log:1632:tests/unit/core/workflows/test_generate_briefing_comprehensive.py::TestBriefingGenerator::test_generate_briefing_error_handling 
+C:\taly\ai-system\pytest_run.log:1633:[gw1] PASSED tests/unit/core/workflows/test_generate_briefing_comprehensive.py::TestBriefingGenerator::test_generate_briefing_error_handling 
+C:\taly\ai-system\pytest_run.log:1699:[gw1] FAILED tests/unit/infrastructure/utils/test_common_utils.py::TestPathUtilities::test_add_project_to_path 
+C:\taly\ai-system\pytest_run.log:1703:[gw1] FAILED tests/unit/infrastructure/utils/test_common_utils.py::TestFixtureIntegration::test_safe_get_env_with_config 
+C:\taly\ai-system\pytest_run.log:1705:[gw1] FAILED tests/unit/infrastructure/utils/test_common_utils.py::TestFixtureIntegration::test_read_config_fixture 
+C:\taly\ai-system\pytest_run.log:1729:tests/unit/infrastructure/tools/validation/test_unified_validator.py::TestUnifiedValidatorIntegration::test_validation_error_handling 
+C:\taly\ai-system\pytest_run.log:1760:tests/unit/infrastructure/utils/test_common_utils.py::TestAPIUtilities::test_format_api_response_error 
+C:\taly\ai-system\pytest_run.log:1761:[gw1] PASSED tests/unit/infrastructure/utils/test_common_utils.py::TestAPIUtilities::test_format_api_response_error 
+C:\taly\ai-system\pytest_run.log:1764:tests/unit/infrastructure/utils/test_common_utils.py::TestJSONUtilities::test_read_json_permission_error 
+C:\taly\ai-system\pytest_run.log:1765:[gw1] PASSED tests/unit/infrastructure/utils/test_common_utils.py::TestJSONUtilities::test_read_json_permission_error 
+C:\taly\ai-system\pytest_run.log:1789:[gw1] FAILED tests/unit/infrastructure/utils/test_common_utils.py::TestEnvironmentConfig::test_get_openai_api_key_optional_in_test 
+C:\taly\ai-system\pytest_run.log:1793:[gw1] FAILED tests/unit/infrastructure/utils/test_common_utils.py::TestEnvironmentConfig::test_get_openai_api_key_required 
+C:\taly\ai-system\pytest_run.log:1799:[gw1] FAILED tests/unit/infrastructure/utils/test_common_utils.py::TestEnvironmentConfig::test_get_secret_key_dev_default 
+C:\taly\ai-system\pytest_run.log:1811:[gw1] FAILED tests/unit/core/agents/test_qa_agent_decisions.py::TestQAAgentMockIntegration::test_qa_agent_in_workflow 
+C:\taly\ai-system\pytest_run.log:1829:[gw1] FAILED tests/test_phase4_final_validation.py::TestPhase4FinalValidation::test_success_criteria_6_reports_summaries 
+C:\taly\ai-system\pytest_run.log:1866:tests/unit/core/test_register_output.py::TestAgentOutputRegistry::test_file_not_found_error 
+C:\taly\ai-system\pytest_run.log:1867:[gw1] PASSED tests/unit/core/test_register_output.py::TestAgentOutputRegistry::test_file_not_found_error 
+C:\taly\ai-system\pytest_run.log:1873:[gw1] FAILED tests/integration/test_step_5_4_qa_registration.py::TestStep54QARegistration::test_qa_registration_audit_trail 
+C:\taly\ai-system\pytest_run.log:1883:[gw1] FAILED tests/integration/test_step_5_4_qa_registration.py::TestStep54QARegistration::test_qa_traceability_integration 
+C:\taly\ai-system\pytest_run.log:1885:[gw1] FAILED tests/integration/test_step_5_4_qa_registration.py::TestStep54QARegistration::test_qa_registration_metadata_tracking 
+C:\taly\ai-system\pytest_run.log:1904:tests/integration/test_business_endpoints.py::TestBusinessEndpoints::test_endpoint_error_handling 
+C:\taly\ai-system\pytest_run.log:1905:[gw1] PASSED tests/integration/test_business_endpoints.py::TestBusinessEndpoints::test_endpoint_error_handling 
+C:\taly\ai-system\pytest_run.log:1913:tests/integration/test_escalation_integration.py::TestEscalationEngine::test_error_recovery_and_resilience 
+C:\taly\ai-system\pytest_run.log:1914:[gw5] PASSED tests/integration/test_escalation_integration.py::TestEscalationEngine::test_error_recovery_and_resilience 
+C:\taly\ai-system\pytest_run.log:1919:tests/unit/core/validation/test_business_rules.py::TestBusinessRuleEngine::test_validate_with_rule_execution_error 
+C:\taly\ai-system\pytest_run.log:1920:[gw5] PASSED tests/unit/core/validation/test_business_rules.py::TestBusinessRuleEngine::test_validate_with_rule_execution_error 
+C:\taly\ai-system\pytest_run.log:1924:[gw5] FAILED tests/unit/core/validation/test_business_rules.py::TestBusinessRuleEngine::test_get_rules_by_category 
+C:\taly\ai-system\pytest_run.log:1995:tests/unit/core/agents/test_agent_orchestration_new.py::TestErrorRecoveryAndResilience::test_graceful_degradation 
+C:\taly\ai-system\pytest_run.log:1996:[gw5] PASSED tests/unit/core/agents/test_agent_orchestration_new.py::TestErrorRecoveryAndResilience::test_graceful_degradation 
+C:\taly\ai-system\pytest_run.log:1997:tests/unit/core/agents/test_agent_orchestration_new.py::TestErrorRecoveryAndResilience::test_agent_health_monitoring 
+C:\taly\ai-system\pytest_run.log:1998:[gw5] PASSED tests/unit/core/agents/test_agent_orchestration_new.py::TestErrorRecoveryAndResilience::test_agent_health_monitoring 
+C:\taly\ai-system\pytest_run.log:1999:tests/unit/core/agents/test_agent_orchestration_new.py::TestErrorRecoveryAndResilience::test_system_recovery_after_failure 
+C:\taly\ai-system\pytest_run.log:2000:[gw5] PASSED tests/unit/core/agents/test_agent_orchestration_new.py::TestErrorRecoveryAndResilience::test_system_recovery_after_failure 
+C:\taly\ai-system\pytest_run.log:2018:[gw5] FAILED tests/unit/core/test_prompt_generation.py::TestStep42PromptGeneration::test_generate_prompt_default_output_path 
+C:\taly\ai-system\pytest_run.log:2068:[gw0] PASSED tests/unit/infrastructure/tools/validation/test_unified_validator.py::TestUnifiedValidatorIntegration::test_validation_error_handling 
+C:\taly\ai-system\pytest_run.log:2079:tests/unit/infrastructure/tools/validation/test_unified_validator.py::TestUnifiedValidator::test_run_phase_error_handling 
+C:\taly\ai-system\pytest_run.log:2080:[gw0] PASSED tests/unit/infrastructure/tools/validation/test_unified_validator.py::TestUnifiedValidator::test_run_phase_error_handling 
+C:\taly\ai-system\pytest_run.log:2106:[gw5] FAILED tests/unit/interfaces/cli/test_hitl_cli.py::TestHITLCLICommands::test_cmd_list_checkpoints_empty 
+C:\taly\ai-system\pytest_run.log:2108:[gw5] FAILED tests/unit/interfaces/cli/test_hitl_cli.py::TestHITLCLICommands::test_cmd_approve_checkpoint_cancelled 
+C:\taly\ai-system\pytest_run.log:2110:[gw5] FAILED tests/unit/interfaces/cli/test_hitl_cli.py::TestHITLCLICommands::test_cmd_list_checkpoints_with_data 
+C:\taly\ai-system\pytest_run.log:2112:[gw5] FAILED tests/unit/interfaces/cli/test_hitl_cli.py::TestHITLCLICommands::test_cmd_show_checkpoint_found 
+C:\taly\ai-system\pytest_run.log:2114:[gw5] FAILED tests/unit/interfaces/cli/test_hitl_cli.py::TestHITLCLICommands::test_cmd_show_checkpoint_not_found 
+C:\taly\ai-system\pytest_run.log:2116:[gw5] FAILED tests/unit/interfaces/cli/test_hitl_cli.py::TestHITLCLICommands::test_cmd_approve_checkpoint_with_confirmation 
+C:\taly\ai-system\pytest_run.log:2121:tests/unit/infrastructure/tools/validation/test_structure_validator.py::TestStructureValidator::test_validate_security_patterns_with_error 
+C:\taly\ai-system\pytest_run.log:2122:[gw5] PASSED tests/unit/infrastructure/tools/validation/test_structure_validator.py::TestStructureValidator::test_validate_security_patterns_with_error 
+C:\taly\ai-system\pytest_run.log:2129:tests/unit/infrastructure/tools/validation/test_structure_validator.py::TestStructureValidator::test_has_errors 
+C:\taly\ai-system\pytest_run.log:2130:[gw5] PASSED tests/unit/infrastructure/tools/validation/test_structure_validator.py::TestStructureValidator::test_has_errors 
+C:\taly\ai-system\pytest_run.log:2133:tests/unit/infrastructure/tools/validation/test_structure_validator.py::TestStructureValidator::test_validate_code_naming_with_parsing_error 
+C:\taly\ai-system\pytest_run.log:2134:[gw5] PASSED tests/unit/infrastructure/tools/validation/test_structure_validator.py::TestStructureValidator::test_validate_code_naming_with_parsing_error 
+C:\taly\ai-system\pytest_run.log:2141:tests/unit/infrastructure/tools/validation/test_structure_validator.py::TestStructureValidator::test_validate_file_security_with_read_error 
+C:\taly\ai-system\pytest_run.log:2142:[gw5] PASSED tests/unit/infrastructure/tools/validation/test_structure_validator.py::TestStructureValidator::test_validate_file_security_with_read_error 
+C:\taly\ai-system\pytest_run.log:2153:tests/unit/infrastructure/tools/validation/test_structure_validator.py::TestStructureValidator::test_validate_file_documentation_with_parse_error 
+C:\taly\ai-system\pytest_run.log:2154:[gw5] PASSED tests/unit/infrastructure/tools/validation/test_structure_validator.py::TestStructureValidator::test_validate_file_documentation_with_parse_error 
+C:\taly\ai-system\pytest_run.log:2192:[gw5] FAILED tests/test_phase7_hitl.py::TestHITLTaskMetadata::test_metadata_storage_and_retrieval 
+C:\taly\ai-system\pytest_run.log:2194:[gw5] FAILED tests/test_phase7_hitl.py::TestHITLTaskMetadata::test_phase_tracking 
+C:\taly\ai-system\pytest_run.log:2196:[gw5] FAILED tests/test_phase7_hitl.py::TestHITLTaskMetadata::test_checkpoint_tracking 
+C:\taly\ai-system\pytest_run.log:2200:[gw5] FAILED tests/test_phase7_hitl.py::TestHITLDashboardWidgets::test_workflow_status_widget 
+C:\taly\ai-system\pytest_run.log:2210:[gw5] FAILED tests/test_phase7_hitl.py::TestHITLWorkflowIntegration::test_workflow_progression_after_approval 
+C:\taly\ai-system\pytest_run.log:2232:[gw5] FAILED tests/test_phase7_hitl.py::TestHITLPolicyEngine::test_audit_logging 
+C:\taly\ai-system\pytest_run.log:2234:[gw5] FAILED tests/test_phase7_hitl.py::TestHITLPolicyEngine::test_auto_approval_low_risk 
+C:\taly\ai-system\pytest_run.log:2239:tests/unit/core/workflows/test_execute_graph_comprehensive.py::TestExecuteGraphIntegration::test_error_handling_scenarios 
+C:\taly\ai-system\pytest_run.log:2240:[gw5] PASSED tests/unit/core/workflows/test_execute_graph_comprehensive.py::TestExecuteGraphIntegration::test_error_handling_scenarios 
+C:\taly\ai-system\pytest_run.log:2269:tests/unit/core/workflows/test_execute_graph_comprehensive.py::TestBuildTaskState::test_build_task_state_with_dependencies_error 
+C:\taly\ai-system\pytest_run.log:2270:[gw5] PASSED tests/unit/core/workflows/test_execute_graph_comprehensive.py::TestBuildTaskState::test_build_task_state_with_dependencies_error 
+C:\taly\ai-system\pytest_run.log:2372:[gw5] FAILED tests/integration/dashboard/test_hitl_dashboard_widgets.py::TestHITLPendingReviewsWidget::test_priority_sorting 
+C:\taly\ai-system\pytest_run.log:2391:tests/unit/core/tasks/test_summarise_task.py::TestTaskSummarizer::test_error_handling 
+C:\taly\ai-system\pytest_run.log:2392:[gw0] PASSED tests/unit/core/tasks/test_summarise_task.py::TestTaskSummarizer::test_error_handling 
+C:\taly\ai-system\pytest_run.log:2398:[gw5] FAILED tests/integration/dashboard/test_hitl_dashboard_widgets.py::TestHITLPendingReviewsWidget::test_time_remaining_calculation 
+C:\taly\ai-system\pytest_run.log:2417:tests/unit/core/tasks/test_summarise_task.py::TestTaskSummarizer::test_determine_completion_status_failed 
+C:\taly\ai-system\pytest_run.log:2420:[gw0] PASSED tests/unit/core/tasks/test_summarise_task.py::TestTaskSummarizer::test_determine_completion_status_failed 
+C:\taly\ai-system\pytest_run.log:2456:tests/unit/core/workflows/test_daily_cycle.py::TestDailyCycleOrchestrator::test_handle_execution_error 
+C:\taly\ai-system\pytest_run.log:2458:[gw0] PASSED tests/unit/core/workflows/test_daily_cycle.py::TestDailyCycleOrchestrator::test_handle_execution_error 
+C:\taly\ai-system\pytest_run.log:2477:tests/unit/core/workflows/test_daily_cycle.py::TestDailyCycleOrchestrationIntegration::test_error_recovery_workflow 
+C:\taly\ai-system\pytest_run.log:2478:[gw5] FAILED tests/integration/workflows/test_workflow_integration.py::TestIntegratedWorkflowExecution::test_workflow_with_task_dependencies 
+C:\taly\ai-system\pytest_run.log:2479:tests/integration/workflows/test_workflow_integration.py::TestIntegratedWorkflowExecution::test_error_handling_in_workflow 
+C:\taly\ai-system\pytest_run.log:2480:[gw0] PASSED tests/unit/core/workflows/test_daily_cycle.py::TestDailyCycleOrchestrationIntegration::test_error_recovery_workflow 
+C:\taly\ai-system\pytest_run.log:2482:[gw5] FAILED tests/integration/workflows/test_workflow_integration.py::TestIntegratedWorkflowExecution::test_error_handling_in_workflow 
+C:\taly\ai-system\pytest_run.log:2494:[gw5] FAILED tests/integration/workflows/test_workflow_integration.py::TestIntegratedWorkflowExecution::test_auto_generated_workflow_with_dependencies 
+C:\taly\ai-system\pytest_run.log:2515:tests/unit/core/agents/test_documentation_agent.py::test_documentation_agent_error_handling 
+C:\taly\ai-system\pytest_run.log:2516:[gw0] PASSED tests/unit/core/agents/test_documentation_agent.py::test_documentation_agent_error_handling 
+C:\taly\ai-system\pytest_run.log:2518:[gw5] FAILED tests/integration/workflows/test_workflow_integration.py::TestIntegratedWorkflowExecution::test_resilient_workflow_retry_logic 
+C:\taly\ai-system\pytest_run.log:2528:[gw0] FAILED tests/e2e/system/test_enhanced_qa_agent.py::TestQAWorkflowIntegration::test_end_to_end_test_generation 
+C:\taly\ai-system\pytest_run.log:2530:[gw0] FAILED tests/e2e/system/test_enhanced_qa_agent.py::TestQAWorkflowIntegration::test_create_enhanced_qa_workflow 
+C:\taly\ai-system\pytest_run.log:2531:[gw5] FAILED tests/integration/workflows/test_workflow_integration.py::TestIntegratedWorkflowExecution::test_dynamic_routing_based_on_status 
+C:\taly\ai-system\pytest_run.log:2560:[gw0] ERROR tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_generate_recommendations 
+C:\taly\ai-system\pytest_run.log:2572:[gw0] ERROR tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_get_test_file_path_jest 
+C:\taly\ai-system\pytest_run.log:2584:[gw0] ERROR tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_determine_test_framework_python 
+C:\taly\ai-system\pytest_run.log:2597:tests/integration/dashboard/test_dashboard_routes.py::TestDashboardRoutes::test_endpoint_error_handling 
+C:\taly\ai-system\pytest_run.log:2598:[gw5] PASSED tests/integration/dashboard/test_dashboard_routes.py::TestDashboardRoutes::test_endpoint_error_handling 
+C:\taly\ai-system\pytest_run.log:2599:[gw0] ERROR tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_validate_quality_gates_failure 
+C:\taly\ai-system\pytest_run.log:2602:[gw0] ERROR tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_discover_source_files 
+C:\taly\ai-system\pytest_run.log:2604:[gw0] FAILED tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_load_config_default 
+C:\taly\ai-system\pytest_run.log:2608:[gw0] ERROR tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_validate_quality_gates 
+C:\taly\ai-system\pytest_run.log:2612:[gw0] ERROR tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_determine_test_framework_javascript 
+C:\taly\ai-system\pytest_run.log:2614:[gw0] ERROR tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_calculate_overall_quality_score 
+C:\taly\ai-system\pytest_run.log:2616:[gw0] ERROR tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_calculate_quality_metrics 
+C:\taly\ai-system\pytest_run.log:2618:[gw0] ERROR tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_generate_comprehensive_tests 
+C:\taly\ai-system\pytest_run.log:2620:[gw0] FAILED tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_load_config_with_file 
+C:\taly\ai-system\pytest_run.log:2622:[gw0] ERROR tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_get_test_file_path_pytest 
+C:\taly\ai-system\pytest_run.log:2624:[gw0] FAILED tests/e2e/system/test_enhanced_qa_agent.py::TestEnhancedQAAgent::test_qa_agent_initialization 
+C:\taly\ai-system\pytest_run.log:2627:tests/unit/core/workflows/test_end_of_day_reporting.py::TestEndOfDayReporting::test_error_handling_for_end_of_day_reports 
+C:\taly\ai-system\pytest_run.log:2628:[gw0] PASSED tests/unit/core/workflows/test_end_of_day_reporting.py::TestEndOfDayReporting::test_error_handling_for_end_of_day_reports 
+C:\taly\ai-system\pytest_run.log:2717:[gw5] FAILED tests/integration/dashboard/test_dashboard_routes.py::test_endpoint_integration 

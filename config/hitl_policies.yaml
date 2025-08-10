@@ -75,7 +75,9 @@ hitl_policies:
       auto_approve_threshold: 0.80
       required_approvals: 1
       reviewers: ["Technical Writer", "Product Manager"]
-      timeout_action: "auto_approve"    # Task Transition Phase
+      timeout_action: "auto_approve"
+
+    # Task Transition Phase
     task_transitions:
       enabled: true
       description: "Review critical task status transitions"
@@ -95,7 +97,6 @@ hitl_policies:
     backend_tasks:
       prefix: "BE-"
       auto_approve_enabled: true
-      auto_approve_low_risk: true
       auto_approve_threshold: 0.90
       required_reviewers: ["Backend Engineer", "Technical Lead"]
       critical_checkpoints:

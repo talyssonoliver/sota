@@ -1,15 +1,24 @@
+
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    Path,
+    dataclass,
+    json,
+    subprocess,
+    time
+)
 """
 Quality Gates Implementation
 Implements quality gates based on software engineering principles and ISO/IEC 25010 standards.
 """
 
 import ast
-import json
-import subprocess
-import time
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import subprocess  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Any, Dict, List, Optional, Tuple
 
 
@@ -91,34 +100,38 @@ class QualityMetricsCalculator:
                 return coverage
             except Exception:
                 pass
-        
+
         # Check for skip flag
-        if hasattr(self, 'skip_coverage') and self.skip_coverage:
+        if hasattr(self, "skip_coverage") and self.skip_coverage:
             print("  ⚡ Skipping coverage analysis (performance mode)")
             return 0.0
-            
+
         try:
             print("  🧪 Running test coverage analysis...")
             # Run coverage analysis with optimized settings for performance
-            result = subprocess.run(
+            print("     ⚙️ Using optimized pytest settings for speed")
+            print("     🏃 Running pytest with coverage collection...")
+            coverage_result = subprocess.run(
                 [
                     "python",
                     "-m",
                     "pytest",
                     "--cov=src",
                     "--cov-report=json:coverage.json",
-                    "--tb=no",      # No traceback for performance
-                    "-x",           # Stop on first failure  
+                    "--tb=no",  # No traceback for performance
+                    "-x",  # Stop on first failure
                     "--maxfail=5",  # Stop after 5 failures
-                    "-q",           # Quiet mode
+                    "-q",  # Quiet mode
                     "tests/",
                 ],
                 cwd=self.root_path,
                 capture_output=True,
                 text=True,
-                encoding='utf-8',
+                encoding="utf-8",
                 timeout=120,  # Reasonable timeout for test execution
             )
+            
+            print(f"     📋 Coverage subprocess completed with return code: {coverage_result.returncode}")
 
             coverage_file = self.root_path / "coverage.json"
             if coverage_file.exists():
@@ -228,7 +241,7 @@ class QualityMetricsCalculator:
         # Check for existing reports first (performance optimization)
         mypy_report = self.root_path / "mypy-report.json"
         bandit_report = self.root_path / "bandit-report.json"
-        
+
         # Run MyPy for type checking bugs
         if mypy_report.exists():
             try:
@@ -239,16 +252,23 @@ class QualityMetricsCalculator:
             except Exception:
                 # If cached report is corrupted, run fresh analysis
                 pass
-        
+
         if not mypy_report.exists() or issues["bugs"] == 0:
             try:
                 print("  🔍 Running MyPy type checking...")
                 result = subprocess.run(
-                    ["python", "-m", "mypy", "src/", "--json-report", "mypy-report.json"],
+                    [
+                        "python",
+                        "-m",
+                        "mypy",
+                        "src/",
+                        "--json-report",
+                        "mypy-report.json",
+                    ],
                     cwd=self.root_path,
                     capture_output=True,
                     text=True,
-                    encoding='utf-8',
+                    encoding="utf-8",
                     timeout=90,  # Reasonable timeout
                 )
 
@@ -256,7 +276,9 @@ class QualityMetricsCalculator:
                     with open(mypy_report) as f:
                         mypy_data = json.load(f)
                     issues["bugs"] += len(mypy_data.get("files", {}))
-                    print(f"  ✓ MyPy analysis completed: {issues['bugs']} type issues found")
+                    print(
+                        f"  ✓ MyPy analysis completed: {issues['bugs']} type issues found"
+                    )
 
             except subprocess.TimeoutExpired:
                 print("  ⏱️  MyPy analysis timed out after 90s")
@@ -274,12 +296,17 @@ class QualityMetricsCalculator:
                             issues["vulnerabilities"] += 1
                         else:
                             issues["security_hotspots"] += 1
-                print(f"  ⚡ Using existing bandit-report.json: {issues['vulnerabilities']} vulnerabilities, {issues['security_hotspots']} hotspots")
+                print(
+                    f"  ⚡ Using existing bandit-report.json: {issues['vulnerabilities']} vulnerabilities, {issues['security_hotspots']} hotspots"
+                )
             except Exception:
                 # If cached report is corrupted, run fresh analysis
                 pass
-        
-        if not bandit_report.exists() or (issues["vulnerabilities"] + issues["security_hotspots"]) == 0:
+
+        if (
+            not bandit_report.exists()
+            or (issues["vulnerabilities"] + issues["security_hotspots"]) == 0
+        ):
             try:
                 print("  🔍 Running Bandit security scanning...")
                 result = subprocess.run(
@@ -297,7 +324,7 @@ class QualityMetricsCalculator:
                     cwd=self.root_path,
                     capture_output=True,
                     text=True,
-                    encoding='utf-8',
+                    encoding="utf-8",
                     timeout=90,  # Reasonable timeout
                 )
 
@@ -311,8 +338,10 @@ class QualityMetricsCalculator:
                                 issues["vulnerabilities"] += 1
                             else:
                                 issues["security_hotspots"] += 1
-                    
-                    print(f"  ✓ Bandit analysis completed: {issues['vulnerabilities']} vulnerabilities, {issues['security_hotspots']} hotspots")
+
+                    print(
+                        f"  ✓ Bandit analysis completed: {issues['vulnerabilities']} vulnerabilities, {issues['security_hotspots']} hotspots"
+                    )
 
             except subprocess.TimeoutExpired:
                 print("  ⏱️  Bandit analysis timed out after 90s")
@@ -327,7 +356,7 @@ class QualityMetricsCalculator:
                 cwd=self.root_path,
                 capture_output=True,
                 text=True,
-                encoding='utf-8',
+                encoding="utf-8",
                 timeout=30,  # Reduced timeout for lightweight tool
             )
 
@@ -422,6 +451,29 @@ class QualityMetricsCalculator:
             "comments": comment_lines,
             "blank": blank_lines,
         }
+    
+    def _analyze_target(self, target: Any):
+        """Perform actual analysis (implement abstract method from BaseAnalyzer).
+        
+        Args:
+            target: The target to analyze
+        """
+        # This calculator uses specific methods for different metrics
+        # The analysis is done through calculate_* methods
+        if target:
+            self.add_result("target", target)
+        
+        # Calculate all metrics and store as results
+        self.add_metric("test_coverage", self.calculate_test_coverage())
+        avg_complexity, max_complexity = self.calculate_cyclomatic_complexity()
+        self.add_metric("avg_complexity", avg_complexity)
+        self.add_metric("max_complexity", max_complexity)
+        self.add_metric("duplication", self.calculate_code_duplication())
+        self.add_metric("critical_issues", len(self.count_critical_issues()))
+        
+        loc_metrics = self.count_lines_of_code()
+        for key, value in loc_metrics.items():
+            self.add_metric(f"loc_{key}", value)
 
 
 class QualityGatesEngine:
@@ -785,7 +837,7 @@ class QualityGatesEngine:
     def generate_quality_report(self, output_path: Optional[Path] = None) -> bool:
         """Generate a comprehensive quality report."""
         # Check if we already have a recent evaluation to avoid duplicate work
-        if hasattr(self, '_last_report') and hasattr(self, '_last_report_time'):
+        if hasattr(self, "_last_report") and hasattr(self, "_last_report_time"):
             if time.time() - self._last_report_time < 60:  # Within last minute
                 print("  ⚡ Using cached quality gates evaluation")
                 report = self._last_report

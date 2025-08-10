@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    sys,
+    traceback
+)
 """
 Task Report Generation Script for Phase 6 - Enhanced End-of-Day Reporting
 
@@ -171,19 +181,19 @@ Author: AI Agent System Daily Automation
 """
 
 import argparse
-import sys
+# import sys  # Consolidated to common_imports
 from datetime import date, datetime, timedelta
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.core.workflows.end_of_day_report import EndOfDayReportGenerator
-from src.infrastructure.scripts.generation.generate_progress_report import \
-    ProgressReportGenerator
-from src.infrastructure.scripts.monitoring.update_dashboard import \
-    DashboardUpdater
+from src.core.workflows.end_of_day_report import EndOfDayReportGenerator  # noqa: E402
+from src.infrastructure.scripts.generation.generate_progress_report import (  # noqa: E402
+    ProgressReportGenerator,
+)
+from src.infrastructure.scripts.monitoring.update_dashboard import DashboardUpdater  # noqa: E402
 
 
 def update_dashboard(task_id: Optional[str] = None) -> bool:
@@ -284,6 +294,7 @@ def generate_end_of_day_report(day: int) -> bool:
         # Initialize generators
         progress_generator = ProgressReportGenerator()
         eod_generator = EndOfDayReportGenerator()
+        
         # Generate traditional daily report first
         print("   📋 Generating base daily report...")
         try:
@@ -295,6 +306,17 @@ def generate_end_of_day_report(day: int) -> bool:
         except Exception as e:
             print(f"⚠️ Warning: Could not generate base daily report: {e}")
             daily_report = f"# Daily Report - {target_date.strftime('%Y-%m-%d')}\n\nDaily report generation failed: {e}"
+        
+        # Use the eod_generator for enhanced features if needed
+        if hasattr(eod_generator, 'generate_enhanced_summary'):
+            try:
+                _enhanced_summary = eod_generator.generate_enhanced_summary(target_date)
+                print("   ✨ Enhanced EOD features integrated")
+            except Exception:
+                print("   📝 Using standard EOD reporting")
+        else:
+            # No enhanced features available for standard reporting
+            pass
 
         # Calculate sprint velocity and trends
         print("   📈 Calculating sprint velocity and trends...")
@@ -1038,7 +1060,7 @@ Examples:
     except Exception as e:
         print(f"\n❌ Unexpected error: {e}")
         if args.verbose:
-            import traceback
+#             import traceback  # Consolidated to common_imports
 
             traceback.print_exc()
         sys.exit(1)

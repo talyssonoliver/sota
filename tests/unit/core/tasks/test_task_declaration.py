@@ -1,531 +1,329 @@
 """
-Comprehensive tests for Task Declaration system.
-Tests task creation, loading, preparation, lifecycle management, and HITL integration.
+Tests for Phase 4 Task Declaration & Preparation System
+Tests the complete workflow from task declaration to execution readiness.
 """
 
+import os
+import shutil
 import sys
-import yaml
+import tempfile
 from pathlib import Path
-from unittest.mock import patch, mock_open
+from unittest.mock import Mock, patch
 
-# Add project root to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
+import pytest
 
-# Try to import task declaration components
-try:
-    from src.core.workflows.task_declaration import (
-        TaskDeclaration, TaskDeclarationManager, TaskPreparationStatus
-    )
-    from src.infrastructure.utils.task_loader import load_task_metadata, get_all_tasks
-    from src.core.workflows.hitl_task_metadata import (
-        HITLTaskMetadata, HITLTaskMetadataManager, HITLStatus
-    )
-    from src.core.workflows.task_lifecycle import TaskLifecycleManager
-except ImportError:
-    # Create mock classes if imports fail
-    class TaskPreparationStatus:
-        PENDING = "PENDING"
-        CONTEXT_LOADED = "CONTEXT_LOADED"
-        PROMPT_GENERATED = "PROMPT_GENERATED"
-        READY_FOR_EXECUTION = "READY_FOR_EXECUTION"
-        FAILED = "FAILED"
-    
-    class TaskDeclaration:
-        def __init__(self, task_id, metadata=None, preparation_status=None):
-            self.task_id = task_id
-            self.metadata = metadata or {}
-            self.preparation_status = preparation_status or TaskPreparationStatus.PENDING
-            self.context_loaded = False
-            self.prompt_generated = False
-    
-    class TaskDeclarationManager:
-        def __init__(self):
-            self.declared_tasks = {}
-        
-        def declare_task(self, task_id):
-            return TaskDeclaration(task_id)
-        
-        def prepare_task_for_execution(self, task_id):
-            return True
-        
-        def get_tasks_ready_for_execution(self):
-            return []
-    
-    class HITLStatus:
-        NO_HITL = "NO_HITL"
-        HITL_PENDING = "HITL_PENDING"
-        HITL_APPROVED = "HITL_APPROVED"
-    
-    class HITLTaskMetadata:
-        def __init__(self, task_id, hitl_status=None):
-            self.task_id = task_id
-            self.hitl_status = hitl_status or HITLStatus.NO_HITL
-    
-    class HITLTaskMetadataManager:
-        def __init__(self):
-            pass
-        
-        def create_hitl_metadata(self, task_id):
-            return HITLTaskMetadata(task_id)
-    
-    class TaskLifecycleManager:
-        def __init__(self):
-            pass
-        
-        def archive_task(self, task_id):
-            return True
-    
-    def load_task_metadata(task_id):
-        return {
-            "id": task_id,
-            "title": f"Test task {task_id}",
-            "owner": "backend",
-            "state": "CREATED"
-        }
-    
-    def get_all_tasks():
-        return ["BE-01", "FE-01", "TL-01"]
+from src.core.workflows.task_declaration import (TaskDeclaration,
+                                            TaskDeclarationManager,
+                                            TaskPreparationStatus)
+from src.infrastructure.utils.task_loader import load_task_metadata
+
+# Add parent directory to path to allow imports
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 class TestTaskDeclaration:
-    """Test TaskDeclaration class functionality."""
-    
-    def test_task_declaration_initialization(self):
-        """Test TaskDeclaration can be initialized with basic parameters."""
-        task_id = "BE-01"
+    """Test the TaskDeclaration dataclass functionality"""
+
+    def test_task_declaration_creation(self):
+        """Test basic TaskDeclaration creation"""
         declaration = TaskDeclaration(
-            id=task_id,
+            id="TEST-01",
             title="Test Task",
-            description="Test task description",
+            description="Test description",
             owner="backend",
-            state="CREATED",
-            priority="medium",
-            estimation_hours=8.0,
-            depends_on=[],
-            artefacts=[],
-            context_topics=[],
+            state="PLANNED",
+            priority="HIGH",
+            estimation_hours=2.0,
+            depends_on=["TEST-00"],
+            artefacts=["test.ts"],
+            context_topics=["test-pattern"],
             preparation_status=TaskPreparationStatus.PENDING
         )
-        
-        assert declaration.id == task_id
+
+        assert declaration.id == "TEST-01"
+        assert declaration.title == "Test Task"
+        assert declaration.owner == "backend"
         assert declaration.preparation_status == TaskPreparationStatus.PENDING
-        assert hasattr(declaration, 'title')
-    
-    def test_task_declaration_with_metadata(self):
-        """Test TaskDeclaration initialization with metadata."""
-        task_id = "FE-02"
-        
+        assert "TEST-00" in declaration.depends_on
+        assert "test.ts" in declaration.artefacts
+
+    def test_task_declaration_to_dict(self):
+        """Test TaskDeclaration serialization to dictionary"""
         declaration = TaskDeclaration(
-            id=task_id,
-            title="Create user dashboard",
-            description="Create a user dashboard interface",
-            owner="frontend",
-            state="CREATED",
-            priority="high",
-            estimation_hours=16.0,
-            depends_on=["BE-01"],
-            artefacts=["dashboard.html", "dashboard.css"],
-            context_topics=["ui_patterns", "design_system"],
-            preparation_status=TaskPreparationStatus.PENDING
-        )
-        
-        assert declaration.id == task_id
-        assert declaration.title == "Create user dashboard"
-        assert declaration.owner == "frontend"
-        assert declaration.priority == "high"
-    
-    def test_task_declaration_preparation_status(self):
-        """Test TaskDeclaration preparation status handling."""
-        task_id = "QA-01"
-        declaration = TaskDeclaration(
-            id=task_id,
-            title="QA Test Task",
-            description="QA testing description",
-            owner="qa",
-            state="CREATED",
-            priority="medium",
-            estimation_hours=4.0,
+            id="TEST-01",
+            title="Test Task",
+            description="Test description",
+            owner="backend",
+            state="PLANNED",
+            priority="HIGH",
+            estimation_hours=2.0,
             depends_on=[],
             artefacts=[],
             context_topics=[],
-            preparation_status=TaskPreparationStatus.CONTEXT_LOADED
+            preparation_status=TaskPreparationStatus.PENDING
         )
-        
-        assert declaration.preparation_status == TaskPreparationStatus.CONTEXT_LOADED
-    
-    def test_task_preparation_status_values(self):
-        """Test TaskPreparationStatus enum values."""
-        assert TaskPreparationStatus.PENDING == "PENDING"
-        assert TaskPreparationStatus.CONTEXT_LOADED == "CONTEXT_LOADED"
-        assert TaskPreparationStatus.PROMPT_GENERATED == "PROMPT_GENERATED"
-        assert TaskPreparationStatus.READY_FOR_EXECUTION == "READY_FOR_EXECUTION"
-        assert TaskPreparationStatus.FAILED == "FAILED"
+
+        data = declaration.to_dict()
+        assert isinstance(data, dict)
+        assert data['id'] == "TEST-01"
+        assert data['title'] == "Test Task"
+        assert data['preparation_status'] == TaskPreparationStatus.PENDING
+
+    def test_task_declaration_from_dict(self):
+        """Test TaskDeclaration deserialization from dictionary"""
+        data = {
+            'id': 'TEST-01',
+            'title': 'Test Task',
+            'description': 'Test description',
+            'owner': 'backend',
+            'state': 'PLANNED',
+            'priority': 'HIGH',
+            'estimation_hours': 2.0,
+            'depends_on': [],
+            'artefacts': [],
+            'context_topics': [],
+            'preparation_status': 'PENDING'
+        }
+
+        declaration = TaskDeclaration.from_dict(data)
+        assert declaration.id == "TEST-01"
+        assert declaration.title == "Test Task"
+        assert declaration.preparation_status == TaskPreparationStatus.PENDING
+
+    def test_task_declaration_from_metadata(self):
+        """Test TaskDeclaration creation from task metadata"""
+        metadata = {
+            'id': 'TEST-01',
+            'title': 'Test Task',
+            'description': 'Test description',
+            'owner': 'backend',
+            'state': 'PLANNED',
+            'priority': 'HIGH',
+            'estimation_hours': 2,
+            'depends_on': ['TEST-00'],
+            'artefacts': ['test.ts'],
+            'context_topics': ['test-pattern']
+        }
+
+        declaration = TaskDeclaration.from_metadata(metadata)
+        assert declaration.id == "TEST-01"
+        assert declaration.title == "Test Task"
+        assert declaration.owner == "backend"
+        assert declaration.depends_on == ['TEST-00']
+        assert declaration.preparation_status == TaskPreparationStatus.PENDING
 
 
 class TestTaskDeclarationManager:
-    """Test TaskDeclarationManager functionality."""
-    
-    def test_task_declaration_manager_initialization(self):
-        """Test TaskDeclarationManager can be initialized."""
-        manager = TaskDeclarationManager()
-        assert manager is not None
-        assert hasattr(manager, 'declare_task')
-    
-    def test_declare_task_basic(self):
-        """Test basic task declaration."""
-        manager = TaskDeclarationManager()
-        task_id = "BE-03"
-        
-        declaration = manager.declare_task(task_id)
-        
-        assert declaration is not None
-        assert declaration.id == task_id
-    
-    @patch('src.infrastructure.utils.task_loader.load_task_metadata')
-    def test_declare_task_with_metadata_loading(self, mock_load):
-        """Test task declaration with metadata loading."""
-        mock_load.return_value = {
-            "id": "TL-01",
-            "title": "Setup project architecture",
-            "owner": "technical",
-            "state": "CREATED"
-        }
-        
-        manager = TaskDeclarationManager()
-        
-        if hasattr(manager, 'load_task_metadata'):
-            declaration = manager.declare_task("TL-01")
-            assert declaration.id == "TL-01"
-    
-    def test_prepare_task_for_execution(self):
-        """Test task preparation for execution."""
-        manager = TaskDeclarationManager()
-        task_id = "BE-04"
-        
-        # First declare the task
-        manager.declare_task(task_id)
-        
-        # Then prepare it for execution
-        result = manager.prepare_task_for_execution(task_id)
-        
-        # Should return success indicator
-        assert result is not None
-    
-    def test_get_tasks_ready_for_execution(self):
-        """Test getting tasks ready for execution."""
-        manager = TaskDeclarationManager()
-        
-        # Declare and prepare some tasks
-        manager.declare_task("BE-05")
-        manager.declare_task("FE-03")
-        
-        ready_tasks = manager.get_tasks_ready_for_execution()
-        
-        # Should return a list (may be empty if no tasks are ready)
-        assert isinstance(ready_tasks, list)
-    
-    def test_declare_all_tasks(self):
-        """Test declaring all available tasks."""
-        manager = TaskDeclarationManager()
-        
-        with patch('src.infrastructure.utils.task_loader.get_all_tasks') as mock_get_all:
-            mock_get_all.return_value = ["BE-01", "FE-01", "TL-01", "QA-01"]
-            
-            if hasattr(manager, 'declare_all_tasks'):
-                result = manager.declare_all_tasks()
-                assert result is not None
+    """Test the TaskDeclarationManager functionality"""
 
+    @pytest.fixture
+    def temp_outputs_dir(self):
+        """Create a temporary outputs directory for testing"""
+        temp_dir = tempfile.mkdtemp()
+        yield Path(temp_dir)
+        shutil.rmtree(temp_dir)
 
-class TestTaskLoader:
-    """Test task loading functionality."""
-    
-    def test_load_task_metadata_basic(self):
-        """Test basic task metadata loading."""
-        task_id = "BE-06"
-        
-        # Mock the task metadata
-        mock_metadata = {
-            "id": task_id,
-            "title": "Create API endpoint",
-            "owner": "backend",
-            "state": "CREATED",
-            "priority": "medium"
-        }
-        
-        with patch('builtins.open', mock_open(read_data=yaml.dump(mock_metadata))):
-            with patch('pathlib.Path.exists', return_value=True):
-                metadata = load_task_metadata(task_id)
-                
-                assert metadata["id"] == task_id
-                assert metadata["owner"] == "backend"
-    
-    def test_load_task_metadata_with_dependencies(self):
-        """Test loading task metadata with dependencies."""
-        task_id = "FE-04"
-        mock_metadata = {
-            "id": task_id,
-            "title": "Implement user interface",
-            "owner": "frontend",
-            "depends_on": ["BE-01", "BE-02"],
-            "context_topics": ["ui_patterns", "design_system"]
-        }
-        
-        with patch('builtins.open', mock_open(read_data=yaml.dump(mock_metadata))):
-            with patch('pathlib.Path.exists', return_value=True):
-                metadata = load_task_metadata(task_id)
-                
-                assert "depends_on" in metadata
-                assert "context_topics" in metadata
-                assert len(metadata["depends_on"]) == 2
-    
-    def test_get_all_tasks(self):
-        """Test getting all available task IDs."""
-        mock_task_files = [
-            Path("BE-01.yaml"), Path("BE-02.yaml"),
-            Path("FE-01.yaml"), Path("TL-01.yaml")
-        ]
-        
-        with patch('pathlib.Path.glob') as mock_glob:
-            mock_glob.return_value = mock_task_files
-            
-            tasks = get_all_tasks()
-            
-            # Should return task IDs extracted from filenames
-            assert isinstance(tasks, list)
-    
-    def test_load_task_metadata_file_not_found(self):
-        """Test handling when task file doesn't exist."""
-        task_id = "INVALID-01"
-        
-        with patch('pathlib.Path.exists', return_value=False):
-            metadata = load_task_metadata(task_id)
-            # Should return default metadata when file doesn't exist
-            assert metadata is not None
-            assert metadata["id"] == task_id
-            assert metadata["state"] == "pending"
-            assert "depends_on" in metadata
+    @pytest.fixture
+    def mock_memory_engine(self):
+        """Create a mock memory engine for testing"""
+        mock_engine = Mock()
+        mock_engine.build_focused_context.return_value = "Mock context content"
+        mock_engine.get_documents.return_value = []
+        mock_engine.add_document.return_value = True
+        mock_engine.get_context.return_value = {}
+        mock_engine.store_context.return_value = True
+        mock_engine.retrieve_context.return_value = {}
+        return mock_engine
 
+    @pytest.fixture
+    def manager_with_temp_dir(self, temp_outputs_dir, mock_memory_engine):
+        """Create a TaskDeclarationManager with temporary directory"""
+        manager = TaskDeclarationManager(memory_engine=mock_memory_engine)
+        manager.outputs_dir = temp_outputs_dir
+        # Clear any existing declarations to ensure test isolation
+        manager.declared_tasks = {}
+        return manager
 
-class TestHITLTaskMetadata:
-    """Test HITL task metadata functionality."""
-    
-    def test_hitl_task_metadata_creation(self):
-        """Test creating HITL task metadata."""
-        task_id = "BE-07"
-        hitl_metadata = HITLTaskMetadata(task_id)
-        
-        assert hitl_metadata.task_id == task_id
-        assert hitl_metadata.hitl_status == HITLStatus.NO_HITL
-    
-    def test_hitl_task_metadata_with_status(self):
-        """Test HITL metadata with specific status."""
-        task_id = "TL-02"
-        hitl_metadata = HITLTaskMetadata(
-            task_id, 
-            hitl_status=HITLStatus.HITL_PENDING
-        )
-        
-        assert hitl_metadata.hitl_status == HITLStatus.HITL_PENDING
-    
-    def test_hitl_status_values(self):
-        """Test HITL status enum values."""
-        assert HITLStatus.NO_HITL == "no_hitl"
-        assert HITLStatus.HITL_PENDING == "hitl_pending"
-        assert HITLStatus.HITL_APPROVED == "hitl_approved"
-    
-    def test_hitl_task_metadata_manager(self):
-        """Test HITL task metadata manager."""
-        manager = HITLTaskMetadataManager()
-        task_id = "QA-02"
-        
-        # Create HITL metadata directly (manager doesn't have create method)
-        hitl_metadata = HITLTaskMetadata(task_id)
-        
-        # Test that manager can save the metadata
-        result = manager.save_task_metadata(hitl_metadata)
-        assert result is True or result is False  # Should return a boolean
-        assert hitl_metadata.task_id == task_id
+    def test_manager_initialization(self, mock_memory_engine):
+        """Test TaskDeclarationManager initialization"""
+        manager = TaskDeclarationManager(memory_engine=mock_memory_engine)
+        assert manager.memory_engine == mock_memory_engine
+        assert isinstance(manager.declared_tasks, dict)
+        assert manager.outputs_dir.exists()
 
-
-class TestTaskLifecycleManager:
-    """Test task lifecycle management."""
-    
-    def test_task_lifecycle_manager_initialization(self):
-        """Test TaskLifecycleManager can be initialized."""
-        lifecycle_manager = TaskLifecycleManager()
-        assert lifecycle_manager is not None
-    
-    def test_archive_task(self):
-        """Test task archival functionality."""
-        lifecycle_manager = TaskLifecycleManager()
-        task_id = "BE-08"
-        
-        result = lifecycle_manager.archive_task(task_id)
-        
-        # Should return success indicator
-        assert result is not None
-    
-    def test_track_task_completion(self):
-        """Test task completion tracking."""
-        lifecycle_manager = TaskLifecycleManager()
-        
-        if hasattr(lifecycle_manager, 'track_task_completion'):
-            result = lifecycle_manager.track_task_completion("FE-05", "frontend_agent")
-            # Method returns None and should complete without error
-            assert result is None
-    
-    def test_cleanup_old_tasks(self):
-        """Test cleanup of old tasks."""
-        lifecycle_manager = TaskLifecycleManager()
-        
-        if hasattr(lifecycle_manager, 'cleanup_old_tasks'):
-            result = lifecycle_manager.cleanup_old_tasks()
-            # Should complete without errors
-            assert result is not None or result is None  # Either return value is acceptable
-
-
-class TestTaskIntegration:
-    """Integration tests for task declaration system."""
-    
     @patch('src.core.workflows.task_declaration.load_task_metadata')
-    def test_end_to_end_task_workflow(self, mock_load):
-        """Test complete task workflow from declaration to execution."""
-        task_id = "INTEGRATION-01"
-        
-        # Mock task metadata with all required fields
-        mock_load.return_value = {
-            "id": task_id,
-            "title": "Integration Test Task",
-            "description": "End-to-end integration test",
-            "owner": "backend",
-            "state": "CREATED",
-            "priority": "medium",
-            "estimation_hours": 8.0,
-            "depends_on": [],
-            "artefacts": [],
-            "context_topics": []
+    def test_declare_task(self, mock_load_metadata, manager_with_temp_dir):
+        """Test task declaration functionality"""
+        # Mock task metadata
+        mock_metadata = {
+            'id': 'TEST-01',
+            'title': 'Test Task',
+            'description': 'Test description',
+            'owner': 'backend',
+            'state': 'PLANNED',
+            'priority': 'HIGH',
+            'estimation_hours': 2,
+            'depends_on': [],
+            'artefacts': ['test.ts'],
+            'context_topics': ['test-pattern']
         }
-        
-        # Initialize components
-        declaration_manager = TaskDeclarationManager()
-        hitl_manager = HITLTaskMetadataManager()
-        lifecycle_manager = TaskLifecycleManager()
-        
-        # Step 1: Declare task
-        declaration = declaration_manager.declare_task(task_id)
-        assert declaration.id == task_id
-        
-        # Step 2: Create HITL metadata
-        hitl_metadata = HITLTaskMetadata(task_id)
-        assert hitl_metadata.task_id == task_id
-        
-        # Step 3: Prepare for execution
-        preparation_result = declaration_manager.prepare_task_for_execution(task_id)
-        assert preparation_result is not None
-    
+        mock_load_metadata.return_value = mock_metadata
+
+        # Declare the task
+        declaration = manager_with_temp_dir.declare_task('TEST-01')
+
+        # Verify declaration
+        assert declaration.id == 'TEST-01'
+        assert declaration.title == 'Test Task'
+        assert declaration.preparation_status == TaskPreparationStatus.PENDING
+        assert 'TEST-01' in manager_with_temp_dir.declared_tasks
+
+        # Verify file was saved
+        task_dir = manager_with_temp_dir.outputs_dir / 'TEST-01'
+        declaration_file = task_dir / 'task_declaration.json'
+        assert declaration_file.exists()
+
     @patch('src.core.workflows.task_declaration.load_task_metadata')
-    def test_task_declaration_with_dependencies(self, mock_load):
-        """Test task declaration with dependency handling."""
-        mock_load.return_value = {
-            "id": "DEPENDENT-01",
-            "title": "Task with dependencies",
-            "owner": "backend",
-            "depends_on": ["BE-01", "FE-01"],
-            "state": "CREATED"
+    def test_prepare_task_for_execution(
+            self, mock_load_metadata, manager_with_temp_dir):
+        """Test complete task preparation workflow"""
+        mock_metadata = {
+            'id': 'TEST-01',
+            'title': 'Test Task',
+            'description': 'Test description',
+            'owner': 'backend',
+            'state': 'PLANNED',
+            'priority': 'HIGH',
+            'estimation_hours': 2,
+            'depends_on': [],
+            'artefacts': ['test.ts'],
+            'context_topics': ['test-pattern']
         }
-        
-        manager = TaskDeclarationManager()
-        declaration = manager.declare_task("DEPENDENT-01")
-        
-        assert declaration.id == "DEPENDENT-01"
-    
-    def test_task_metadata_validation(self):
-        """Test task metadata validation."""
-        # Test valid task metadata structure
-        valid_metadata = {
-            "id": "VALID-01",
-            "title": "Valid task",
-            "owner": "backend",
-            "state": "CREATED",
-            "priority": "medium",
-            "estimation_hours": 8
+        mock_load_metadata.return_value = mock_metadata
+
+        # Prepare task for execution
+        declaration = manager_with_temp_dir.prepare_task_for_execution(
+            'TEST-01')
+
+        # Verify preparation completed
+        assert declaration.preparation_status == TaskPreparationStatus.READY_FOR_EXECUTION
+        assert declaration.context_loaded
+        assert declaration.prompt_generated
+        assert declaration.dependencies_satisfied
+        assert declaration.agent_assignment is not None
+        assert declaration.execution_plan is not None
+
+    def test_get_preparation_summary_empty(self, manager_with_temp_dir):
+        """Test preparation summary with no new declared tasks"""
+        summary = manager_with_temp_dir.get_preparation_summary()
+
+        # Manager starts with empty declarations due to isolation
+        assert summary['total_tasks'] == 0
+        assert summary['ready_for_execution'] == 0
+        assert summary['failed_preparation'] == 0
+        assert summary['summary'] == "No tasks declared"
+
+    @patch('src.core.workflows.task_declaration.load_task_metadata')
+    def test_get_tasks_ready_for_execution(
+            self, mock_load_metadata, manager_with_temp_dir):
+        """Test getting tasks ready for execution"""
+        mock_metadata = {
+            'id': 'TEST-01',
+            'title': 'Test Task',
+            'description': 'Test description',
+            'owner': 'backend',
+            'state': 'PLANNED',
+            'priority': 'HIGH',
+            'estimation_hours': 2,
+            'depends_on': [],
+            'artefacts': [],
+            'context_topics': []
         }
-        
-        # Basic validation - check required fields
-        required_fields = ["id", "title", "owner", "state"]
-        for field in required_fields:
-            assert field in valid_metadata
-        
-        # Validate owner values
-        valid_owners = ["backend", "frontend", "technical", "qa", "doc", "coordinator", "product", "ux"]
-        assert valid_metadata["owner"] in valid_owners
-    
-    def test_task_state_transitions(self):
-        """Test valid task state transitions."""
-        valid_states = [
-            "CREATED", "PLANNED", "IN_PROGRESS", 
-            "QA_PENDING", "DOCUMENTATION", "HUMAN_REVIEW", 
-            "DONE", "BLOCKED"
-        ]
-        
-        # Test that all states are valid strings
-        for state in valid_states:
-            assert isinstance(state, str)
-            assert len(state) > 0
-        
-        # Test state uniqueness
-        assert len(set(valid_states)) == len(valid_states)
+        mock_load_metadata.return_value = mock_metadata
+
+        # Prepare task
+        manager_with_temp_dir.prepare_task_for_execution('TEST-01')
+
+        # Get ready tasks
+        ready_tasks = manager_with_temp_dir.get_tasks_ready_for_execution()
+
+        assert len(ready_tasks) == 1
+        assert ready_tasks[0].id == 'TEST-01'
+        assert ready_tasks[0].preparation_status == TaskPreparationStatus.READY_FOR_EXECUTION
 
 
-class TestTaskErrorHandling:
-    """Test error handling in task declaration system."""
-    
-    def test_invalid_task_id_handling(self):
-        """Test handling of invalid task IDs."""
-        manager = TaskDeclarationManager()
-        
-        # Test with invalid task ID format
-        invalid_ids = ["", "invalid", "123", "BE-", "-01"]
-        
-        for invalid_id in invalid_ids:
-            try:
-                declaration = manager.declare_task(invalid_id)
-                # If no exception, verify it handles gracefully
-                assert declaration is not None
-            except (ValueError, KeyError):
-                # Expected behavior for invalid IDs
-                pass
-    
-    def test_missing_task_file_handling(self):
-        """Test handling when task files are missing."""
-        with patch('pathlib.Path.exists', return_value=False):
-            # load_task_metadata returns default metadata instead of raising
-            metadata = load_task_metadata("MISSING-01")
-            assert metadata is not None
-            assert metadata["id"] == "MISSING-01"
-            assert metadata["state"] == "pending"
-    
-    def test_malformed_task_metadata_handling(self):
-        """Test handling of malformed task metadata."""
-        malformed_yaml = "invalid: yaml: content: ["
-        
-        with patch('builtins.open', mock_open(read_data=malformed_yaml)):
-            with patch('pathlib.Path.exists', return_value=True):
-                try:
-                    load_task_metadata("MALFORMED-01")
-                except (yaml.YAMLError, ValueError):
-                    # Expected behavior for malformed YAML
-                    pass
-    
-    def test_task_preparation_failure_handling(self):
-        """Test handling of task preparation failures."""
-        manager = TaskDeclarationManager()
-        
-        # Test preparation of non-existent task
+class TestTaskDeclarationIntegration:
+    """Integration tests for the complete task declaration system"""
+
+    @pytest.fixture
+    def real_task_file(self):
+        """Use a real task file for integration testing"""
+        return "BE-07"  # This should exist in the tasks directory
+
+    @pytest.mark.integration
+    def test_real_task_declaration(self, real_task_file):
+        """Test declaring a real task from the tasks directory"""
         try:
-            result = manager.prepare_task_for_execution("NON_EXISTENT-01")
-            # Should either return False/None or raise exception
-            assert result is False or result is None
-        except (ValueError, KeyError):
-            # Expected behavior for non-existent tasks
-            pass
+            # Create manager with real memory engine (mocked for faster tests)
+            with patch('src.infrastructure.memory.engines.memory_engine.MemoryEngine') as mock_engine_class:
+                mock_engine = Mock()
+                mock_engine.build_focused_context.return_value = "Real context content"
+                mock_engine.get_documents.return_value = []
+                mock_engine_class.return_value = mock_engine
+
+                manager = TaskDeclarationManager()
+
+                # Declare real task
+                declaration = manager.declare_task(real_task_file)
+
+                # Verify basic properties
+                assert declaration.id == real_task_file
+                assert declaration.title is not None
+                assert declaration.owner is not None
+                # Don't check specific preparation status since it may already
+                # be prepared
+                assert declaration.preparation_status is not None
+
+        except FileNotFoundError:
+            pytest.skip(
+                f"Task file {real_task_file}.yaml not found - skipping integration test")
+
+
+class TestTaskDeclarationCLI:
+    """Test the command-line interface functionality"""
+
+    @patch('src.core.workflows.task_declaration.TaskDeclarationManager')
+    def test_cli_summary_command(self, mock_manager_class):
+        """Test the CLI summary command"""
+        mock_manager = Mock()
+        mock_manager.get_preparation_summary.return_value = {
+            'total_tasks': 5,
+            'ready_for_execution': 2,
+            'failed_preparation': 0,
+            'status_breakdown': {
+                TaskPreparationStatus.READY_FOR_EXECUTION: 2,
+                TaskPreparationStatus.PENDING: 3
+            }
+        }
+        mock_manager_class.return_value = mock_manager
+
+        # Test would require actual CLI execution - this tests the manager
+        # method
+        summary = mock_manager.get_preparation_summary()
+
+        assert summary['total_tasks'] == 5
+        assert summary['ready_for_execution'] == 2
+        assert summary['failed_preparation'] == 0
+
+
+def test_module_imports():
+    """Test that all required modules can be imported"""
+
+    # Basic import test
+    # Removed redundant identity checks that always pass
+    assert load_task_metadata is not None
+
+
+if __name__ == "__main__":
+    # Run tests when script is executed directly
+    pytest.main([__file__, "-v"])

@@ -20,39 +20,106 @@ Comprehensive tests for all Phase 7 HITL components including:
 - Task metadata extension with HITL support
 - Workflow integration and automation
 """
+
+import json
 import sys
+import tempfile
 import unittest
-import yaml
 from datetime import datetime, timedelta
 from pathlib import Path
-from unittest.mock import patch, MagicMock
-import tempfile
-import json
+from unittest.mock import MagicMock, patch
+
+import yaml
+
 sys.path.append(str(Path(__file__).parent.parent))
-from src.core.workflows.hitl_engine import HITLPolicyEngine
+from flask import Flask
+
 from src.core.workflows.hitl.models import HITLCheckpoint, HITLReviewDecision
 from src.core.workflows.hitl.types import CheckpointStatus, RiskLevel
-from src.core.workflows.notification_handlers import DashboardNotificationHandler, EmailNotificationHandler, SlackNotificationHandler
-from src.core.workflows.hitl_task_metadata import HITLTaskMetadata, HITLCheckpointMetadata, HITLTaskMetadataManager
-from src.interfaces.dashboard.components.hitl_widgets import HITLPendingReviewsWidget, HITLApprovalActionsWidget, HITLMetricsWidget, HITLWorkflowStatusWidget, HITLDashboardManager
+from src.core.workflows.hitl_engine import HITLPolicyEngine
+from src.core.workflows.hitl_task_metadata import (
+    HITLCheckpointMetadata,
+    HITLTaskMetadata,
+    HITLTaskMetadataManager,
+)
+from src.core.workflows.notification_handlers import (
+    DashboardNotificationHandler,
+    EmailNotificationHandler,
+    SlackNotificationHandler,
+)
 from src.interfaces.api.hitl_routes import create_hitl_blueprint
-from flask import Flask
+from src.interfaces.dashboard.components.hitl_widgets import (
+    HITLApprovalActionsWidget,
+    HITLDashboardManager,
+    HITLMetricsWidget,
+    HITLPendingReviewsWidget,
+    HITLWorkflowStatusWidget,
+)
+
 
 class TestHITLPolicyEngine(unittest.TestCase):
     """Test cases for HITL policy engine core functionality."""
 
     def setUp(self):
         """Set up test environment."""
-        self.test_config = {'global_settings': {'default_timeout_hours': 24, 'escalation_timeout_hours': 72, 'enable_notifications': True, 'enable_audit_logging': True}, 'checkpoint_triggers': {'agent_prompt': {'enabled': True, 'risk_threshold': 'medium', 'timeout_hours': 24, 'required_approvers': 1}, 'output_evaluation': {'enabled': True, 'risk_threshold': 'high', 'timeout_hours': 12, 'required_approvers': 2}}, 'task_type_policies': {'backend': {'enabled': True, 'default_risk_level': 'medium', 'auto_approve_low_risk': True, 'risk_assessment': {'high_risk_patterns': ['complex_logic', 'external_dependency', 'security_sensitive'], 'medium_risk_patterns': ['INSERT INTO', 'UPDATE SET'], 'low_risk_patterns': ['simple_crud', 'styling', 'documentation_update']}}}, 'escalation_policies': {'high_risk': {'escalation_levels': ['team_lead', 'technical_director'], 'notification_channels': ['dashboard', 'email', 'slack']}}}
+        self.test_config = {
+            "global_settings": {
+                "default_timeout_hours": 24,
+                "escalation_timeout_hours": 72,
+                "enable_notifications": True,
+                "enable_audit_logging": True,
+            },
+            "checkpoint_triggers": {
+                "agent_prompt": {
+                    "enabled": True,
+                    "risk_threshold": "medium",
+                    "timeout_hours": 24,
+                    "required_approvers": 1,
+                },
+                "output_evaluation": {
+                    "enabled": True,
+                    "risk_threshold": "high",
+                    "timeout_hours": 12,
+                    "required_approvers": 2,
+                },
+            },
+            "task_type_policies": {
+                "backend": {
+                    "enabled": True,
+                    "default_risk_level": "medium",
+                    "auto_approve_low_risk": True,
+                    "risk_assessment": {
+                        "high_risk_patterns": [
+                            "complex_logic",
+                            "external_dependency",
+                            "security_sensitive",
+                        ],
+                        "medium_risk_patterns": ["INSERT INTO", "UPDATE SET"],
+                        "low_risk_patterns": [
+                            "simple_crud",
+                            "styling",
+                            "documentation_update",
+                        ],
+                    },
+                }
+            },
+            "escalation_policies": {
+                "high_risk": {
+                    "escalation_levels": ["team_lead", "technical_director"],
+                    "notification_channels": ["dashboard", "email", "slack"],
+                }
+            },
+        }
         self.temp_dir = tempfile.mkdtemp()
-        self.config_path = Path(self.temp_dir) / 'hitl_policies.yaml'
-        with open(self.config_path, 'w') as f:
+        self.config_path = Path(self.temp_dir) / "hitl_policies.yaml"
+        with open(self.config_path, "w") as f:
             yaml.dump(self.test_config, f)
         self.engine = HITLPolicyEngine(str(self.config_path))
 
     def tearDown(self):
         """Clean up test environment."""
         import shutil
+
         try:
             shutil.rmtree(self.temp_dir)
         except Exception:
@@ -61,32 +128,58 @@ class TestHITLPolicyEngine(unittest.TestCase):
     def test_policy_loading(self):
         """Test policy configuration loading."""
         self.assertIsNotNone(self.engine.policies)
-        self.assertEqual(self.engine.policies['global_settings']['default_timeout_hours'], 24)
-        self.assertTrue(self.engine.policies['checkpoint_triggers']['agent_prompt']['enabled'])
+        self.assertEqual(
+            self.engine.policies["global_settings"]["default_timeout_hours"], 24
+        )
+        self.assertTrue(
+            self.engine.policies["checkpoint_triggers"]["agent_prompt"]["enabled"]
+        )
 
     def test_checkpoint_creation(self):
         """Test checkpoint creation with proper metadata."""
-        checkpoint = self.engine.create_checkpoint(task_id='BE-07', checkpoint_type='agent_prompt', task_type='backend', content={'prompt': 'Test prompt'}, risk_factors=['complex_logic', 'external_dependency'])
+        checkpoint = self.engine.create_checkpoint(
+            task_id="BE-07",
+            checkpoint_type="agent_prompt",
+            task_type="backend",
+            content={"prompt": "Test prompt"},
+            risk_factors=["complex_logic", "external_dependency"],
+        )
         self.assertIsInstance(checkpoint, HITLCheckpoint)
-        self.assertEqual(checkpoint.task_id, 'BE-07')
-        self.assertEqual(checkpoint.checkpoint_type, 'agent_prompt')
+        self.assertEqual(checkpoint.task_id, "BE-07")
+        self.assertEqual(checkpoint.checkpoint_type, "agent_prompt")
         self.assertEqual(checkpoint.status, CheckpointStatus.PENDING)
-        self.assertIn('complex_logic', checkpoint.risk_factors)
+        self.assertIn("complex_logic", checkpoint.risk_factors)
 
     def test_risk_assessment(self):
         """Test risk assessment algorithm."""
-        high_risk_factors = ['complex_logic', 'external_dependency', 'security_sensitive']
-        risk_level = self.engine._assess_risk('backend', high_risk_factors)
+        high_risk_factors = [
+            "complex_logic",
+            "external_dependency",
+            "security_sensitive",
+        ]
+        risk_level = self.engine._assess_risk("backend", high_risk_factors)
         self.assertEqual(risk_level, RiskLevel.HIGH)
-        low_risk_factors = ['simple_crud']
-        risk_level = self.engine._assess_risk('backend', low_risk_factors)
+        low_risk_factors = ["simple_crud"]
+        risk_level = self.engine._assess_risk("backend", low_risk_factors)
         self.assertEqual(risk_level, RiskLevel.LOW)
 
     def test_checkpoint_approval(self):
         """Test checkpoint approval process."""
-        checkpoint = self.engine.create_checkpoint(task_id='BE-07', checkpoint_type='agent_prompt', task_type='backend', content={'prompt': 'Test prompt'})
-        decision = HITLReviewDecision(checkpoint_id=checkpoint.checkpoint_id, decision='approve', reviewer_id='test_reviewer', comments='Looks good', reviewed_at=datetime.now())
+        checkpoint = self.engine.create_checkpoint(
+            task_id="BE-07",
+            checkpoint_type="agent_prompt",
+            task_type="backend",
+            content={"prompt": "Test prompt"},
+        )
+        decision = HITLReviewDecision(
+            checkpoint_id=checkpoint.checkpoint_id,
+            decision="approve",
+            reviewer_id="test_reviewer",
+            comments="Looks good",
+            reviewed_at=datetime.now(),
+        )
         import asyncio
+
         result = asyncio.run(self.engine.process_decision(decision))
         self.assertTrue(result)
         updated_checkpoint = self.engine.get_checkpoint(checkpoint.checkpoint_id)
@@ -94,9 +187,21 @@ class TestHITLPolicyEngine(unittest.TestCase):
 
     def test_checkpoint_rejection(self):
         """Test checkpoint rejection process."""
-        checkpoint = self.engine.create_checkpoint(task_id='BE-07', checkpoint_type='output_evaluation', task_type='backend', content={'output': 'test output'})
-        decision = HITLReviewDecision(checkpoint_id=checkpoint.checkpoint_id, decision='reject', reviewer_id='test_reviewer', comments='Needs improvement', reviewed_at=datetime.now())
+        checkpoint = self.engine.create_checkpoint(
+            task_id="BE-07",
+            checkpoint_type="output_evaluation",
+            task_type="backend",
+            content={"output": "test output"},
+        )
+        decision = HITLReviewDecision(
+            checkpoint_id=checkpoint.checkpoint_id,
+            decision="reject",
+            reviewer_id="test_reviewer",
+            comments="Needs improvement",
+            reviewed_at=datetime.now(),
+        )
         import asyncio
+
         result = asyncio.run(self.engine.process_decision(decision))
         self.assertTrue(result)
         updated_checkpoint = self.engine.get_checkpoint(checkpoint.checkpoint_id)
@@ -104,7 +209,12 @@ class TestHITLPolicyEngine(unittest.TestCase):
 
     def test_timeout_handling(self):
         """Test checkpoint timeout handling."""
-        checkpoint = self.engine.create_checkpoint(task_id='BE-07', checkpoint_type='agent_prompt', task_type='backend', content={'prompt': 'Test prompt'})
+        checkpoint = self.engine.create_checkpoint(
+            task_id="BE-07",
+            checkpoint_type="agent_prompt",
+            task_type="backend",
+            content={"prompt": "Test prompt"},
+        )
         checkpoint.timeout_at = datetime.now() - timedelta(hours=1)
         timed_out = self.engine.process_timeouts()
         self.assertTrue(len(timed_out) > 0)
@@ -113,58 +223,108 @@ class TestHITLPolicyEngine(unittest.TestCase):
 
     def test_audit_logging(self):
         """Test audit logging functionality."""
-        checkpoint = self.engine.create_checkpoint(task_id='BE-07', checkpoint_type='agent_prompt', task_type='backend', content={'prompt': 'Test prompt'})
-        decision = HITLReviewDecision(checkpoint_id=checkpoint.checkpoint_id, decision='approve', reviewer_id='test_reviewer', comments='Approved', reviewed_at=datetime.now())
+        checkpoint = self.engine.create_checkpoint(
+            task_id="BE-07",
+            checkpoint_type="agent_prompt",
+            task_type="backend",
+            content={"prompt": "Test prompt"},
+        )
+        decision = HITLReviewDecision(
+            checkpoint_id=checkpoint.checkpoint_id,
+            decision="approve",
+            reviewer_id="test_reviewer",
+            comments="Approved",
+            reviewed_at=datetime.now(),
+        )
         import asyncio
+
         asyncio.run(self.engine.process_decision(decision))
         audit_entries = self.engine.get_audit_trail(checkpoint.checkpoint_id)
         self.assertTrue(len(audit_entries) >= 2)
         actions = [entry.action for entry in audit_entries]
-        self.assertIn('created', actions)
-        self.assertIn('approved', actions)
-        self.assertEqual(audit_entries[-1].action, 'approved')
+        self.assertIn("created", actions)
+        self.assertIn("approved", actions)
+        self.assertEqual(audit_entries[-1].action, "approved")
 
     def test_auto_approval_low_risk(self):
         """Test automatic approval of low-risk checkpoints."""
-        checkpoint = self.engine.create_checkpoint(task_id='BE-07', checkpoint_type='agent_prompt', task_type='backend', content={'prompt': 'Simple CRUD operation'}, risk_factors=['simple_crud'])
+        checkpoint = self.engine.create_checkpoint(
+            task_id="BE-07",
+            checkpoint_type="agent_prompt",
+            task_type="backend",
+            content={"prompt": "Simple CRUD operation"},
+            risk_factors=["simple_crud"],
+        )
         self.assertEqual(checkpoint.status, CheckpointStatus.APPROVED)
+
 
 class TestNotificationHandlers(unittest.TestCase):
     """Test cases for notification system."""
 
     def setUp(self):
         """Set up test environment."""
-        self.checkpoint = HITLCheckpoint(checkpoint_id='test-checkpoint-1', task_id='BE-07', checkpoint_type='agent_prompt', task_type='backend', content={'prompt': 'Test prompt'}, risk_level=RiskLevel.MEDIUM, status=CheckpointStatus.PENDING, created_at=datetime.now())
+        self.checkpoint = HITLCheckpoint(
+            checkpoint_id="test-checkpoint-1",
+            task_id="BE-07",
+            checkpoint_type="agent_prompt",
+            task_type="backend",
+            content={"prompt": "Test prompt"},
+            risk_level=RiskLevel.MEDIUM,
+            status=CheckpointStatus.PENDING,
+            created_at=datetime.now(),
+        )
 
     def test_dashboard_notification_handler(self):
         """Test dashboard notification handler."""
         handler = DashboardNotificationHandler()
-        with patch('requests.post') as mock_post:
+        with patch("requests.post") as mock_post:
             mock_post.return_value.status_code = 200
-            result = handler.send_notification(checkpoint=self.checkpoint, notification_type='checkpoint_created', recipients=['dashboard'], metadata={'url': 'http://localhost:5000'})
+            result = handler.send_notification(
+                checkpoint=self.checkpoint,
+                notification_type="checkpoint_created",
+                recipients=["dashboard"],
+                metadata={"url": "http://localhost:5000"},
+            )
             self.assertTrue(result)
             mock_post.assert_called_once()
 
     def test_email_notification_handler(self):
         """Test email notification handler."""
-        config = {'smtp_server': 'smtp.test.com', 'smtp_port': 587, 'username': 'test@test.com', 'password': 'password', 'from_email': 'test@test.com'}
+        config = {
+            "smtp_server": "smtp.test.com",
+            "smtp_port": 587,
+            "username": "test@test.com",
+            "password": "password",
+            "from_email": "test@test.com",
+        }
         handler = EmailNotificationHandler(config)
-        with patch('smtplib.SMTP') as mock_smtp:
+        with patch("smtplib.SMTP") as mock_smtp:
             mock_server = MagicMock()
             mock_smtp.return_value.__enter__.return_value = mock_server
-            result = handler.send_notification(checkpoint=self.checkpoint, notification_type='checkpoint_created', recipients=['reviewer@test.com'], metadata={})
+            result = handler.send_notification(
+                checkpoint=self.checkpoint,
+                notification_type="checkpoint_created",
+                recipients=["reviewer@test.com"],
+                metadata={},
+            )
             self.assertTrue(result)
             mock_server.send_message.assert_called_once()
 
     def test_slack_notification_handler(self):
         """Test Slack notification handler."""
-        config = {'webhook_url': 'https://hooks.slack.com/test'}
+        config = {"webhook_url": "https://hooks.slack.com/test"}
         handler = SlackNotificationHandler(config)
-        with patch('requests.post') as mock_post:
+        with patch("requests.post") as mock_post:
             mock_post.return_value.status_code = 200
-            result = handler.send_notification(checkpoint=self.checkpoint, notification_type='checkpoint_created', recipients=['#engineering'], metadata={})
+            result = handler.send_notification(
+                checkpoint=self.checkpoint,
+                notification_type="checkpoint_created",
+                recipients=["#engineering"],
+                metadata={},
+            )
             self.assertTrue(result)
             mock_post.assert_called_once()
+
 
 class TestHITLTaskMetadata(unittest.TestCase):
     """Test cases for HITL task metadata extension."""
@@ -172,48 +332,66 @@ class TestHITLTaskMetadata(unittest.TestCase):
     def setUp(self):
         """Set up test environment."""
         self.temp_dir = tempfile.mkdtemp()
-        self.storage_path = Path(self.temp_dir) / 'hitl_metadata'
+        self.storage_path = Path(self.temp_dir) / "hitl_metadata"
         self.manager = HITLTaskMetadataManager(str(self.storage_path))
-        self.test_metadata = HITLTaskMetadata(task_id='BE-07', hitl_enabled=True, risk_assessment={'level': 'medium', 'factors': ['complex_logic'], 'score': 65}, current_phase='agent_prompt', checkpoints=[])
+        self.test_metadata = HITLTaskMetadata(
+            task_id="BE-07",
+            hitl_enabled=True,
+            risk_assessment={
+                "level": "medium",
+                "factors": ["complex_logic"],
+                "score": 65,
+            },
+            current_phase="agent_prompt",
+            checkpoints=[],
+        )
 
     def tearDown(self):
         """Clean up test environment."""
         import shutil
+
         shutil.rmtree(self.temp_dir)
 
     def test_metadata_storage_and_retrieval(self):
         """Test storing and retrieving HITL metadata."""
         self.manager.save_task_metadata(self.test_metadata)
-        retrieved = self.manager.load_task_metadata('BE-07')
+        retrieved = self.manager.load_task_metadata("BE-07")
         self.assertIsNotNone(retrieved)
-        self.assertEqual(retrieved.task_id, 'BE-07')
+        self.assertEqual(retrieved.task_id, "BE-07")
         self.assertTrue(retrieved.hitl_enabled)
-        self.assertEqual(retrieved.risk_assessment['level'], 'medium')
+        self.assertEqual(retrieved.risk_assessment["level"], "medium")
 
     def test_checkpoint_tracking(self):
         """Test checkpoint tracking in metadata."""
-        checkpoint = HITLCheckpointMetadata(checkpoint_id='checkpoint-1', checkpoint_type='agent_prompt', status='pending', created_at=datetime.now(), risk_level='medium')
+        checkpoint = HITLCheckpointMetadata(
+            checkpoint_id="checkpoint-1",
+            checkpoint_type="agent_prompt",
+            status="pending",
+            created_at=datetime.now(),
+            risk_level="medium",
+        )
         self.test_metadata.checkpoints.append(checkpoint)
         self.manager.save_task_metadata(self.test_metadata)
-        retrieved = self.manager.load_task_metadata('BE-07')
+        retrieved = self.manager.load_task_metadata("BE-07")
         self.assertEqual(len(retrieved.checkpoints), 1)
-        self.assertEqual(retrieved.checkpoints[0].checkpoint_id, 'checkpoint-1')
+        self.assertEqual(retrieved.checkpoints[0].checkpoint_id, "checkpoint-1")
 
     def test_phase_tracking(self):
         """Test workflow phase tracking."""
-        self.test_metadata.current_phase = 'output_evaluation'
+        self.test_metadata.current_phase = "output_evaluation"
         self.manager.save_task_metadata(self.test_metadata)
-        retrieved = self.manager.load_task_metadata('BE-07')
-        self.assertEqual(retrieved.current_phase, 'output_evaluation')
+        retrieved = self.manager.load_task_metadata("BE-07")
+        self.assertEqual(retrieved.current_phase, "output_evaluation")
 
     def test_serialization(self):
         """Test metadata serialization and deserialization."""
         data = self.test_metadata.to_dict()
         self.assertIsInstance(data, dict)
-        self.assertEqual(data['task_id'], 'BE-07')
+        self.assertEqual(data["task_id"], "BE-07")
         reconstructed = HITLTaskMetadata.from_dict(data)
-        self.assertEqual(reconstructed.task_id, 'BE-07')
-        self.assertEqual(reconstructed.risk_assessment['level'], 'medium')
+        self.assertEqual(reconstructed.task_id, "BE-07")
+        self.assertEqual(reconstructed.risk_assessment["level"], "medium")
+
 
 class TestHITLDashboardWidgets(unittest.TestCase):
     """Test cases for HITL dashboard widgets."""
@@ -221,57 +399,101 @@ class TestHITLDashboardWidgets(unittest.TestCase):
     def setUp(self):
         """Set up test environment."""
         self.mock_hitl_engine = MagicMock()
-        self.mock_checkpoints = [HITLCheckpoint(checkpoint_id='checkpoint-1', task_id='BE-07', checkpoint_type='agent_prompt', task_type='backend', content={'prompt': 'Test'}, risk_level=RiskLevel.MEDIUM, status=CheckpointStatus.PENDING, created_at=datetime.now())]
-        self.mock_hitl_engine.get_pending_checkpoints.return_value = self.mock_checkpoints
+        self.mock_checkpoints = [
+            HITLCheckpoint(
+                checkpoint_id="checkpoint-1",
+                task_id="BE-07",
+                checkpoint_type="agent_prompt",
+                task_type="backend",
+                content={"prompt": "Test"},
+                risk_level=RiskLevel.MEDIUM,
+                status=CheckpointStatus.PENDING,
+                created_at=datetime.now(),
+            )
+        ]
+        self.mock_hitl_engine.get_pending_checkpoints.return_value = (
+            self.mock_checkpoints
+        )
         self.mock_hitl_engine.approve_checkpoint.return_value = True
         self.mock_hitl_engine.process_decision.return_value = True
 
     def test_pending_reviews_widget(self):
         """Test pending reviews widget."""
         widget = HITLPendingReviewsWidget()
-        with patch.object(widget, 'hitl_engine', self.mock_hitl_engine):
+        with patch.object(widget, "hitl_engine", self.mock_hitl_engine):
             data = widget.get_data()
-            self.assertIn('pending_reviews', data)
-            self.assertEqual(len(data['pending_reviews']), 1)
-            self.assertEqual(data['pending_reviews'][0]['checkpoint_id'], 'checkpoint-1')
+            self.assertIn("pending_reviews", data)
+            self.assertEqual(len(data["pending_reviews"]), 1)
+            self.assertEqual(
+                data["pending_reviews"][0]["checkpoint_id"], "checkpoint-1"
+            )
 
     def test_approval_actions_widget(self):
         """Test approval actions widget."""
         widget = HITLApprovalActionsWidget()
-        with patch.object(widget, 'hitl_engine', self.mock_hitl_engine):
-            result = widget.process_action('approve', 'checkpoint-1', 'test_reviewer', 'Good to go')
-            self.assertTrue(result['success'])
+        with patch.object(widget, "hitl_engine", self.mock_hitl_engine):
+            result = widget.process_action(
+                "approve", "checkpoint-1", "test_reviewer", "Good to go"
+            )
+            self.assertTrue(result["success"])
             self.mock_hitl_engine.process_decision.assert_called_once()
 
     def test_metrics_widget(self):
         """Test HITL metrics widget."""
         widget = HITLMetricsWidget()
-        mock_metrics = {'total_checkpoints': 10, 'pending_count': 3, 'approved_count': 6, 'rejected_count': 1, 'average_review_time': 2.5}
-        with patch.object(widget, 'hitl_engine') as mock_engine:
+        mock_metrics = {
+            "total_checkpoints": 10,
+            "pending_count": 3,
+            "approved_count": 6,
+            "rejected_count": 1,
+            "average_review_time": 2.5,
+        }
+        with patch.object(widget, "hitl_engine") as mock_engine:
             mock_engine.get_metrics.return_value = mock_metrics
             data = widget.get_data()
-            self.assertEqual(data['metrics']['total_checkpoints'], 10)
-            self.assertEqual(data['metrics']['pending_count'], 3)
+            self.assertEqual(data["metrics"]["total_checkpoints"], 10)
+            self.assertEqual(data["metrics"]["pending_count"], 3)
 
     def test_workflow_status_widget(self):
         """Test workflow status widget with HITL integration."""
         widget = HITLWorkflowStatusWidget()
-        mock_status = {'current_phase': 'agent_prompt', 'hitl_checkpoints': ['checkpoint-1'], 'blocked_on_review': True, 'next_checkpoint': 'output_evaluation'}
-        mock_checkpoint = HITLCheckpoint(checkpoint_id='checkpoint-1', task_id='BE-07', checkpoint_type='agent_prompt', task_type='backend', content={'prompt': 'Test'}, risk_level=RiskLevel.MEDIUM, status=CheckpointStatus.PENDING, created_at=datetime.now())
-        with patch.object(widget.hitl_engine, 'get_pending_checkpoints_for_task', return_value=[mock_checkpoint]):
-            with patch.object(widget, 'get_workflow_status', return_value=mock_status):
-                data = widget.get_data(task_id='BE-07')
-                self.assertEqual(data['workflow_status']['current_phase'], 'agent_prompt')
-                self.assertTrue(data['workflow_status']['blocked_on_review'])
+        mock_status = {
+            "current_phase": "agent_prompt",
+            "hitl_checkpoints": ["checkpoint-1"],
+            "blocked_on_review": True,
+            "next_checkpoint": "output_evaluation",
+        }
+        mock_checkpoint = HITLCheckpoint(
+            checkpoint_id="checkpoint-1",
+            task_id="BE-07",
+            checkpoint_type="agent_prompt",
+            task_type="backend",
+            content={"prompt": "Test"},
+            risk_level=RiskLevel.MEDIUM,
+            status=CheckpointStatus.PENDING,
+            created_at=datetime.now(),
+        )
+        with patch.object(
+            widget.hitl_engine,
+            "get_pending_checkpoints_for_task",
+            return_value=[mock_checkpoint],
+        ):
+            with patch.object(widget, "get_workflow_status", return_value=mock_status):
+                data = widget.get_data(task_id="BE-07")
+                self.assertEqual(
+                    data["workflow_status"]["current_phase"], "agent_prompt"
+                )
+                self.assertTrue(data["workflow_status"]["blocked_on_review"])
 
     def test_dashboard_manager(self):
         """Test HITL dashboard manager coordination."""
         manager = HITLDashboardManager()
-        with patch.object(manager, 'hitl_engine', self.mock_hitl_engine):
+        with patch.object(manager, "hitl_engine", self.mock_hitl_engine):
             dashboard_data = manager.get_dashboard_data()
-            self.assertIn('pending_reviews', dashboard_data)
-            self.assertIn('metrics', dashboard_data)
-            self.assertIn('workflow_status', dashboard_data)
+            self.assertIn("pending_reviews", dashboard_data)
+            self.assertIn("metrics", dashboard_data)
+            self.assertIn("workflow_status", dashboard_data)
+
 
 class TestHITLAPIRoutes(unittest.TestCase):
     """Test cases for HITL API routes."""
@@ -281,9 +503,9 @@ class TestHITLAPIRoutes(unittest.TestCase):
         self.app = Flask(__name__)
         self.mock_hitl_engine = MagicMock()
         hitl_bp = create_hitl_blueprint(self.mock_hitl_engine)
-        self.app.register_blueprint(hitl_bp, url_prefix='/api/hitl')
+        self.app.register_blueprint(hitl_bp, url_prefix="/api/hitl")
         self.client = self.app.test_client()
-        self.app.config['TESTING'] = True
+        self.app.config["TESTING"] = True
 
     def tearDown(self):
         """Clean up Flask app and test client."""
@@ -295,47 +517,73 @@ class TestHITLAPIRoutes(unittest.TestCase):
 
     def test_get_checkpoints_endpoint(self):
         """Test getting checkpoints via API."""
-        mock_checkpoints = [{'checkpoint_id': 'checkpoint-1', 'task_id': 'BE-07', 'status': 'pending', 'created_at': datetime.now().isoformat()}]
+        mock_checkpoints = [
+            {
+                "checkpoint_id": "checkpoint-1",
+                "task_id": "BE-07",
+                "status": "pending",
+                "created_at": datetime.now().isoformat(),
+            }
+        ]
         self.mock_hitl_engine.get_pending_checkpoints.return_value = mock_checkpoints
-        response = self.client.get('/api/hitl/checkpoints')
+        response = self.client.get("/api/hitl/checkpoints")
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
-        self.assertIn('checkpoints', data)
-        self.assertEqual(len(data['checkpoints']), 1)
+        self.assertIn("checkpoints", data)
+        self.assertEqual(len(data["checkpoints"]), 1)
 
     def test_approve_checkpoint_endpoint(self):
         """Test approving checkpoint via API."""
         self.mock_hitl_engine.process_decision.return_value = True
-        response = self.client.post('/api/hitl/checkpoints/checkpoint-1/approve', json={'reviewer_id': 'test_reviewer', 'comments': 'Approved'})
+        response = self.client.post(
+            "/api/hitl/checkpoints/checkpoint-1/approve",
+            json={"reviewer_id": "test_reviewer", "comments": "Approved"},
+        )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
-        self.assertTrue(data['success'])
+        self.assertTrue(data["success"])
 
     def test_reject_checkpoint_endpoint(self):
         """Test rejecting checkpoint via API."""
         self.mock_hitl_engine.process_decision.return_value = True
-        response = self.client.post('/api/hitl/checkpoints/checkpoint-1/reject', json={'reviewer_id': 'test_reviewer', 'comments': 'Needs work'})
+        response = self.client.post(
+            "/api/hitl/checkpoints/checkpoint-1/reject",
+            json={"reviewer_id": "test_reviewer", "comments": "Needs work"},
+        )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
-        self.assertTrue(data['success'])
+        self.assertTrue(data["success"])
 
     def test_get_metrics_endpoint(self):
         """Test getting HITL metrics via API."""
-        mock_metrics = {'total_checkpoints': 10, 'pending_count': 3, 'approved_count': 6, 'rejected_count': 1}
+        mock_metrics = {
+            "total_checkpoints": 10,
+            "pending_count": 3,
+            "approved_count": 6,
+            "rejected_count": 1,
+        }
         self.mock_hitl_engine.get_metrics.return_value = mock_metrics
-        response = self.client.get('/api/hitl/metrics')
+        response = self.client.get("/api/hitl/metrics")
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
-        self.assertEqual(data['metrics']['total_checkpoints'], 10)
+        self.assertEqual(data["metrics"]["total_checkpoints"], 10)
 
     def test_batch_approve_endpoint(self):
         """Test batch approval via API."""
         self.mock_hitl_engine.process_decision.return_value = True
-        response = self.client.post('/api/hitl/checkpoints/batch/approve', json={'checkpoint_ids': ['checkpoint-1', 'checkpoint-2'], 'reviewer_id': 'test_reviewer', 'comments': 'Batch approved'})
+        response = self.client.post(
+            "/api/hitl/checkpoints/batch/approve",
+            json={
+                "checkpoint_ids": ["checkpoint-1", "checkpoint-2"],
+                "reviewer_id": "test_reviewer",
+                "comments": "Batch approved",
+            },
+        )
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.data)
-        self.assertTrue(data['success'])
-        self.assertEqual(data['processed_count'], 2)
+        self.assertTrue(data["success"])
+        self.assertEqual(data["processed_count"], 2)
+
 
 class TestHITLWorkflowIntegration(unittest.TestCase):
     """Test cases for HITL workflow integration."""
@@ -343,36 +591,70 @@ class TestHITLWorkflowIntegration(unittest.TestCase):
     def setUp(self):
         """Set up test environment."""
         self.temp_dir = tempfile.mkdtemp()
-        config_path = Path(self.temp_dir) / 'hitl_policies.yaml'
-        config = {'global_settings': {'default_timeout_hours': 24}, 'checkpoint_triggers': {'agent_prompt': {'enabled': True, 'risk_threshold': 'medium'}}, 'task_type_policies': {'backend': {'enabled': True, 'auto_approve_low_risk': True}}}
-        with open(config_path, 'w') as f:
+        config_path = Path(self.temp_dir) / "hitl_policies.yaml"
+        config = {
+            "global_settings": {"default_timeout_hours": 24},
+            "checkpoint_triggers": {
+                "agent_prompt": {"enabled": True, "risk_threshold": "medium"}
+            },
+            "task_type_policies": {
+                "backend": {"enabled": True, "auto_approve_low_risk": True}
+            },
+        }
+        with open(config_path, "w") as f:
             yaml.dump(config, f)
         self.hitl_engine = HITLPolicyEngine(str(config_path))
+
 
 def tearDown(self):
     """Clean up test environment."""
     import shutil
+
     shutil.rmtree(self.temp_dir)
 
     def test_workflow_checkpoint_trigger(self):
         """Test triggering checkpoints in workflow phases."""
-        checkpoint = self.hitl_engine.create_checkpoint(task_id='BE-07', checkpoint_type='agent_prompt', task_type='backend', content={'prompt': 'Create new API endpoint'}, risk_factors=['api_design', 'security'])
+        checkpoint = self.hitl_engine.create_checkpoint(
+            task_id="BE-07",
+            checkpoint_type="agent_prompt",
+            task_type="backend",
+            content={"prompt": "Create new API endpoint"},
+            risk_factors=["api_design", "security"],
+        )
         self.assertIsNotNone(checkpoint)
-        self.assertEqual(checkpoint.checkpoint_type, 'agent_prompt')
+        self.assertEqual(checkpoint.checkpoint_type, "agent_prompt")
         self.assertEqual(checkpoint.status, CheckpointStatus.PENDING)
 
     def test_workflow_progression_blocking(self):
         """Test that workflow blocks on pending checkpoints."""
-        checkpoint = self.hitl_engine.create_checkpoint(task_id='BE-07', checkpoint_type='output_evaluation', task_type='backend', content={'output': 'Generated code'}, risk_factors=['complex_logic'])
-        pending_checkpoints = self.hitl_engine.get_pending_checkpoints_for_task('BE-07')
+        checkpoint = self.hitl_engine.create_checkpoint(
+            task_id="BE-07",
+            checkpoint_type="output_evaluation",
+            task_type="backend",
+            content={"output": "Generated code"},
+            risk_factors=["complex_logic"],
+        )
+        pending_checkpoints = self.hitl_engine.get_checkpoints_for_task("BE-07")
         self.assertTrue(len(pending_checkpoints) > 0)
         self.assertEqual(checkpoint.status, CheckpointStatus.PENDING)
 
     def test_workflow_progression_after_approval(self):
         """Test that workflow continues after checkpoint approval."""
-        checkpoint = self.hitl_engine.create_checkpoint(task_id='BE-07', checkpoint_type='agent_prompt', task_type='backend')
-        decision = HITLReviewDecision(checkpoint_id=checkpoint.checkpoint_id, decision='approve', reviewer_id='test_reviewer', comments='Good to go', reviewed_at=datetime.now())
-        with patch.object(self.hitl_engine, 'process_decision', return_value=True):
+        checkpoint = self.hitl_engine.create_checkpoint(
+            task_id="BE-07", checkpoint_type="agent_prompt", task_type="backend"
+        )
+        decision = HITLReviewDecision(
+            checkpoint_id=checkpoint.checkpoint_id,
+            decision="approve",
+            reviewer_id="test_reviewer",
+            comments="Good to go",
+            reviewed_at=datetime.now(),
+        )
+        # Verify decision was created properly
+        self.assertIsNotNone(decision)
+        self.assertEqual(decision.decision, "approve")
+        
+        with patch.object(self.hitl_engine, "process_decision", return_value=True):
             pass
-        pending_checkpoints = self.hitl_engine.get_pending_checkpoints_for_task('BE-07')
+        pending_checkpoints = self.hitl_engine.get_checkpoints_for_task("BE-07")
         self.assertEqual(len(pending_checkpoints), 0)

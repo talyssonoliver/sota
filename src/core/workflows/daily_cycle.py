@@ -1,34 +1,46 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    datetime,
+    json,
+    logging,
+    os,
+    requests,
+    sys,
+    timedelta
+)
 """
-Daily Cycle Automation Orchestrator - Phase 6 Step 6.1
+Daily Cycle Automation Orchestrator
 
     Automated daily task processing orchestrator that manages the complete
     daily cycle of task processing, reporting, and dashboard updates.
-    Integrates with existing Phase 5 infrastructure for seamless automation.
+    Integrates infrastructure for seamless automation.
 """
 
-try:
-    import asyncio
-except ImportError:
-    pass
-import json
-import logging
-import os
-import sys
-
-try:
-    import schedule
-except ImportError:
-    pass
-from datetime import datetime
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime, timedelta  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from time import time
-from typing import Any, Dict, List, Optional
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
-try:
-    from config.build_paths import LOGS_DIR
-except ImportError:
-    LOGS_DIR = "logs"
+# Use centralized import utilities to eliminate duplication
+from src.infrastructure.utils.import_utils import conditional_import, safe_import
+
+# Conditionally import optional dependencies
+asyncio = safe_import('asyncio')
+schedule = safe_import('schedule')
+subprocess = safe_import('subprocess')
+
+# Import build paths with fallback
+LOGS_DIR = conditional_import('config.build_paths', 'LOGS_DIR', 'logs')
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -41,10 +53,6 @@ from src.infrastructure.utils.execution_monitor import ExecutionMonitor
 from src.infrastructure.utils.input_validation import (ValidationError,
                                                        validate_file_path)
 
-try:
-    import subprocess
-except ImportError:
-    pass
 
 
 class DailyCycleOrchestrator:
@@ -388,13 +396,23 @@ class DailyCycleOrchestrator:
             return None
 
     def _run_cli_command(self, command: List[str]) -> Dict[str, Any]:
-        """Run a CLI command and return the result."""
+        """Run a CLI command securely and return the result."""
         try:
+            # Security: Validate command inputs
+            if not command or not all(isinstance(arg, str) for arg in command):
+                raise ValueError("Invalid command arguments")
+            
+            # Security: Sanitize command arguments
+            sanitized_command = self._sanitize_command(command)
+            
+            # Security: Use shell=False to prevent command injection
             result = subprocess.run(
-                command,
+                sanitized_command,
                 capture_output=True,
                 text=True,
                 encoding="utf-8",
+                shell=False,  # Security: Prevent shell injection
+                timeout=30,   # Security: Prevent hanging processes
                 cwd=Path(__file__).parent.parent,
             )
 
@@ -405,13 +423,42 @@ class DailyCycleOrchestrator:
                 "success": result.returncode == 0,
             }
 
+        except subprocess.TimeoutExpired:
+            return {
+                "exit_code": -2,
+                "stdout": "",
+                "stderr": "Command timed out after 30 seconds",
+                "success": False,
+            }
         except Exception as e:
+            self.logger.error(f"Command execution failed: {e}")
             return {
                 "exit_code": -1,
                 "stdout": "",
                 "stderr": str(e),
                 "success": False,
             }
+    
+    def _sanitize_command(self, command: List[str]) -> List[str]:
+        """Sanitize command arguments to prevent injection attacks."""
+        allowed_commands = {
+            "python", "python3", "pip", "pytest", "black", "isort", "flake8"
+        }
+        
+        if not command or command[0] not in allowed_commands:
+            raise ValueError(f"Command not allowed: {command[0] if command else 'empty'}")
+        
+        # Remove potentially dangerous arguments
+        dangerous_patterns = [";", "|", "&", "$", "`", "(", ")"]
+        sanitized = []
+        
+        for arg in command:
+            if any(pattern in arg for pattern in dangerous_patterns):
+                self.logger.warning(f"Removing potentially dangerous argument: {arg}")
+                continue
+            sanitized.append(arg)
+        
+        return sanitized
 
     def schedule_daily_tasks(self):
         """Schedule daily automation tasks (deprecated - use schedule_enhanced_tasks)."""
@@ -499,8 +546,83 @@ class DailyCycleOrchestrator:
         current_date = date.today()
         return (current_date - start_date).days + 1
 
-    async def run_health_check(self):
-        """Run system health check."""
+    def _check_component_health(self, component_name: str, check_function: callable, 
+                               health_status: Dict[str, Any]) -> None:
+        """Check health of a single component and update health status.
+        
+        Args:
+            component_name: Name of the component being checked
+            check_function: Function that performs the health check
+            health_status: Overall health status dictionary to update
+        """
+        try:
+            result = check_function()
+            health_status["components"][component_name] = result
+            
+            # Update overall status if component is not healthy
+            if result.get("status") not in ["healthy", "configured", "disabled"]:
+                health_status["overall_status"] = "degraded"
+                
+        except Exception as e:
+            health_status["components"][component_name] = {
+                "status": "error",
+                "error": str(e),
+            }
+            health_status["overall_status"] = "degraded"
+
+    def _check_execution_monitor(self) -> Dict[str, Any]:
+        """Check execution monitor health."""
+        monitor_status = self.execution_monitor.get_execution_stats()
+        return {
+            "status": "healthy" if monitor_status else "degraded",
+            "details": monitor_status,
+        }
+
+    def _check_metrics_calculator(self) -> Dict[str, Any]:
+        """Check metrics calculator health."""
+        metrics = self.metrics_calculator.calculate_team_metrics()
+        return {
+            "status": "healthy",
+            "last_calculation": datetime.now().isoformat(),
+            "metrics": metrics,
+        }
+
+    def _check_dashboard_api(self) -> Dict[str, Any]:
+        """Check dashboard API health."""
+#         import requests  # Consolidated to common_imports
+        
+        api_port = self.config.get('dashboard', {}).get('api_port', 8000)
+        response = requests.get(
+            f"http://localhost:{api_port}/api/system/health",
+            timeout=5,
+        )
+        
+        if response.status_code == 200:
+            return {
+                "status": "healthy",
+                "response_time": response.elapsed.total_seconds(),
+            }
+        else:
+            return {
+                "status": "degraded",
+                "http_status": response.status_code,
+            }
+
+    def _check_email_integration(self) -> Dict[str, Any]:
+        """Check email integration health."""
+        if self.config.get("email", {}).get("enabled", False):
+            return {
+                "status": "configured" if self.email_integration.enabled else "disabled"
+            }
+        else:
+            return {"status": "disabled"}
+
+    async def run_health_check(self) -> Dict[str, Any]:
+        """Run comprehensive system health check.
+        
+        Returns:
+            Dictionary containing health status of all components
+        """
         self.logger.info("Starting system health check")
 
         try:
@@ -510,72 +632,17 @@ class DailyCycleOrchestrator:
                 "overall_status": "healthy",
             }
 
-            # Check execution monitor
-            try:
-                monitor_status = self.execution_monitor.get_system_status()
-                health_status["components"]["execution_monitor"] = {
-                    "status": "healthy" if monitor_status else "degraded",
-                    "details": monitor_status,
-                }
-            except Exception as e:
-                health_status["components"]["execution_monitor"] = {
-                    "status": "error",
-                    "error": str(e),
-                }
-                health_status["overall_status"] = "degraded"
+            # Define component checks
+            component_checks = {
+                "execution_monitor": self._check_execution_monitor,
+                "metrics_calculator": self._check_metrics_calculator,
+                "dashboard_api": self._check_dashboard_api,
+                "email_integration": self._check_email_integration,
+            }
 
-            # Check metrics calculator
-            try:
-                metrics = self.metrics_calculator.calculate_team_metrics()
-                health_status["components"]["metrics_calculator"] = {
-                    "status": "healthy",
-                    "last_calculation": datetime.now().isoformat(),
-                    "metrics": metrics,
-                }
-            except Exception as e:
-                health_status["components"]["metrics_calculator"] = {
-                    "status": "error",
-                    "error": str(e),
-                }
-                health_status["overall_status"] = "degraded"
-
-            # Check dashboard API
-            try:
-                import requests
-
-                response = requests.get(
-                    f"http://localhost:{self.config['dashboard']['api_port']}/api/system/health",
-                    timeout=5,
-                )
-                if response.status_code == 200:
-                    health_status["components"]["dashboard_api"] = {
-                        "status": "healthy",
-                        "response_time": response.elapsed.total_seconds(),
-                    }
-                else:
-                    health_status["components"]["dashboard_api"] = {
-                        "status": "degraded",
-                        "http_status": response.status_code,
-                    }
-                    health_status["overall_status"] = "degraded"
-            except Exception as e:
-                health_status["components"]["dashboard_api"] = {
-                    "status": "unavailable",
-                    "error": str(e),
-                }
-                health_status["overall_status"] = "degraded"
-
-            # Check email integration
-            if self.config.get("email", {}).get("enabled", False):
-                health_status["components"]["email_integration"] = {
-                    "status": (
-                        "configured" if self.email_integration.enabled else "disabled"
-                    )
-                }
-            else:
-                health_status["components"]["email_integration"] = {
-                    "status": "disabled"
-                }
+            # Run all component health checks
+            for component_name, check_function in component_checks.items():
+                self._check_component_health(component_name, check_function, health_status)
 
             self.logger.info(
                 f"Health check completed - Status: {health_status['overall_status']}"
@@ -794,7 +861,22 @@ class DailyCycleOrchestrator:
         self.logger.info("Daily Cycle Orchestrator initialized for production")
         return self
 
-    # ...existing code...
+    def get_daily_cycles(self) -> Dict[str, Dict[str, int]]:
+        """Mock implementation to return daily automation cycles."""
+        base_date = datetime.now() - timedelta(days=6)
+        cycles = {}
+
+        for i in range(7):
+            day = base_date + timedelta(days=i)
+            day_str = day.strftime("%Y-%m-%d")
+            cycles[day_str] = {
+                "morning_briefings": 1 if i < 5 else 0,
+                "eod_reports": 1 if i < 5 else 0,
+                "health_checks": 3 + (i % 2),
+                "success_rate": 95 + (i % 6) - 2,
+            }
+
+        return cycles
 
 
 def main():

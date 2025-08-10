@@ -1,28 +1,41 @@
+
+from src.infrastructure.utils.common_imports import (
+    datetime,
+    json,
+    logging,
+    re,
+    sys,
+    traceback
+)
 """
 Task Execution Script for the AI Agent System
+
 Example script to demonstrate how to execute tasks using the agent registry.
+Provides CLI interface for task execution with context injection and validation.
 """
 
 import argparse
-import json
-import logging
-import sys
-from datetime import datetime
-from typing import Any, Dict
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+from typing import Any, Dict, Optional
 
 try:
     from src.infrastructure.prompts.utils import extract_context_sources
 except ImportError:
-    pass
+    extract_context_sources = None
 try:
     from src.infrastructure.memory.engines.memory_engine import MemoryEngine
 
-    def get_memory_instance():
+    def get_memory_instance() -> Optional[MemoryEngine]:
+        """Get memory engine instance or None if unavailable."""
         return MemoryEngine()
 
 except ImportError:
 
-    def get_memory_instance():
+    def get_memory_instance() -> None:
+        """Return None when memory engine is unavailable."""
         return None
 
 
@@ -39,10 +52,48 @@ from src.infrastructure.utils.task_loader import (load_task_metadata,
 memory = None
 
 
-def initialize_memory():
-    """Initialize memory system - placeholder for now"""
+def _sanitize_filename(filename: str) -> str:
+    """Sanitize filename for safe filesystem operations.
+    
+    Removes or replaces characters that are not allowed in filenames
+    across different operating systems.
+    
+    Args:
+        filename: Original filename to sanitize
+        
+    Returns:
+        Sanitized filename safe for filesystem operations
+    """
+    try:
+#         import re  # Consolidated to common_imports
+        # Remove characters not allowed in filenames: < > : " / \ | ? *
+        sanitized = re.sub(r'[<>:"/\\|?*]', "_", filename)
+    except ImportError:
+        # Fallback: replace common problematic characters manually
+        sanitized = filename
+        for char in '<>:"/\\|?*':
+            sanitized = sanitized.replace(char, "_")
+    
+    # Limit length to reasonable filesystem limits
+    return sanitized[:200] if len(sanitized) > 200 else sanitized
+
+
+def initialize_memory() -> None:
+    """Initialize memory system.
+    
+    Sets up the global memory instance for task execution context.
+    Gracefully handles cases where memory engine is unavailable.
+    """
     global memory
-    memory = get_memory_instance()
+    try:
+        memory = get_memory_instance()
+        if memory:
+            logging.info("Memory system initialized successfully")
+        else:
+            logging.info("Memory system unavailable, continuing without memory")
+    except Exception as e:
+        logging.warning(f"Failed to initialize memory system: {e}")
+        memory = None
 
 
 def load_task_from_file(task_file: str) -> Dict[str, Any]:
@@ -94,30 +145,36 @@ def execute_task_with_context(task_id: str, agent_role: str = None):
         raise
 
 
-def log_context_usage(task_id: str, agent_role: str, context: str):
-    """Log context usage for analysis and optimization. Handles mocks gracefully for tests."""
+def log_context_usage(task_id: str, agent_role: str, context: str) -> None:
+    """Log context usage for analysis and optimization. 
+    
+    Handles mocks gracefully for tests and sanitizes inputs for secure file operations.
+    
+    Args:
+        task_id: Unique identifier for the task
+        agent_role: Role of the agent executing the task
+        context: Context data used by the agent
+    """
     try:
+        # Safely extract context information
         if hasattr(context, "split") or isinstance(context, (str, list)):
             context_length = len(context)
-            context_sources = extract_context_sources(context)
+            # Use context extraction if available
+            if extract_context_sources:
+                context_sources = extract_context_sources(context)
+            else:
+                context_sources = []
         else:
             context_length = 0
             context_sources = []
-    except Exception:
+    except Exception as e:
+        logging.warning(f"Error extracting context information: {e}")
         context_length = 0
         context_sources = []
-    # Coerce task_id to string for file operations and sanitize for filesystem
+    
+    # Sanitize task_id for safe filesystem usage
     task_id_str = str(task_id)
-    # Remove characters not allowed in filenames (e.g., <, >, :, ", /, \, |,
-    # ?, *)
-    try:
-        import re
-
-        task_id_str = re.sub(r'[<>:"/\\|?*]', "_", task_id_str)
-    except ImportError:
-        # Fallback: replace common problematic characters manually
-        for char in '<>:"/\\|?*':
-            task_id_str = task_id_str.replace(char, "_")
+    task_id_str = _sanitize_filename(task_id_str)
 
     usage_log = {
         "task_id": task_id_str,
@@ -127,13 +184,21 @@ def log_context_usage(task_id: str, agent_role: str, context: str):
         "timestamp": datetime.now().isoformat(),
     }
 
-    # Save to context usage log
-    from config.build_paths import LOGS_DIR
-
-    context_logs_dir = LOGS_DIR / "context_usage"
-    context_logs_dir.mkdir(parents=True, exist_ok=True)
-    with open(context_logs_dir / f"{task_id_str}_context.json", "w") as f:
-        json.dump(usage_log, f, indent=2)
+    # Save to context usage log with proper error handling
+    try:
+        from config.build_paths import LOGS_DIR
+        
+        context_logs_dir = LOGS_DIR / "context_usage"
+        context_logs_dir.mkdir(parents=True, exist_ok=True)
+        
+        log_filename = f"{task_id_str}_context.json"
+        log_path = context_logs_dir / log_filename
+        
+        with open(log_path, "w", encoding="utf-8") as f:
+            json.dump(usage_log, f, indent=2, ensure_ascii=False)
+            
+    except Exception as e:
+        logging.error(f"Failed to save context usage log: {e}")
 
 
 def main():
@@ -272,7 +337,7 @@ def main():
     except Exception as e:
         print(f"Error executing task: {e}")
         if args.verbose:
-            import traceback
+#             import traceback  # Consolidated to common_imports
 
             traceback.print_exc()
         sys.exit(1)

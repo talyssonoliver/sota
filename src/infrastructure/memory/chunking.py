@@ -1,13 +1,23 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    dataclass,
+    logging,
+    re
+)
 """
 Memory Engine Chunking Module
 
 Provides text chunking functionality for the memory engine.
 """
 
-import logging
-import re
-from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+# import logging  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 logger = logging.getLogger(__name__)
 

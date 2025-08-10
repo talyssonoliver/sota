@@ -61,72 +61,43 @@ The system uses specialized agents for different roles (Technical Lead, Backend 
 - **Progress Tracking**: Monitors task completion and generates reports for each sprint cycle
 
 
-## 🏗️ Consolidated Architecture (2024 Optimization)
+## 📁 Project Structure
 
-The project has been optimized from 25+ scattered directories to **8 logical modules** with eliminated code duplication:
-
-### 📁 New Consolidated Structure
+The project follows a clean, organized structure with logical separation of concerns:
 
 ```
-ai-system/
-├── 📄 Core Configuration
-│   ├── main.py                     # Main entry point
-│   ├── README.md                   # Documentation
-│   ├── requirements.txt            # Dependencies
+ai-system/                          # Root directory (37 items - optimized!)
+├── 📄 Core Files
+│   ├── main.py                     # Main entry point with validation suite
+│   ├── README.md                   # This file
+│   ├── requirements*.txt           # Python dependencies
+│   ├── pyproject.toml             # Project configuration
 │   └── CLAUDE.md                  # AI assistant instructions
 │
-├── 📁 src/                        # NEW: Consolidated source code
-│   ├── core/                      # Core business logic
-│   │   ├── agents/               # AI agent implementations
-│   │   ├── workflows/            # LangGraph workflow definitions
-│   │   └── tasks/                # Task management logic
-│   │
-│   ├── interfaces/               # User interfaces
-│   │   ├── api/                  # REST API endpoints
-│   │   ├── cli/                  # Command-line interfaces
-│   │   └── dashboard/            # Unified dashboard (was scattered)
-│   │       ├── api/             # Dashboard API server
-│   │       ├── components/      # Dashboard widgets & components
-│   │       └── templates/       # Dashboard templates
-│   │
-│   └── platform/                # Platform services
-│       ├── memory/              # Unified memory system
-│       │   ├── engines/        # Memory engine implementations
-│       │   ├── knowledge/      # Knowledge repository (was memory-bank/)
-│       │   ├── config/         # Memory configuration
-│       │   └── security/       # Security & encryption
-│       │
-│       ├── orchestration/      # Task orchestration
-│       ├── tools/              # Agent tools
-│       └── utils/              # Shared utilities
+├── 📁 Source Code
+│   ├── agents/                    # Specialized AI agents
+│   ├── api/                       # API routes and endpoints
+│   ├── cli/                       # Command-line interfaces
+│   ├── config/                    # Configuration files (agents.yaml, tools.yaml)
+│   ├── graph/                     # LangGraph workflow definitions
+│   ├── handlers/                  # Request/response handlers
+│   ├── orchestration/             # Task execution and coordination
+│   ├── patches/                   # System patches and fixes
+│   ├── prompts/                   # Agent prompt templates
+│   ├── scripts/                   # Utility and automation scripts
+│   ├── tasks/                     # YAML task definitions
+│   ├── tools/                     # Agent tools and utilities
+│   ├── utils/                     # Helper functions and utilities
+│   └── visualization/             # Data visualization components
 │
-├── 📁 tests/                     # Optimized test pyramid (75/20/5)
-│   ├── unit/                    # 77 unit tests (72%)
-│   │   ├── core/               # Core business logic tests
-│   │   ├── interfaces/         # Interface tests
-│   │   └── platform/           # Platform service tests
+├── 📁 Organized Data & Artifacts
+│   ├── build/                     # Build artifacts (gitignored)
+│   │   ├── archives/             # Task completion archives
+│   │   ├── dashboard/            # Dashboard web components
+│   │   ├── static/               # Static web assets
+│   │   └── claude-code/          # External tool artifacts
 │   │
-│   ├── integration/            # 20 integration tests (18%)
-│   │   ├── api/               # API integration tests
-│   │   ├── dashboard/         # Dashboard integration tests
-│   │   └── workflows/         # Workflow integration tests
-│   │
-│   └── e2e/                   # 9 end-to-end tests (8%)
-│       ├── system/            # Full system tests
-│       ├── workflows/         # Complete workflow tests
-│       └── performance/       # Performance benchmarks
-│
-├── 📁 Legacy (Deprecated - Use src/ instead)
-│   ├── agents/                # → src/core/agents/
-│   ├── dashboard/             # → src/interfaces/dashboard/
-│   ├── memory-bank/          # → src/platform/memory/knowledge/
-│   └── tools/memory/         # → src/platform/memory/
-│
-└── 📁 Data & Runtime
-    ├── config/               # Configuration files
-    ├── outputs/             # Generated outputs
-    ├── logs/                # System logs
-    └── storage/             # Persistent data
+│   ├── data/                      # All data and context (persistent)
 │   │   ├── context/              # Unified context store (patterns, db schema, etc.)
 │   │   ├── storage/              # Tiered storage (hot/warm/cold)
 │   │   ├── sprints/              # Sprint planning and execution data
@@ -169,32 +140,6 @@ ai-system/
 
 ### Installation
 
-#### Windows Installation (Recommended)
-
-1. Clone this repository
-2. Open PowerShell as Administrator and run:
-   ```powershell
-   # Allow script execution (if needed)
-   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-   
-   # Run the setup script
-   .\setup_windows.ps1
-   ```
-   
-   Or use the batch file:
-   ```cmd
-   setup_windows.bat
-   ```
-
-3. The setup script will:
-   - Create a virtual environment
-   - Install all dependencies
-   - Set up git hooks
-   - Create .env file from template
-   - Generate MEMORY_ENGINE_KEY automatically
-
-#### Manual Installation (Linux/Mac/WSL)
-
 1. Clone this repository
 2. Create a virtual environment:
    ```bash
@@ -205,44 +150,11 @@ ai-system/
    ```bash
    pip install -r requirements.txt
    ```
-4. Copy `.env.example` to `.env` and add your API keys:
+4. Copy `.env.template` to `.env` and add your API keys:
    ```bash
    cp .env.template .env
-   # Edit .env to add your API keys including:
-   # - OPENAI_API_KEY (required)
-   # - MEMORY_ENGINE_KEY (required for secure encryption)
+   # Edit .env to add your API keys
    ```
-
-5. Generate and set the memory engine encryption key:
-   ```bash
-   # Use the secure key generation script
-   python scripts/generate_memory_key.py
-   # This will generate a key and optionally add it to your .env file
-   ```
-
-## 📦 Import Guidelines
-
-For detailed import guidelines and standard paths, see [IMPORT_GUIDELINES.md](IMPORT_GUIDELINES.md).
-
-### Quick Import Reference
-```python
-# Agents
-from src.core.agents.technical import TechnicalLeadAgent
-from src.core.agents.factory import AgentFactory
-
-# Workflows (Library)
-from src.core.workflows import execute_workflow
-from src.core.workflows.states import TaskStatus
-
-# Workflows (CLI)
-from orchestration.execute_task import execute_task_cli
-from orchestration.gantt_analyzer import generate_gantt_chart
-
-# Tools
-from tools.memory.engine import MemoryEngine
-from tools.github_tool import GitHubTool
-from tools.tool_loader import load_tools_for_agent
-```
 
 ## 🚀 Quick Start
 
@@ -252,7 +164,9 @@ from tools.tool_loader import load_tools_for_agent
 python main.py
 
 # Run unified test suite (optimized for speed)
-python -m pytest -v
+python -m tests.run_tests --all    # All tests (~31.8s)
+python -m tests.run_tests --quick  # Fast validation only
+python -m tests.run_tests --tools  # Tool loader tests
 ```
 
 ### Task Execution
@@ -316,19 +230,6 @@ The system includes comprehensive testing for agents, tools, and orchestration u
 
 The test system uses a unified test runner that can execute different test suites:
 
-#### Windows
-```cmd
-# Use the Windows test runner
-test_windows.bat --quick   # Quick validation
-test_windows.bat --tools   # Tool loader tests
-test_windows.bat --all     # All tests
-
-# Or activate virtual environment first
-.venv\Scripts\activate
-python -m tests.run_tests --all
-```
-
-#### Linux/Mac/WSL
 ```bash
 # Run all tests (quick validation, tool tests, and full suite)
 python -m tests.run_tests --all
@@ -344,12 +245,6 @@ python -m tests.run_tests --full
 
 # Show available test options
 python -m tests.run_tests --help
-```
-
-### Test Watch Mode
-Run tests automatically when files change:
-```bash
-./scripts/test-watch.sh
 ```
 
 ### Test Components
@@ -512,24 +407,3 @@ Create your feature branch (git checkout -b feature/amazing-feature)
 Commit your changes using the conventional format (git commit -m 'feat: add amazing feature')
 Push to the branch (git push origin feature/amazing-feature)
 Open a Pull Request
-## Development Shortcuts
-Use the Makefile for common tasks. Example:
-```bash
-make setup    # Complete environment setup with git hooks
-make dev      # Start development environment with Docker
-make test-quick  # Fast validation (<60s)
-```
-
-### VSCode Development Setup
-The project includes VSCode configuration for optimal development:
-- **Extensions**: Recommended Python, testing, and linting extensions
-- **Settings**: Auto-formatting with black, ruff linting, pytest integration
-- **Debug Config**: Launch configurations for debugging tests and agents
-- **Snippets**: Python code snippets for agent development
-
-### Git Hooks Setup
-Copy git hooks after cloning for automated validation:
-```bash
-cp githooks/* .git/hooks/
-chmod +x githooks/* scripts/*.sh
-```

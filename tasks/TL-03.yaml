@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=./task-schema.json
+id: TL-03
+title: Update PR and Issue Templates
+owner: technical
+depends_on:
+  - TL-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task TL-03: Update PR and Issue Templates"
+artefacts:
+  - .github/PULL_REQUEST_TEMPLATE.md
+  - docs/templates/bug_report.md
+  - docs/templates/feature_request.md
+  - docs/setup/contribution-guidelines.md
+context_topics:
+  - infrastructure
+  - ci-cd
+  - tech-standards

@@ -1,12 +1,23 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    dataclass,
+    datetime,
+    logging,
+    re
+)
 """
 Security Manager for Memory Engine
 
 Centralized security management for memory operations.
 """
 
-import logging
-from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+# import logging  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 from ..exceptions import MemoryEngineSecurityError
 
@@ -79,7 +90,7 @@ class SecurityManager:
             return data
 
         # Basic PII detection and masking
-        import re
+#         import re  # Consolidated to common_imports
 
         # Mask email addresses
         data = re.sub(
@@ -168,7 +179,7 @@ class SecurityManager:
         if not self.policy.audit_logging_enabled:
             return
 
-        from datetime import datetime
+#         from datetime import datetime  # Consolidated to common_imports
 
         entry = {
             "timestamp": datetime.now().isoformat(),

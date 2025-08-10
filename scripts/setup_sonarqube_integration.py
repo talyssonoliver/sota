@@ -212,7 +212,7 @@ volumes:
             # Create project
             project_data = {
                 "name": "SOTA AI System", 
-                "project": "sota-ai-system",
+                "project": "sota-ai",
                 "mainBranch": "main"
             }
             
@@ -230,7 +230,7 @@ volumes:
             token_response = requests.post(
                 f"{base_url}/api/user_tokens/generate",
                 data={
-                    "name": "sota-ai-system-token",
+                    "name": "sota-ai-token",
                     "type": "USER_TOKEN"
                 },
                 auth=auth,

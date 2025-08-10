@@ -1,14 +1,34 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    datetime,
+    json,
+    logging,
+    os,
+    sys,
+    time
+)
 """
 Task Execution with LangGraph Workflow
+
 Runs a task through the agent workflow using the dynamically constructed LangGraph.
+Provides support for different workflow types and execution modes including
+coordinator planning and plan execution management.
 """
 
-import json
-import logging
-import sys
-import time
-from datetime import datetime
-from pathlib import Path
+import argparse
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 try:
     from pythonjsonlogger import jsonlogger
@@ -16,10 +36,9 @@ except ImportError:
     jsonlogger = None
 
 try:
-    from src.core.workflows.graph.graph_builder import (build_advanced_workflow_graph,
-                                     build_dynamic_workflow_graph,
-                                     build_state_workflow_graph,
-                                     build_workflow_graph)
+    from src.core.workflows.graph.graph_builder import (
+        build_advanced_workflow_graph, build_dynamic_workflow_graph,
+        build_state_workflow_graph, build_workflow_graph)
 
     GRAPH_IMPORTS_AVAILABLE = True
 except ImportError as e:
@@ -41,9 +60,6 @@ except ImportError as e:
         return MagicMock()
 
 
-import argparse
-import os
-
 from src.core.workflows.plan_execution_manager import PlanExecutionManager
 
 # Add parent directory to path to allow imports
@@ -64,12 +80,12 @@ logger.setLevel(logging.INFO)
 
 
 def execute_task(
-    task_id,
-    input_message=None,
-    workflow_type="standard",
-    output_dir=None,
-    use_coordinator_planning=True,
-):
+    task_id: str,
+    input_message: Optional[str] = None,
+    workflow_type: str = "standard",
+    output_dir: Optional[str] = None,
+    use_coordinator_planning: bool = True,
+) -> Dict[str, Any]:
     """
     Execute a task through the agent workflow.
 
@@ -200,16 +216,25 @@ def execute_task(
         output_path = Path(output_dir) / task_id
         output_path.mkdir(parents=True, exist_ok=True)
 
-        # Save the final state
-        with open(output_path / "workflow_result.json", "w") as f:
-            json.dump(result, f, indent=2, default=str)
-
-        logger.info("Results saved", extra={"task_id": task_id, "event": "save_result"})
+        # Save the final state with proper error handling
+        try:
+            output_file = output_path / "workflow_result.json"
+            with open(output_file, "w", encoding="utf-8") as f:
+                json.dump(result, f, indent=2, default=str, ensure_ascii=False)
+                f.flush()
+                
+            # Verify file was written successfully
+            if not output_file.exists() or output_file.stat().st_size == 0:
+                raise IOError(f"Failed to write result file: {output_file}")
+                
+            logger.info("Results saved", extra={"task_id": task_id, "event": "save_result"})
+        except Exception as e:
+            logger.error(f"Failed to save results: {e}", extra={"task_id": task_id, "event": "save_error"})
 
     return result
 
 
-def load_all_tasks():
+def load_all_tasks() -> Dict[str, List[Dict[str, Any]]]:
     """
     Load all tasks from the agent_task_assignments.json file.
 
@@ -221,14 +246,31 @@ def load_all_tasks():
         "context-store",
         "agent_task_assignments.json",
     )
+    
+    try:
+        if not os.path.exists(tasks_file):
+            logger.warning(f"Tasks file not found: {tasks_file}")
+            return {}
+            
+        with open(tasks_file, "r", encoding="utf-8") as f:
+            all_tasks = json.load(f)
+            
+        if not isinstance(all_tasks, dict):
+            logger.error(f"Invalid tasks file format: expected dict, got {type(all_tasks)}")
+            return {}
+            
+        logger.info(f"Loaded {len(all_tasks)} agent task groups from {tasks_file}")
+        return all_tasks
+        
+    except json.JSONDecodeError as e:
+        logger.error(f"Invalid JSON in tasks file {tasks_file}: {e}")
+        return {}
+    except Exception as e:
+        logger.error(f"Error loading tasks file {tasks_file}: {e}")
+        return {}
 
-    with open(tasks_file, "r") as f:
-        all_tasks = json.load(f)
 
-    return all_tasks
-
-
-def get_all_tasks_flattened():
+def get_all_tasks_flattened() -> List[Dict[str, Any]]:
     """
     Get all tasks from all agents, flattened into a single list.
 
@@ -248,7 +290,7 @@ def get_all_tasks_flattened():
     return flattened_tasks
 
 
-def get_dependency_ordered_tasks():
+def get_dependency_ordered_tasks() -> List[Dict[str, Any]]:
     """
     Get all tasks ordered by dependencies (topological sort).
 
@@ -293,8 +335,11 @@ def get_dependency_ordered_tasks():
 
 
 def execute_all_tasks(
-    workflow_type="standard", output_dir=None, by_agent=None, day=None
-):
+    workflow_type: str = "standard", 
+    output_dir: Optional[str] = None, 
+    by_agent: Optional[str] = None, 
+    day: Optional[int] = None
+) -> List[Dict[str, Any]]:
     """
     Execute all tasks from the agent_task_assignments.json file.
 

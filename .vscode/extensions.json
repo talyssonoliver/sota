@@ -1,8 +1,0 @@
-{
-  "recommendations": [
-    "ms-python.python",
-    "ms-python.ruff",
-    "ms-python.black-formatter",
-    "hbenl.vscode-test-explorer"
-  ]
-}

@@ -2,16 +2,17 @@
 Test suite for Management Dashboard using TDD approach.
 """
 
-import pytest
-import tempfile
 import sqlite3
+import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+
 from src.infrastructure.tools.validation.dashboard.management_dashboard import (
-    ManagementDashboard,
     DashboardMetric,
-    MetricTrend
+    ManagementDashboard,
+    MetricTrend,
 )
 
 
@@ -22,17 +23,18 @@ class TestManagementDashboard:
         """Set up test fixtures."""
         self.temp_dir = tempfile.mkdtemp()
         self.root_path = Path(self.temp_dir)
-        
+
         # Create test project structure
         self.create_test_project()
-        
+
         self.dashboard = ManagementDashboard(self.root_path)
 
     def create_test_project(self):
         """Create a test project structure."""
         # Main application files
         app_file = self.root_path / "app.py"
-        app_file.write_text("""
+        app_file.write_text(
+            """
 '''Main application module.'''
 
 import logging
@@ -102,11 +104,13 @@ def validate_config(config: Dict[str, str]) -> bool:
             return False
     
     return True
-""")
-        
+"""
+        )
+
         # Test files
         test_file = self.root_path / "test_app.py"
-        test_file.write_text("""
+        test_file.write_text(
+            """
 '''Tests for application module.'''
 
 import pytest
@@ -186,16 +190,19 @@ def test_validate_config():
         "environment": "development"
     }
     assert validate_config(invalid_config) is False
-""")
-        
+"""
+        )
+
         # Configuration files
         requirements_file = self.root_path / "requirements.txt"
-        requirements_file.write_text("""
+        requirements_file.write_text(
+            """
 pytest>=7.0.0
 black>=22.0.0
 ruff>=0.0.1
 mypy>=1.0.0
-""")
+"""
+        )
 
     def test_initialization(self):
         """Test dashboard initialization."""
@@ -213,7 +220,7 @@ mypy>=1.0.0
         with sqlite3.connect(self.dashboard.db_path) as conn:
             cursor = conn.execute("SELECT name FROM sqlite_master WHERE type='table'")
             tables = [row[0] for row in cursor.fetchall()]
-            
+
             assert "metrics_history" in tables
             assert "validation_runs" in tables
             assert "team_metrics" in tables
@@ -228,24 +235,20 @@ mypy>=1.0.0
                 "critical_issues": 1,
                 "warnings": 3,
                 "total_duration": 120.5,
-                "can_merge": True
+                "can_merge": True,
             },
             "phase_results": {
-                "quality_gates": {
-                    "details": {
-                        "technical_debt": {"total_hours": 8.5}
-                    }
-                }
-            }
+                "quality_gates": {"details": {"technical_debt": {"total_hours": 8.5}}}
+            },
         }
-        
+
         self.dashboard._store_validation_metrics(validation_report)
-        
+
         # Check that data was stored
         with sqlite3.connect(self.dashboard.db_path) as conn:
             cursor = conn.execute("SELECT COUNT(*) FROM validation_runs")
             assert cursor.fetchone()[0] == 1
-            
+
             cursor = conn.execute("SELECT COUNT(*) FROM metrics_history")
             assert cursor.fetchone()[0] > 0
 
@@ -259,12 +262,12 @@ mypy>=1.0.0
                 "warnings": 8,
                 "phases_completed": 6,
                 "total_duration": 180.0,
-                "can_merge": True
+                "can_merge": True,
             }
         }
-        
+
         summary = self.dashboard._generate_executive_summary(validation_report)
-        
+
         assert "overall_health_score" in summary
         assert "status" in summary
         assert "status_color" in summary
@@ -272,10 +275,10 @@ mypy>=1.0.0
         assert "total_issues" in summary
         assert "critical_issues" in summary
         assert "recommendation" in summary
-        
+
         # Health score should be calculated correctly
         assert 0 <= summary["overall_health_score"] <= 100
-        
+
         # Status should be appropriate
         assert summary["status"] in ["Excellent", "Good", "Needs Attention", "Critical"]
         assert summary["status_color"] in ["green", "yellow", "orange", "red"]
@@ -283,19 +286,19 @@ mypy>=1.0.0
     def test_get_executive_recommendation(self):
         """Test executive recommendation generation."""
         summary = {"critical_issues": 0, "warnings": 5, "can_merge": True}
-        
+
         # Test excellent health
         recommendation = self.dashboard._get_executive_recommendation(95, summary)
         assert "production-ready" in recommendation
-        
+
         # Test good health
         recommendation = self.dashboard._get_executive_recommendation(80, summary)
         assert "Good overall quality" in recommendation
-        
+
         # Test needs attention
         recommendation = self.dashboard._get_executive_recommendation(60, summary)
         assert "Quality issues detected" in recommendation
-        
+
         # Test critical
         recommendation = self.dashboard._get_executive_recommendation(30, summary)
         assert "Critical issues found" in recommendation
@@ -303,42 +306,40 @@ mypy>=1.0.0
     def test_generate_key_metrics(self):
         """Test key metrics generation."""
         validation_report = {
-            "summary": {
-                "total_issues": 10,
-                "critical_issues": 2,
-                "warnings": 5
-            },
+            "summary": {"total_issues": 10, "critical_issues": 2, "warnings": 5},
             "phase_results": {
                 "quality_gates": {
                     "details": {
                         "metrics": {"coverage_percentage": 85.0},
-                        "technical_debt": {"total_hours": 12.5}
+                        "technical_debt": {"total_hours": 12.5},
                     }
                 },
                 "security_scan": {
                     "details": {
                         "security_vulnerabilities": {"total_vulnerabilities": 1},
-                        "owasp_compliance": {"compliance_percentage": 90.0}
+                        "owasp_compliance": {"compliance_percentage": 90.0},
                     }
                 },
                 "nfr_validation": {
-                    "details": {
-                        "maintainability_metrics": {"average_complexity": 6.0}
-                    }
-                }
-            }
+                    "details": {"maintainability_metrics": {"average_complexity": 6.0}}
+                },
+            },
         }
-        
+
         metrics = self.dashboard._generate_key_metrics(validation_report)
-        
+
         assert len(metrics) > 0
-        
+
         # Check metric structure
         for metric in metrics:
             assert isinstance(metric, DashboardMetric)
             assert metric.name is not None
             assert metric.current_value is not None
-            assert metric.trend in [MetricTrend.IMPROVING, MetricTrend.STABLE, MetricTrend.DECLINING]
+            assert metric.trend in [
+                MetricTrend.IMPROVING,
+                MetricTrend.STABLE,
+                MetricTrend.DECLINING,
+            ]
             assert metric.target_value is not None
             assert metric.unit is not None
             assert metric.category is not None
@@ -351,17 +352,17 @@ mypy>=1.0.0
                 "security_scan": {
                     "details": {
                         "security_vulnerabilities": {"total_vulnerabilities": 2},
-                        "owasp_compliance": {"compliance_percentage": 85.0}
+                        "owasp_compliance": {"compliance_percentage": 85.0},
                     }
                 }
             }
         }
-        
+
         score = self.dashboard._calculate_security_score(validation_report)
-        
+
         assert 0 <= score <= 100
         assert score == 65.0  # 85 - (2 * 10)
-        
+
         # Test with no security data
         empty_report = {"phase_results": {}}
         score = self.dashboard._calculate_security_score(empty_report)
@@ -376,15 +377,15 @@ mypy>=1.0.0
                         "maintainability_metrics": {
                             "average_complexity": 8.0,
                             "duplication_percentage": 5.0,
-                            "documentation_coverage": 80.0
+                            "documentation_coverage": 80.0,
                         }
                     }
                 }
             }
         }
-        
+
         score = self.dashboard._calculate_maintainability_score(validation_report)
-        
+
         assert 0 <= score <= 100
         # Score = 80 - (8 * 2) - (5 * 3) = 80 - 16 - 15 = 49
         assert score == 49.0
@@ -394,23 +395,23 @@ mypy>=1.0.0
         # Test improving trend (higher is better)
         trend = self.dashboard._calculate_trend(85.0, 80.0, 90.0)
         assert trend == MetricTrend.IMPROVING
-        
+
         # Test declining trend (higher is better)
         trend = self.dashboard._calculate_trend(75.0, 80.0, 90.0)
         assert trend == MetricTrend.DECLINING
-        
+
         # Test stable trend
         trend = self.dashboard._calculate_trend(80.2, 80.0, 90.0)
         assert trend == MetricTrend.STABLE
-        
+
         # Test improving trend (lower is better)
         trend = self.dashboard._calculate_trend(2.0, 5.0, 0.0)
         assert trend == MetricTrend.IMPROVING
-        
+
         # Test declining trend (lower is better)
         trend = self.dashboard._calculate_trend(8.0, 5.0, 0.0)
         assert trend == MetricTrend.DECLINING
-        
+
         # Test no previous value
         trend = self.dashboard._calculate_trend(85.0, None, 90.0)
         assert trend == MetricTrend.STABLE
@@ -421,14 +422,17 @@ mypy>=1.0.0
         with sqlite3.connect(self.dashboard.db_path) as conn:
             # Add sample validation runs
             for i in range(10):
-                conn.execute('''
+                conn.execute(
+                    """
                     INSERT INTO validation_runs 
                     (total_issues, critical_issues, warnings, duration, can_merge, overall_success, report_data)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
-                ''', (5 + i, 1, 3 + i, 120.0, True, True, '{}'))
-        
+                """,
+                    (5 + i, 1, 3 + i, 120.0, True, True, "{}"),
+                )
+
         trends = self.dashboard._generate_quality_trends()
-        
+
         assert "data" in trends
         assert "period" in trends
         assert "trend_direction" in trends
@@ -447,29 +451,29 @@ mypy>=1.0.0
                             "bugs": 5.0,
                             "vulnerabilities": 8.0,
                             "code_smells": 10.0,
-                            "security_hotspots": 1.5
+                            "security_hotspots": 1.5,
                         }
                     }
                 }
             }
         }
-        
+
         analysis = self.dashboard._generate_technical_debt_analysis(validation_report)
-        
+
         assert "total_hours" in analysis
         assert "total_days" in analysis
         assert "breakdown" in analysis
         assert "priority_actions" in analysis
-        
+
         assert analysis["total_hours"] == 24.5
         assert analysis["total_days"] == 3.0
-        
+
         breakdown = analysis["breakdown"]
         assert breakdown["bugs"] == 5.0
         assert breakdown["vulnerabilities"] == 8.0
         assert breakdown["code_smells"] == 10.0
         assert breakdown["security_hotspots"] == 1.5
-        
+
         # Should have priority actions
         assert len(analysis["priority_actions"]) > 0
 
@@ -482,19 +486,19 @@ mypy>=1.0.0
                 "overall_compliance_percentage": 85.0,
                 "principles": {
                     "Quality Engineering": {"compliance": True},
-                    "Security": {"compliance": False}
-                }
+                    "Security": {"compliance": False},
+                },
             }
         }
-        
+
         overview = self.dashboard._generate_compliance_overview(validation_report)
-        
+
         assert "iso_25010_compliant" in overview
         assert "ready_for_production" in overview
         assert "overall_compliance_percentage" in overview
         assert "principles_compliance" in overview
         assert "recommendations" in overview
-        
+
         assert overview["iso_25010_compliant"] is True
         assert overview["ready_for_production"] is True
         assert overview["overall_compliance_percentage"] == 85.0
@@ -507,12 +511,14 @@ mypy>=1.0.0
                 "critical_issues": 2,
                 "can_merge": False,
                 "total_duration": 350.0,  # Over 5 minutes
-                "warnings": 25
+                "warnings": 25,
             }
         }
-        
-        recommendations = self.dashboard._generate_management_recommendations(validation_report)
-        
+
+        recommendations = self.dashboard._generate_management_recommendations(
+            validation_report
+        )
+
         assert len(recommendations) > 0
         assert any("EXECUTIVE ACTION REQUIRED" in rec for rec in recommendations)
         assert any("DEPLOYMENT BLOCKED" in rec for rec in recommendations)
@@ -522,17 +528,13 @@ mypy>=1.0.0
     def test_generate_alerts(self):
         """Test alerts generation."""
         validation_report = {
-            "summary": {
-                "critical_issues": 3,
-                "can_merge": False,
-                "warnings": 20
-            }
+            "summary": {"critical_issues": 3, "can_merge": False, "warnings": 20}
         }
-        
+
         alerts = self.dashboard._generate_alerts(validation_report)
-        
+
         assert len(alerts) > 0
-        
+
         # Check alert structure
         for alert in alerts:
             assert "level" in alert
@@ -540,7 +542,7 @@ mypy>=1.0.0
             assert "action" in alert
             assert "impact" in alert
             assert alert["level"] in ["critical", "high", "medium", "low"]
-        
+
         # Should have critical alert for critical issues
         critical_alerts = [a for a in alerts if a["level"] == "critical"]
         assert len(critical_alerts) > 0
@@ -551,17 +553,20 @@ mypy>=1.0.0
         with sqlite3.connect(self.dashboard.db_path) as conn:
             # Add sample validation runs
             for i in range(5):
-                conn.execute('''
+                conn.execute(
+                    """
                     INSERT INTO validation_runs 
                     (total_issues, critical_issues, warnings, duration, can_merge, overall_success, report_data)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
-                ''', (5 + i, i, 3 + i, 120.0, True, True, '{}'))
-        
+                """,
+                    (5 + i, i, 3 + i, 120.0, True, True, "{}"),
+                )
+
         charts_data = self.dashboard._generate_charts_data()
-        
+
         assert "issues_over_time" in charts_data
         assert "quality_distribution" in charts_data
-        
+
         # Check quality distribution
         distribution = charts_data["quality_distribution"]
         assert "healthy" in distribution
@@ -578,7 +583,7 @@ mypy>=1.0.0
                 "overall_health_score": 85.0,
                 "status": "Good",
                 "can_deploy": True,
-                "recommendation": "System ready for deployment"
+                "recommendation": "System ready for deployment",
             },
             "key_metrics": [
                 DashboardMetric(
@@ -589,7 +594,7 @@ mypy>=1.0.0
                     target_value=90.0,
                     unit="%",
                     category="quality",
-                    priority="high"
+                    priority="high",
                 )
             ],
             "alerts": [
@@ -597,34 +602,31 @@ mypy>=1.0.0
                     "level": "medium",
                     "message": "Test alert",
                     "action": "Review code",
-                    "impact": "Minor issue"
+                    "impact": "Minor issue",
                 }
             ],
             "technical_debt": {
                 "total_hours": 12.5,
                 "total_days": 1.5,
-                "priority_actions": ["Fix critical bugs"]
+                "priority_actions": ["Fix critical bugs"],
             },
             "recommendations": ["Improve test coverage"],
-            "quality_trends": {
-                "period": "30 days",
-                "trend_direction": "improving"
-            },
+            "quality_trends": {"period": "30 days", "trend_direction": "improving"},
             "compliance_overview": {
                 "iso_25010_compliant": True,
                 "ready_for_production": True,
-                "overall_compliance_percentage": 85.0
-            }
+                "overall_compliance_percentage": 85.0,
+            },
         }
-        
+
         self.dashboard._generate_html_dashboard(dashboard_data)
-        
+
         # Check that HTML file was created
         html_file = self.dashboard.dashboard_path / "index.html"
         assert html_file.exists()
-        
+
         # Check HTML content
-        html_content = html_file.read_text(encoding='utf-8')
+        html_content = html_file.read_text(encoding="utf-8")
         assert "Code Quality Management Dashboard" in html_content
         assert "Executive Summary" in html_content
         assert "Technical Debt Analysis" in html_content
@@ -635,7 +637,7 @@ mypy>=1.0.0
     def test_get_dashboard_url(self):
         """Test getting dashboard URL."""
         url = self.dashboard.get_dashboard_url()
-        
+
         assert url.startswith("file://")
         assert "index.html" in url
         assert str(self.dashboard.dashboard_path) in url
@@ -651,7 +653,7 @@ mypy>=1.0.0
                 target_value=90.0,
                 unit="%",
                 category="quality",
-                priority="high"
+                priority="high",
             ),
             DashboardMetric(
                 name="Critical Issues",
@@ -661,12 +663,12 @@ mypy>=1.0.0
                 target_value=0.0,
                 unit="count",
                 category="issues",
-                priority="high"
-            )
+                priority="high",
+            ),
         ]
-        
+
         html = self.dashboard._generate_metric_cards_html(metrics)
-        
+
         assert "Test Coverage" in html
         assert "Critical Issues" in html
         assert "85%" in html  # Updated: whole number percentages show without decimal
@@ -683,25 +685,25 @@ mypy>=1.0.0
                 "level": "critical",
                 "message": "Critical issue found",
                 "action": "Fix immediately",
-                "impact": "System down"
+                "impact": "System down",
             },
             {
                 "level": "medium",
                 "message": "Warning detected",
                 "action": "Review code",
-                "impact": "Minor issue"
-            }
+                "impact": "Minor issue",
+            },
         ]
-        
+
         html = self.dashboard._generate_alerts_html(alerts)
-        
+
         assert "Critical issue found" in html
         assert "Warning detected" in html
         assert "alert-critical" in html
         assert "alert-medium" in html
         assert "Fix immediately" in html
         assert "Review code" in html
-        
+
         # Test no alerts
         html = self.dashboard._generate_alerts_html([])
         assert "No alerts - all systems healthy" in html
@@ -709,9 +711,9 @@ mypy>=1.0.0
     def test_generate_list_html(self):
         """Test list HTML generation."""
         items = ["Item 1", "Item 2", "Item 3"]
-        
+
         html = self.dashboard._generate_list_html(items)
-        
+
         assert "<li>Item 1</li>" in html
         assert "<li>Item 2</li>" in html
         assert "<li>Item 3</li>" in html
@@ -724,19 +726,20 @@ class TestManagementDashboardIntegration:
         """Set up test fixtures."""
         self.temp_dir = tempfile.mkdtemp()
         self.root_path = Path(self.temp_dir)
-        
+
         # Create comprehensive test project
         self.create_comprehensive_test_project()
-        
+
         self.dashboard = ManagementDashboard(self.root_path)
 
     def create_comprehensive_test_project(self):
         """Create a comprehensive test project."""
         # Create multiple modules with different characteristics
-        
+
         # High-quality module
         quality_module = self.root_path / "quality_module.py"
-        quality_module.write_text("""
+        quality_module.write_text(
+            """
 '''High-quality module with comprehensive documentation and testing.'''
 
 from typing import List, Dict, Optional
@@ -840,11 +843,13 @@ class DataProcessor:
             'error_count': self.error_count,
             'success_rate': self.processed_count / max(self.processed_count + self.error_count, 1) * 100
         }
-""")
-        
+"""
+        )
+
         # Module with some quality issues
         issues_module = self.root_path / "issues_module.py"
-        issues_module.write_text("""
+        issues_module.write_text(
+            """
 # Module with various quality issues for testing
 
 def process_data(data):
@@ -902,11 +907,13 @@ def insecure_function(user_input):
 def hardcoded_secret():
     api_key = "secret_key_123"  # Hardcoded secret
     return api_key
-""")
-        
+"""
+        )
+
         # Test files
         test_quality = self.root_path / "test_quality_module.py"
-        test_quality.write_text("""
+        test_quality.write_text(
+            """
 '''Comprehensive tests for quality module.'''
 
 import pytest
@@ -968,10 +975,12 @@ class TestDataProcessor:
         assert stats['processed_count'] == 1
         assert stats['error_count'] == 0
         assert stats['success_rate'] == 100.0
-""")
-        
+"""
+        )
+
         test_issues = self.root_path / "test_issues_module.py"
-        test_issues.write_text("""
+        test_issues.write_text(
+            """
 '''Basic tests for issues module.'''
 
 from issues_module import process_data, another_function
@@ -987,11 +996,14 @@ def test_another_function():
     '''Test another function.'''
     result = another_function(1, 2, 3, 4, 5, 6)
     assert result == 21
-""")
+"""
+        )
 
     def test_comprehensive_dashboard_generation(self):
         """Test comprehensive dashboard generation."""
-        with patch.object(self.dashboard.unified_validator, 'run_validation') as mock_validate:
+        with patch.object(
+            self.dashboard.unified_validator, "run_validation"
+        ) as mock_validate:
             # Mock comprehensive validation results
             mock_validate.return_value = {
                 "summary": {
@@ -1001,7 +1013,7 @@ def test_another_function():
                     "warnings": 8,
                     "phases_completed": 7,
                     "total_duration": 145.5,
-                    "can_merge": False
+                    "can_merge": False,
                 },
                 "phase_results": {
                     "quality_gates": {
@@ -1009,7 +1021,7 @@ def test_another_function():
                             "metrics": {
                                 "coverage_percentage": 78.5,
                                 "avg_cyclomatic_complexity": 6.2,
-                                "duplication_percentage": 8.5
+                                "duplication_percentage": 8.5,
                             },
                             "technical_debt": {
                                 "total_hours": 18.5,
@@ -1017,14 +1029,14 @@ def test_another_function():
                                 "bugs": 6.0,
                                 "vulnerabilities": 4.0,
                                 "code_smells": 12.0,
-                                "security_hotspots": 2.0
-                            }
+                                "security_hotspots": 2.0,
+                            },
                         }
                     },
                     "security_scan": {
                         "details": {
                             "security_vulnerabilities": {"total_vulnerabilities": 4},
-                            "owasp_compliance": {"compliance_percentage": 75.0}
+                            "owasp_compliance": {"compliance_percentage": 75.0},
                         }
                     },
                     "nfr_validation": {
@@ -1032,10 +1044,10 @@ def test_another_function():
                             "maintainability_metrics": {
                                 "average_complexity": 7.5,
                                 "duplication_percentage": 8.5,
-                                "documentation_coverage": 65.0
+                                "documentation_coverage": 65.0,
                             }
                         }
-                    }
+                    },
                 },
                 "compliance_assessment": {
                     "iso_25010_compliant": False,
@@ -1044,14 +1056,14 @@ def test_another_function():
                     "principles": {
                         "Quality Engineering": {"compliance": True},
                         "Security": {"compliance": False},
-                        "Maintainability": {"compliance": True}
-                    }
-                }
+                        "Maintainability": {"compliance": True},
+                    },
+                },
             }
-            
+
             # Generate dashboard
             dashboard_data = self.dashboard.generate_management_dashboard()
-            
+
             # Should have all required sections
             assert "timestamp" in dashboard_data
             assert "executive_summary" in dashboard_data
@@ -1062,35 +1074,35 @@ def test_another_function():
             assert "recommendations" in dashboard_data
             assert "alerts" in dashboard_data
             assert "charts_data" in dashboard_data
-            
+
             # Check executive summary
             exec_summary = dashboard_data["executive_summary"]
             assert exec_summary["overall_health_score"] < 100  # Should reflect issues
             assert exec_summary["status"] in ["Good", "Needs Attention", "Critical"]
             assert exec_summary["can_deploy"] is False
-            
+
             # Check key metrics
             key_metrics = dashboard_data["key_metrics"]
             assert len(key_metrics) > 0
             assert all(isinstance(metric, DashboardMetric) for metric in key_metrics)
-            
+
             # Check technical debt
             tech_debt = dashboard_data["technical_debt"]
             assert tech_debt["total_hours"] == 18.5
             assert tech_debt["total_days"] == 2.3
             assert len(tech_debt["priority_actions"]) > 0
-            
+
             # Check compliance
             compliance = dashboard_data["compliance_overview"]
             assert compliance["iso_25010_compliant"] is False
             assert compliance["ready_for_production"] is False
             assert compliance["overall_compliance_percentage"] == 72.5
-            
+
             # Check recommendations
             recommendations = dashboard_data["recommendations"]
             assert len(recommendations) > 0
             assert any("EXECUTIVE ACTION" in rec for rec in recommendations)
-            
+
             # Check alerts
             alerts = dashboard_data["alerts"]
             assert len(alerts) > 0
@@ -1098,7 +1110,9 @@ def test_another_function():
 
     def test_dashboard_with_excellent_quality(self):
         """Test dashboard with excellent code quality."""
-        with patch.object(self.dashboard.unified_validator, 'run_validation') as mock_validate:
+        with patch.object(
+            self.dashboard.unified_validator, "run_validation"
+        ) as mock_validate:
             # Mock excellent validation results
             mock_validate.return_value = {
                 "summary": {
@@ -1108,7 +1122,7 @@ def test_another_function():
                     "warnings": 0,
                     "phases_completed": 7,
                     "total_duration": 95.0,
-                    "can_merge": True
+                    "can_merge": True,
                 },
                 "phase_results": {
                     "quality_gates": {
@@ -1116,7 +1130,7 @@ def test_another_function():
                             "metrics": {
                                 "coverage_percentage": 95.0,
                                 "avg_cyclomatic_complexity": 3.2,
-                                "duplication_percentage": 1.5
+                                "duplication_percentage": 1.5,
                             },
                             "technical_debt": {
                                 "total_hours": 2.0,
@@ -1124,14 +1138,14 @@ def test_another_function():
                                 "bugs": 0.0,
                                 "vulnerabilities": 0.0,
                                 "code_smells": 2.0,
-                                "security_hotspots": 0.0
-                            }
+                                "security_hotspots": 0.0,
+                            },
                         }
                     },
                     "security_scan": {
                         "details": {
                             "security_vulnerabilities": {"total_vulnerabilities": 0},
-                            "owasp_compliance": {"compliance_percentage": 100.0}
+                            "owasp_compliance": {"compliance_percentage": 100.0},
                         }
                     },
                     "nfr_validation": {
@@ -1139,10 +1153,10 @@ def test_another_function():
                             "maintainability_metrics": {
                                 "average_complexity": 3.2,
                                 "duplication_percentage": 1.5,
-                                "documentation_coverage": 95.0
+                                "documentation_coverage": 95.0,
                             }
                         }
-                    }
+                    },
                 },
                 "compliance_assessment": {
                     "iso_25010_compliant": True,
@@ -1151,40 +1165,44 @@ def test_another_function():
                     "principles": {
                         "Quality Engineering": {"compliance": True},
                         "Security": {"compliance": True},
-                        "Maintainability": {"compliance": True}
-                    }
-                }
+                        "Maintainability": {"compliance": True},
+                    },
+                },
             }
-            
+
             # Generate dashboard
             dashboard_data = self.dashboard.generate_management_dashboard()
-            
+
             # Should reflect excellent quality
             exec_summary = dashboard_data["executive_summary"]
             assert exec_summary["overall_health_score"] >= 90
             assert exec_summary["status"] == "Excellent"
             assert exec_summary["can_deploy"] is True
-            
+
             # Should have minimal technical debt
             tech_debt = dashboard_data["technical_debt"]
             assert tech_debt["total_hours"] == 2.0
-            
+
             # Should be compliant
             compliance = dashboard_data["compliance_overview"]
             assert compliance["iso_25010_compliant"] is True
             assert compliance["ready_for_production"] is True
-            
+
             # Should have positive recommendations
             recommendations = dashboard_data["recommendations"]
             assert any("EXCELLENT" in rec for rec in recommendations)
-            
+
             # Should have minimal alerts
             alerts = dashboard_data["alerts"]
-            assert len(alerts) == 0 or all(alert["level"] != "critical" for alert in alerts)
+            assert len(alerts) == 0 or all(
+                alert["level"] != "critical" for alert in alerts
+            )
 
     def test_html_dashboard_generation(self):
         """Test HTML dashboard generation with real data."""
-        with patch.object(self.dashboard.unified_validator, 'run_validation') as mock_validate:
+        with patch.object(
+            self.dashboard.unified_validator, "run_validation"
+        ) as mock_validate:
             mock_validate.return_value = {
                 "summary": {
                     "overall_success": True,
@@ -1193,33 +1211,37 @@ def test_another_function():
                     "warnings": 3,
                     "phases_completed": 7,
                     "total_duration": 120.0,
-                    "can_merge": True
+                    "can_merge": True,
                 },
                 "phase_results": {
                     "quality_gates": {
                         "details": {
                             "metrics": {"coverage_percentage": 85.0},
-                            "technical_debt": {"total_hours": 8.0, "total_days": 1.0}
+                            "technical_debt": {"total_hours": 8.0, "total_days": 1.0},
                         }
                     }
                 },
                 "compliance_assessment": {
                     "iso_25010_compliant": True,
                     "ready_for_production": True,
-                    "overall_compliance_percentage": 85.0
-                }
+                    "overall_compliance_percentage": 85.0,
+                },
             }
-            
+
             # Generate dashboard
             dashboard_data = self.dashboard.generate_management_dashboard()
             
+            # Verify dashboard data structure
+            assert isinstance(dashboard_data, dict), "Dashboard data should be a dictionary"
+            assert len(dashboard_data) > 0, "Dashboard data should not be empty"
+
             # Check that HTML file was created
             html_file = self.dashboard.dashboard_path / "index.html"
             assert html_file.exists()
-            
+
             # Read and verify HTML content
-            html_content = html_file.read_text(encoding='utf-8')
-            
+            html_content = html_file.read_text(encoding="utf-8")
+
             # Should contain all major sections
             assert "Code Quality Management Dashboard" in html_content
             assert "Executive Summary" in html_content
@@ -1227,20 +1249,22 @@ def test_another_function():
             assert "Management Recommendations" in html_content
             assert "Quality Trends" in html_content
             assert "Compliance Overview" in html_content
-            
+
             # Should contain actual data
             assert "85%" in html_content  # Health score
             assert "8.0 hours" in html_content  # Technical debt
             assert "85.0%" in html_content  # Compliance
-            
+
             # Should have proper styling
             assert "font-family: Arial" in html_content
             assert "background-color: #f5f5f5" in html_content
-            assert "class=\"dashboard\"" in html_content
+            assert 'class="dashboard"' in html_content
 
     def test_dashboard_persistence(self):
         """Test dashboard data persistence in database."""
-        with patch.object(self.dashboard.unified_validator, 'run_validation') as mock_validate:
+        with patch.object(
+            self.dashboard.unified_validator, "run_validation"
+        ) as mock_validate:
             mock_validate.return_value = {
                 "summary": {
                     "overall_success": True,
@@ -1249,33 +1273,33 @@ def test_another_function():
                     "warnings": 2,
                     "phases_completed": 7,
                     "total_duration": 100.0,
-                    "can_merge": True
+                    "can_merge": True,
                 },
                 "phase_results": {
                     "quality_gates": {
-                        "details": {
-                            "technical_debt": {"total_hours": 5.0}
-                        }
+                        "details": {"technical_debt": {"total_hours": 5.0}}
                     }
-                }
+                },
             }
-            
+
             # Generate dashboard multiple times
             self.dashboard.generate_management_dashboard()
             self.dashboard.generate_management_dashboard()
-            
+
             # Check that data was stored in database
             with sqlite3.connect(self.dashboard.db_path) as conn:
                 cursor = conn.execute("SELECT COUNT(*) FROM validation_runs")
                 validation_runs = cursor.fetchone()[0]
                 assert validation_runs == 2
-                
+
                 cursor = conn.execute("SELECT COUNT(*) FROM metrics_history")
                 metrics_count = cursor.fetchone()[0]
                 assert metrics_count > 0
-                
+
                 # Check specific data
-                cursor = conn.execute("SELECT total_issues, critical_issues FROM validation_runs ORDER BY timestamp DESC LIMIT 1")
+                cursor = conn.execute(
+                    "SELECT total_issues, critical_issues FROM validation_runs ORDER BY timestamp DESC LIMIT 1"
+                )
                 row = cursor.fetchone()
                 assert row[0] == 3  # total_issues
                 assert row[1] == 1  # critical_issues

@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    asyncio,
+    datetime,
+    logging
+)
 """
 HITL Dashboard Widgets - Phase 7 Integration
 
@@ -6,12 +16,12 @@ Dashboard widgets for Human-in-the-Loop checkpoint management,
 review interfaces, and approval workflows.
 """
 
-import logging
-from datetime import datetime
-from typing import Any, Dict, List, Optional
+# import logging  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
-from src.core.workflows.hitl_engine import HITLPolicyEngine
 from src.core.workflows.hitl.models import HITLCheckpoint
+from src.core.workflows.hitl_engine import HITLPolicyEngine
 
 
 class HITLDashboardWidget:
@@ -370,12 +380,13 @@ class HITLApprovalActionsWidget(HITLDashboardWidget):
                 )
                 # For async compatibility, try both sync and async calls
                 try:
-                    import asyncio
+#                     import asyncio  # Consolidated to common_imports
 
                     if asyncio.iscoroutinefunction(self.hitl_engine.process_decision):
                         # Try to get running loop, but don't create new one in tests
                         try:
                             loop = asyncio.get_running_loop()
+                            print(f"🔄 Found running event loop: {type(loop).__name__}")
                             # Don't use run_until_complete as it can cause issues
                             # Instead, convert to sync call
                             result = self.hitl_engine.approve_checkpoint(
@@ -1080,6 +1091,8 @@ class HITLWorkflowStatusWidget(HITLDashboardWidget):
         try:
             phase = workflow.get("current_phase", "")
             task_type = workflow.get("task_type", "")
+            
+            print(f"🔮 Predicting next checkpoint for phase={phase}, type={task_type}")
 
             if phase == "agent_prompt":
                 return "output_evaluation"

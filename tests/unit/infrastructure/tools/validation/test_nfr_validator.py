@@ -2,14 +2,15 @@
 Test suite for NFR (Non-Functional Requirements) Validator using TDD approach.
 """
 
-import pytest
 import tempfile
 from pathlib import Path
 
+import pytest
+
 from src.infrastructure.tools.validation.core.nfr_validator import (
-    NFRValidator,
     NFRCategory,
-    PerformanceProfile
+    NFRValidator,
+    PerformanceProfile,
 )
 
 
@@ -20,17 +21,18 @@ class TestNFRValidator:
         """Set up test fixtures."""
         self.temp_dir = tempfile.mkdtemp()
         self.root_path = Path(self.temp_dir)
-        
+
         # Create test Python files
         self.create_test_project()
-        
+
         self.validator = NFRValidator(self.root_path)
 
     def create_test_project(self):
         """Create a test project structure."""
         # Main source file
         main_file = self.root_path / "main.py"
-        main_file.write_text("""
+        main_file.write_text(
+            """
 '''Main application module.'''
 
 import time
@@ -129,11 +131,13 @@ def maintainable_function(items: List[str]) -> Dict[str, int]:
             result[item] = 1
     
     return result
-""")
-        
+"""
+        )
+
         # Test file
         test_file = self.root_path / "test_main.py"
-        test_file.write_text("""
+        test_file.write_text(
+            """
 '''Test module for main application.'''
 
 import pytest
@@ -207,7 +211,8 @@ def test_maintainable_function():
     
     result = maintainable_function([])
     assert result == {}
-""")
+"""
+        )
 
     def test_initialization(self):
         """Test validator initialization."""
@@ -221,9 +226,9 @@ def test_maintainable_function():
     def test_load_nfr_categories(self):
         """Test loading NFR categories."""
         categories = self.validator._load_nfr_categories()
-        
+
         assert len(categories) > 0
-        
+
         # Check for ISO/IEC 25010 categories (using enum names)
         category_names = [cat.name for cat in categories]
         assert "PERFORMANCE_EFFICIENCY" in category_names
@@ -235,9 +240,9 @@ def test_maintainable_function():
     def test_analyze_performance(self):
         """Test performance analysis."""
         profiles = self.validator._analyze_performance()
-        
+
         assert len(profiles) >= 0
-        
+
         # Should analyze all Python files
         for profile in profiles:
             assert isinstance(profile, PerformanceProfile)
@@ -248,45 +253,48 @@ def test_maintainable_function():
     def test_analyze_security_metrics(self):
         """Test security metrics analysis."""
         metrics = self.validator._analyze_security_metrics()
-        
+
         assert isinstance(metrics, list)
         assert len(metrics) >= 0  # May be empty if no files analyzed yet
-        
+
         # If we have metrics, check their structure
         if metrics:
             metric_names = [m.name for m in metrics]
+            # Verify all metrics have names - check structure consistency
+            assert len(metric_names) == len(metrics), f"All metrics should have names: {metric_names}"
+            
             # Check that metrics have valid structure
             for metric in metrics:
-                assert hasattr(metric, 'name')
-                assert hasattr(metric, 'value')
-                assert hasattr(metric, 'threshold')
-                assert hasattr(metric, 'status')
+                assert hasattr(metric, "name")
+                assert hasattr(metric, "value")
+                assert hasattr(metric, "threshold")
+                assert hasattr(metric, "status")
                 assert 0 <= metric.value <= 100
 
     def test_analyze_maintainability(self):
         """Test maintainability analysis."""
         metrics = self.validator._analyze_maintainability()
-        
+
         assert isinstance(metrics, list)
         assert len(metrics) >= 0  # May be empty if no files analyzed yet
-        
+
         # If we have metrics, check their structure
         if metrics:
             # Check that metrics have valid structure
             for metric in metrics:
-                assert hasattr(metric, 'name')
-                assert hasattr(metric, 'value')
-                assert hasattr(metric, 'threshold')
-                assert hasattr(metric, 'status')
+                assert hasattr(metric, "name")
+                assert hasattr(metric, "value")
+                assert hasattr(metric, "threshold")
+                assert hasattr(metric, "status")
                 assert metric.value >= 0
 
     def test_analyze_reliability(self):
         """Test reliability analysis."""
         metrics = self.validator._analyze_reliability()
-        
+
         assert isinstance(metrics, dict)
         assert len(metrics) >= 0  # May be empty if no files analyzed yet
-        
+
         # If we have metrics, check their structure
         if metrics:
             for key, value in metrics.items():
@@ -297,10 +305,10 @@ def test_maintainable_function():
     def test_analyze_usability(self):
         """Test usability analysis."""
         metrics = self.validator._analyze_usability()
-        
+
         assert isinstance(metrics, dict)
         assert len(metrics) >= 0  # May be empty if no files analyzed yet
-        
+
         # If we have metrics, check their structure
         if metrics:
             for key, value in metrics.items():
@@ -318,16 +326,16 @@ def test_maintainable_function():
             "Usability": 70.0,
             "Functional Suitability": 95.0,
             "Compatibility": 85.0,
-            "Portability": 80.0
+            "Portability": 80.0,
         }
-        
+
         compliance = self.validator._calculate_iso_25010_compliance(category_scores)
-        
+
         assert "overall" in compliance
         assert "by_category" in compliance
         assert "compliant_categories" in compliance
         assert "non_compliant_categories" in compliance
-        
+
         # Should calculate correct overall score
         expected_overall = sum(category_scores.values()) / len(category_scores)
         assert abs(compliance["overall"] - expected_overall) < 0.1
@@ -335,11 +343,16 @@ def test_maintainable_function():
     def test_validate_nfr_requirements(self):
         """Test NFR requirements validation."""
         validation_results = self.validator._validate_nfr_requirements()
-        
+
         assert isinstance(validation_results, dict)
-        
+
         # Should have category results
-        expected_categories = ["security", "performance", "maintainability", "reliability"]
+        expected_categories = [
+            "security",
+            "performance",
+            "maintainability",
+            "reliability",
+        ]
         for category in expected_categories:
             if category in validation_results:
                 assert isinstance(validation_results[category], dict)
@@ -348,9 +361,9 @@ def test_maintainable_function():
     def test_run_nfr_validation(self):
         """Test complete NFR validation."""
         result = self.validator.run_nfr_validation()
-        
+
         assert isinstance(result, bool)
-        
+
         # Should have analyzed all categories
         assert len(self.validator.performance_profiles) >= 0
         assert len(self.validator.security_metrics) > 0
@@ -361,16 +374,16 @@ def test_maintainable_function():
         """Test NFR report generation."""
         # Run validation first
         self.validator.run_nfr_validation()
-        
+
         report = self.validator.generate_nfr_report()
-        
+
         assert isinstance(report, dict)
         # Check for keys that are actually present in the report
         assert "iso_25010_compliance" in report
         assert "performance_profiles" in report
         assert "maintainability_metrics" in report
         assert "nfr_violations" in report
-        
+
         # Should have compliance data
         compliance = report["iso_25010_compliance"]
         assert "overall" in compliance
@@ -380,7 +393,8 @@ def test_maintainable_function():
     def test_performance_profile_creation(self):
         """Test performance profile creation."""
         test_file = self.root_path / "performance_test.py"
-        test_file.write_text("""
+        test_file.write_text(
+            """
 def simple_function():
     return 1
 
@@ -390,16 +404,17 @@ def complex_function():
         for j in range(100):
             result += i * j
     return result
-""")
-        
+"""
+        )
+
         # Re-collect files
         self.validator._collect_files()
-        
+
         profiles = self.validator._analyze_performance()
-        
+
         # Should have profiles for files
         assert len(profiles) > 0
-        
+
         # Should detect complexity differences
         complexities = [p.complexity_score for p in profiles]
         assert any(c > 5 for c in complexities)  # Should detect complex function
@@ -408,7 +423,8 @@ def complex_function():
         """Test security metrics calculation."""
         # Add secure code
         secure_file = self.root_path / "secure_code.py"
-        secure_file.write_text("""
+        secure_file.write_text(
+            """
 import hashlib
 import secrets
 
@@ -431,27 +447,31 @@ def validate_input(data):
         raise ValueError("Data too long")
     
     return data.strip()
-""")
-        
+"""
+        )
+
         # Re-collect files
         self.validator._collect_files()
-        
+
         # Analyze security metrics to populate the internal metrics
         self.validator._analyze_security_metrics()
-        
+
         # Access the populated security metrics dictionary
         metrics = self.validator.security_metrics
-        
+
         # Should detect security features
         assert metrics["authentication_coverage"] >= 0
-        assert metrics["input_validation_coverage"] >= 0  # May be 0 if patterns don't match perfectly
+        assert (
+            metrics["input_validation_coverage"] >= 0
+        )  # May be 0 if patterns don't match perfectly
         assert metrics["encryption_usage"] >= 0
 
     def test_maintainability_metrics_calculation(self):
         """Test maintainability metrics calculation."""
         # Add well-documented code
         maintainable_file = self.root_path / "maintainable_code.py"
-        maintainable_file.write_text("""
+        maintainable_file.write_text(
+            """
 '''Well-documented module.'''
 
 from typing import List, Dict
@@ -516,17 +536,18 @@ def process_data(data: Dict[str, str]) -> Dict[str, int]:
         result[key] = len(value)
     
     return result
-""")
-        
+"""
+        )
+
         # Re-collect files
         self.validator._collect_files()
-        
+
         # Analyze maintainability metrics to populate the internal metrics
         self.validator._analyze_maintainability()
-        
+
         # Access the populated maintainability metrics dictionary
         metrics = self.validator.maintainability_metrics
-        
+
         # Should detect good documentation
         assert metrics["documentation_coverage"] > 50
         assert metrics["average_complexity"] < 10
@@ -535,7 +556,8 @@ def process_data(data: Dict[str, str]) -> Dict[str, int]:
         """Test NFR violations detection."""
         # Add code with NFR violations
         violation_file = self.root_path / "nfr_violations.py"
-        violation_file.write_text("""
+        violation_file.write_text(
+            """
 # Code with NFR violations
 
 def undocumented_function():
@@ -575,18 +597,21 @@ def insecure_function(user_input):
 def unreliable_function():
     # No error handling
     return 1 / 0
-""")
-        
+"""
+        )
+
         # Re-collect files
         self.validator._collect_files()
-        
+
         # Run validation
         self.validator.run_nfr_validation()
-        
+
         # Should detect violations
-        nfr_issues = [issue for issue in self.validator.issues if issue.category == "nfr"]
+        nfr_issues = [
+            issue for issue in self.validator.issues if issue.category == "nfr"
+        ]
         assert len(nfr_issues) > 0
-        
+
         # Should have different violation types (check the issue messages for different NFR types)
         issue_messages = [issue.message for issue in nfr_issues]
         assert len(issue_messages) > 0
@@ -599,19 +624,20 @@ class TestNFRValidatorIntegration:
         """Set up test fixtures."""
         self.temp_dir = tempfile.mkdtemp()
         self.root_path = Path(self.temp_dir)
-        
+
         # Create comprehensive test project
         self.create_comprehensive_test_project()
-        
+
         self.validator = NFRValidator(self.root_path)
 
     def create_comprehensive_test_project(self):
         """Create a comprehensive test project."""
         # Create multiple modules with different NFR characteristics
-        
+
         # High-performance module
         perf_module = self.root_path / "performance_module.py"
-        perf_module.write_text("""
+        perf_module.write_text(
+            """
 '''High-performance module with optimized algorithms.'''
 
 from typing import List, Dict, Optional
@@ -684,11 +710,13 @@ def batch_process(items: List[str], batch_size: int = 100) -> List[str]:
         result.extend(batch_result)
     
     return result
-""")
-        
+"""
+        )
+
         # Security-focused module
         security_module = self.root_path / "security_module.py"
-        security_module.write_text("""
+        security_module.write_text(
+            """
 '''Security-focused module with proper validation and encryption.'''
 
 import hashlib
@@ -832,11 +860,13 @@ def validate_input(data: Any, max_length: int = 1000) -> str:
             raise ValueError(f"Potentially dangerous pattern detected: {pattern}")
     
     return sanitized
-""")
-        
+"""
+        )
+
         # Test files
         test_perf = self.root_path / "test_performance.py"
-        test_perf.write_text("""
+        test_perf.write_text(
+            """
 '''Tests for performance module.'''
 
 import pytest
@@ -888,10 +918,12 @@ def test_batch_process():
     # Test invalid batch size
     with pytest.raises(ValueError):
         batch_process(items, batch_size=0)
-""")
-        
+"""
+        )
+
         test_security = self.root_path / "test_security.py"
-        test_security.write_text("""
+        test_security.write_text(
+            """
 '''Tests for security module.'''
 
 import pytest
@@ -978,24 +1010,25 @@ def test_validate_input():
     
     with pytest.raises(ValueError):
         validate_input("eval('malicious code')")
-""")
+"""
+        )
 
     def test_comprehensive_nfr_validation(self):
         """Test comprehensive NFR validation."""
         # Run full validation
         result = self.validator.run_nfr_validation()
-        
+
         # Should complete successfully
         assert isinstance(result, bool)
-        
+
         # Should have analyzed all aspects
         assert len(self.validator.performance_profiles) > 0
         assert len(self.validator.security_metrics) > 0
         assert len(self.validator.maintainability_metrics) > 0
-        
+
         # Generate comprehensive report
         report = self.validator.generate_nfr_report()
-        
+
         # Should have all required sections
         assert "iso_25010_compliance" in report
         assert "performance_profiles" in report
@@ -1003,7 +1036,7 @@ def test_validate_input():
         assert "maintainability_metrics" in report
         assert "nfr_violations" in report
         assert "recommendations" in report
-        
+
         # Should have valid compliance scores
         compliance = report["iso_25010_compliance"]
         assert "overall" in compliance
@@ -1015,19 +1048,19 @@ def test_validate_input():
         """Test performance analysis with real code patterns."""
         # Ensure files are collected first
         self.validator._collect_files()
-        
+
         # Trigger performance analysis
         self.validator._profile_performance()
         profiles = self.validator._analyze_performance()
-        
+
         # Should have profiles for each file
         assert len(profiles) > 0
-        
+
         # Should detect different complexity levels
         complexities = [p.complexity_score for p in profiles]
         assert min(complexities) >= 0
         assert max(complexities) > 0
-        
+
         # Should have reasonable execution time estimates
         times = [p.execution_time for p in profiles]
         assert all(t >= 0 for t in times)
@@ -1036,15 +1069,15 @@ def test_validate_input():
         """Test security analysis with real security-focused code."""
         # Analyze security metrics to populate the internal metrics
         self.validator._analyze_security_metrics()
-        
+
         # Access the populated security metrics dictionary
         metrics = self.validator.security_metrics
-        
+
         # Should detect security features in the security module
         assert metrics["authentication_coverage"] >= 0
         assert metrics["input_validation_coverage"] >= 0
         assert metrics["encryption_usage"] >= 0
-        
+
         # Should have reasonable scores
         assert all(0 <= v <= 100 for v in metrics.values())
 
@@ -1052,15 +1085,15 @@ def test_validate_input():
         """Test maintainability analysis with real well-documented code."""
         # Analyze maintainability metrics to populate the internal metrics
         self.validator._analyze_maintainability()
-        
+
         # Access the populated maintainability metrics dictionary
         metrics = self.validator.maintainability_metrics
-        
+
         # Should detect good documentation in the modules
         assert metrics["documentation_coverage"] > 50
         assert metrics["average_complexity"] < 20
         assert metrics["duplication_percentage"] < 50
-        
+
         # Should have valid metrics
         assert all(isinstance(v, (int, float)) for v in metrics.values())
 
@@ -1068,16 +1101,16 @@ def test_validate_input():
         """Test ISO/IEC 25010 compliance calculation with real code."""
         # Run full analysis
         self.validator.run_nfr_validation()
-        
+
         # Generate report
         report = self.validator.generate_nfr_report()
         compliance = report["iso_25010_compliance"]
-        
+
         # Should have valid compliance data
         assert "overall" in compliance
         assert "by_category" in compliance
         assert 0 <= compliance["overall"] <= 100
-        
+
         # Should have all major categories
         categories = compliance["by_category"]
         expected_categories = [
@@ -1085,9 +1118,9 @@ def test_validate_input():
             "security",
             "maintainability",
             "reliability",
-            "usability"
+            "usability",
         ]
-        
+
         for category in expected_categories:
             assert category in categories
             assert 0 <= categories[category] <= 100
@@ -1096,10 +1129,10 @@ def test_validate_input():
         """Test NFR violations detection with real code."""
         # Run validation
         self.validator.run_nfr_validation()
-        
+
         # Should detect some violations (code is not perfect)
         violations = self.validator.nfr_violations
-        
+
         # Should have violation data
         for violation in violations:
             assert violation.category in [cat.value for cat in NFRCategory]

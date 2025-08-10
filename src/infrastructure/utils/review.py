@@ -1,20 +1,19 @@
+
+from src.infrastructure.utils.common_imports import datetime, json, os
 """
 Review Utilities
 Contains functions for managing human review workflow.
 """
 
-try:
-    import json
-    import os
-    from datetime import datetime
-except ImportError:
-    pass
-REVIEW_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "reviews"
-)
-APPROVED_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".approved"
-)
+# import json  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+
+# Constants
+REVIEW_DIR = os.path.join(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))), "reviews")
+APPROVED_DIR = os.path.join(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))), ".approved")
 
 
 def save_to_review(filename: str, content: str) -> str:
@@ -39,7 +38,7 @@ def save_to_review(filename: str, content: str) -> str:
         "timestamp": datetime.now().isoformat(),
         "filename": filename,
         "status": "PENDING",
-        "reviewer": None,
+        "reviewer": None
     }
 
     metadata_path = f"{filepath}.meta.json"
@@ -66,7 +65,10 @@ def is_review_approved(filename: str) -> bool:
     return os.path.exists(approval_flag)
 
 
-def approve_review(filename: str, reviewer: str = "human", comments: str = "") -> bool:
+def approve_review(
+        filename: str,
+        reviewer: str = "human",
+        comments: str = "") -> bool:
     """
     Marks a review as approved.
 
@@ -84,7 +86,8 @@ def approve_review(filename: str, reviewer: str = "human", comments: str = "") -
         approval_flag = os.path.join(APPROVED_DIR, f"{filename}.approved")
 
         with open(approval_flag, "w") as f:
-            f.write(f"Approved by {reviewer} at {datetime.now().isoformat()}\n")
+            f.write(
+                f"Approved by {reviewer} at {datetime.now().isoformat()}\n")
             if comments:
                 f.write(f"Comments: {comments}\n")
 
@@ -111,7 +114,10 @@ def approve_review(filename: str, reviewer: str = "human", comments: str = "") -
         return False
 
 
-def reject_review(filename: str, reviewer: str = "human", reason: str = "") -> bool:
+def reject_review(
+        filename: str,
+        reviewer: str = "human",
+        reason: str = "") -> bool:
     """
     Marks a review as rejected.
 

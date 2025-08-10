@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Path,
+    datetime,
+    json,
+    logging,
+    sys
+)
 """
 LangGraph Integration for QA Agent Execution
 
@@ -7,19 +17,19 @@ When a task reaches QA_PENDING state, it automatically triggers the QA Agent
 for automated validation.
 """
 
-import json
-import logging
-import sys
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict  # Consolidated to common_imports
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -31,9 +41,12 @@ except ImportError:
     class QAExecutionEngine:
         def __init__(self, outputs_dir: str = "outputs"):
             self.outputs_dir = outputs_dir
-        
+
         def execute_qa_validation(self, *args, **kwargs):
-            return {"status": "qa_unavailable", "message": "QAExecutionEngine not available"}
+            return {
+                "status": "qa_unavailable",
+                "message": "QAExecutionEngine not available",
+            }
 
 
 class LangGraphQAIntegration:
@@ -256,9 +269,9 @@ def create_qa_conditional_edge() -> callable:
 if __name__ == "__main__":
     # Example usage and testing
     import argparse
-    import json
-    import logging
-    import sys
+#     import json  # Consolidated to common_imports
+#     import logging  # Consolidated to common_imports
+#     import sys  # Consolidated to common_imports
 
     parser = argparse.ArgumentParser(description="Test LangGraph QA integration")
     parser.add_argument("task_id", help="Task ID to test (e.g., BE-07)")

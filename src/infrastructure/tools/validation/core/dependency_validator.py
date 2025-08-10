@@ -4,10 +4,8 @@ Validates project dependencies and detects unused packages with safe categorizat
 """
 
 import ast
-from datetime import datetime
-from pathlib import Path
+from src.infrastructure.utils.common_imports import Path, datetime, time
 from typing import Dict, List, Optional, Set
-
 from .base_validator import BaseValidator
 
 
@@ -48,7 +46,7 @@ class DependencyValidator(BaseValidator):
 
             # Report findings with appropriate safety levels
             self._report_dependency_findings(requirements_file)
-            
+
             # Return success if no critical dependency issues found
             return True
 
@@ -86,12 +84,12 @@ class DependencyValidator(BaseValidator):
     def _find_used_imports(self) -> Set[str]:
         """Find all imports used in Python files with parallel processing."""
         import concurrent.futures
-        
+
         if not self.python_files:
             self._collect_files()
 
         print(f"   📦 Scanning {len(self.python_files)} files for dependencies...")
-        
+
         def extract_imports_from_file(file_path: Path) -> Set[str]:
             """Extract imports from a single file."""
             imports = set()
@@ -119,24 +117,28 @@ class DependencyValidator(BaseValidator):
         used_imports = set()
         processed_count = 0
         chunk_size = max(1, len(self.python_files) // 10)  # 10 progress updates
-        
+
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
             future_to_file = {
                 executor.submit(extract_imports_from_file, file_path): file_path
                 for file_path in self.python_files
             }
-            
+
             for future in concurrent.futures.as_completed(future_to_file):
                 try:
                     file_imports = future.result()
                     used_imports.update(file_imports)
                     processed_count += 1
-                    
+
                     # Progress reporting
-                    if processed_count % chunk_size == 0 or processed_count == len(self.python_files):
+                    if processed_count % chunk_size == 0 or processed_count == len(
+                        self.python_files
+                    ):
                         progress = (processed_count / len(self.python_files)) * 100
-                        print(f"   Progress: {processed_count}/{len(self.python_files)} ({progress:.1f}%)")
-                        
+                        print(
+                            f"   Progress: {processed_count}/{len(self.python_files)} ({progress:.1f}%)"
+                        )
+
                 except Exception:
                     processed_count += 1
                     continue
@@ -301,96 +303,108 @@ class DependencyValidator(BaseValidator):
 
     def _scan_comprehensive_usage(self, dependencies: Set[str]) -> Dict[str, Dict]:
         """Scan multiple locations for dependency usage with optimized algorithm."""
-        import time
-        
+
         start_time = time.time()
-        print(f"   📦 Starting optimized dependency scanning for {len(dependencies)} dependencies...")
-        
+        print(
+            f"   📦 Starting optimized dependency scanning for {len(dependencies)} dependencies..."
+        )
+
         # Initialize result structure
-        usage_context = {dep: {
-            "python_files": [],
-            "config_files": [],
-            "scripts": [],
-            "docker_files": [],
-            "ci_files": [],
-            "documentation": [],
-            "possible_indirect": [],
-        } for dep in dependencies}
-        
+        usage_context = {
+            dep: {
+                "python_files": [],
+                "config_files": [],
+                "scripts": [],
+                "docker_files": [],
+                "ci_files": [],
+                "documentation": [],
+                "possible_indirect": [],
+            }
+            for dep in dependencies
+        }
+
         # Build reverse index: file -> dependencies found in it
         # This reduces complexity from O(deps × files) to O(files + deps)
         file_dependency_map = self._build_file_dependency_index(dependencies)
-        
+
         # Populate usage context from reverse index
         for file_path, found_deps in file_dependency_map.items():
             file_category = self._categorize_file_type(file_path)
-            
+
             for dep in found_deps:
                 if dep in usage_context:
                     usage_context[dep][file_category].append(str(file_path))
-        
+
         # Add indirect dependency information
         for dep in dependencies:
             usage_context[dep]["possible_indirect"] = self._check_indirect_deps(dep)
-        
+
         duration = time.time() - start_time
         total_files_scanned = len(file_dependency_map)
-        print(f"   ✓ Dependency scanning completed in {duration:.2f}s ({total_files_scanned} files)")
-        
+        print(
+            f"   ✓ Dependency scanning completed in {duration:.2f}s ({total_files_scanned} files)"
+        )
+
         return usage_context
 
     def _build_file_dependency_index(self, dependencies: Set[str]) -> Dict:
         """Build optimized index: file -> list of dependencies found in it."""
         import concurrent.futures
         from collections import defaultdict
-        
+
         file_dependency_map = defaultdict(list)
         all_files = []
-        
+
         # Collect all files to scan
         if not self.python_files:
             self._collect_files()
-        
+
         # Add Python files
         all_files.extend(self.python_files)
-        
+
         # Add configuration files
         config_patterns = ["*.ini", "*.yaml", "*.yml", "*.toml", "*.json", "*.cfg"]
         for pattern in config_patterns:
             all_files.extend(self.root_path.glob(f"**/{pattern}"))
-        
+
         # Add script files
         script_patterns = ["*.sh", "*.bash", "Makefile", "makefile"]
         for pattern in script_patterns:
             all_files.extend(self.root_path.glob(f"**/{pattern}"))
-        
+
         # Add Docker and CI files
         docker_patterns = ["Dockerfile*", "docker-compose*.yml", "docker-compose*.yaml"]
-        ci_patterns = [".github/workflows/*.yml", ".github/workflows/*.yaml", ".gitlab-ci.yml"]
-        
+        ci_patterns = [
+            ".github/workflows/*.yml",
+            ".github/workflows/*.yaml",
+            ".gitlab-ci.yml",
+        ]
+
         for pattern in docker_patterns + ci_patterns:
             all_files.extend(self.root_path.glob(pattern))
-        
+
         # Remove duplicates and filter out non-existent files
         unique_files = list(set(f for f in all_files if f.exists() and f.is_file()))
-        
-        print(f"   📁 Scanning {len(unique_files)} files for {len(dependencies)} dependencies...")
-        
+
+        print(
+            f"   📁 Scanning {len(unique_files)} files for {len(dependencies)} dependencies..."
+        )
+
         def scan_file_for_dependencies(file_path):
             """Scan a single file for all dependencies (parallel worker function)."""
             found_deps = []
             try:
                 # Skip binary files and very large files for performance
-                if file_path.suffix in ['.pyc', '.pyo', '.so', '.dll', '.exe']:
+                if file_path.suffix in [".pyc", ".pyo", ".so", ".dll", ".exe"]:
                     return file_path, found_deps
-                
+
                 # Check file size (skip files > 10MB)
                 if file_path.stat().st_size > 10 * 1024 * 1024:
                     return file_path, found_deps
-                
+
                 with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()
-                
+
                 # Search for each dependency in the file content
                 for dep in dependencies:
                     # Check for various patterns of dependency usage
@@ -403,79 +417,98 @@ class DependencyValidator(BaseValidator):
                         f"{dep}>=",
                         f" {dep} ",  # Standalone word
                     ]
-                    
+
                     if any(pattern in content for pattern in patterns):
                         found_deps.append(dep)
-                        
+
             except Exception:
                 # Skip files that can't be read
                 pass
-            
+
             return file_path, found_deps
-        
+
         # Process files in parallel with progress tracking
         processed_count = 0
         chunk_size = max(1, len(unique_files) // 20)  # 20 progress updates
-        
+
         with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
             future_to_file = {
                 executor.submit(scan_file_for_dependencies, file_path): file_path
                 for file_path in unique_files
             }
-            
+
             for future in concurrent.futures.as_completed(future_to_file):
                 try:
                     file_path, found_deps = future.result()
                     if found_deps:
                         file_dependency_map[file_path] = found_deps
-                    
+
                     processed_count += 1
-                    
+
                     # Progress reporting
-                    if processed_count % chunk_size == 0 or processed_count == len(unique_files):
+                    if processed_count % chunk_size == 0 or processed_count == len(
+                        unique_files
+                    ):
                         progress = (processed_count / len(unique_files)) * 100
-                        print(f"   Progress: {processed_count}/{len(unique_files)} ({progress:.1f}%)")
-                        
+                        print(
+                            f"   Progress: {processed_count}/{len(unique_files)} ({progress:.1f}%)"
+                        )
+
                 except Exception:
                     processed_count += 1
                     continue
-        
+
         dependencies_found = sum(len(deps) for deps in file_dependency_map.values())
-        print(f"   ✓ Found {dependencies_found} dependency references across {len(file_dependency_map)} files")
-        
+        print(
+            f"   ✓ Found {dependencies_found} dependency references across {len(file_dependency_map)} files"
+        )
+
         return dict(file_dependency_map)
 
     def _categorize_file_type(self, file_path) -> str:
         """Categorize a file into the appropriate dependency context category."""
         file_path_str = str(file_path).lower()
-        
+
         # Python files
-        if file_path_str.endswith('.py'):
+        if file_path_str.endswith(".py"):
             return "python_files"
-        
+
         # Configuration files
-        config_extensions = ['.ini', '.yaml', '.yml', '.toml', '.json', '.cfg']
+        config_extensions = [".ini", ".yaml", ".yml", ".toml", ".json", ".cfg"]
         if any(file_path_str.endswith(ext) for ext in config_extensions):
             return "config_files"
-        
+
         # Docker files
-        if any(pattern in file_path_str for pattern in ['dockerfile', 'docker-compose']):
+        if any(
+            pattern in file_path_str for pattern in ["dockerfile", "docker-compose"]
+        ):
             return "docker_files"
-        
+
         # CI/CD files
-        if any(pattern in file_path_str for pattern in ['.github/workflows', '.gitlab-ci', '.travis', 'azure-pipelines']):
+        if any(
+            pattern in file_path_str
+            for pattern in [
+                ".github/workflows",
+                ".gitlab-ci",
+                ".travis",
+                "azure-pipelines",
+            ]
+        ):
             return "ci_files"
-        
+
         # Script files
-        script_extensions = ['.sh', '.bash', '.bat', '.cmd']
-        if any(file_path_str.endswith(ext) for ext in script_extensions) or 'makefile' in file_path_str:
+        script_extensions = [".sh", ".bash", ".bat", ".cmd"]
+        if (
+            any(file_path_str.endswith(ext) for ext in script_extensions)
+            or "makefile" in file_path_str
+        ):
             return "scripts"
-        
+
         # Documentation files
-        doc_extensions = ['.md', '.rst', '.txt']
+        doc_extensions = [".md", ".rst", ".txt"]
         if any(file_path_str.endswith(ext) for ext in doc_extensions):
             return "documentation"
-        
+
         # Default to scripts for unknown file types
         return "scripts"
 
@@ -689,7 +722,7 @@ class DependencyValidator(BaseValidator):
 
         try:
             # This would require pip/pkg_resources but we'll keep it simple
-            # In a real implementation, you'd use pkg_resources.get_distribution()
+            # TODO: Must implement, you'd use pkg_resources.get_distribution()
             # to check what depends on this package
 
             # For now, just check common patterns
@@ -740,13 +773,11 @@ class DependencyValidator(BaseValidator):
             for dep_info in deps:
                 if isinstance(dep_info, dict):
                     dep_name = dep_info.get("name", "unknown")
-                    context = dep_info.get("context", {})
                     risk_level = dep_info.get("risk_level", "MEDIUM")
                     suggestions = dep_info.get("suggestions", [])
                 else:
                     # Handle legacy format
                     dep_name = str(dep_info)
-                    context = {}
                     risk_level = "MEDIUM"
                     suggestions = []
 

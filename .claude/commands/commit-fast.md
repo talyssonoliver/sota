@@ -50,11 +50,7 @@ Create a structured git commit with automated checks and conventional commit for
    
    # Create commit message
    TIMESTAMP=$(date +"%Y-%m-%d %H:%M")
-   git commit -m "${TYPE}: ${BRANCH} - automated commit ${TIMESTAMP}
-
-🤖 Generated with Claude Code
-
-Co-Authored-By: Claude <noreply@anthropic.com>"
+   git commit -m "${TYPE}: ${BRANCH} - automated commit ${TIMESTAMP}"
    ```
 
 5. **Show Result**

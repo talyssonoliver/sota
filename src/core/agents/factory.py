@@ -1,22 +1,28 @@
+
+from src.infrastructure.utils.common_imports import logging, yaml
 """Agent factory for creating different types of agents."""
 
-import logging
+# import logging  # Consolidated to common_imports
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 if TYPE_CHECKING:
     from src.infrastructure.memory import MemoryEngine
 
 try:
-    import yaml
+    from src.infrastructure.utils.common_imports import yaml
 except ImportError:
     # Fallback YAML implementation
     class yaml:
+        """Fallback YAML implementation when PyYAML is not available."""
+        
         @staticmethod
         def safe_load(stream):
+            """Mock safe_load that returns empty dict."""
             return {}
 
         @staticmethod
         def safe_dump(data, stream=None):
+            """Mock safe_dump that returns string representation."""
             if stream:
                 stream.write(str(data))
             return str(data)
@@ -27,7 +33,10 @@ try:
 except ImportError:
     # Mock Agent class for testing
     class Agent:
+        """Mock Agent class for testing when CrewAI is not available."""
+        
         def __init__(self, *args, **kwargs):
+            """Initialize mock agent."""
             pass
 
 
@@ -96,7 +105,19 @@ AGENT_CONFIGS = {
 
 
 def create_agent(agent_type: str, tools: Optional[List] = None, **kwargs) -> Agent:
-    """Create an agent of the specified type."""
+    """Create an agent of the specified type.
+    
+    Args:
+        agent_type: Type of agent to create (must be one of the predefined types)
+        tools: Optional list of tools for the agent to use
+        **kwargs: Additional keyword arguments to override agent configuration
+        
+    Returns:
+        Agent: CrewAI Agent instance configured for the specified type
+        
+    Raises:
+        ValueError: If agent_type is not recognized
+    """
     if agent_type not in AGENT_CONFIGS:
         raise ValueError(f"Unknown agent type: {agent_type}")
 
@@ -114,7 +135,17 @@ def create_agent(agent_type: str, tools: Optional[List] = None, **kwargs) -> Age
 
 
 def agent_builder(config: Dict[str, Any]) -> Agent:
-    """Build an agent from configuration."""
+    """Build an agent from configuration dictionary.
+    
+    Args:
+        config: Configuration dictionary containing:
+            - type: Agent type (defaults to 'technical_lead')
+            - tools: List of tools for the agent (optional)
+            - Additional keyword arguments for agent configuration
+            
+    Returns:
+        Agent: CrewAI Agent instance built from configuration
+    """
     agent_type = config.get("type", "technical_lead")
     tools = config.get("tools", [])
 
@@ -123,12 +154,28 @@ def agent_builder(config: Dict[str, Any]) -> Agent:
 
 # Factory functions for backward compatibility
 def create_technical_lead_agent(tools: Optional[List] = None, **kwargs) -> Agent:
-    """Create a Technical Lead agent."""
+    """Create a Technical Lead agent.
+    
+    Args:
+        tools: Optional list of tools for the agent to use
+        **kwargs: Additional keyword arguments for agent configuration
+        
+    Returns:
+        Agent: Technical Lead agent with delegation capabilities
+    """
     return create_agent("technical_lead", tools=tools, **kwargs)
 
 
 def create_backend_engineer_agent(tools: Optional[List] = None, **kwargs) -> Agent:
-    """Create a Backend Engineer agent."""
+    """Create a Backend Engineer agent.
+    
+    Args:
+        tools: Optional list of tools for the agent to use
+        **kwargs: Additional keyword arguments for agent configuration
+        
+    Returns:
+        Agent: Backend Engineer agent for API and service development
+    """
     return create_agent("backend", tools=tools, **kwargs)
 
 
@@ -138,7 +185,15 @@ def create_backend_agent(tools: Optional[List] = None, **kwargs) -> Agent:
 
 
 def create_frontend_engineer_agent(tools: Optional[List] = None, **kwargs) -> Agent:
-    """Create a Frontend Engineer agent."""
+    """Create a Frontend Engineer agent.
+    
+    Args:
+        tools: Optional list of tools for the agent to use
+        **kwargs: Additional keyword arguments for agent configuration
+        
+    Returns:
+        Agent: Frontend Engineer agent for UI/UX development
+    """
     return create_agent("frontend", tools=tools, **kwargs)
 
 
@@ -148,17 +203,41 @@ def create_frontend_agent(tools: Optional[List] = None, **kwargs) -> Agent:
 
 
 def create_qa_agent(tools: Optional[List] = None, **kwargs) -> Agent:
-    """Create a QA Engineer agent."""
+    """Create a QA Engineer agent.
+    
+    Args:
+        tools: Optional list of tools for the agent to use
+        **kwargs: Additional keyword arguments for agent configuration
+        
+    Returns:
+        Agent: QA Engineer agent for testing and quality assurance
+    """
     return create_agent("qa", tools=tools, **kwargs)
 
 
 def create_documentation_agent(tools: Optional[List] = None, **kwargs) -> Agent:
-    """Create a Documentation Writer agent."""
+    """Create a Documentation Writer agent.
+    
+    Args:
+        tools: Optional list of tools for the agent to use
+        **kwargs: Additional keyword arguments for agent configuration
+        
+    Returns:
+        Agent: Documentation Writer agent for technical documentation
+    """
     return create_agent("documentation", tools=tools, **kwargs)
 
 
 def create_coordinator_agent(tools: Optional[List] = None, **kwargs) -> Agent:
-    """Create a Project Coordinator agent."""
+    """Create a Project Coordinator agent.
+    
+    Args:
+        tools: Optional list of tools for the agent to use
+        **kwargs: Additional keyword arguments for agent configuration
+        
+    Returns:
+        Agent: Project Coordinator agent with delegation capabilities
+    """
     return create_agent("coordinator", tools=tools, **kwargs)
 
 

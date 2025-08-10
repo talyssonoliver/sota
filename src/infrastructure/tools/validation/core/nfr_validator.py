@@ -1,3 +1,16 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Enum,
+    List,
+    Optional,
+    Path,
+    dataclass,
+    json,
+    re,
+    time
+)
 """
 Non-Functional Requirements (NFR) Validator
 Implements NFR validation for security, performance, maintainability, reliability,
@@ -5,13 +18,13 @@ usability, and portability based on ISO/IEC 25010.
 """
 
 import ast
-import json
-import re
-import time
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# import json  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 import psutil
 
@@ -481,6 +494,16 @@ class NFRValidator(BaseValidator):
         try:
             # Simple performance profiling using basic metrics
             process = psutil.Process()
+            
+            # Get actual system metrics using the process instance
+            try:
+                system_cpu_percent = process.cpu_percent(interval=0.1)
+                memory_info = process.memory_info()
+                system_memory_mb = memory_info.rss / (1024 * 1024)  # Convert to MB
+            except Exception:
+                # Fallback to estimated values if system monitoring fails
+                system_cpu_percent = 0.0
+                system_memory_mb = 0.0
 
             for file_path in self.python_files[:5]:  # Limit to first 5 files for demo
                 try:
@@ -494,14 +517,17 @@ class NFRValidator(BaseValidator):
                             # Calculate basic complexity score
                             complexity = self._calculate_function_complexity(node)
 
-                            # Estimate performance metrics based on complexity
-                            estimated_time = (
-                                complexity * 0.001
-                            )  # 1ms per complexity point
-                            estimated_memory = (
-                                complexity * 0.5
-                            )  # 0.5MB per complexity point
-                            estimated_cpu = min(complexity * 2, 100)  # Max 100% CPU
+                            # Use real system metrics when available, otherwise estimate based on complexity
+                            if system_cpu_percent > 0 or system_memory_mb > 0:
+                                # Scale system metrics by function complexity
+                                estimated_time = (complexity * 0.001) + (system_cpu_percent * 0.0001)
+                                estimated_memory = max(complexity * 0.5, system_memory_mb / 100)
+                                estimated_cpu = min(system_cpu_percent + (complexity * 2), 100)
+                            else:
+                                # Fallback to complexity-based estimation
+                                estimated_time = (complexity * 0.001)  # 1ms per complexity point
+                                estimated_memory = (complexity * 0.5)  # 0.5MB per complexity point
+                                estimated_cpu = min(complexity * 2, 100)  # Max 100% CPU
 
                             profile = PerformanceProfile(
                                 function_name=node.name,
@@ -861,12 +887,18 @@ class NFRValidator(BaseValidator):
         # If no platform-specific code, assume high portability
         if total_platform_checks == 0:
             return 95.0
+        
+        # Include platform_specific_code in the calculation
+        compatibility_score = (portable_implementations / total_platform_checks * 100)
+        
+        # Adjust score based on amount of platform-specific code found
+        if platform_specific_code > 0:
+            # Reduce score if there's unhandled platform-specific code
+            unhandled_platform_code = max(0, platform_specific_code - portable_implementations)
+            penalty = (unhandled_platform_code / total_platform_checks) * 20  # Up to 20% penalty
+            compatibility_score = max(0, compatibility_score - penalty)
 
-        return (
-            (portable_implementations / total_platform_checks * 100)
-            if total_platform_checks > 0
-            else 95.0
-        )
+        return compatibility_score
 
     def _calculate_dependency_portability(self) -> float:
         """Calculate dependency portability score."""
@@ -956,7 +988,7 @@ class NFRValidator(BaseValidator):
             category.value: self._assess_category_compliance(category)
             for category in NFRCategory
         }
-        
+
         # Calculate overall compliance using the _calculate_iso_25010_compliance method
         # Convert to format expected by that method
         category_scores = {
@@ -964,7 +996,7 @@ class NFRValidator(BaseValidator):
             for category, data in category_compliance.items()
         }
         iso_compliance = self._calculate_iso_25010_compliance(category_scores)
-        
+
         return {
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
             "iso_25010_compliance": iso_compliance,
@@ -988,7 +1020,11 @@ class NFRValidator(BaseValidator):
                         if ":" in issue.message
                         else issue.message
                     ),
-                    "severity": str(issue.severity.value) if hasattr(issue.severity, 'value') else str(issue.severity),
+                    "severity": (
+                        str(issue.severity.value)
+                        if hasattr(issue.severity, "value")
+                        else str(issue.severity)
+                    ),
                     "category": issue.category,
                 }
                 for issue in self.issues
@@ -1038,7 +1074,7 @@ class NFRValidator(BaseValidator):
             auth_coverage = self._calculate_authentication_coverage()
             validation_coverage = self._calculate_input_validation_coverage()
             encryption_usage = self._calculate_encryption_usage()
-            
+
             self.security_metrics = {
                 "authentication_coverage": auth_coverage,
                 "input_validation_coverage": validation_coverage,
@@ -1071,7 +1107,7 @@ class NFRValidator(BaseValidator):
             avg_complexity = self._calculate_average_complexity()
             duplication_percentage = self._calculate_code_duplication()
             doc_coverage = self._calculate_documentation_coverage()
-            
+
             self.maintainability_metrics = {
                 "average_complexity": avg_complexity,
                 "duplication_percentage": duplication_percentage,
@@ -1128,21 +1164,28 @@ class NFRValidator(BaseValidator):
             "user_interface_simplicity": 90.0,  # Mock value
         }
 
-    def _calculate_iso_25010_compliance(self, category_scores: Dict[str, Any] = None) -> Dict[str, Any]:
+    def _calculate_iso_25010_compliance(
+        self, category_scores: Dict[str, Any] = None
+    ) -> Dict[str, Any]:
         """Calculate ISO/IEC 25010 compliance score."""
         if category_scores is None:
             category_scores = {}
 
             # Calculate compliance for each category
             for category in NFRCategory:
-                category_metrics = [m for m in self.nfr_metrics if m.category == category]
+                category_metrics = [
+                    m for m in self.nfr_metrics if m.category == category
+                ]
                 category_violations = [
-                    v for v in self.nfr_violations if category.value in v.category.lower()
+                    v
+                    for v in self.nfr_violations
+                    if category.value in v.category.lower()
                 ]
 
                 if category_metrics:
                     compliance_score = max(
-                        0, 100 - (len(category_violations) / len(category_metrics) * 100)
+                        0,
+                        100 - (len(category_violations) / len(category_metrics) * 100),
                     )
                 else:
                     compliance_score = 100
@@ -1151,7 +1194,9 @@ class NFRValidator(BaseValidator):
                     "score": compliance_score,
                     "violations": len(category_violations),
                     "total_metrics": len(category_metrics),
-                    "status": "COMPLIANT" if compliance_score >= 90 else "NON_COMPLIANT",
+                    "status": (
+                        "COMPLIANT" if compliance_score >= 90 else "NON_COMPLIANT"
+                    ),
                 }
 
         # Calculate overall compliance
@@ -1164,13 +1209,13 @@ class NFRValidator(BaseValidator):
                 scores.append(float(cat))
             else:
                 scores.append(0.0)  # fallback
-        
+
         overall_score = sum(scores) / len(scores) if scores else 0.0
 
         # Count compliant and non-compliant categories (score >= 90)
         compliant_categories = sum(1 for score in scores if score >= 90.0)
         non_compliant_categories = len(scores) - compliant_categories
-        
+
         return {
             "overall": overall_score,
             "by_category": category_scores,

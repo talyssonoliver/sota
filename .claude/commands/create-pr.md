@@ -109,7 +109,7 @@ Create a pull request with automated analysis and proper formatting.
    - $([ "$PR_TYPE" = "docs" ] && echo "[x]" || echo "[ ]") Documentation
    - $([ "$PR_TYPE" = "chore" ] && echo "[x]" || echo "[ ]") Maintenance
    
-   🤖 Generated with [Claude Code](https://claude.ai/code)
+   Automated PR creation
    EOF
    )" \
        --draft=false

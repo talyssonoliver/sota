@@ -1,8 +1,10 @@
+
+from src.infrastructure.utils.common_imports import logging
 """
 Technical Lead Agent for architecture and technical oversight.
 """
 
-import logging
+# import logging  # Consolidated to common_imports
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type
 
 if TYPE_CHECKING:
@@ -16,7 +18,15 @@ _crewai_available = None
 
 
 def _get_agent_class() -> Type[Any]:
-    """Lazy import of CrewAI Agent class to avoid loading heavy dependencies on module import."""
+    """Lazy import of CrewAI Agent class to avoid loading heavy dependencies on module import.
+    
+    This function implements lazy loading to prevent the 1.6s import cascade
+    from CrewAI. It loads the Agent class only when actually needed and provides
+    a mock class for testing environments.
+    
+    Returns:
+        Type[Any]: CrewAI Agent class or MockAgent class for testing
+    """
     global _agent_class, _crewai_available
 
     if _crewai_available is None:
@@ -31,7 +41,15 @@ def _get_agent_class() -> Type[Any]:
 
             # Mock class for testing
             class MockAgent:
+                """Mock Agent class for testing when CrewAI is not available."""
+                
                 def __init__(self, *args, **kwargs):
+                    """Initialize mock agent with basic properties.
+                    
+                    Args:
+                        *args: Positional arguments (ignored)
+                        **kwargs: Keyword arguments to configure the mock agent
+                    """
                     self.role = kwargs.get("role", "TechnicalLead")
                     self.goal = kwargs.get("goal", "")
                     self.backstory = kwargs.get("backstory", "")
@@ -53,14 +71,26 @@ class TechnicalLead:
         tools: Optional[List] = None,
         memory_engine: Optional["MemoryEngine"] = None,
     ):
-        """Initialize TechnicalLead."""
+        """Initialize TechnicalLead.
+        
+        Args:
+            tools: Optional list of tools for the agent to use
+            memory_engine: Optional memory engine for context integration
+        """
         self.tools = tools or []
         self.memory_engine = memory_engine
         self._agent: Optional[Any] = None  # Lazy-loaded agent instance
 
     @property
     def agent(self) -> Any:
-        """Get the agent instance, loading CrewAI only when needed."""
+        """Get the agent instance, loading CrewAI only when needed.
+        
+        This property implements lazy loading to defer CrewAI import until
+        the agent is actually needed, preventing unnecessary startup delays.
+        
+        Returns:
+            Any: CrewAI Agent instance or mock agent for testing
+        """
         if self._agent is None:
             agent_class = _get_agent_class()
 
@@ -76,7 +106,18 @@ class TechnicalLead:
         return self._agent
 
     def execute_task(self, task: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute a task."""
+        """Execute a technical leadership task.
+        
+        This is a placeholder implementation that returns a successful result.
+        In production, this would contain actual technical oversight and
+        architecture decision logic.
+        
+        Args:
+            task: Dictionary containing task details with 'id' and other parameters
+            
+        Returns:
+            Dict[str, Any]: Result dictionary with task_id, status, output, and agent fields
+        """
         logger.info(f"Executing task: {task.get('id', 'unknown')}")
 
         result = {

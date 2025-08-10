@@ -1,1 +1,0 @@
-"""Optimized test structure"""

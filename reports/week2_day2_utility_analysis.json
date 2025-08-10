@@ -1,0 +1,119 @@
+{
+  "summary": {
+    "total_utility_functions": 267,
+    "unique_function_names": 191,
+    "duplicate_function_names": 44,
+    "total_duplicate_instances": 120,
+    "categories": {
+      "logging": 2,
+      "config": 7,
+      "validation": 177,
+      "file_ops": 1,
+      "time_id": 0,
+      "string_ops": 18,
+      "error_handling": 30,
+      "crypto": 32
+    }
+  },
+  "consolidation_plan": [
+    {
+      "module": "src/infrastructure/utils/logging_utils.py",
+      "description": "Centralized logging utilities",
+      "functions_to_consolidate": [
+        "setup_logging",
+        "get_logger",
+        "create_logger",
+        "configure_logging"
+      ],
+      "affected_files": 2,
+      "instances": 2,
+      "estimated_savings": -60
+    },
+    {
+      "module": "src/infrastructure/utils/config_utils.py",
+      "description": "Configuration management utilities",
+      "functions_to_consolidate": [
+        "load_config",
+        "save_config",
+        "read_config",
+        "get_config",
+        "update_config"
+      ],
+      "affected_files": 5,
+      "instances": 7,
+      "estimated_savings": 25
+    },
+    {
+      "module": "src/infrastructure/utils/file_utils.py",
+      "description": "File and directory operations",
+      "functions_to_consolidate": [
+        "read_file",
+        "write_file",
+        "load_json",
+        "save_json",
+        "load_yaml",
+        "save_yaml",
+        "ensure_directory"
+      ],
+      "affected_files": 1,
+      "instances": 1,
+      "estimated_savings": -85
+    },
+    {
+      "module": "src/infrastructure/utils/validation_utils.py",
+      "description": "Input validation and checking utilities",
+      "functions_to_consolidate": [
+        "validate_*",
+        "check_*",
+        "is_valid_*",
+        "verify_*"
+      ],
+      "affected_files": 65,
+      "instances": 177,
+      "estimated_savings": 5110
+    }
+  ],
+  "duplicate_count": 44,
+  "top_duplicates": [
+    {
+      "name": "setup_logging",
+      "count": 2
+    },
+    {
+      "name": "load_config",
+      "count": 4
+    },
+    {
+      "name": "validate_email",
+      "count": 2
+    },
+    {
+      "name": "validate_step_3_8_complete",
+      "count": 2
+    },
+    {
+      "name": "check_service_health",
+      "count": 2
+    },
+    {
+      "name": "verify_signature",
+      "count": 2
+    },
+    {
+      "name": "validate_workflow",
+      "count": 2
+    },
+    {
+      "name": "validate_syntax",
+      "count": 3
+    },
+    {
+      "name": "validate_dependencies",
+      "count": 2
+    },
+    {
+      "name": "validate_quality_gates",
+      "count": 2
+    }
+  ]
+}

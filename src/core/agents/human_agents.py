@@ -1,9 +1,11 @@
+
+from src.infrastructure.utils.common_imports import Any, Dict, logging
 """
 Human agents for product and UX decisions.
 """
 
-import logging
-from typing import Any, Dict
+# import logging  # Consolidated to common_imports
+# from typing import Any, Dict  # Consolidated to common_imports
 
 logger = logging.getLogger(__name__)
 

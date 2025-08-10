@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    dataclass,
+    field
+)
 """
 Unified Memory Configuration
 
 Consolidated configuration for all memory system components.
 """
 
-from typing import Any, Dict
+# from typing import Any, Dict  # Consolidated to common_imports
 
 try:
-    from dataclasses import dataclass, field
+    from src.infrastructure.utils.common_imports import dataclass, field
 except ImportError:
     pass
-try:
-    import logging
-except ImportError:
-    pass
+# Logging removed - not used in this module
 
 
 @dataclass
@@ -82,13 +86,13 @@ class MemoryEngineConfig:
     retrieval: RetrievalConfig = field(default_factory=RetrievalConfig)
     resources: ResourceConfig = field(default_factory=ResourceConfig)
 
-    # Embedding configuration
-    embedding_model: str = "text-embedding-ada-002"
+    # Embedding configuration (OpenAI production-ready)
+    embedding_model: str = "text-embedding-ada-002"  # OpenAI production model
     embedding_dimensions: int = 1536
     collection_name: str = "memory_collection"
 
     # Security settings
-    encryption_enabled: bool = False
+    encryption_enabled: bool = True
     pii_detection_enabled: bool = True
     access_control_enabled: bool = True
     audit_logging_enabled: bool = True
@@ -155,7 +159,7 @@ class MemoryConfig:
                 },
             },
             "security": {
-                "encryption_enabled": False,
+                "encryption_enabled": True,
                 "access_control_enabled": True,
             },
             "performance": {

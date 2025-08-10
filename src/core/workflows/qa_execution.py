@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Path,
+    datetime,
+    json,
+    logging,
+    sys
+)
 """
 QA Agent Execution for Step 5.3 - Automated Validation
 
@@ -23,21 +34,17 @@ Saved to: outputs/[TASK-ID]/qa_report.json
 """
 
 import argparse
-import json
-import logging
-import sys
-from typing import Any, Dict, List
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from typing import Any, Dict, List  # Consolidated to common_imports
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    from pathlib import Path
-except ImportError:
-    pass
-try:
-    from src.infrastructure.utils.coverage_analyzer import CoverageAnalyzer
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 
@@ -48,9 +55,10 @@ except ImportError:
     class EnhancedQAAgent:
         def __init__(self, project_root: str):
             self.project_root = project_root
-        
+
         def generate_comprehensive_tests(self, code_files):
             return {"generated_tests": [], "status": "qa_agent_unavailable"}
+
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 

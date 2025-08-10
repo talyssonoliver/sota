@@ -2,44 +2,69 @@
 Test suite for Incremental Analyzer using TDD approach.
 """
 
-import pytest
-import tempfile
 import json
+import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 from unittest.mock import Mock, patch
 
+import pytest
+
 from src.infrastructure.tools.validation.core.incremental_analyzer import (
-    IncrementalAnalyzer,
     ChangeType,
     FileChange,
-    IncrementalResult
+    IncrementalAnalyzer,
+    IncrementalResult,
 )
 
 
 class TestIncrementalAnalyzer:
     """Test incremental analyzer for pull request validation."""
+    
+    @classmethod
+    def setup_class(cls):
+        """Set up class-level fixtures to reduce overhead."""
+        # Mock subprocess calls for performance
+        cls.subprocess_patcher = patch("subprocess.run")
+        cls.mock_subprocess = cls.subprocess_patcher.start()
+        
+        cls.temp_dir = tempfile.mkdtemp()
+        cls.root_path = Path(cls.temp_dir)
+        cls.create_test_git_repo()
 
     def setup_method(self):
         """Set up test fixtures."""
-        self.temp_dir = tempfile.mkdtemp()
-        self.root_path = Path(self.temp_dir)
-        
-        # Create test git repository
-        self.create_test_git_repo()
-        
-        self.analyzer = IncrementalAnalyzer(self.root_path, base_branch="main")
+        # Use class-level temp directory and files
+        self.temp_dir = self.__class__.temp_dir
+        self.root_path = self.__class__.root_path
 
-    def create_test_git_repo(self):
+        self.analyzer = IncrementalAnalyzer(self.root_path, base_branch="main")
+    
+    @classmethod
+    def teardown_class(cls):
+        """Clean up class-level fixtures."""
+        # Stop subprocess mocking
+        if hasattr(cls, 'subprocess_patcher'):
+            cls.subprocess_patcher.stop()
+            
+        if hasattr(cls, 'temp_dir') and Path(cls.temp_dir).exists():
+            shutil.rmtree(cls.temp_dir, ignore_errors=True)
+
+    @classmethod
+    def create_test_git_repo(cls):
         """Create a test git repository with history."""
         # Initialize git repo
-        subprocess.run(["git", "init"], cwd=self.root_path, capture_output=True)
-        subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=self.root_path)
-        subprocess.run(["git", "config", "user.name", "Test User"], cwd=self.root_path)
-        
+        subprocess.run(["git", "init"], cwd=cls.root_path, capture_output=True)
+        subprocess.run(
+            ["git", "config", "user.email", "test@example.com"], cwd=cls.root_path
+        )
+        subprocess.run(["git", "config", "user.name", "Test User"], cwd=cls.root_path)
+
         # Create initial files
-        main_file = self.root_path / "main.py"
-        main_file.write_text("""
+        main_file = cls.root_path / "main.py"
+        main_file.write_text(
+            """
 '''Main module.'''
 
 def hello_world():
@@ -49,10 +74,12 @@ def hello_world():
 def add_numbers(a, b):
     '''Add two numbers.'''
     return a + b
-""")
-        
-        utils_file = self.root_path / "utils.py"
-        utils_file.write_text("""
+"""
+        )
+
+        utils_file = cls.root_path / "utils.py"
+        utils_file.write_text(
+            """
 '''Utility functions.'''
 
 def multiply(a, b):
@@ -64,21 +91,23 @@ def divide(a, b):
     if b == 0:
         raise ValueError("Cannot divide by zero")
     return a / b
-""")
-        
+"""
+        )
+
         # Add and commit initial files
-        subprocess.run(["git", "add", "."], cwd=self.root_path)
-        subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=self.root_path)
-        
+        subprocess.run(["git", "add", "."], cwd=cls.root_path)
+        subprocess.run(["git", "commit", "-m", "Initial commit"], cwd=cls.root_path)
+
         # Create main branch
-        subprocess.run(["git", "branch", "main"], cwd=self.root_path)
-        subprocess.run(["git", "checkout", "main"], cwd=self.root_path)
-        
+        subprocess.run(["git", "branch", "main"], cwd=cls.root_path)
+        subprocess.run(["git", "checkout", "main"], cwd=cls.root_path)
+
         # Create feature branch with changes
-        subprocess.run(["git", "checkout", "-b", "feature-branch"], cwd=self.root_path)
-        
+        subprocess.run(["git", "checkout", "-b", "feature-branch"], cwd=cls.root_path)
+
         # Modify existing file
-        main_file.write_text("""
+        main_file.write_text(
+            """
 '''Main module with improvements.'''
 
 def hello_world():
@@ -94,11 +123,13 @@ def add_numbers(a, b):
 def subtract_numbers(a, b):
     '''Subtract two numbers.'''
     return a - b
-""")
-        
+"""
+        )
+
         # Add new file
-        new_file = self.root_path / "new_module.py"
-        new_file.write_text("""
+        new_file = cls.root_path / "new_module.py"
+        new_file.write_text(
+            """
 '''New module with additional functionality.'''
 
 def power(base, exponent):
@@ -115,11 +146,12 @@ def factorial(n):
     for i in range(2, n + 1):
         result *= i
     return result
-""")
-        
+"""
+        )
+
         # Commit changes
-        subprocess.run(["git", "add", "."], cwd=self.root_path)
-        subprocess.run(["git", "commit", "-m", "Add new features"], cwd=self.root_path)
+        subprocess.run(["git", "add", "."], cwd=cls.root_path)
+        subprocess.run(["git", "commit", "-m", "Add new features"], cwd=cls.root_path)
 
     def test_initialization(self):
         """Test analyzer initialization."""
@@ -130,7 +162,7 @@ def factorial(n):
         assert self.analyzer.current_report is None
         assert self.analyzer.unified_validator is not None
 
-    @patch('subprocess.run')
+    @patch("subprocess.run")
     def test_get_file_changes(self, mock_run):
         """Test getting file changes from git."""
         # Mock git diff output
@@ -138,38 +170,38 @@ def factorial(n):
         mock_run.return_value.stdout = """M\tmain.py
 A\tnew_module.py
 D\tdeleted_file.py"""
-        
-        with patch.object(self.analyzer, '_get_line_changes') as mock_lines:
+
+        with patch.object(self.analyzer, "_get_line_changes") as mock_lines:
             mock_lines.return_value = (10, 5)
-            
+
             changes = self.analyzer._get_file_changes("main")
-            
+
             assert len(changes) == 3
-            
+
             # Check change types
             change_types = [c.change_type for c in changes]
             assert ChangeType.MODIFIED in change_types
             assert ChangeType.ADDED in change_types
             assert ChangeType.DELETED in change_types
-            
+
             # Check file paths
             file_paths = [c.file_path for c in changes]
             assert "main.py" in file_paths
             assert "new_module.py" in file_paths
             assert "deleted_file.py" in file_paths
 
-    @patch('subprocess.run')
+    @patch("subprocess.run")
     def test_get_line_changes(self, mock_run):
         """Test getting line changes for a file."""
         # Mock git diff --numstat output
         mock_run.return_value.returncode = 0
         mock_run.return_value.stdout = "15\t3\tmain.py"
-        
+
         lines_added, lines_deleted = self.analyzer._get_line_changes("main.py", "main")
-        
+
         assert lines_added == 15
         assert lines_deleted == 3
-        
+
         # Should call git diff --numstat
         mock_run.assert_called_once()
         call_args = mock_run.call_args[0][0]
@@ -177,23 +209,25 @@ D\tdeleted_file.py"""
         assert "diff" in call_args
         assert "--numstat" in call_args
 
-    @patch('subprocess.run')
+    @patch("subprocess.run")
     def test_get_baseline_report(self, mock_run):
         """Test getting baseline report from target branch."""
         # Mock git worktree commands
         mock_run.return_value.returncode = 0
-        
+
         # Patch the UnifiedValidator class since the method creates new instances
-        with patch('src.infrastructure.tools.validation.core.incremental_analyzer.Validator') as mock_validator_class:
+        with patch(
+            "src.infrastructure.tools.validation.core.incremental_analyzer.Validator"
+        ) as mock_validator_class:
             mock_validator_instance = Mock()
             mock_validator_instance.run_validation.return_value = {
                 "summary": {"total_issues": 5, "critical_issues": 1},
-                "phase_results": {}
+                "phase_results": {},
             }
             mock_validator_class.return_value = mock_validator_instance
-            
+
             baseline_report = self.analyzer._get_baseline_report("main")
-            
+
             # Should return validation report
             assert baseline_report is not None
             assert "summary" in baseline_report
@@ -205,23 +239,29 @@ D\tdeleted_file.py"""
         self.analyzer.changes = [
             FileChange("main.py", ChangeType.MODIFIED, 10, 5, is_new_file=False),
             FileChange("new_module.py", ChangeType.ADDED, 20, 0, is_new_file=True),
-            FileChange("deleted_file.py", ChangeType.DELETED, 0, 15, is_new_file=False)
+            FileChange("deleted_file.py", ChangeType.DELETED, 0, 15, is_new_file=False),
         ]
-        
+
         # Patch the UnifiedValidator class since the method creates new instances
-        with patch('src.infrastructure.tools.validation.core.incremental_analyzer.Validator') as mock_validator_class:
+        with patch(
+            "src.infrastructure.tools.validation.core.incremental_analyzer.Validator"
+        ) as mock_validator_class:
             mock_validator_instance = Mock()
             mock_validator_instance.run_validation.return_value = {
                 "detailed_issues": [
                     {"category": "syntax", "severity": "error", "file": "main.py"},
-                    {"category": "style", "severity": "warning", "file": "new_module.py"}
+                    {
+                        "category": "style",
+                        "severity": "warning",
+                        "file": "new_module.py",
+                    },
                 ],
-                "summary": {"total_issues": 2}
+                "summary": {"total_issues": 2},
             }
             mock_validator_class.return_value = mock_validator_instance
-            
+
             result = self.analyzer._analyze_changed_files()
-            
+
             assert "issues" in result
             assert "files_analyzed" in result
             assert "summary" in result
@@ -231,28 +271,26 @@ D\tdeleted_file.py"""
     def test_calculate_incremental_metrics(self):
         """Test calculating incremental metrics."""
         # Set up baseline report
-        self.analyzer.baseline_report = {
-            "summary": {"total_issues": 10}
-        }
-        
+        self.analyzer.baseline_report = {"summary": {"total_issues": 10}}
+
         # Set up focused results
         focused_results = {
             "issues": [
                 {"category": "syntax", "severity": "error"},
                 {"category": "style", "severity": "warning"},
-                {"category": "performance", "severity": "info"}
+                {"category": "performance", "severity": "info"},
             ],
-            "files_analyzed": 2
+            "files_analyzed": 2,
         }
-        
+
         # Set up changes
         self.analyzer.changes = [
             FileChange("main.py", ChangeType.MODIFIED, 10, 5, is_new_file=False),
-            FileChange("new_module.py", ChangeType.ADDED, 20, 0, is_new_file=True)
+            FileChange("new_module.py", ChangeType.ADDED, 20, 0, is_new_file=True),
         ]
-        
+
         result = self.analyzer._calculate_incremental_metrics(focused_results)
-        
+
         assert isinstance(result, IncrementalResult)
         assert result.changed_files_count == 2
         assert result.new_issues_count >= 0
@@ -269,17 +307,17 @@ D\tdeleted_file.py"""
                 {"category": "syntax", "severity": "error"},
                 {"category": "syntax", "severity": "error"},
                 {"category": "style", "severity": "warning"},
-                {"category": "performance", "severity": "info"}
+                {"category": "performance", "severity": "info"},
             ]
         }
-        
+
         focus_areas = self.analyzer._determine_focus_areas(focused_results)
-        
+
         assert len(focus_areas) > 0
         assert "syntax: 2 issues" in focus_areas
         assert "style: 1 issues" in focus_areas
         assert "performance: 1 issues" in focus_areas
-        
+
         # Test with no issues
         focused_results = {"issues": []}
         focus_areas = self.analyzer._determine_focus_areas(focused_results)
@@ -290,20 +328,20 @@ D\tdeleted_file.py"""
         focused_results = {
             "issues": [
                 {"category": "syntax", "severity": "error"},
-                {"category": "style", "severity": "warning"}
+                {"category": "style", "severity": "warning"},
             ]
         }
-        
+
         # Set up changes
         self.analyzer.changes = [
             FileChange("main.py", ChangeType.MODIFIED, 150, 50, is_new_file=False),
-            FileChange("new_module.py", ChangeType.ADDED, 100, 0, is_new_file=True)
+            FileChange("new_module.py", ChangeType.ADDED, 100, 0, is_new_file=True),
         ]
-        
+
         recommendations = self.analyzer._generate_incremental_recommendations(
             focused_results, -0.5, 2  # Quality regression, 2 issues
         )
-        
+
         assert len(recommendations) > 0
         assert any("Quality regression detected" in rec for rec in recommendations)
         assert any("2 issues found" in rec for rec in recommendations)
@@ -316,12 +354,12 @@ D\tdeleted_file.py"""
             "issues": [
                 {"category": "formatting", "auto_fixable": True},
                 {"category": "imports", "auto_fixable": True},
-                {"category": "syntax", "auto_fixable": False}
+                {"category": "syntax", "auto_fixable": False},
             ]
         }
-        
+
         quick_fixes = self.analyzer._identify_quick_fixes(focused_results)
-        
+
         assert len(quick_fixes) > 0
         assert any("2 issues can be auto-fixed" in fix for fix in quick_fixes)
         assert any("Run 'black .' to fix" in fix for fix in quick_fixes)
@@ -329,11 +367,11 @@ D\tdeleted_file.py"""
 
     def test_analyze_pull_request_no_changes(self):
         """Test analyzing pull request with no changes."""
-        with patch.object(self.analyzer, '_get_file_changes') as mock_changes:
+        with patch.object(self.analyzer, "_get_file_changes") as mock_changes:
             mock_changes.return_value = []
-            
+
             result = self.analyzer.analyze_pull_request("main")
-            
+
             assert isinstance(result, IncrementalResult)
             assert result.changed_files_count == 0
             assert result.new_issues_count == 0
@@ -343,26 +381,30 @@ D\tdeleted_file.py"""
 
     def test_analyze_pull_request_with_changes(self):
         """Test analyzing pull request with changes."""
-        with patch.object(self.analyzer, '_get_file_changes') as mock_changes:
+        with patch.object(self.analyzer, "_get_file_changes") as mock_changes:
             mock_changes.return_value = [
                 FileChange("main.py", ChangeType.MODIFIED, 10, 5, is_new_file=False),
-                FileChange("new_module.py", ChangeType.ADDED, 20, 0, is_new_file=True)
+                FileChange("new_module.py", ChangeType.ADDED, 20, 0, is_new_file=True),
             ]
-            
+
             # Patch the UnifiedValidator class since the method creates new instances
-            with patch('src.infrastructure.tools.validation.core.incremental_analyzer.Validator') as mock_validator_class:
+            with patch(
+                "src.infrastructure.tools.validation.core.incremental_analyzer.Validator"
+            ) as mock_validator_class:
                 mock_validator_instance = Mock()
                 mock_validator_instance.run_validation.return_value = {
                     "detailed_issues": [{"category": "style", "severity": "warning"}],
-                    "summary": {"total_issues": 1}
+                    "summary": {"total_issues": 1},
                 }
                 mock_validator_class.return_value = mock_validator_instance
-                
-                with patch.object(self.analyzer, '_get_baseline_report') as mock_baseline:
+
+                with patch.object(
+                    self.analyzer, "_get_baseline_report"
+                ) as mock_baseline:
                     mock_baseline.return_value = {"summary": {"total_issues": 2}}
-                    
+
                     result = self.analyzer.analyze_pull_request("main")
-                    
+
                     assert isinstance(result, IncrementalResult)
                     assert result.changed_files_count == 2
                     assert result.fixed_issues_count == 1  # 2 baseline - 1 current
@@ -374,20 +416,20 @@ D\tdeleted_file.py"""
         # Set up test changes
         self.analyzer.changes = [
             FileChange("main.py", ChangeType.MODIFIED, 10, 5, is_new_file=False),
-            FileChange("new_module.py", ChangeType.ADDED, 20, 0, is_new_file=True)
+            FileChange("new_module.py", ChangeType.ADDED, 20, 0, is_new_file=True),
         ]
-        
+
         result = IncrementalResult(
             changed_files_count=2,
             new_issues_count=1,
             fixed_issues_count=2,
             net_quality_impact=0.3,
             focus_areas=["style: 1 issues"],
-            recommendations=["Good work!", "Consider adding tests"]
+            recommendations=["Good work!", "Consider adding tests"],
         )
-        
+
         comment = self.analyzer.generate_pr_comment(result)
-        
+
         assert "## ✅ Code Quality Analysis" in comment
         assert "Files Changed**: 2" in comment
         assert "New Issues**: 1" in comment
@@ -402,9 +444,9 @@ D\tdeleted_file.py"""
         # Set up changes
         self.analyzer.changes = [
             FileChange("main.py", ChangeType.MODIFIED, 100, 50, is_new_file=False),
-            FileChange("new_module.py", ChangeType.ADDED, 200, 0, is_new_file=True)
+            FileChange("new_module.py", ChangeType.ADDED, 200, 0, is_new_file=True),
         ]
-        
+
         # Test case 1: Quality regression
         result1 = IncrementalResult(
             changed_files_count=2,
@@ -412,11 +454,11 @@ D\tdeleted_file.py"""
             fixed_issues_count=0,
             net_quality_impact=-0.3,  # Quality regression
             focus_areas=[],
-            recommendations=[]
+            recommendations=[],
         )
-        
+
         assert self.analyzer.should_request_review(result1) is True
-        
+
         # Test case 2: Many new issues
         result2 = IncrementalResult(
             changed_files_count=2,
@@ -424,11 +466,11 @@ D\tdeleted_file.py"""
             fixed_issues_count=0,
             net_quality_impact=0.1,
             focus_areas=[],
-            recommendations=[]
+            recommendations=[],
         )
-        
+
         assert self.analyzer.should_request_review(result2) is True
-        
+
         # Test case 3: Good quality
         result3 = IncrementalResult(
             changed_files_count=2,
@@ -436,9 +478,9 @@ D\tdeleted_file.py"""
             fixed_issues_count=2,
             net_quality_impact=0.2,
             focus_areas=[],
-            recommendations=[]
+            recommendations=[],
         )
-        
+
         assert self.analyzer.should_request_review(result3) is False
 
     def test_get_merge_recommendation(self):
@@ -447,7 +489,7 @@ D\tdeleted_file.py"""
         self.analyzer.changes = [
             FileChange("main.py", ChangeType.MODIFIED, 10, 5, is_new_file=False)
         ]
-        
+
         # Test case 1: Should allow merge
         result1 = IncrementalResult(
             changed_files_count=1,
@@ -455,17 +497,17 @@ D\tdeleted_file.py"""
             fixed_issues_count=3,
             net_quality_impact=0.2,
             focus_areas=[],
-            recommendations=[]
+            recommendations=[],
         )
-        
+
         recommendation1 = self.analyzer.get_merge_recommendation(result1)
-        
+
         assert recommendation1["can_merge"] is True
         assert recommendation1["requires_review"] is False
         assert "recommendation" in recommendation1
         assert "quality_score" in recommendation1
         assert 0 <= recommendation1["quality_score"] <= 100
-        
+
         # Test case 2: Should block merge
         result2 = IncrementalResult(
             changed_files_count=1,
@@ -473,11 +515,11 @@ D\tdeleted_file.py"""
             fixed_issues_count=0,
             net_quality_impact=-0.6,  # Significant regression
             focus_areas=[],
-            recommendations=[]
+            recommendations=[],
         )
-        
+
         recommendation2 = self.analyzer.get_merge_recommendation(result2)
-        
+
         assert recommendation2["can_merge"] is False
         assert recommendation2["requires_review"] is True
 
@@ -495,11 +537,11 @@ D\tdeleted_file.py"""
             FileChange("main.py", ChangeType.MODIFIED, 10, 5, is_new_file=False),
             FileChange("new_module.py", ChangeType.ADDED, 20, 0, is_new_file=True),
             FileChange("another.py", ChangeType.MODIFIED, 5, 2, is_new_file=False),
-            FileChange("deleted.py", ChangeType.DELETED, 0, 15, is_new_file=False)
+            FileChange("deleted.py", ChangeType.DELETED, 0, 15, is_new_file=False),
         ]
-        
+
         summary = self.analyzer._summarize_changes_by_type()
-        
+
         assert summary["modified"] == 2
         assert summary["added"] == 1
         assert summary["deleted"] == 1
@@ -509,32 +551,32 @@ D\tdeleted_file.py"""
         # Set up changes
         self.analyzer.changes = [
             FileChange("main.py", ChangeType.MODIFIED, 10, 5, is_new_file=False),
-            FileChange("new_module.py", ChangeType.ADDED, 20, 0, is_new_file=True)
+            FileChange("new_module.py", ChangeType.ADDED, 20, 0, is_new_file=True),
         ]
-        
+
         result = IncrementalResult(
             changed_files_count=2,
             new_issues_count=1,
             fixed_issues_count=2,
             net_quality_impact=0.3,
             focus_areas=["style: 1 issues"],
-            recommendations=["Good work!"]
+            recommendations=["Good work!"],
         )
-        
-        with patch('time.strftime') as mock_time:
+
+        with patch("time.strftime") as mock_time:
             mock_time.return_value = "2023-01-01 12:00:00"
-            
+
             # This should create a report file
             self.analyzer._generate_incremental_report(result)
-            
+
             # Check that report file was created
             report_path = self.root_path / "reports" / "incremental_analysis.json"
             assert report_path.exists()
-            
+
             # Check report content
             with open(report_path) as f:
                 report_data = json.load(f)
-            
+
             assert report_data["timestamp"] == "2023-01-01 12:00:00"
             assert report_data["analysis_type"] == "incremental"
             assert report_data["base_branch"] == "main"
@@ -548,24 +590,41 @@ class TestIncrementalAnalyzerIntegration:
 
     def setup_method(self):
         """Set up test fixtures."""
+        # Mock subprocess calls for performance
+        self.subprocess_patcher = patch("subprocess.run")
+        self.mock_subprocess = self.subprocess_patcher.start()
+        
         self.temp_dir = tempfile.mkdtemp()
         self.root_path = Path(self.temp_dir)
-        
+
         # Create comprehensive test project
         self.create_comprehensive_test_project()
-        
+
         self.analyzer = IncrementalAnalyzer(self.root_path)
+
+    def teardown_method(self):
+        """Clean up after each test."""
+        # Stop subprocess mocking
+        if hasattr(self, 'subprocess_patcher'):
+            self.subprocess_patcher.stop()
+        
+        # Clean up temp directory
+        if hasattr(self, 'temp_dir') and Path(self.temp_dir).exists():
+            shutil.rmtree(self.temp_dir, ignore_errors=True)
 
     def create_comprehensive_test_project(self):
         """Create a comprehensive test project with git history."""
         # Initialize git repo
         subprocess.run(["git", "init"], cwd=self.root_path, capture_output=True)
-        subprocess.run(["git", "config", "user.email", "test@example.com"], cwd=self.root_path)
+        subprocess.run(
+            ["git", "config", "user.email", "test@example.com"], cwd=self.root_path
+        )
         subprocess.run(["git", "config", "user.name", "Test User"], cwd=self.root_path)
-        
+
         # Create initial application
         app_file = self.root_path / "app.py"
-        app_file.write_text("""
+        app_file.write_text(
+            """
 '''Main application.'''
 
 class Calculator:
@@ -578,10 +637,12 @@ class Calculator:
     def subtract(self, a, b):
         '''Subtract two numbers.'''
         return a - b
-""")
-        
+"""
+        )
+
         test_file = self.root_path / "test_app.py"
-        test_file.write_text("""
+        test_file.write_text(
+            """
 '''Tests for application.'''
 
 import pytest
@@ -594,21 +655,23 @@ def test_add():
 def test_subtract():
     calc = Calculator()
     assert calc.subtract(5, 3) == 2
-""")
-        
+"""
+        )
+
         # Commit initial version
         subprocess.run(["git", "add", "."], cwd=self.root_path)
         subprocess.run(["git", "commit", "-m", "Initial version"], cwd=self.root_path)
-        
+
         # Create main branch
         subprocess.run(["git", "branch", "main"], cwd=self.root_path)
         subprocess.run(["git", "checkout", "main"], cwd=self.root_path)
-        
+
         # Create feature branch
         subprocess.run(["git", "checkout", "-b", "feature"], cwd=self.root_path)
-        
+
         # Make improvements
-        app_file.write_text("""
+        app_file.write_text(
+            """
 '''Main application with improvements.'''
 
 import logging
@@ -655,11 +718,13 @@ class Calculator:
     def get_history(self):
         '''Get calculation history.'''
         return self.history.copy()
-""")
-        
+"""
+        )
+
         # Add new utility module
         utils_file = self.root_path / "utils.py"
-        utils_file.write_text("""
+        utils_file.write_text(
+            """
 '''Utility functions.'''
 
 def validate_number(value):
@@ -673,10 +738,12 @@ def format_result(result, precision=2):
     if isinstance(result, float):
         return round(result, precision)
     return result
-""")
-        
+"""
+        )
+
         # Update tests
-        test_file.write_text("""
+        test_file.write_text(
+            """
 '''Tests for enhanced application.'''
 
 import pytest
@@ -734,28 +801,49 @@ class TestUtils:
         assert format_result(3.14159, 2) == 3.14
         assert format_result(5) == 5
         assert format_result(2.0, 1) == 2.0
-""")
-        
+"""
+        )
+
         # Commit changes
         subprocess.run(["git", "add", "."], cwd=self.root_path)
-        subprocess.run(["git", "commit", "-m", "Add enhancements and new features"], cwd=self.root_path)
+        subprocess.run(
+            ["git", "commit", "-m", "Add enhancements and new features"],
+            cwd=self.root_path,
+        )
 
     @pytest.mark.slow
     def test_full_incremental_analysis(self):
         """Test full incremental analysis workflow."""
-        with patch.object(self.analyzer.unified_validator, 'run_validation') as mock_validate:
+        with patch.object(
+            self.analyzer.unified_validator, "run_validation"
+        ) as mock_validate, patch('subprocess.run') as mock_subprocess:
+            # Mock git diff to return changed files
+            mock_subprocess.return_value.returncode = 0
+            mock_subprocess.return_value.stdout = "M\tapp.py\nA\ttest.py\n"
+            mock_subprocess.return_value.stderr = ""
+            
             # Mock current validation
             mock_validate.return_value = {
                 "detailed_issues": [
-                    {"category": "style", "severity": "warning", "file": "app.py", "auto_fixable": True},
-                    {"category": "complexity", "severity": "info", "file": "app.py", "auto_fixable": False}
+                    {
+                        "category": "style",
+                        "severity": "warning",
+                        "file": "app.py",
+                        "auto_fixable": True,
+                    },
+                    {
+                        "category": "complexity",
+                        "severity": "info",
+                        "file": "app.py",
+                        "auto_fixable": False,
+                    },
                 ],
-                "summary": {"total_issues": 2, "critical_issues": 0, "warnings": 1}
+                "summary": {"total_issues": 2, "critical_issues": 0, "warnings": 1},
             }
-            
+
             # Run analysis
             result = self.analyzer.analyze_pull_request("main")
-            
+
             # Should complete successfully
             assert isinstance(result, IncrementalResult)
             assert result.changed_files_count > 0
@@ -765,24 +853,34 @@ class TestUtils:
     @pytest.mark.slow
     def test_pr_comment_generation(self):
         """Test PR comment generation with real data."""
-        with patch.object(self.analyzer, '_get_file_changes') as mock_changes:
+        with patch.object(self.analyzer, "_get_file_changes") as mock_changes:
             mock_changes.return_value = [
                 FileChange("app.py", ChangeType.MODIFIED, 30, 10, is_new_file=False),
-                FileChange("utils.py", ChangeType.ADDED, 25, 0, is_new_file=True)
+                FileChange("utils.py", ChangeType.ADDED, 25, 0, is_new_file=True),
             ]
-            
-            with patch.object(self.analyzer.unified_validator, 'run_validation') as mock_validate:
+
+            with patch.object(
+                self.analyzer.unified_validator, "run_validation"
+            ) as mock_validate:
                 mock_validate.return_value = {
                     "detailed_issues": [
-                        {"category": "style", "severity": "warning", "auto_fixable": True},
-                        {"category": "documentation", "severity": "info", "auto_fixable": False}
+                        {
+                            "category": "style",
+                            "severity": "warning",
+                            "auto_fixable": True,
+                        },
+                        {
+                            "category": "documentation",
+                            "severity": "info",
+                            "auto_fixable": False,
+                        },
                     ],
-                    "summary": {"total_issues": 2}
+                    "summary": {"total_issues": 2},
                 }
-                
+
                 result = self.analyzer.analyze_pull_request("main")
                 comment = self.analyzer.generate_pr_comment(result)
-                
+
                 # Should generate comprehensive comment
                 assert "Code Quality Analysis" in comment
                 assert "Files Changed" in comment
@@ -795,89 +893,103 @@ class TestUtils:
     def test_merge_recommendation_logic(self):
         """Test merge recommendation logic with different scenarios."""
         # Scenario 1: High quality changes
-        with patch.object(self.analyzer, '_get_file_changes') as mock_changes:
+        with patch.object(self.analyzer, "_get_file_changes") as mock_changes:
             mock_changes.return_value = [
                 FileChange("app.py", ChangeType.MODIFIED, 10, 5, is_new_file=False)
             ]
-            
+
             # Mock both the main validator and any new validators created
-            with patch.object(self.analyzer.unified_validator, 'run_validation') as mock_validate, \
-                 patch('src.infrastructure.tools.validation.core.incremental_analyzer.Validator') as mock_validator_class:
-                
+            with patch.object(
+                self.analyzer.unified_validator, "run_validation"
+            ) as mock_validate, patch(
+                "src.infrastructure.tools.validation.core.incremental_analyzer.Validator"
+            ) as mock_validator_class:
+
                 # Configure main validator mock
                 mock_validate.return_value = {
                     "detailed_issues": [],
-                    "summary": {"total_issues": 0}
+                    "summary": {"total_issues": 0},
                 }
-                
+
                 # Configure the focused validator that gets created in _analyze_changed_files
                 mock_focused_validator = Mock()
                 mock_focused_validator.run_validation.return_value = {
                     "detailed_issues": [],
-                    "summary": {"total_issues": 0}
+                    "summary": {"total_issues": 0},
                 }
                 mock_validator_class.return_value = mock_focused_validator
-                
+
                 result = self.analyzer.analyze_pull_request("main")
                 recommendation = self.analyzer.get_merge_recommendation(result)
-                
+
                 assert recommendation["can_merge"] is True
                 assert recommendation["requires_review"] is False
                 assert recommendation["quality_score"] > 50
-        
+
         # Scenario 2: Poor quality changes
-        with patch.object(self.analyzer, '_get_file_changes') as mock_changes, \
-             patch.object(self.analyzer.unified_validator, 'run_validation') as mock_validate, \
-             patch('src.infrastructure.tools.validation.core.incremental_analyzer.Validator') as mock_validator_class, \
-             patch.object(self.analyzer, '_analyze_changed_files') as mock_analyze, \
-             patch.object(self.analyzer, '_get_baseline_report') as mock_baseline:
-            
+        with patch.object(
+            self.analyzer, "_get_file_changes"
+        ) as mock_changes, patch.object(
+            self.analyzer.unified_validator, "run_validation"
+        ) as mock_validate, patch(
+            "src.infrastructure.tools.validation.core.incremental_analyzer.Validator"
+        ) as mock_validator_class, patch.object(
+            self.analyzer, "_analyze_changed_files"
+        ) as mock_analyze, patch.object(
+            self.analyzer, "_get_baseline_report"
+        ) as mock_baseline:
+
             mock_changes.return_value = [
-                FileChange("app.py", ChangeType.MODIFIED, 200, 100, is_new_file=False)  # Large change
+                FileChange(
+                    "app.py", ChangeType.MODIFIED, 200, 100, is_new_file=False
+                )  # Large change
             ]
-            
+
             # Configure main validator mock
             mock_validate.return_value = {
                 "detailed_issues": [
                     {"category": "security", "severity": "error"},
                     {"category": "bugs", "severity": "error"},
-                    {"category": "style", "severity": "warning"}
-                ] * 5,  # 15 issues total
-                "summary": {"total_issues": 15}
+                    {"category": "style", "severity": "warning"},
+                ]
+                * 5,  # 15 issues total
+                "summary": {"total_issues": 15},
             }
-            
-            # Configure the focused validator that gets created in _analyze_changed_files  
+
+            # Configure the focused validator that gets created in _analyze_changed_files
             mock_focused_validator = Mock()
             mock_focused_validator.run_validation.return_value = {
                 "detailed_issues": [
                     {"category": "security", "severity": "error"},
                     {"category": "bugs", "severity": "error"},
-                    {"category": "style", "severity": "warning"}
-                ] * 5,  # 15 issues total
-                "summary": {"total_issues": 15}
+                    {"category": "style", "severity": "warning"},
+                ]
+                * 5,  # 15 issues total
+                "summary": {"total_issues": 15},
             }
             mock_validator_class.return_value = mock_focused_validator
-            
+
             # Mock _analyze_changed_files to return our expected results
             mock_analyze.return_value = {
                 "issues": [
                     {"category": "security", "severity": "error"},
                     {"category": "bugs", "severity": "error"},
-                    {"category": "style", "severity": "warning"}
-                ] * 5,  # 15 issues total
+                    {"category": "style", "severity": "warning"},
+                ]
+                * 5,  # 15 issues total
                 "files_analyzed": 1,
-                "summary": {"total_issues": 15}
+                "summary": {"total_issues": 15},
             }
-            
+
             # Mock baseline to have 0 issues (clean baseline)
             mock_baseline.return_value = {
                 "detailed_issues": [],
-                "summary": {"total_issues": 0}
+                "summary": {"total_issues": 0},
             }
-            
+
             result = self.analyzer.analyze_pull_request("main")
             recommendation = self.analyzer.get_merge_recommendation(result)
-            
+
             assert recommendation["can_merge"] is False
             assert recommendation["requires_review"] is True
             assert recommendation["quality_score"] < 50

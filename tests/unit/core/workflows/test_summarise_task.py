@@ -9,11 +9,11 @@ from unittest.mock import Mock, patch
 # Import the actual classes from the summarization module
 try:
     from src.core.workflows.summarise_task import (
-        TaskSummarizer,
-        TaskSummary,
         AgentOutput,
         QAResults,
-        TaskArtifact
+        TaskArtifact,
+        TaskSummarizer,
+        TaskSummary,
     )
 except ImportError:
     # Create mock classes if the actual module isn't available
@@ -21,28 +21,28 @@ except ImportError:
         def __init__(self, task_id, base_dir=None):
             self.task_id = task_id
             self.base_dir = base_dir or "."
-        
+
         def analyze_task_completion(self):
             return Mock()
-        
+
         def load_task_metadata(self):
             return {}
-        
+
         def analyze_agent_outputs(self):
             return []
-        
+
         def categorize_files_by_type(self, files):
             return {}
-        
+
         def process_qa_results(self):
             return None
-        
+
         def determine_completion_status(self):
             return "completed"
-        
+
         def generate_markdown_report(self, summary):
             return "# Mock Report"
-        
+
         def save_completion_report(self, summary):
             return "/mock/path/report.md"
 
@@ -81,14 +81,15 @@ class TestTaskSummarizer:
         self.task_id = "TEST-01"
         self.temp_dir = tempfile.mkdtemp()
         self.base_dir = self.temp_dir
-        
+
         # Mock the directory creation to avoid permission errors
-        with patch('pathlib.Path.mkdir'):
+        with patch("pathlib.Path.mkdir"):
             self.summarizer = TaskSummarizer(self.task_id, self.base_dir)
-    
+
     def teardown_method(self):
         """Clean up test environment."""
         import shutil
+
         try:
             shutil.rmtree(self.temp_dir)
         except (OSError, FileNotFoundError):
@@ -101,62 +102,70 @@ class TestTaskSummarizer:
 
     def test_task_summarizer_default_base_dir(self):
         """Test TaskSummarizer with default base directory."""
-        with patch('pathlib.Path.mkdir'):
+        with patch("pathlib.Path.mkdir"):
             summarizer = TaskSummarizer("TEST-02")
             assert summarizer.task_id == "TEST-02"
             # The default base_dir might resolve to the current working directory
             assert isinstance(summarizer.base_dir, Path)
 
-    @patch('pathlib.Path.exists')
-    @patch('builtins.open')
+    @patch("pathlib.Path.exists")
+    @patch("builtins.open")
     def test_load_task_metadata_success(self, mock_open, mock_exists):
         """Test successful task metadata loading."""
         mock_exists.return_value = True
         mock_metadata = {
-            "tasks": [{
-                "id": self.task_id,
-                "title": "Test Task",
-                "description": "Test description"
-            }]
+            "tasks": [
+                {
+                    "id": self.task_id,
+                    "title": "Test Task",
+                    "description": "Test description",
+                }
+            ]
         }
-        mock_open.return_value.__enter__.return_value.read.return_value = json.dumps(mock_metadata)
-        
-        if hasattr(self.summarizer, 'load_task_metadata'):
+        mock_open.return_value.__enter__.return_value.read.return_value = json.dumps(
+            mock_metadata
+        )
+
+        if hasattr(self.summarizer, "load_task_metadata"):
             result = self.summarizer.load_task_metadata()
             assert isinstance(result, dict)
 
-    @patch('pathlib.Path.exists')
+    @patch("pathlib.Path.exists")
     def test_load_task_metadata_file_not_found(self, mock_exists):
         """Test task metadata loading when file doesn't exist."""
         mock_exists.return_value = False
-        
-        if hasattr(self.summarizer, 'load_task_metadata'):
+
+        if hasattr(self.summarizer, "load_task_metadata"):
             result = self.summarizer.load_task_metadata()
             assert result == {}
 
     def test_analyze_task_completion_basic(self):
         """Test basic task completion analysis."""
         result = self.summarizer.analyze_task_completion()
-        
+
         # Should return some kind of summary object or data
         assert result is not None
 
-    @patch('pathlib.Path.exists')
-    @patch('builtins.open')
+    @patch("pathlib.Path.exists")
+    @patch("builtins.open")
     def test_analyze_agent_outputs_with_status_file(self, mock_open, mock_exists):
         """Test agent output analysis with status file."""
         mock_exists.return_value = True
         mock_status = {
-            "agent_outputs": [{
-                "agent_id": "backend_agent",
-                "status": "completed",
-                "files_generated": ["api.py", "models.py"],
-                "files_modified": ["main.py"]
-            }]
+            "agent_outputs": [
+                {
+                    "agent_id": "backend_agent",
+                    "status": "completed",
+                    "files_generated": ["api.py", "models.py"],
+                    "files_modified": ["main.py"],
+                }
+            ]
         }
-        mock_open.return_value.__enter__.return_value.read.return_value = json.dumps(mock_status)
-        
-        if hasattr(self.summarizer, 'analyze_agent_outputs'):
+        mock_open.return_value.__enter__.return_value.read.return_value = json.dumps(
+            mock_status
+        )
+
+        if hasattr(self.summarizer, "analyze_agent_outputs"):
             result = self.summarizer.analyze_agent_outputs()
             assert isinstance(result, list)
 
@@ -167,10 +176,10 @@ class TestTaskSummarizer:
             "src/models/user.py",
             "tests/test_api.py",
             "README.md",
-            "package.json"
+            "package.json",
         ]
-        
-        if hasattr(self.summarizer, 'categorize_files_by_type'):
+
+        if hasattr(self.summarizer, "categorize_files_by_type"):
             result = self.summarizer.categorize_files_by_type(test_files)
             assert isinstance(result, dict)
 
@@ -181,21 +190,21 @@ class TestTaskSummarizer:
             "src/styles/main.css",
             "docs/api.md",
             "config/database.yml",
-            "Dockerfile"
+            "Dockerfile",
         ]
-        
-        if hasattr(self.summarizer, 'categorize_files_by_type'):
+
+        if hasattr(self.summarizer, "categorize_files_by_type"):
             result = self.summarizer.categorize_files_by_type(test_files)
             assert isinstance(result, dict)
 
     def test_categorize_files_by_type_empty_list(self):
         """Test file categorization with empty file list."""
-        if hasattr(self.summarizer, 'categorize_files_by_type'):
+        if hasattr(self.summarizer, "categorize_files_by_type"):
             result = self.summarizer.categorize_files_by_type([])
             assert isinstance(result, dict)
 
-    @patch('pathlib.Path.exists')
-    @patch('builtins.open')
+    @patch("pathlib.Path.exists")
+    @patch("builtins.open")
     def test_process_qa_results_with_qa_file(self, mock_open, mock_exists):
         """Test QA results processing with existing QA file."""
         mock_exists.return_value = True
@@ -203,28 +212,30 @@ class TestTaskSummarizer:
             "test_coverage": 85.5,
             "tests_passed": 24,
             "tests_failed": 2,
-            "overall_status": "passed_with_warnings"
+            "overall_status": "passed_with_warnings",
         }
-        mock_open.return_value.__enter__.return_value.read.return_value = json.dumps(mock_qa_data)
-        
-        if hasattr(self.summarizer, 'process_qa_results'):
+        mock_open.return_value.__enter__.return_value.read.return_value = json.dumps(
+            mock_qa_data
+        )
+
+        if hasattr(self.summarizer, "process_qa_results"):
             result = self.summarizer.process_qa_results()
             # Should return QAResults object or similar data structure
             assert result is not None
 
-    @patch('pathlib.Path.exists')
+    @patch("pathlib.Path.exists")
     def test_process_qa_results_no_qa_file(self, mock_exists):
         """Test QA results processing when QA file doesn't exist."""
         mock_exists.return_value = False
-        
-        if hasattr(self.summarizer, 'process_qa_results'):
+
+        if hasattr(self.summarizer, "process_qa_results"):
             result = self.summarizer.process_qa_results()
             # Should return None or default QA results
-            assert result is None or hasattr(result, 'test_coverage')
+            assert result is None or hasattr(result, "test_coverage")
 
     def test_determine_completion_status_completed(self):
         """Test completion status determination for completed task."""
-        if hasattr(self.summarizer, 'determine_completion_status'):
+        if hasattr(self.summarizer, "determine_completion_status"):
             result = self.summarizer.determine_completion_status()
             assert isinstance(result, str)
             assert result in ["completed", "in_progress", "failed", "blocked"]
@@ -244,9 +255,9 @@ class TestTaskSummarizer:
         mock_summary.qa_results = None
         mock_summary.next_steps = ["Review code", "Deploy"]
         mock_summary.dependencies = []
-        
+
         result = self.summarizer.generate_markdown_report(mock_summary)
-        
+
         assert isinstance(result, str)
         assert self.task_id in result
 
@@ -268,14 +279,14 @@ class TestTaskSummarizer:
         mock_summary.qa_results.test_coverage = 85.0
         mock_summary.qa_results.overall_status = "passed"
         mock_summary.qa_results.detailed_findings = []
-        
+
         result = self.summarizer.generate_markdown_report(mock_summary)
-        
+
         assert isinstance(result, str)
         assert "85.0" in result or "85" in result
 
-    @patch('pathlib.Path.mkdir')
-    @patch('builtins.open')
+    @patch("pathlib.Path.mkdir")
+    @patch("builtins.open")
     def test_save_completion_report(self, mock_open, mock_mkdir):
         """Test saving completion report to file."""
         mock_summary = Mock()
@@ -291,9 +302,9 @@ class TestTaskSummarizer:
         mock_summary.qa_results = None
         mock_summary.next_steps = ["Review code", "Deploy"]
         mock_summary.dependencies = []
-        
+
         result = self.summarizer.save_completion_report(mock_summary)
-        
+
         assert isinstance(result, (str, Path))
         assert self.task_id in str(result)
 
@@ -316,9 +327,9 @@ class TestTaskSummary:
             next_steps=[],
             total_files_created=2,
             total_files_modified=1,
-            total_code_lines=150
+            total_code_lines=150,
         )
-        
+
         assert summary.task_id == "TEST-01"
         assert summary.task_title == "Test Task"
         assert summary.completion_status == "completed"
@@ -338,12 +349,12 @@ class TestTaskSummary:
             next_steps=["Review code"],
             total_files_created=1,
             total_files_modified=0,
-            total_code_lines=75
+            total_code_lines=75,
         )
-        
+
         assert summary.task_id == "TEST-02"
-        assert hasattr(summary, 'agent_outputs')
-        assert hasattr(summary, 'artifacts')
+        assert hasattr(summary, "agent_outputs")
+        assert hasattr(summary, "artifacts")
 
 
 class TestAgentOutput:
@@ -357,13 +368,13 @@ class TestAgentOutput:
             status="completed",
             files_generated=["api.py"],
             files_modified=["main.py"],
-            metadata={"duration": "5 minutes"}
+            metadata={"duration": "5 minutes"},
         )
-        
+
         assert output.agent_id == "backend_agent"
         assert output.status == "completed"
-        assert hasattr(output, 'files_generated')
-        assert hasattr(output, 'files_modified')
+        assert hasattr(output, "files_generated")
+        assert hasattr(output, "files_modified")
 
     def test_agent_output_default_status(self):
         """Test AgentOutput with default status."""
@@ -373,9 +384,9 @@ class TestAgentOutput:
             status="completed",
             files_generated=[],
             files_modified=[],
-            metadata={}
+            metadata={},
         )
-        
+
         assert output.agent_id == "frontend_agent"
         assert output.status == "completed"
 
@@ -392,12 +403,12 @@ class TestQAResults:
             critical_issues=0,
             warnings=3,
             overall_status="passed_with_warnings",
-            detailed_findings=[{"type": "warning", "message": "Unused import"}]
+            detailed_findings=[{"type": "warning", "message": "Unused import"}],
         )
-        
+
         assert qa_results.test_coverage == 85.5
-        assert hasattr(qa_results, 'tests_passed')
-        assert hasattr(qa_results, 'tests_failed')
+        assert hasattr(qa_results, "tests_passed")
+        assert hasattr(qa_results, "tests_failed")
 
     def test_qa_results_default_coverage(self):
         """Test QAResults with default test coverage."""
@@ -408,9 +419,9 @@ class TestQAResults:
             critical_issues=0,
             warnings=0,
             overall_status="not_run",
-            detailed_findings=[]
+            detailed_findings=[],
         )
-        
+
         assert qa_results.test_coverage == 0
 
 
@@ -419,23 +430,15 @@ class TestTaskArtifact:
 
     def test_task_artifact_creation(self):
         """Test TaskArtifact object creation."""
-        artifact = TaskArtifact(
-            path="src/api/routes.py",
-            type="code",
-            size_bytes=1024
-        )
-        
+        artifact = TaskArtifact(path="src/api/routes.py", type="code", size_bytes=1024)
+
         assert artifact.path == "src/api/routes.py"
         assert artifact.type == "code"
 
     def test_task_artifact_default_type(self):
         """Test TaskArtifact with default type."""
-        artifact = TaskArtifact(
-            path="README.md",
-            type="doc",
-            size_bytes=2048
-        )
-        
+        artifact = TaskArtifact(path="README.md", type="doc", size_bytes=2048)
+
         assert artifact.path == "README.md"
         assert artifact.type == "doc"
 
@@ -445,15 +448,11 @@ class TestTaskArtifact:
             ("src/components/App.tsx", "frontend"),
             ("tests/test_api.py", "test"),
             ("docs/api.md", "documentation"),
-            ("package.json", "configuration")
+            ("package.json", "configuration"),
         ]
-        
+
         for file_path, expected_type in test_cases:
-            artifact = TaskArtifact(
-                path=file_path,
-                type=expected_type,
-                size_bytes=512
-            )
+            artifact = TaskArtifact(path=file_path, type=expected_type, size_bytes=512)
             assert artifact.path == file_path
             assert artifact.type == expected_type
 
@@ -461,65 +460,71 @@ class TestTaskArtifact:
 class TestTaskSummarizationIntegration:
     """Integration tests for task summarization workflow."""
 
-    @patch('pathlib.Path.exists')
-    @patch('builtins.open')
+    @patch("pathlib.Path.exists")
+    @patch("builtins.open")
     def test_full_summarization_workflow(self, mock_open, mock_exists):
         """Test complete task summarization workflow."""
         # Mock file system
         mock_exists.return_value = True
-        
+
         # Mock task metadata
         task_metadata = {
-            "tasks": [{
-                "id": "TEST-INTEGRATION",
-                "title": "Integration Test Task",
-                "description": "Full workflow test"
-            }]
+            "tasks": [
+                {
+                    "id": "TEST-INTEGRATION",
+                    "title": "Integration Test Task",
+                    "description": "Full workflow test",
+                }
+            ]
         }
-        
+
         # Mock status data
         status_data = {
-            "agent_outputs": [{
-                "agent_id": "test_agent",
-                "status": "completed",
-                "files_generated": ["test.py", "api.py"],
-                "files_modified": ["main.py"]
-            }]
+            "agent_outputs": [
+                {
+                    "agent_id": "test_agent",
+                    "status": "completed",
+                    "files_generated": ["test.py", "api.py"],
+                    "files_modified": ["main.py"],
+                }
+            ]
         }
-        
+
         # Mock QA data
         qa_data = {
             "test_coverage": 90.0,
             "tests_passed": 30,
             "tests_failed": 1,
-            "overall_status": "passed"
+            "overall_status": "passed",
         }
-        
+
         # Configure mock to return different data based on file being opened
         def mock_read_side_effect(*args, **kwargs):
-            if 'agent_task_assignments.json' in str(args):
+            if "agent_task_assignments.json" in str(args):
                 return json.dumps(task_metadata)
-            elif 'status.json' in str(args):
+            elif "status.json" in str(args):
                 return json.dumps(status_data)
-            elif 'qa_report.json' in str(args):
+            elif "qa_report.json" in str(args):
                 return json.dumps(qa_data)
             return "{}"
-        
-        mock_open.return_value.__enter__.return_value.read.side_effect = mock_read_side_effect
-        
+
+        mock_open.return_value.__enter__.return_value.read.side_effect = (
+            mock_read_side_effect
+        )
+
         # Run summarization
-        with patch('pathlib.Path.mkdir'):
+        with patch("pathlib.Path.mkdir"):
             summarizer = TaskSummarizer("TEST-INTEGRATION", "/test/dir")
             summary = summarizer.analyze_task_completion()
-        
+
         # Verify results
         assert summary is not None
 
     def test_error_handling_missing_files(self):
         """Test error handling when required files are missing."""
-        with patch('pathlib.Path.mkdir'):
+        with patch("pathlib.Path.mkdir"):
             summarizer = TaskSummarizer("NONEXISTENT-TASK", "/nonexistent/dir")
-            
+
             # Should handle missing files gracefully
             try:
                 summary = summarizer.analyze_task_completion()
@@ -530,15 +535,15 @@ class TestTaskSummarizationIntegration:
 
     def test_partial_data_handling(self):
         """Test handling of partial or incomplete data."""
-        with patch('pathlib.Path.mkdir'):
+        with patch("pathlib.Path.mkdir"):
             summarizer = TaskSummarizer("PARTIAL-DATA", "/test/dir")
-            
+
             # Test with empty or partial data
-            if hasattr(summarizer, 'categorize_files_by_type'):
+            if hasattr(summarizer, "categorize_files_by_type"):
                 result = summarizer.categorize_files_by_type([])
                 assert isinstance(result, dict)
-            
-            if hasattr(summarizer, 'determine_completion_status'):
+
+            if hasattr(summarizer, "determine_completion_status"):
                 status = summarizer.determine_completion_status()
                 assert isinstance(status, str)
 
@@ -555,13 +560,13 @@ class TestTaskSummarizationUtilities:
             "config.yaml",
             "README.md",
             "Dockerfile",
-            "file_without_extension"
+            "file_without_extension",
         ]
-        
-        with patch('pathlib.Path.mkdir'):
+
+        with patch("pathlib.Path.mkdir"):
             summarizer = TaskSummarizer("UTIL-TEST")
-            
-            if hasattr(summarizer, 'categorize_files_by_type'):
+
+            if hasattr(summarizer, "categorize_files_by_type"):
                 categories = summarizer.categorize_files_by_type(test_files)
                 assert isinstance(categories, dict)
 
@@ -569,16 +574,16 @@ class TestTaskSummarizationUtilities:
         """Test performance with large file lists."""
         # Generate a large list of mock files
         large_file_list = [f"src/file_{i}.py" for i in range(1000)]
-        
-        with patch('pathlib.Path.mkdir'):
+
+        with patch("pathlib.Path.mkdir"):
             summarizer = TaskSummarizer("PERF-TEST")
-            
+
             # Should handle large lists without issues
-            if hasattr(summarizer, 'categorize_files_by_type'):
+            if hasattr(summarizer, "categorize_files_by_type"):
                 start_time = datetime.now()
                 result = summarizer.categorize_files_by_type(large_file_list)
                 end_time = datetime.now()
-                
+
                 assert isinstance(result, dict)
                 # Should complete within reasonable time (less than 1 second)
                 duration = (end_time - start_time).total_seconds()
@@ -592,12 +597,12 @@ class TestTaskSummarizationUtilities:
             "file with spaces.py",
             "file-with-dashes.py",
             "file_with_underscores.py",
-            "file.with.multiple.dots.py"
+            "file.with.multiple.dots.py",
         ]
-        
-        with patch('pathlib.Path.mkdir'):
+
+        with patch("pathlib.Path.mkdir"):
             summarizer = TaskSummarizer("UNICODE-TEST")
-            
-            if hasattr(summarizer, 'categorize_files_by_type'):
+
+            if hasattr(summarizer, "categorize_files_by_type"):
                 result = summarizer.categorize_files_by_type(special_files)
                 assert isinstance(result, dict)

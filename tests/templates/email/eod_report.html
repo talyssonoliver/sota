@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background-color: #4CAF50; color: white; padding: 20px; border-radius: 5px; }
+        .section { margin: 20px 0; padding: 15px; border-left: 4px solid #4CAF50; }
+        .metric { display: inline-block; margin: 10px; padding: 10px; background-color: #f5f5f5; border-radius: 3px; }
+        .accomplishment { color: #4CAF50; font-weight: bold; margin: 5px 0; }
+        .challenge { color: #FF6B35; font-weight: bold; margin: 5px 0; }
+        .tomorrow { color: #2196F3; font-weight: bold; margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌙 End-of-Day Report - {{date}}</h1>
+        <p>Daily Productivity Score: {{productivity_score}}/10</p>
+    </div>
+    
+    <div class="section">
+        <h2>📊 Daily Summary</h2>
+        <div class="metric">✅ Tasks Completed: {{completed_today}}</div>
+        <div class="metric">🚀 Tasks Started: {{started_today}}</div>
+        <div class="metric">🚫 Blocked Tasks: {{blocked_today}}</div>
+        <div class="metric">📈 Daily Velocity: {{daily_velocity}}</div>
+    </div>
+    
+    {% if accomplishments %}
+    <div class="section">
+        <h2>🎉 Key Accomplishments</h2>
+        {% for accomplishment in accomplishments %}
+        <div class="accomplishment">✅ {{accomplishment}}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if challenges %}
+    <div class="section">
+        <h2>⚠️ Challenges Faced</h2>
+        {% for challenge in challenges %}
+        <div class="challenge">⚠️ {{challenge}}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    {% if tomorrow_prep %}
+    <div class="section">
+        <h2>🗓️ Tomorrow's Preparation</h2>
+        {% for item in tomorrow_prep %}
+        <div class="tomorrow">📋 {{item}}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="section">
+        <p><a href="{{dashboard_url}}">View Dashboard</a> | <a href="{{detailed_report_url}}">Detailed Report</a></p>
+    </div>
+</body>
+</html>
+        

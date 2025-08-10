@@ -6,7 +6,7 @@
     "owner": "backend",
     "status": "COMPLETED",
     "start_date": null,
-    "completion_date": "2025-06-13T05:40:35.787723",
+    "completion_date": "2025-08-08T19:17:18.397368",
     "duration_hours": null
   },
   "artifacts": [
@@ -14,28 +14,28 @@
       "name": "task_declaration.json",
       "path": "task_declaration.json",
       "type": "configuration",
-      "size_bytes": 809,
+      "size_bytes": 780,
       "description": "Configuration file for task_declaration (JSON data)"
     },
     {
       "name": "completion_report.md",
       "path": "completion_report.md",
       "type": "documentation",
-      "size_bytes": 1692,
+      "size_bytes": 1613,
       "description": "Documentation for completion_report (Markdown)"
     },
     {
       "name": "prompt_backend.md",
       "path": "prompt_backend.md",
       "type": "documentation",
-      "size_bytes": 157,
+      "size_bytes": 1429,
       "description": "Documentation for prompt_backend (Markdown)"
     },
     {
       "name": "prompt_backend.md",
       "path": "prompt_backend.md",
       "type": "output",
-      "size_bytes": 157,
+      "size_bytes": 1429,
       "description": "Agent output containing implementation details (Markdown)"
     }
   ],
@@ -73,12 +73,11 @@
       "url": "outputs/BE-07/task_declaration.json"
     },
     {
-      "type": "pull_request",
-      "title": "Pull Request for BE-07 (manual entry needed)",
-      "url": "https://github.com/artesanato-shop/artesanato-ecommerce/pulls?q=BE-07",
-      "status": "pending"
+      "type": "github_pr",
+      "title": "GitHub PR (manual entry needed)",
+      "url": "#"
     }
   ],
-  "generated_at": "2025-06-13T05:40:35.982024",
+  "generated_at": "2025-08-08T19:17:18.412123",
   "version": "1.0.0"
 }

@@ -6,18 +6,10 @@ It should be imported at the start of your application.
 """
 
 import logging
-from pathlib import Path
 
 # Don't import patches at module level to avoid expensive imports
 # Patches will be imported lazily when needed
-chromadb_telemetry_patch = None
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-)
-logger = logging.getLogger("security")
+logger = logging.getLogger(__name__)
 
 
 def apply_all_patches():
@@ -27,8 +19,9 @@ def apply_all_patches():
 
     # Apply the chromadb telemetry patch
     try:
-        from src.infrastructure.security.chromadb_telemetry_patch import \
-            apply_patch as apply_chromadb_patch
+        from src.infrastructure.security.chromadb_telemetry_patch import (
+            apply_patch as apply_chromadb_patch,
+        )
 
         if apply_chromadb_patch():
             logger.info("Successfully applied ChromaDB telemetry patch")

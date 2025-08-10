@@ -1,34 +1,40 @@
+
+from src.infrastructure.utils.common_imports import os, sys
 """
 Workflow Visualization Utility
 Generates visual representations of the LangGraph workflow.
 """
 
 import argparse
-import os
-import sys
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 
 # Add parent directory to path to allow imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import workflow building functions
 try:
-    from .graph_builder import build_workflow_graph, build_dynamic_workflow_graph
+    from .graph_builder import (build_dynamic_workflow_graph,
+                                build_workflow_graph)
 except ImportError:
     # Create placeholder functions if imports fail
     def build_workflow_graph():
         print("build_workflow_graph not available")
         return None
-    
+
     def build_dynamic_workflow_graph():
-        print("build_dynamic_workflow_graph not available") 
+        print("build_dynamic_workflow_graph not available")
         return None
+
 
 try:
     from .flow import build_workflow_graph as build_state_workflow_graph
 except ImportError:
+
     def build_state_workflow_graph():
         print("build_state_workflow_graph not available")
         return None
+
 
 # Create placeholder for missing function
 def build_advanced_workflow_graph():

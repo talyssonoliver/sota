@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    subprocess,
+    sys,
+    time
+)
 """
 Optimized Test Suite Runner - Implementation of Test Suite Optimization Plan
 
@@ -6,10 +13,10 @@ This script demonstrates the performance improvements implemented in the test su
 Includes parallel execution, mocking, categorization, and performance monitoring.
 """
 
-import subprocess
-import sys
-import time
-from pathlib import Path
+# import subprocess  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 
 def run_command(cmd, description, timeout=300):
@@ -23,9 +30,12 @@ def run_command(cmd, description, timeout=300):
     start_time = time.time()
 
     try:
+        # Use shlex to safely parse command and avoid shell injection
+        import shlex
+        cmd_args = shlex.split(cmd)
         result = subprocess.run(
-            cmd,
-            shell=True,
+            cmd_args,
+            shell=False,  # Safer - no shell injection
             capture_output=True,
             text=True,
             timeout=timeout,

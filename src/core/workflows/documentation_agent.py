@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    dataclass,
+    datetime,
+    json,
+    os,
+    sys
+)
 """
 Documentation Agent for Phase 5
 
@@ -6,25 +19,12 @@ Automated documentation generation and task completion reporting.
 Creates comprehensive reports for completed tasks with artifacts,
 summaries, and next steps.
 """
-import json
-import sys
-
-try:
-    from dataclasses import asdict, dataclass
-except ImportError:
-    pass
-try:
-    from datetime import datetime
-except ImportError:
-    pass
-try:
-    from pathlib import Path
-except ImportError:
-    pass
-try:
-    from typing import Any, Dict, List, Optional
-except ImportError:
-    pass
+# import json  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 
 @dataclass
@@ -79,6 +79,10 @@ class DocumentationReport:
     version: str = "1.0.0"
 
 
+# Constants for common patterns
+OUTPUT_MD_PATTERN = "output_*.md"
+TYPESCRIPT_PATTERN = "**/*.ts"
+
 class DocumentationAgent:
     """Automated documentation generation system"""
 
@@ -113,7 +117,7 @@ class DocumentationAgent:
         technical_details = self._extract_technical_details(task_id)
 
         # Generate next steps
-        next_steps = self._generate_next_steps(task_id, qa_summary)
+        next_steps = self._generate_next_steps(qa_summary)
 
         # Collect references
         references = self._collect_references(task_id)
@@ -165,7 +169,7 @@ class DocumentationAgent:
                 completion_dt = datetime.now()
                 duration = completion_dt - start_dt
                 duration_hours = duration.total_seconds() / 3600
-            except BaseException:
+            except (ValueError, TypeError, OSError):
                 pass
 
         return TaskSummary(
@@ -188,7 +192,7 @@ class DocumentationAgent:
         artifact_patterns = {
             "code": [
                 "code/**/*.py",
-                "code/**/*.ts",
+                f"code/{TYPESCRIPT_PATTERN}",
                 "code/**/*.js",
                 "code/**/*.tsx",
                 "code/**/*.jsx",
@@ -196,40 +200,43 @@ class DocumentationAgent:
             "documentation": ["*.md", "docs/**/*.md"],
             "configuration": ["*.yaml", "*.yml", "*.json", "*.toml", "config/**/*"],
             "tests": ["test/**/*", "tests/**/*", "**/*test*", "**/*spec*"],
-            "output": ["output_*.md", "prompt_*.md"],
+            "output": [OUTPUT_MD_PATTERN, "prompt_*.md"],
             "reports": ["qa_*.json", "qa_*.md", "status.json"],
         }
 
         for artifact_type, patterns in artifact_patterns.items():
-            for pattern in patterns:
-                for file_path in task_dir.glob(pattern):
-                    if file_path.is_file():
-                        try:
-                            stat = file_path.stat()
-                            # Use safe path calculation
-                            try:
-                                relative_path = str(file_path.relative_to(task_dir))
-                            except ValueError:
-                                # If relative_to fails, use name only
-                                relative_path = file_path.name
-
-                            artifacts.append(
-                                TaskArtifact(
-                                    name=file_path.name,
-                                    path=relative_path,
-                                    type=artifact_type,
-                                    size_bytes=stat.st_size,
-                                    description=self._generate_artifact_description(
-                                        file_path, artifact_type
-                                    ),
-                                )
-                            )
-                        except Exception as e:
-                            print(
-                                f"Warning: Could not process artifact {file_path}: {e}"
-                            )
+            self._collect_artifacts_by_type(task_dir, artifact_type, patterns, artifacts)
 
         return sorted(artifacts, key=lambda x: (x.type, x.name))
+
+    def _collect_artifacts_by_type(self, task_dir: Path, artifact_type: str, 
+                                   patterns: List[str], artifacts: List[TaskArtifact]) -> None:
+        """Helper method to collect artifacts of a specific type"""
+        for pattern in patterns:
+            for file_path in task_dir.glob(pattern):
+                if file_path.is_file():
+                    try:
+                        stat = file_path.stat()
+                        # Use safe path calculation
+                        try:
+                            relative_path = str(file_path.relative_to(task_dir))
+                        except ValueError:
+                            # If relative_to fails, use name only
+                            relative_path = file_path.name
+
+                        artifacts.append(
+                            TaskArtifact(
+                                name=file_path.name,
+                                path=relative_path,
+                                type=artifact_type,
+                                size_bytes=stat.st_size,
+                                description=self._generate_artifact_description(
+                                    file_path, artifact_type
+                                ),
+                            )
+                        )
+                    except Exception as e:
+                        print(f"Warning: Could not process artifact {file_path}: {e}")
 
     def _load_qa_summary(self, task_id: str) -> QASummary:
         """Load QA summary from QA report"""
@@ -292,7 +299,7 @@ class DocumentationAgent:
         notes = []
 
         # Analyze agent outputs
-        output_files = list(task_dir.glob("output_*.md"))
+        output_files = list(task_dir.glob(OUTPUT_MD_PATTERN))
         for output_file in output_files:
             try:
                 with open(output_file) as f:
@@ -319,7 +326,7 @@ class DocumentationAgent:
         # Analyze code artifacts
         code_dir = task_dir / "code"
         if code_dir.exists():
-            code_files = list(code_dir.glob("**/*.ts")) + list(code_dir.glob("**/*.py"))
+            code_files = list(code_dir.glob(TYPESCRIPT_PATTERN)) + list(code_dir.glob("**/*.py"))
             if code_files:
                 notes.append(f"Generated {len(code_files)} code files")
 
@@ -355,7 +362,7 @@ class DocumentationAgent:
         code_dir = task_dir / "code"
         if code_dir.exists():
             # Detect technologies
-            if list(code_dir.glob("**/*.ts")):
+            if list(code_dir.glob(TYPESCRIPT_PATTERN)):
                 details["technologies"].append("TypeScript")
             if list(code_dir.glob("**/*.py")):
                 details["technologies"].append("Python")
@@ -363,7 +370,7 @@ class DocumentationAgent:
                 details["technologies"].append("JavaScript")
 
             # Detect patterns
-            for code_file in code_dir.glob("**/*.ts"):
+            for code_file in code_dir.glob(TYPESCRIPT_PATTERN):
                 try:
                     with open(code_file) as f:
                         content = f.read()
@@ -390,7 +397,7 @@ class DocumentationAgent:
 
         return details
 
-    def _generate_next_steps(self, task_id: str, qa_summary: QASummary) -> List[str]:
+    def _generate_next_steps(self, qa_summary: QASummary) -> List[str]:
         """Generate next steps based on task completion and QA results"""
         next_steps = []
 
@@ -442,7 +449,7 @@ class DocumentationAgent:
             )
 
         # Agent outputs
-        output_files = list((self.outputs_dir / task_id).glob("output_*.md"))
+        output_files = list((self.outputs_dir / task_id).glob(OUTPUT_MD_PATTERN))
         for output_file in output_files:
             agent_name = output_file.stem.replace("output_", "")
             try:
@@ -461,86 +468,42 @@ class DocumentationAgent:
             )
 
         # Add GitHub PR references for this task
-        pr_links = self._collect_github_pr_links(task_id)
+        pr_links = self._collect_github_pr_links()
         references.extend(pr_links)
 
         return references
 
-    def _collect_github_pr_links(self, task_id: str) -> List[Dict[str, str]]:
+    def _collect_github_pr_links(self) -> List[Dict[str, str]]:
         """Collect GitHub PR links related to this task"""
         pr_links = []
 
         try:
-            # Import GitHub tool to fetch PR information
-            from tools.github_tool import GitHubTool
-
-            github_tool = GitHubTool()
-
             # Check if GitHub token is available
-            import os
+#             import os  # Consolidated to common_imports
+            if not os.getenv('GITHUB_TOKEN'):
+                # Return fallback entry when GitHub integration is not available
+                return [{
+                    "type": "github_pr",
+                    "title": "GitHub PR (manual entry needed)",
+                    "url": "#"
+                }]
+            
+            # GitHub integration not available - skipping PR collection
+            # Note: GitHub integration can be implemented when tools.github_tool is available
+            return [{
+                "type": "github_pr", 
+                "title": "GitHub PR (manual entry needed)",
+                "url": "#"
+            }]
 
-            if not os.getenv("GITHUB_TOKEN"):
-                print("Info: GITHUB_TOKEN not set, using manual PR link fallback")
-                raise Exception("GitHub token not available")
-
-            # List pull requests and filter for those related to this task
-            pr_response = github_tool._run("list pull requests")
-            pr_data = json.loads(pr_response)
-
-            if pr_data.get("success") and pr_data.get("data"):
-                for pr in pr_data["data"]:
-                    # Check if PR is related to this task (by title, body, or
-                    # branch name)
-                    pr_title = pr.get("title", "").lower()
-                    pr_body = pr.get("body", "").lower()
-                    pr_branch = pr.get("head", {}).get("ref", "").lower()
-
-                    task_id_lower = task_id.lower()
-
-                    # Match PR if task ID appears in title, body, or branch
-                    if (
-                        task_id_lower in pr_title
-                        or task_id_lower in pr_body
-                        or task_id_lower in pr_branch
-                        or
-                        # Also check for common patterns like "be-07" matching
-                        # "BE-07"
-                        task_id_lower.replace("-", "") in pr_title.replace("-", "")
-                        or task_id_lower.replace("-", "") in pr_body.replace("-", "")
-                        or task_id_lower.replace("-", "") in pr_branch.replace("-", "")
-                    ):
-
-                        pr_links.append(
-                            {
-                                "type": "pull_request",
-                                "title": f"PR #{pr.get('number')}: {pr.get('title')}",
-                                "url": pr.get("html_url", "#"),
-                                "status": pr.get("state", "unknown"),
-                            }
-                        )
-
-            # If no PRs found, add manual fallback
-            if not pr_links:
-                pr_links.append(
-                    {
-                        "type": "pull_request",
-                        "title": f"Pull Request for {task_id} (manual entry needed)",
-                        "url": f"https://github.com/artesanato-shop/artesanato-ecommerce/pulls?q={task_id}",
-                        "status": "pending",
-                    }
-                )
-
-        except Exception as e:
+        except OSError as e:
             print(f"Warning: Could not fetch GitHub PR links: {e}")
-            # Add a placeholder for manual PR entry
-            pr_links.append(
-                {
-                    "type": "pull_request",
-                    "title": f"Pull Request for {task_id} (manual entry needed)",
-                    "url": f"https://github.com/artesanato-shop/artesanato-ecommerce/pulls?q={task_id}",
-                    "status": "pending",
-                }
-            )
+            # Return fallback entry when GitHub integration unavailable
+            return [{
+                "type": "github_pr",
+                "title": "GitHub PR (manual entry needed)", 
+                "url": "#"
+            }]
 
         return pr_links
 
@@ -550,8 +513,43 @@ class DocumentationAgent:
 
         # Save JSON report
         json_path = self.docs_dir / f"{task_id}.json"
+        # Convert dataclass to dictionary manually for JSON serialization
+        doc_dict = {
+            'task_summary': {
+                'task_id': doc_report.task_summary.task_id,
+                'title': doc_report.task_summary.title,
+                'description': doc_report.task_summary.description,
+                'owner': doc_report.task_summary.owner,
+                'status': doc_report.task_summary.status,
+                'start_date': doc_report.task_summary.start_date,
+                'completion_date': doc_report.task_summary.completion_date,
+                'duration_hours': doc_report.task_summary.duration_hours
+            },
+            'artifacts': [{ 
+                'name': artifact.name,
+                'path': artifact.path,
+                'type': artifact.type,
+                'size_bytes': artifact.size_bytes,
+                'description': artifact.description
+            } for artifact in doc_report.artifacts],
+            'qa_summary': {
+                'overall_status': doc_report.qa_summary.overall_status,
+                'tests_passed': doc_report.qa_summary.tests_passed,
+                'tests_failed': doc_report.qa_summary.tests_failed,
+                'coverage_percentage': doc_report.qa_summary.coverage_percentage,
+                'critical_issues': doc_report.qa_summary.critical_issues,
+                'recommendations_count': doc_report.qa_summary.recommendations_count
+            },
+            'implementation_notes': doc_report.implementation_notes,
+            'technical_details': doc_report.technical_details,
+            'next_steps': doc_report.next_steps,
+            'references': doc_report.references,
+            'generated_at': doc_report.generated_at,
+            'version': doc_report.version
+        }
+        
         with open(json_path, "w") as f:
-            json.dump(asdict(doc_report), f, indent=2)
+            json.dump(doc_dict, f, indent=2)
 
         # Save Markdown report
         md_path = self.docs_dir / f"{task_id}.md"

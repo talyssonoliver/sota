@@ -1,30 +1,40 @@
+
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    dataclass,
+    datetime,
+    field,
+    logging,
+    time,
+    timedelta,
+    traceback,
+    uuid
+)
 """
 Enhanced Error Handling for Multi-Agent Workflows
-Implements comprehensive error propagation, recovery, and escalation strategies.
+
+Implements comprehensive error propagation, recovery, and escalation strategies
+for multi-agent workflow systems. Provides robust error classification, automated
+recovery mechanisms, and human escalation pathways.
 """
 
-try:
-    import time
-    from datetime import datetime, timedelta
-except ImportError:
-    pass
-try:
-    from enum import Enum
-except ImportError:
-    pass
-try:
-    from typing import Any, Callable, Dict, List, Optional
-except ImportError:
-    pass
-try:
-    from dataclasses import dataclass, field
-except ImportError:
-    pass
-try:
-    import logging
-except ImportError:
-    pass
+# import logging  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from datetime import datetime, timedelta  # Consolidated to common_imports
+# from dataclasses import dataclass, field  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+from typing import Any, Callable, Dict, List, Optional
+
+# Configure module logger
 logger = logging.getLogger(__name__)
+if not logger.handlers:
+    handler = logging.StreamHandler()
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
 
 
 class ErrorType(str, Enum):
@@ -375,8 +385,8 @@ class ErrorPropagationManager:
         context_data: Optional[Dict[str, Any]] = None,
     ) -> ErrorContext:
         """Create comprehensive error context from exception"""
-        import traceback
-        import uuid
+#         import traceback  # Consolidated to common_imports
+#         import uuid  # Consolidated to common_imports
 
         error_id = f"ERR_{task_id}_{uuid.uuid4().hex[:8]}"
         error_type = self.classify_error(exception, task_id, agent_role)
@@ -554,7 +564,7 @@ class ErrorPropagationManager:
 
     def _escalate_to_human(self, error_context: ErrorContext) -> bool:
         """Escalate error to human administrators"""
-        # In a real implementation, this would:
+        # TODO: Must implement, this would:
         # 1. Create human review task
         # 2. Send notifications (email, Slack, etc.)
         # 3. Update task status to require human intervention

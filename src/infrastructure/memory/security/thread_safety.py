@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Union,
+    logging,
+    time
+)
 """
 thread_safe.py - Unified Memory System
 
@@ -12,12 +22,12 @@ Thread-Safe Memory Engine Access Patterns
 Provides thread-safe wrappers and access patterns for memory engine operations.
 """
 
-import logging
+# import logging  # Consolidated to common_imports
 import threading
-import time
+# import time  # Consolidated to common_imports
 
 try:
-    from typing import Any, Dict, List, Optional, Union
+    from src.infrastructure.utils.common_imports import Any, Dict, List, Optional, Union  
 except ImportError:
     pass
 try:
@@ -32,6 +42,7 @@ except ImportError:
     class MemoryEngine:
         def __init__(self, config=None):
             self.config = config
+
 
 logger = logging.getLogger(__name__)
 

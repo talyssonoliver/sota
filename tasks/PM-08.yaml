@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=./task-schema.json
+id: PM-08
+title: Confirm External Dependencies and Risks
+owner: product
+depends_on: []
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task PM-08: Confirm External Dependencies and Risks"
+artefacts:
+  - docs/sprint/risk-register.md
+context_topics:
+  - project-overview

@@ -1,18 +1,25 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path
+)
 """Generate progress reports."""
 
 import datetime
-from pathlib import Path
+# from pathlib import Path  # Consolidated to common_imports
 
 try:
     pass
 except ImportError:
     pass
-from typing import Any, Dict, List, Optional
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 # Try to import CompletionMetricsCalculator - will be mocked in tests
 try:
-    from src.infrastructure.utils.completion_metrics import \
-        CompletionMetricsCalculator
+    from src.infrastructure.utils.completion_metrics import CompletionMetricsCalculator
 except ImportError:
     CompletionMetricsCalculator = None
 
@@ -148,6 +155,19 @@ class ProgressReportGenerator:
 
         if average_coverage < 85:
             steps += "- **Increase test coverage** to meet quality standards\n"
+            
+        # Add QA-specific recommendations based on pass rate
+        if qa_pass_rate < 90:
+            if qa_pass_rate < 70:
+                steps += "- **Urgent: Review QA processes** - pass rate is critically low\n"
+                steps += "- **Conduct QA training** sessions for team members\n"
+            elif qa_pass_rate < 85:
+                steps += "- **Improve QA standards** - focus on test quality and coverage\n"
+            else:
+                steps += "- **Fine-tune QA processes** to reach 90%+ pass rate target\n"
+                
+        if qa_pass_rate >= 95:
+            steps += "- **Excellent QA performance** - maintain current standards\n"
 
         return steps
 
@@ -234,6 +254,18 @@ class ProgressReportGenerator:
 
         if failed_tasks > 0:
             recommendations += "- **Review and address failed tasks**\n"
+            
+        # Add comprehensive QA-based recommendations
+        if qa_pass_rate < 80:
+            recommendations += "- **Critical QA Issue**: Implement immediate quality improvement measures\n"
+            recommendations += "- **QA Process Review**: Conduct thorough review of testing procedures\n"
+            recommendations += "- **Team Training**: Schedule QA best practices training sessions\n"
+        elif qa_pass_rate < 90:
+            recommendations += "- **QA Enhancement**: Focus on improving test quality and review processes\n"
+            recommendations += "- **Peer Review**: Implement mandatory peer review for critical changes\n"
+        elif qa_pass_rate >= 95:
+            recommendations += "- **Excellent QA Standards**: Maintain current high-quality practices\n"
+            recommendations += "- **QA Leadership**: Consider mentoring other teams on QA excellence\n"
 
         return recommendations
 
@@ -267,8 +299,8 @@ class ProgressReportGenerator:
 
         return insights
 
-    def generate_daily_report(self) -> str:
-        """Generate daily progress report.
+    def generate_simple_daily_report(self) -> str:
+        """Generate simple daily progress report.
 
         Returns:
             String containing daily report

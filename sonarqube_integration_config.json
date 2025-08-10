@@ -1,6 +1,6 @@
 {
   "sonarqube_integration": {
-    "project_key": "sota-ai-system",
+    "project_key": "Sota-ai",
     "host_url": "http://localhost:9000",
     "scanner_path": null,
     "coverage_enabled": true,

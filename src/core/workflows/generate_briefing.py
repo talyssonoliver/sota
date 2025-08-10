@@ -1,9 +1,22 @@
-"""Generate briefing workflow."""
 
-import json
-import logging
-from datetime import datetime
-from pathlib import Path
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    logging,
+    yaml
+)
+"""Generate briefing workflow.
+
+Provides comprehensive briefing generation capabilities for multi-agent workflows
+including daily briefings, weekly summaries, performance alerts, and various
+output formats (markdown, JSON, email, Slack).
+"""
+
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Any, Dict, List, Optional, Protocol
 
 # Import or create CompletionMetricsCalculator for test compatibility
@@ -47,53 +60,82 @@ class BriefingGenerator:
         execution_monitor: Optional[ExecutionMonitorProtocol] = None,
     ):
         """Initialize briefing generator with optional dependency injection."""
-        from pathlib import Path
-        from unittest.mock import Mock
-
         self.briefing_data = {}
 
         # Use injected dependencies if provided (for testing), otherwise create instances
         if metrics_calculator is not None:
             self.metrics_calculator: MetricsCalculatorProtocol = metrics_calculator
         else:
-            # Check if CompletionMetricsCalculator is a Mock (from patches)
-            if CompletionMetricsCalculator is not None and (
-                hasattr(CompletionMetricsCalculator, "_mock_name")
-                or isinstance(CompletionMetricsCalculator, Mock)
-            ):
-                self.metrics_calculator = CompletionMetricsCalculator()  # type: ignore
-            elif CompletionMetricsCalculator is not None:
-                self.metrics_calculator = CompletionMetricsCalculator()  # type: ignore
-            else:
-                self.metrics_calculator = MockMetricsCalculator()
+            self.metrics_calculator = self._create_metrics_calculator()
 
         if execution_monitor is not None:
             self.execution_monitor: ExecutionMonitorProtocol = execution_monitor
         else:
-            # Check if ExecutionMonitor is a Mock (from patches)
-            if ExecutionMonitor is not None and (
-                hasattr(ExecutionMonitor, "_mock_name")
-                or isinstance(ExecutionMonitor, Mock)
-            ):
-                self.execution_monitor = ExecutionMonitor()  # type: ignore
-            elif ExecutionMonitor is not None:
-                self.execution_monitor = ExecutionMonitor()  # type: ignore
-            else:
-                self.execution_monitor = MockExecutionMonitor()
+            self.execution_monitor = self._create_execution_monitor()
 
         # Add missing attributes expected by tests
         self.briefings_dir = Path("outputs/briefings")
         self.briefings_dir.mkdir(parents=True, exist_ok=True)
         self.logger = logging.getLogger(__name__)
 
-    def generate(self, project_data):
-        """Generate a project briefing."""
+    def _create_metrics_calculator(self) -> MetricsCalculatorProtocol:
+        """Create metrics calculator instance with fallback to mock."""
+        from unittest.mock import Mock
+        
+        if CompletionMetricsCalculator is not None:
+            # Check if it's a Mock (from patches)
+            if (hasattr(CompletionMetricsCalculator, "_mock_name")
+                or isinstance(CompletionMetricsCalculator, Mock)):
+                return CompletionMetricsCalculator()  # type: ignore
+            else:
+                try:
+                    return CompletionMetricsCalculator()  # type: ignore
+                except Exception:
+                    return MockMetricsCalculator()
+        else:
+            return MockMetricsCalculator()
+    
+    def _create_execution_monitor(self) -> ExecutionMonitorProtocol:
+        """Create execution monitor instance with fallback to mock."""
+        from unittest.mock import Mock
+        
+        if ExecutionMonitor is not None:
+            # Check if it's a Mock (from patches)
+            if (hasattr(ExecutionMonitor, "_mock_name")
+                or isinstance(ExecutionMonitor, Mock)):
+                return ExecutionMonitor()  # type: ignore
+            else:
+                try:
+                    return ExecutionMonitor()  # type: ignore
+                except Exception:
+                    return MockExecutionMonitor()
+        else:
+            return MockExecutionMonitor()
+
+    def generate(self, project_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Generate a project briefing.
+        
+        Args:
+            project_data: Project information and requirements
+            
+        Returns:
+            Generated briefing with project details
+        """
         return {"project": project_data, "briefing": "Generated briefing"}
 
     async def generate_briefing(
-        self, briefing_type="morning", output_format="markdown", **kwargs
-    ):
-        """Generate a briefing with specified type and format."""
+        self, briefing_type: str = "morning", output_format: str = "markdown", **kwargs: Any
+    ) -> Dict[str, Any]:
+        """Generate a briefing with specified type and format.
+        
+        Args:
+            briefing_type: Type of briefing (morning, evening, etc.)
+            output_format: Output format (markdown, json, etc.)
+            **kwargs: Additional briefing parameters
+            
+        Returns:
+            Generated briefing data and metadata
+        """
         return {
             "type": briefing_type,
             "format": output_format,
@@ -102,16 +144,30 @@ class BriefingGenerator:
             "sprint_health": self._assess_sprint_health(),
         }
 
-    def generate_morning_briefing(self, day):
-        """Generate morning briefing for a specific day."""
+    def generate_morning_briefing(self, day: int) -> Dict[str, Any]:
+        """Generate morning briefing for a specific day.
+        
+        Args:
+            day: Day number for the briefing
+            
+        Returns:
+            Morning briefing data for the specified day
+        """
         return {
             "day": day,
             "type": "morning",
             "briefing": f"Morning briefing for day {day}",
         }
 
-    def generate_evening_briefing(self, day):
-        """Generate evening briefing for a specific day."""
+    def generate_evening_briefing(self, day: int) -> Dict[str, Any]:
+        """Generate evening briefing for a specific day.
+        
+        Args:
+            day: Day number for the briefing
+            
+        Returns:
+            Evening briefing data for the specified day
+        """
         return {
             "day": day,
             "type": "evening",
@@ -188,7 +244,7 @@ class BriefingGenerator:
 
     def _get_day_briefing_path(self, day):
         """Get the file path for a day's briefing."""
-        from pathlib import Path
+#         from pathlib import Path  # Consolidated to common_imports
 
         return Path(f"docs/sprint/briefings/day{day}-morning-briefing.md")
 
@@ -588,7 +644,7 @@ Completion Rate: {data['metrics']['completion_rate']}%
 
         try:
             # Import yaml only when needed
-            import yaml
+#             import yaml  # Consolidated to common_imports
 
             with open(path, "r") as f:
                 template = yaml.safe_load(f)

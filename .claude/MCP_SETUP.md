@@ -14,24 +14,24 @@ To use the GitHub MCP server, you need to set up a GitHub Personal Access Token:
    **Linux/WSL:**
    ```bash
    # Add to ~/.bashrc or ~/.zshrc
-   export GITHUB_TOKEN="your_token_here"
+   export PERSONAL_ACCESS_TOKEN="your_token_here"
    
    # Or set for current session:
-   export GITHUB_TOKEN="your_token_here"
+   export PERSONAL_ACCESS_TOKEN="your_token_here"
    ```
    
    **Windows:**
    ```cmd
    # Set permanently
-   setx GITHUB_TOKEN "your_token_here"
+   setx PERSONAL_ACCESS_TOKEN "your_token_here"
    
    # Or for current session:
-   set GITHUB_TOKEN=your_token_here
+   set PERSONAL_ACCESS_TOKEN=your_token_here
    ```
 
 3. **Verify setup:**
    ```bash
-   echo $GITHUB_TOKEN  # Should show your token
+   echo $PERSONAL_ACCESS_TOKEN  # Should show your token
    ```
 
 ## MCP Server Status
@@ -55,8 +55,8 @@ Active servers:
 
 ## Troubleshooting
 
-1. **"Missing environment variables: GITHUB_TOKEN"**
-   - Set up the GITHUB_TOKEN as described above
+1. **"Missing environment variables: PERSONAL_ACCESS_TOKEN"**
+   - Set up the PERSONAL_ACCESS_TOKEN as described above
    - Restart Claude Code after setting the token
 
 2. **MCP server connection failed**

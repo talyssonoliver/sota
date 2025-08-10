@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    logging,
+    sys
+)
 """
 Complete Task Workflow for Phase 5
 
@@ -6,22 +14,20 @@ End-to-end task completion orchestration that coordinates QA validation,
 documentation generation, archival, and dashboard updates.
 """
 
-import json
-import logging
-import sys
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 from dataclasses import asdict, dataclass
-from datetime import datetime
-from pathlib import Path
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Any, List, Optional
 
 logger = logging.getLogger(__name__)
 
 # Import dependencies with fallback to mock implementations
 try:
-    from src.core.workflows.documentation_agent import \
-        DocumentationAgent  # type: ignore
-    from src.core.workflows.documentation_agent import \
-        DocumentationReport  # type: ignore
+    from src.core.workflows.documentation_agent import (  # type: ignore
+        DocumentationAgent, DocumentationReport)
 except ImportError:
     logger.warning("DocumentationAgent not available, using mock")
 

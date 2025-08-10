@@ -2,11 +2,8 @@
 
 # Import from the existing hitl_widgets module in the components directory
 try:
-    from ...components.hitl_widgets import *
+    from ...components import hitl_widgets
 except ImportError:
-    pass
-
-    # Fallback if import fails
-    pass
+    hitl_widgets = None
 
 __all__ = ["hitl_widgets"]

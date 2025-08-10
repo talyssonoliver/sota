@@ -2,11 +2,11 @@
 
 try:
     from .memory_config import (
-        MemoryConfig, 
-        MemoryEngineConfig,
         CacheConfig,
         ChunkingConfig,
-        StorageConfig
+        MemoryConfig,
+        MemoryEngineConfig,
+        StorageConfig,
     )
 
     __all__ = [

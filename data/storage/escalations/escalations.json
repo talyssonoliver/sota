@@ -1,21 +1,135 @@
 [
   {
-    "task_id": "TEST-01",
+    "task_id": "CONCURRENT-0",
     "trigger": "manual",
     "level": {
-      "name": "Director Review",
-      "value": 3,
-      "timeout_hours": 12
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
     },
-    "triggered_at": "2025-07-20T10:09:12.021815",
-    "triggered_by": "test_user",
+    "triggered_at": "2025-08-08T01:42:29.660799",
+    "triggered_by": "user_0",
     "context": {
-      "error_type": "SystemFailure",
-      "timestamp": "2025-07-20T10:09:12.021815"
+      "description": "Concurrent test event 0"
     },
     "resolved_at": null,
     "resolution": null,
     "notifications_sent": []
+  },
+  {
+    "task_id": "CONCURRENT-1",
+    "trigger": "manual",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-08-08T01:42:29.661796",
+    "triggered_by": "user_1",
+    "context": {
+      "description": "Concurrent test event 1"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "CONCURRENT-2",
+    "trigger": "manual",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-08-08T01:42:29.662822",
+    "triggered_by": "user_2",
+    "context": {
+      "description": "Concurrent test event 2"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "CONCURRENT-3",
+    "trigger": "manual",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-08-08T01:42:29.664076",
+    "triggered_by": "user_3",
+    "context": {
+      "description": "Concurrent test event 3"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "CONCURRENT-4",
+    "trigger": "manual",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-08-08T01:42:29.666582",
+    "triggered_by": "user_4",
+    "context": {
+      "description": "Concurrent test event 4"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "QA-999",
+    "trigger": "timeout",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-08-08T01:42:43.784339",
+    "triggered_by": "system",
+    "context": {
+      "timeout_duration": "unknown",
+      "reviewer": "unknown",
+      "task_type": "qa",
+      "risk_level": "high"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-08-08T01:42:43.784815",
+      "slack_2025-08-08T01:42:43.784815"
+    ]
+  },
+  {
+    "task_id": "QA-999",
+    "trigger": "timeout",
+    "level": {
+      "name": "Management Review",
+      "value": 2,
+      "timeout_hours": 6
+    },
+    "triggered_at": "2025-08-08T01:42:43.787338",
+    "triggered_by": "system",
+    "context": {
+      "timeout_duration": "unknown",
+      "reviewer": "unknown",
+      "task_type": "qa",
+      "risk_level": "high"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-08-08T01:42:43.787338",
+      "slack_2025-08-08T01:42:43.787338",
+      "dashboard_2025-08-08T01:42:43.787338"
+    ]
   },
   {
     "task_id": "FE-888",
@@ -25,7 +139,7 @@
       "value": 3,
       "timeout_hours": 12
     },
-    "triggered_at": "2025-07-20T10:09:33.966326",
+    "triggered_at": "2025-08-08T01:42:43.900956",
     "triggered_by": "reviewer",
     "context": {
       "rejection_count": 3,
@@ -37,10 +151,10 @@
     "resolved_at": null,
     "resolution": null,
     "notifications_sent": [
-      "email_2025-07-20T10:09:33.966326",
-      "slack_2025-07-20T10:09:33.966326",
-      "dashboard_2025-07-20T10:09:33.966326",
-      "phone_2025-07-20T10:09:33.966326"
+      "email_2025-08-08T01:42:43.900956",
+      "slack_2025-08-08T01:42:43.900956",
+      "dashboard_2025-08-08T01:42:43.900956",
+      "phone_2025-08-08T01:42:43.900956"
     ]
   },
   {
@@ -51,7 +165,7 @@
       "value": 2,
       "timeout_hours": 6
     },
-    "triggered_at": "2025-07-20T10:09:34.216254",
+    "triggered_at": "2025-08-08T01:42:44.255322",
     "triggered_by": "cli_user",
     "context": {
       "reason": "urgent_deadline",
@@ -61,9 +175,58 @@
     "resolved_at": null,
     "resolution": null,
     "notifications_sent": [
-      "email_2025-07-20T10:09:34.216254",
-      "slack_2025-07-20T10:09:34.216254",
-      "dashboard_2025-07-20T10:09:34.216254"
+      "email_2025-08-08T01:42:44.256443",
+      "slack_2025-08-08T01:42:44.256443",
+      "dashboard_2025-08-08T01:42:44.256443"
+    ]
+  },
+  {
+    "task_id": "FE-666",
+    "trigger": "manual",
+    "level": {
+      "name": "Management Review",
+      "value": 2,
+      "timeout_hours": 6
+    },
+    "triggered_at": "2025-08-08T01:42:45.631371",
+    "triggered_by": "cli_user",
+    "context": {
+      "reason": "urgent_deadline",
+      "manual_trigger": true,
+      "cli_initiated": true
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-08-08T01:42:45.631886",
+      "slack_2025-08-08T01:42:45.631944",
+      "dashboard_2025-08-08T01:42:45.631944"
+    ]
+  },
+  {
+    "task_id": "FE-888",
+    "trigger": "rejection",
+    "level": {
+      "name": "Director Review",
+      "value": 3,
+      "timeout_hours": 12
+    },
+    "triggered_at": "2025-08-08T01:42:45.921596",
+    "triggered_by": "reviewer",
+    "context": {
+      "rejection_count": 3,
+      "rejection_reason": "design_guidelines",
+      "reviewer": "alice.reviewer",
+      "task_type": "frontend",
+      "risk_level": "medium"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-08-08T01:42:45.921596",
+      "slack_2025-08-08T01:42:45.921596",
+      "dashboard_2025-08-08T01:42:45.921596",
+      "phone_2025-08-08T01:42:45.921596"
     ]
   },
   {
@@ -74,7 +237,7 @@
       "value": 1,
       "timeout_hours": 2
     },
-    "triggered_at": "2025-07-20T10:09:34.309343",
+    "triggered_at": "2025-08-08T01:42:46.123651",
     "triggered_by": "system",
     "context": {
       "timeout_duration": "unknown",
@@ -85,8 +248,8 @@
     "resolved_at": null,
     "resolution": null,
     "notifications_sent": [
-      "email_2025-07-20T10:09:34.310239",
-      "slack_2025-07-20T10:09:34.310239"
+      "email_2025-08-08T01:42:46.124652",
+      "slack_2025-08-08T01:42:46.124652"
     ]
   },
   {
@@ -97,7 +260,7 @@
       "value": 2,
       "timeout_hours": 6
     },
-    "triggered_at": "2025-07-20T10:09:34.312178",
+    "triggered_at": "2025-08-08T01:42:46.129320",
     "triggered_by": "system",
     "context": {
       "timeout_duration": "unknown",
@@ -108,9 +271,9 @@
     "resolved_at": null,
     "resolution": null,
     "notifications_sent": [
-      "email_2025-07-20T10:09:34.312178",
-      "slack_2025-07-20T10:09:34.312178",
-      "dashboard_2025-07-20T10:09:34.312178"
+      "email_2025-08-08T01:42:46.129320",
+      "slack_2025-08-08T01:42:46.129320",
+      "dashboard_2025-08-08T01:42:46.129320"
     ]
   }
 ]

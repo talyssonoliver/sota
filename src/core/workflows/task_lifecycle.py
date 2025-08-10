@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    timedelta
+)
 """
 Task Lifecycle Management for Scalable QA System
 
@@ -15,21 +22,47 @@ try:
 except ImportError:
     pass
 try:
-    from datetime import datetime, timedelta
+    from src.infrastructure.utils.common_imports import datetime, timedelta
 except ImportError:
     pass
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 try:
-    import json
+#     import json  # Consolidated to common_imports
+    import os
     import shutil
     import tarfile
     import threading
-    from typing import Any, Dict, List, Optional
+    from typing import Any, Dict, Optional
 except ImportError:
     pass
+
+
+def safe_print(message: str) -> None:
+    """Print message with Unicode fallback."""
+    try:
+        print(message)
+    except UnicodeEncodeError:
+        # Replace Unicode characters with ASCII equivalents
+        fallback = (message
+                   .replace('📦', '[ARCHIVE]')
+                   .replace('🔄', '[RUNNING]')
+                   .replace('📊', '[STATS]')
+                   .replace('💾', '[STORAGE]')
+                   .replace('✅', '[OK]')
+                   .replace('❌', '[ERROR]')
+                   .replace('⚠️', '[WARNING]')
+                   .replace('🗑️', '[DELETE]')
+                   .replace('📂', '[FOLDER]')
+                   .replace('→', '->')
+                   .replace('🟢', '[GREEN]')
+                   .replace('🟡', '[YELLOW]')
+                   .replace('🟠', '[ORANGE]')
+                   .replace('🔴', '[RED]')
+                   .replace('⚪', '[WHITE]'))
+        print(fallback)
 
 
 @dataclass
@@ -106,8 +139,8 @@ class TaskLifecycleManager:
         """Save archive metadata to disk"""
         try:
             data = {k: asdict(v) for k, v in self.metadata.items()}
-            with open(self.metadata_file, "w") as f:
-                json.dump(data, f, indent=2)
+            with open(self.metadata_file, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as e:
             print(f"⚠️ Failed to save archive metadata: {e}")
 
@@ -195,9 +228,9 @@ class TaskLifecycleManager:
                 if qa_file.exists():
                     try:
                         content = qa_file.read_text()
-                        if "✅ PASSED" in content:
+                        if "✅ PASSED" in content or "[PASSED]" in content or "PASSED" in content.upper():
                             qa_status = "passed"
-                        elif "❌ FAILED" in content:
+                        elif "❌ FAILED" in content or "[FAILED]" in content or "FAILED" in content.upper():
                             qa_status = "failed"
                         else:
                             qa_status = "pending"
@@ -222,7 +255,7 @@ class TaskLifecycleManager:
                 # Remove original directory
                 shutil.rmtree(task_dir)
 
-                print(
+                safe_print(
                     f"📦 Archived {task_id}: {original_size:,} → {compressed_size:,} bytes "
                     f"({compressed_size / original_size * 100:.1f}% compression)"
                 )
@@ -250,9 +283,35 @@ class TaskLifecycleManager:
             return False
 
         try:
-            # Extract to outputs directory
+            # Extract to outputs directory with security validation
             with tarfile.open(archive_path, "r:gz") as tar:
-                tar.extractall(self.outputs_dir)
+                # Validate all members before extraction
+                for member in tar.getmembers():
+                    # Check for directory traversal attacks
+                    if member.name.startswith('/') or '..' in member.name:
+                        print(f"⚠️  Skipping dangerous member: {member.name}")
+                        continue
+                    # Check for absolute paths
+                    if os.path.isabs(member.name):
+                        print(f"⚠️  Skipping absolute path: {member.name}")
+                        continue
+                
+                # Safe extraction with member validation
+                def is_within_directory(directory, target):
+                    abs_directory = os.path.abspath(directory)
+                    abs_target = os.path.abspath(target)
+                    prefix = os.path.commonprefix([abs_directory, abs_target])
+                    return prefix == abs_directory
+                
+                safe_members = []
+                for member in tar.getmembers():
+                    target_path = os.path.join(self.outputs_dir, member.name)
+                    if is_within_directory(self.outputs_dir, target_path):
+                        safe_members.append(member)
+                    else:
+                        print(f"⚠️  Skipping member outside target directory: {member.name}")
+                
+                tar.extractall(self.outputs_dir, members=safe_members)
 
             print(f"📂 Restored {task_id} from archive")
             return True
@@ -435,8 +494,8 @@ class TaskLifecycleManager:
         tracking_data["ready_for_archival"] = True
 
         try:
-            with open(tracking_file, "w") as f:
-                json.dump(tracking_data, f, indent=2)
+            with open(tracking_file, "w", encoding="utf-8") as f:
+                json.dump(tracking_data, f, indent=2, ensure_ascii=False)
         except Exception as e:
             print(f"⚠️ Failed to save tracking data for {task_id}: {e}")
 

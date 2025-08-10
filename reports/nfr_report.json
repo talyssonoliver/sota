@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-07-20 10:15:57",
+  "timestamp": "2025-08-02 21:50:16",
   "iso_25010_compliance": {
     "overall": 100.0,
     "by_category": {
@@ -17,61 +17,21 @@
     "status": "COMPLIANT"
   },
   "security_metrics": {
-    "authentication_coverage": 25.0,
-    "input_validation_coverage": 9.25925925925926,
-    "encryption_usage": 0.24271844660194172
+    "authentication_coverage": 10.204081632653061,
+    "input_validation_coverage": 10.132026405281056,
+    "encryption_usage": 0.4317111459968602
   },
   "maintainability_metrics": {
-    "average_complexity": 2.721963161576125,
-    "duplication_percentage": 48.43516260880832,
-    "documentation_coverage": 86.73010837959292
+    "average_complexity": 2.571243818942564,
+    "duplication_percentage": 48.218295067719275,
+    "documentation_coverage": 77.17686181850004
   },
   "performance_profiles": [
-    {
-      "function": "run_import_timing",
-      "file": "C:\\taly\\ai-system\\detailed_import_analysis.py",
-      "execution_time_ms": 6.500000000000001,
-      "memory_mb": 3.25,
-      "cpu_percent": 13.0,
-      "complexity": 6.5
-    },
-    {
-      "function": "analyze_import_chain",
-      "file": "C:\\taly\\ai-system\\detailed_import_analysis.py",
-      "execution_time_ms": 5.0,
-      "memory_mb": 2.5,
-      "cpu_percent": 10.0,
-      "complexity": 5.0
-    },
-    {
-      "function": "find_import_bottlenecks",
-      "file": "C:\\taly\\ai-system\\detailed_import_analysis.py",
-      "execution_time_ms": 4.0,
-      "memory_mb": 2.0,
-      "cpu_percent": 8.0,
-      "complexity": 4.0
-    },
-    {
-      "function": "generate_optimization_recommendations",
-      "file": "C:\\taly\\ai-system\\detailed_import_analysis.py",
-      "execution_time_ms": 13.000000000000002,
-      "memory_mb": 6.5,
-      "cpu_percent": 26.0,
-      "complexity": 13.0
-    },
-    {
-      "function": "main",
-      "file": "C:\\taly\\ai-system\\detailed_import_analysis.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
     {
       "function": "run_simple_agent_test",
       "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 3.0,
-      "memory_mb": 1.5,
+      "memory_mb": 3.4428125,
       "cpu_percent": 6.0,
       "complexity": 3.0
     },
@@ -79,7 +39,7 @@
       "function": "run_supabase_tool_test",
       "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 3.5,
-      "memory_mb": 1.75,
+      "memory_mb": 3.4428125,
       "cpu_percent": 7.0,
       "complexity": 3.5
     },
@@ -94,24 +54,24 @@
     {
       "function": "run_workflow_test",
       "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 4.500000000000001,
-      "memory_mb": 2.25,
-      "cpu_percent": 9.0,
-      "complexity": 4.5
+      "execution_time_ms": 3.5,
+      "memory_mb": 3.4428125,
+      "cpu_percent": 7.0,
+      "complexity": 3.5
     },
     {
       "function": "run_comprehensive_tests",
       "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 5.0,
-      "memory_mb": 2.5,
-      "cpu_percent": 10.0,
-      "complexity": 5.0
+      "execution_time_ms": 4.0,
+      "memory_mb": 3.4428125,
+      "cpu_percent": 8.0,
+      "complexity": 4.0
     },
     {
       "function": "run_validation_suite",
       "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
+      "memory_mb": 3.4428125,
       "cpu_percent": 2.0,
       "complexity": 1.0
     },
@@ -119,185 +79,49 @@
       "function": "print_summary",
       "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 5.0,
-      "memory_mb": 2.5,
+      "memory_mb": 3.4428125,
       "cpu_percent": 10.0,
       "complexity": 5.0
     },
     {
       "function": "main",
       "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 5.0,
-      "memory_mb": 2.5,
-      "cpu_percent": 10.0,
-      "complexity": 5.0
-    },
-    {
-      "function": "initialize_agent",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "create_sql_agent",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "__init__",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "from_function",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "__init__",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
+      "execution_time_ms": 4.0,
+      "memory_mb": 3.4428125,
+      "cpu_percent": 8.0,
+      "complexity": 4.0
     },
     {
       "function": "test_handler",
       "file": "C:\\taly\\ai-system\\main.py",
       "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "invoke",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "__init__",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "add_node",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "add_edge",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "set_entry_point",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "set_finish_point",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "compile",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "invoke",
-      "file": "C:\\taly\\ai-system\\main.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "create_optimized_quality_gates",
-      "file": "C:\\taly\\ai-system\\optimize_validation_performance.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "create_performance_config",
-      "file": "C:\\taly\\ai-system\\optimize_validation_performance.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "patch_validator_for_performance",
-      "file": "C:\\taly\\ai-system\\optimize_validation_performance.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
-      "cpu_percent": 2.0,
-      "complexity": 1.0
-    },
-    {
-      "function": "create_quick_validation_script",
-      "file": "C:\\taly\\ai-system\\optimize_validation_performance.py",
-      "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
+      "memory_mb": 3.4428125,
       "cpu_percent": 2.0,
       "complexity": 1.0
     },
     {
       "function": "main",
-      "file": "C:\\taly\\ai-system\\optimize_validation_performance.py",
+      "file": "C:\\taly\\ai-system\\.venv\\Lib\\site-packages\\pip\\__init__.py",
       "execution_time_ms": 1.0,
-      "memory_mb": 0.5,
+      "memory_mb": 3.4428125,
       "cpu_percent": 2.0,
       "complexity": 1.0
     },
     {
-      "function": "check_xdist_available",
-      "file": "C:\\taly\\ai-system\\pytest_optimized.py",
-      "execution_time_ms": 2.0,
-      "memory_mb": 1.0,
-      "cpu_percent": 4.0,
-      "complexity": 2.0
+      "function": "version_str",
+      "file": "C:\\taly\\ai-system\\.venv\\Lib\\site-packages\\pip\\__pip-runner__.py",
+      "execution_time_ms": 1.0,
+      "memory_mb": 3.4428125,
+      "cpu_percent": 2.0,
+      "complexity": 1.0
     },
     {
-      "function": "run_pytest_optimized",
-      "file": "C:\\taly\\ai-system\\pytest_optimized.py",
-      "execution_time_ms": 6.0,
-      "memory_mb": 3.0,
-      "cpu_percent": 12.0,
-      "complexity": 6.0
+      "function": "find_spec",
+      "file": "C:\\taly\\ai-system\\.venv\\Lib\\site-packages\\pip\\__pip-runner__.py",
+      "execution_time_ms": 2.0,
+      "memory_mb": 3.4428125,
+      "cpu_percent": 4.0,
+      "complexity": 2.0
     }
   ],
   "nfr_violations": [
@@ -322,7 +146,17 @@
       "category": "nfr"
     },
     {
+      "metric": "Documentation coverage should be at least 80% (Actual",
+      "severity": "warning",
+      "category": "nfr"
+    },
+    {
       "metric": "Error handling coverage should be at least 90% (Actual",
+      "severity": "error",
+      "category": "nfr"
+    },
+    {
+      "metric": "Test coverage should be at least 80% (Actual",
       "severity": "error",
       "category": "nfr"
     },
@@ -343,7 +177,7 @@
     }
   ],
   "recommendations": [
-    "\ud83d\udccb 8 NFR violations found:",
+    "\ud83d\udccb 10 NFR violations found:",
     "  compatibility: 1 issues"
   ]
 }

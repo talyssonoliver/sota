@@ -49,7 +49,7 @@ function Install-PythonTools {
     
     # Install tools
     $tools = @(
-        "ruff",
+        "flake8",
         "black", 
         "isort",
         "bandit",
@@ -80,30 +80,29 @@ function Install-PythonTools {
 function New-ConfigurationFiles {
     Write-Info "Creating configuration files..."
     
-    # pyproject.toml for ruff, black and isort
+    # .flake8 configuration
+    $flake8Config = @"
+[flake8]
+max-line-length = 88
+extend-ignore = E203, W503
+exclude = 
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    .pytest_cache,
+    build,
+    dist
+max-complexity = 10
+"@
+    
+    if (-not (Test-Path ".flake8")) {
+        $flake8Config | Out-File -FilePath ".flake8" -Encoding UTF8
+        Write-Success "Created .flake8 configuration"
+    }
+    
+    # pyproject.toml for black and isort
     $pyprojectConfig = @"
-[tool.ruff]
-line-length = 88
-target-version = "py39"
-select = ["E", "F", "W", "I"]
-ignore = ["E203", "W503"]
-exclude = [
-    ".git",
-    "__pycache__",
-    ".venv",
-    "venv",
-    ".pytest_cache",
-    "build",
-    "dist",
-]
-
-[tool.ruff.format]
-quote-style = "double"
-indent-style = "space"
-
-[tool.ruff.isort]
-known-first-party = ["src"]
-
 [tool.black]
 line-length = 88
 target-version = ['py39']
@@ -344,7 +343,8 @@ function Main {
     Write-Host ""
     Write-Host "[FILES CREATED]"
     Write-Host "  • code-quality.ps1     # Main script"
-    Write-Host "  • pyproject.toml      # Ruff, Black, and tool configuration"
+    Write-Host "  • .flake8             # Style configuration"
+    Write-Host "  • pyproject.toml      # Tool configuration"
     Write-Host "  • mypy.ini            # Type checking config"
     
     if (-not $Minimal) {

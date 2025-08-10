@@ -5,10 +5,11 @@ Enhanced Error Handling: Added retry logic and self-correction routing.
 """
 
 import json
-import logging
+import logging  
 import os
-
 from typing import Any, Dict, Optional
+from src.core.workflows.registry import get_agent
+from src.core.workflows.states import TaskStatus, get_next_status
 
 # Try to import TypedDict - use Any as fallback for type annotations
 try:
@@ -27,10 +28,12 @@ except ImportError:
     END = "END"
 try:
     from langgraph.graph import StateGraph as LangGraphStateGraph
+
     LANGGRAPH_AVAILABLE = True
 except ImportError:
     LANGGRAPH_AVAILABLE = False
     LangGraphStateGraph = None
+
 
 # Create a consistent wrapper class
 class StateGraph:
@@ -40,8 +43,9 @@ class StateGraph:
         else:
             # Create a mock object that supports the required methods
             from unittest.mock import MagicMock
+
             self._graph = MagicMock()
-    
+
     def __getattr__(self, name):
         return getattr(self._graph, name)
 
@@ -52,8 +56,6 @@ try:
                            human_review_handler, qa_handler, technical_handler)
 except ImportError:
     pass
-from src.core.workflows.registry import get_agent
-from src.core.workflows.states import TaskStatus, get_next_status
 
 # Configure logger for routing decisions
 logger = logging.getLogger("graph_builder")
@@ -135,20 +137,20 @@ def build_workflow_graph() -> StateGraph:
             def create_agent_node(role=agent_role):
                 def node_function(state):
                     agent = get_agent(role)
-                    
+
                     # Handle the agent execution properly - get_agent returns dict, not object with run method
                     if isinstance(agent, dict):
                         # For dictionary-based agents, create a simple result
                         result: Dict[str, Any] = {
                             "status": "completed",
                             "agent_type": agent.get("type", role),
-                            "message": f"Processed by {role} agent"
+                            "message": f"Processed by {role} agent",
                         }
                     else:
                         # Fallback for unknown agent types
                         result: Dict[str, Any] = {
-                            "status": "completed", 
-                            "message": f"Processed by {role} agent"
+                            "status": "completed",
+                            "message": f"Processed by {role} agent",
                         }
 
                     # Ensure result is a dictionary with task_id preserved
@@ -180,7 +182,7 @@ def build_workflow_graph() -> StateGraph:
             def create_router(deps=depends_on):
                 def router(state):
                     # For simple routing, just use the first dependency
-                    # In a real implementation, you'd have logic to choose the
+                    # TODO: Must implement, you'd have logic to choose the
                     # correct path
                     return deps[0]
 
@@ -251,20 +253,20 @@ def build_state_workflow_graph() -> StateGraph:
             def generic_handler(role=agent_role):
                 def handler_fn(state):
                     agent = get_agent(role)
-                    
+
                     # Handle the agent execution properly - get_agent returns dict
                     if isinstance(agent, dict):
                         # For dictionary-based agents, create a simple result
                         result: Dict[str, Any] = {
                             "status": "completed",
                             "agent_type": agent.get("type", role),
-                            "message": f"Processed by {role} agent"
+                            "message": f"Processed by {role} agent",
                         }
                     else:
                         # Fallback for unknown agent types
                         result: Dict[str, Any] = {
-                            "status": "completed", 
-                            "message": f"Processed by {role} agent"
+                            "status": "completed",
+                            "message": f"Processed by {role} agent",
                         }
 
                     if not isinstance(result, dict):
@@ -568,20 +570,20 @@ def build_dynamic_workflow_graph(task_id: Optional[str] = None) -> StateGraph:
                 def handler(state):
                     try:
                         agent = get_agent(role)
-                        
+
                         # Handle the agent execution properly - get_agent returns dict
                         if isinstance(agent, dict):
                             # For dictionary-based agents, create a simple result
                             result: Dict[str, Any] = {
                                 "status": "completed",
                                 "agent_type": agent.get("type", role),
-                                "message": f"Processed by {role} agent"
+                                "message": f"Processed by {role} agent",
                             }
                         else:
                             # Fallback for unknown agent types
                             result: Dict[str, Any] = {
-                                "status": "completed", 
-                                "message": f"Processed by {role} agent"
+                                "status": "completed",
+                                "message": f"Processed by {role} agent",
                             }
 
                         # Ensure result is a dictionary
@@ -596,7 +598,11 @@ def build_dynamic_workflow_graph(task_id: Optional[str] = None) -> StateGraph:
                         # Update the status
                         current_status = state.get("status", TaskStatus.CREATED.value)
                         next_status = get_next_status(current_status, role, True)
-                        result["status"] = next_status.value if hasattr(next_status, 'value') else str(next_status)
+                        result["status"] = (
+                            next_status.value
+                            if hasattr(next_status, "value")
+                            else str(next_status)
+                        )
 
                         # Preserve other context from state
                         result.update(

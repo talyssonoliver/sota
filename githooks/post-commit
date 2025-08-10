@@ -1,0 +1,36 @@
+#!/bin/bash
+# Post-commit hook to clean up any temporary files created during commit process
+
+set -e
+
+echo "🧹 Post-commit: Cleaning up temporary files..."
+
+# Colors for output
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Clean up any temporary files that might have been created
+clean_temporary_files() {
+    echo -e "${BLUE}Cleaning temporary commit artifacts...${NC}"
+    
+    # Remove any temporary coverage files that might have been created
+    rm -f .coverage.* 2>/dev/null || true
+    
+    # Remove any temporary log files
+    find . -maxdepth 2 -name "*.tmp" -o -name "*.temp" -delete 2>/dev/null || true
+    
+    # Clean up any __pycache__ that may have been created during the commit process
+    find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+    
+    echo -e "${GREEN}✅ Post-commit cleanup completed${NC}"
+}
+
+# Main execution
+main() {
+    clean_temporary_files
+    echo -e "${GREEN}🎉 Commit completed successfully!${NC}"
+}
+
+# Run main function
+main "$@"

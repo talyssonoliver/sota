@@ -15,7 +15,7 @@ Features:
 Usage:
 
     1. Import the main function:
-       >>> from tools.context_visualizer import generate_context_coverage_report
+       >>> from src.infrastructure.tools.context_visualizer import generate_context_coverage_report
 
     2. Generate coverage report:
        >>> generate_context_coverage_report()
@@ -31,19 +31,36 @@ CLI Usage:
 """
 
 import csv
-import json
-import logging
-import os
-from collections import Counter, defaultdict
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Counter,
+    Dict,
+    Path,
+    datetime,
+    defaultdict,
+    json,
+    logging,
+    os
+)
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# from collections import Counter, defaultdict  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict  # Consolidated to common_imports
 
 # Import from Step 3.7 context tracking
 try:
     from .context_tracker import analyze_context_usage, get_all_context_logs
 except ImportError:
-    pass
+    # Gracefully handle missing context tracker dependency
+    def get_all_context_logs():
+        return {}
+    
+    def analyze_context_usage():
+        return {}
 
 logger = logging.getLogger(__name__)
 
@@ -51,9 +68,16 @@ logger = logging.getLogger(__name__)
 def analyze_context_coverage() -> Dict[str, Any]:
     """
     Analyze context coverage patterns across all tasks.
+    
+    Analyzes context usage patterns from Step 3.7 tracking data
+    to provide comprehensive coverage metrics and visualizations.
 
     Returns:
-        Dict[str, Any]: Comprehensive coverage analysis
+        Dict[str, Any]: Comprehensive coverage analysis including:
+            - Task analysis count
+            - Topic frequency data
+            - Coverage matrix
+            - Summary statistics
     """
     try:
         # Get all context logs from Step 3.7
@@ -162,13 +186,16 @@ def generate_csv_report(
 ) -> bool:
     """
     Generate CSV report of context usage patterns.
+    
+    Creates a detailed CSV report with topic usage frequency,
+    task analysis, and summary statistics.
 
     Args:
-        coverage_data (Dict[str, Any]): Coverage analysis data
-        output_path (str): Path for CSV output
+        coverage_data: Coverage analysis data from analyze_context_coverage
+        output_path: Path for CSV output file
 
     Returns:
-        bool: True if successful
+        True if report generation succeeded, False otherwise
     """
     try:
         # Create reports directory
@@ -253,13 +280,16 @@ def generate_html_report(
 ) -> bool:
     """
     Generate interactive HTML heatmap of context usage patterns.
+    
+    Creates an interactive HTML report with charts and visualizations
+    including heatmaps, bar charts, and pie charts for context analysis.
 
     Args:
-        coverage_data (Dict[str, Any]): Coverage analysis data
-        output_path (str): Path for HTML output
+        coverage_data: Coverage analysis data from analyze_context_coverage
+        output_path: Path for HTML output file
 
     Returns:
-        bool: True if successful
+        True if report generation succeeded, False otherwise
     """
     try:
         # Create reports directory
@@ -281,7 +311,14 @@ def generate_html_report(
 
 
 def generate_html_content(coverage_data: Dict[str, Any]) -> str:
-    """Generate HTML content for context coverage visualization."""
+    """Generate HTML content for context coverage visualization.
+    
+    Args:
+        coverage_data: Coverage analysis data
+        
+    Returns:
+        Complete HTML content string with embedded charts
+    """
 
     # Prepare data for JavaScript
     coverage_matrix = coverage_data.get("coverage_matrix", [])
@@ -513,7 +550,15 @@ def generate_html_content(coverage_data: Dict[str, Any]) -> str:
 
 
 def generate_json_report(coverage_data: dict, output_path: str) -> bool:
-    """Generate a JSON file with all stats and chart data for dynamic HTML reports."""
+    """Generate a JSON file with all stats and chart data for dynamic HTML reports.
+    
+    Args:
+        coverage_data: Coverage analysis data
+        output_path: Path for JSON output file
+        
+    Returns:
+        True if JSON report generation succeeded, False otherwise
+    """
     try:
         # Prepare the JSON structure expected by the dynamic HTML
         json_data = {
@@ -568,7 +613,18 @@ def generate_context_coverage_report(
 ) -> bool:
     """
     Generate context coverage visualization reports.
-    Now also generates a JSON file for dynamic HTML reports.
+    
+    Main entry point for Step 3.9 context coverage visualization.
+    Generates CSV, HTML, and JSON reports based on context tracking data.
+    
+    Args:
+        format: Output format - "csv", "html", or "both"
+        csv_path: Path for CSV report output
+        html_path: Path for HTML report output
+        json_path: Path for JSON data output (auto-generated if None)
+        
+    Returns:
+        True if report generation succeeded, False otherwise
     """
     try:
         logger.info(f"Generating context coverage report(s) in {format} format...")

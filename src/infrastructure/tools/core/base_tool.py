@@ -7,14 +7,14 @@ This module defines the ArtesanatoBaseTool, which provides:
 - Error handling and logging
 - Integration with LangChain's BaseTool
 """
-
-import logging
-import time
+from src.infrastructure.utils.common_imports import logging, time
 from typing import Any, Dict, Optional
 
 # Conditional import following the project pattern
 try:
-    from langchain_core.tools import BaseTool as LangChainBaseTool  # type: ignore[assignment]
+    from langchain_core.tools import (
+        BaseTool as LangChainBaseTool,  # type: ignore[assignment]
+    )
 except ImportError:
     logging.warning("LangChain not available, using mock BaseTool")
 
@@ -154,13 +154,9 @@ class ArtesanatoBaseTool(LangChainBaseTool):
             "success": error is None,
             "timestamp": time.time(),
             "tool": self.name,
+            "data": data,    # Always include data key (None if no data)
+            "error": error,  # Always include error key (None if no error)
         }
-
-        if data is not None:
-            response["data"] = data
-
-        if error:
-            response["error"] = error
 
         if metadata:
             response["metadata"] = metadata

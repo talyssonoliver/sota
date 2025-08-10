@@ -1,3 +1,19 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    asyncio,
+    datetime,
+    json,
+    logging,
+    os,
+    timedelta,
+    uuid,
+    yaml
+)
 """
 Human-in-the-Loop (HITL) Engine for Phase 7 Implementation
 
@@ -13,16 +29,16 @@ Key Features:
 - Audit trail and compliance reporting
 """
 
-import json
-import logging
-import os
-import uuid
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import uuid  # Consolidated to common_imports
+# from datetime import datetime, timedelta  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 try:
-    import yaml
+#     import yaml  # Consolidated to common_imports
 
     YAML_AVAILABLE = True
 except ImportError:
@@ -44,7 +60,7 @@ class HITLPolicyEngine:
     def __init__(self, config_path: Optional[str] = None, test_mode: bool = False):
         """Initialize HITL policy engine"""
         self.config_path = config_path or "config/hitl_policies.yaml"
-        self.test_mode = test_mode or os.getenv('PYTEST_CURRENT_TEST') is not None
+        self.test_mode = test_mode or os.getenv("PYTEST_CURRENT_TEST") is not None
         self.policies = self._load_policies()
         self.checkpoints: Dict[str, HITLCheckpoint] = {}
         self.audit_log: List[Dict[str, Any]] = []
@@ -52,6 +68,7 @@ class HITLPolicyEngine:
         # Initialize storage directories
         if not self.test_mode:
             from config.build_paths import HITL_STORAGE_DIR
+
             self.storage_dir = HITL_STORAGE_DIR
             self.storage_dir.mkdir(parents=True, exist_ok=True)
         else:
@@ -111,7 +128,9 @@ class HITLPolicyEngine:
         from src.core.workflows.notification_handlers import \
             DashboardNotificationHandler
 
-        self.notification_handlers.append(DashboardNotificationHandler(test_mode=self.test_mode))
+        self.notification_handlers.append(
+            DashboardNotificationHandler(test_mode=self.test_mode)
+        )
 
         # Email notification handler (if configured)
         if (
@@ -736,7 +755,7 @@ class HITLPolicyEngine:
             # In test mode, don't write to filesystem
             logger.info(f"Test mode: Checkpoint {checkpoint.id} saved in memory")
             return
-            
+
         filepath = self.storage_dir / f"{checkpoint.id}.json"
         with open(filepath, "w", encoding="utf-8") as f:
             json.dump(checkpoint.to_dict(), f, indent=2, ensure_ascii=False)
@@ -760,7 +779,7 @@ class HITLPolicyEngine:
         if self.test_mode:
             # In test mode, don't write to filesystem
             return
-            
+
         if metadata_file.exists():
             with open(metadata_file, "r", encoding="utf-8") as f:
                 existing_metadata = json.load(f)
@@ -1519,7 +1538,8 @@ HITLEngine = HITLPolicyEngine  # Alias for backward compatibility
 if __name__ == "__main__":
     # Example usage
     try:
-        import asyncio
+
+        from src.infrastructure.utils.common_imports import asyncio
     except ImportError:
         pass
 

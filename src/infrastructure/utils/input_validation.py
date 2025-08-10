@@ -1,3 +1,12 @@
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    json,
+    logging,
+    re,
+    tempfile,
+    yaml
+)
 """
 Input Validation Utilities for AI Agent System
 
@@ -14,15 +23,15 @@ path traversal vulnerabilities, and data integrity issues.
 
 import argparse
 import inspect
-import json
-import logging
-import re
-from pathlib import Path
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Dict, List, Optional, Union
 from urllib.parse import urlparse
 
 try:
-    import yaml
+    from src.infrastructure.utils.common_imports import yaml
 except ImportError:
     # Fallback YAML implementation
     class yaml:
@@ -301,7 +310,7 @@ class InputValidator:
             raise ValidationError(f"Invalid file path: {file_path} - {e}")
 
         # Ensure path stays within allowed directories
-        import tempfile
+#         import tempfile  # Consolidated to common_imports
 
         allowed_base_paths = [
             Path.cwd(),
@@ -384,9 +393,7 @@ class InputValidator:
             for pattern in sql_patterns:
                 if re.search(pattern, content, re.IGNORECASE):
                     logger.warning(f"SQL injection pattern detected: {pattern}")
-                    content = re.sub(
-                        pattern, "[FILTERED]", content, flags=re.IGNORECASE
-                    )
+                    raise ValidationError(f"Dangerous SQL pattern detected: {pattern}")
 
             # Then check other dangerous patterns
             for pattern in self.dangerous_compiled_patterns:
@@ -394,8 +401,7 @@ class InputValidator:
                     logger.warning(
                         f"Potentially dangerous content detected: {pattern.pattern}"
                     )
-                    # Sanitize rather than reject
-                    content = pattern.sub("", content)
+                    raise ValidationError(f"Dangerous content pattern detected: {pattern.pattern}")
 
         # Basic sanitization
         content = content.strip()

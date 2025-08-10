@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=./task-schema.json
+id: PM-11
+title: Develop User Persona Documentation
+owner: product
+depends_on: []
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task PM-11: Develop User Persona Documentation"
+artefacts:
+  - docs/product/user-personas.md
+context_topics:
+  - project-overview

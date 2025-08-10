@@ -59,15 +59,36 @@
       "integrations": "src/integrations"
     },
     "allowed_imports": {
-      "core": ["utils"],
-      "infrastructure": ["core", "utils"],
-      "interfaces": ["core", "infrastructure", "utils"],
-      "integrations": ["core", "infrastructure", "utils"],
+      "core": [
+        "utils"
+      ],
+      "infrastructure": [
+        "core",
+        "utils"
+      ],
+      "interfaces": [
+        "core",
+        "infrastructure",
+        "utils"
+      ],
+      "integrations": [
+        "core",
+        "infrastructure",
+        "utils"
+      ],
       "utils": []
     },
     "forbidden_imports": {
-      "infrastructure": ["interfaces", "integrations"],
-      "utils": ["core", "infrastructure", "interfaces", "integrations"]
+      "infrastructure": [
+        "interfaces",
+        "integrations"
+      ],
+      "utils": [
+        "core",
+        "infrastructure",
+        "interfaces",
+        "integrations"
+      ]
     },
     "layer_restrictions": {
       "circular_imports": false,
@@ -83,7 +104,7 @@
   "auto_fix_settings": {
     "enabled_fixes": [
       "CODE_FORMATTING",
-      "IMPORT_SORTING", 
+      "IMPORT_SORTING",
       "EMPTY_DIRECTORY",
       "FORBIDDEN_PATTERN",
       "UNUSED_IMPORT"
@@ -133,8 +154,15 @@
   "tool_management": {
     "auto_install_tools": true,
     "verify_tool_versions": true,
-    "required_tools": ["black", "ruff", "mypy", "bandit"],
-    "optional_tools": ["sonar-scanner"],
+    "required_tools": [
+      "black",
+      "ruff",
+      "mypy",
+      "bandit"
+    ],
+    "optional_tools": [
+      "sonar-scanner"
+    ],
     "installation_timeout": 300
   },
   "sonarqube_quality_gates": {
@@ -145,5 +173,11 @@
     "new_code_smells": 25,
     "security_hotspots_reviewed": 100.0,
     "clean_as_you_code": true
+  },
+  "security": {
+    "encryption_enabled": true,
+    "pii_detection_enabled": true,
+    "access_control_enabled": true,
+    "audit_logging_enabled": true
   }
 }

@@ -1,10 +1,9 @@
+
 """
 Validation Issue Model
 Structured representation of code validation issues.
 """
-
-from dataclasses import dataclass
-from enum import Enum
+from src.infrastructure.utils.common_imports import Enum, dataclass
 from typing import Dict, Optional
 
 
@@ -16,6 +15,8 @@ class IssueType(Enum):
     UNUSED_IMPORT = "unused_import"
     CIRCULAR_IMPORT = "circular_import"
     NAMING_CONVENTION = "naming_convention"
+    FUNCTION_NAMING_CONVENTION = "function_naming_convention"
+    IMPORT_SORTING = "import_sorting"
     SECURITY_ISSUE = "security_issue"
     PERFORMANCE_ISSUE = "performance_issue"
     COMPLEXITY_ISSUE = "complexity_issue"
@@ -49,6 +50,31 @@ class IssueType(Enum):
     DEBUG_IMPORT = "debug_import"
     BREAKPOINT = "breakpoint"
     COMMENTED_TODO = "commented_todo"
+    
+    # Auto-fixer specific issue types
+    EMPTY_DIRECTORY = "empty_directory"
+    FORBIDDEN_PATTERN = "forbidden_pattern"
+    CODE_FORMATTING = "code_formatting"
+    
+    # Syntax validator specific issue types
+    PARSE_ERROR = "parse_error"
+    IMPORT_EXTRACTION_ERROR = "import_extraction_error"
+    INVALID_IMPORT_NAME = "invalid_import_name"
+    INVALID_IMPORT_SYNTAX = "invalid_import_syntax"
+    OPTIONAL_DEPENDENCY = "optional_dependency"
+    IMPORT_VALIDATION_ERROR = "import_validation_error"
+    
+    # Structure validator specific issue types
+    FILE_NAMING_CONVENTION = "file_naming_convention"
+    CLASS_NAMING_CONVENTION = "class_naming_convention"
+    NAMING_VALIDATION_ERROR = "naming_validation_error"
+    MISSING_DOCSTRING = "missing_docstring"
+    DOCUMENTATION_COVERAGE = "documentation_coverage"
+    LOW_TEST_COVERAGE = "low_test_coverage"
+    SECURITY_SCAN_ERROR = "security_scan_error"
+    POTENTIAL_HARDCODED_SECRET = "potential_hardcoded_secret"
+    DANGEROUS_FUNCTION_USAGE = "dangerous_function_usage"
+    SHELL_INJECTION_RISK = "shell_injection_risk"
 
 
 class SeverityLevel(Enum):
@@ -75,6 +101,7 @@ class ValidationIssue:
     offending_line: Optional[str] = None
     expected_pattern: Optional[str] = None
     auto_fixable: bool = False
+    details: Optional[Dict] = None
 
     def to_dict(self) -> Dict:
         """Convert issue to dictionary format."""
@@ -90,6 +117,7 @@ class ValidationIssue:
             "offending_line": self.offending_line,
             "expected_pattern": self.expected_pattern,
             "auto_fixable": self.auto_fixable,
+            "details": self.details,
         }
 
     def __str__(self) -> str:

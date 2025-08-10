@@ -1,19 +1,33 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    datetime,
+    hashlib,
+    json,
+    logging,
+    os,
+    time
+)
 """
 Memory Engine Storage System
 
 Handles tiered storage (hot/warm/cold) and data lifecycle management
 """
 
-import hashlib
-import json
-import logging
-import os
+# import hashlib  # Consolidated to common_imports
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
 import shutil
 import threading
-import time
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# import time  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 # External dependencies with error handling
 try:
@@ -82,8 +96,11 @@ class TieredStorageManager:
         self.migration_interval_hours = config.migration_interval_hours
 
         # Storage paths
-        from config.build_paths import (COLD_STORAGE_DIR, HOT_STORAGE_DIR,
-                                        WARM_STORAGE_DIR)
+        from config.build_paths import (
+            COLD_STORAGE_DIR,
+            HOT_STORAGE_DIR,
+            WARM_STORAGE_DIR,
+        )
 
         self.hot_path = HOT_STORAGE_DIR
         self.warm_path = WARM_STORAGE_DIR
@@ -472,8 +489,8 @@ class PartitionManager:
         """
         Determine partition key for data.
         """
-        # Simple hash-based partitioning
-        hash_value = hashlib.md5(data_key.encode()).hexdigest()
+        # Simple hash-based partitioning using SHA256 for security
+        hash_value = hashlib.sha256(data_key.encode()).hexdigest()
         partition_id = int(hash_value[:2], 16) % 16  # 16 partitions
         return f"partition_{partition_id:02d}"
 

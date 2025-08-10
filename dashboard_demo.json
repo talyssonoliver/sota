@@ -1,0 +1,72 @@
+{
+  "timestamp": "2025-06-11T00:55:59.837603",
+  "total_items": 6,
+  "items": [
+    {
+      "task_id": "BE-07",
+      "status": "Awaiting QA",
+      "pending_reviewer": "QA Agent",
+      "deadline": "4 PM",
+      "action": "Review",
+      "priority": 8,
+      "overdue": false,
+      "risk_level": "high",
+      "checkpoint_type": "agent_prompt"
+    },
+    {
+      "task_id": "UX-02",
+      "status": "Awaiting Human",
+      "pending_reviewer": "UX Lead",
+      "deadline": "6 PM",
+      "action": "Approve",
+      "priority": 6,
+      "overdue": false,
+      "risk_level": "medium",
+      "checkpoint_type": "task_transitions"
+    },
+    {
+      "task_id": "PM-05",
+      "status": "Approved",
+      "pending_reviewer": "\u2014",
+      "deadline": "\u2014",
+      "action": "Completed",
+      "priority": 0,
+      "overdue": false,
+      "risk_level": "low",
+      "checkpoint_type": "documentation"
+    },
+    {
+      "task_id": "FE-12",
+      "status": "Escalated",
+      "pending_reviewer": "Team Lead",
+      "deadline": "Overdue by 2h",
+      "action": "Resolve",
+      "priority": 12,
+      "overdue": true,
+      "risk_level": "critical",
+      "checkpoint_type": "output_evaluation"
+    },
+    {
+      "task_id": "DB-03",
+      "status": "In Review",
+      "pending_reviewer": "DB Admin",
+      "deadline": "8h",
+      "action": "Complete Review",
+      "priority": 4,
+      "overdue": false,
+      "risk_level": "medium",
+      "checkpoint_type": "qa"
+    },
+    {
+      "task_id": "API-09",
+      "status": "Rejected",
+      "pending_reviewer": "\u2014",
+      "deadline": "\u2014",
+      "action": "Fix Issues",
+      "priority": 7,
+      "overdue": false,
+      "risk_level": "high",
+      "checkpoint_type": "output_evaluation"
+    }
+  ]
+}

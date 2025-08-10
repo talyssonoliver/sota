@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-22
+title: Establish Image Guidelines for Product Photography
+owner: ux
+depends_on:
+  - UX-06
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-22: Establish Image Guidelines for Product Photography"
+artefacts:
+  - docs/design/product-photography-guidelines.md
+  - public/images/
+context_topics:
+  - project-overview

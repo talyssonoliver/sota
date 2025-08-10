@@ -26,6 +26,7 @@ __pycache__/
 .env.*
 
 # IDEs and editors
+.vscode/
 .idea/
 *.sublime-workspace
 *.sublime-project
@@ -45,7 +46,6 @@ Thumbs.db
 cache/
 archives/
 logs/
-outputs/
 chroma_db/
 mock-api-key/
 progress_reports/
@@ -65,54 +65,13 @@ yarn.lock
 # Coverage reports
 coverage/
 .nyc_output/
-.coverage
-.coverage.*
-*.coverage
 
 # Generated files that should not be committed
 tasks/tasks.json
 *_backup.py
 *_clean.py
-*_corrupted.py
 debug_*.py
 check_*.py
-validate_*.py
-
-# Analysis and cleanup artifacts
-cleanup_analysis_report.json
-file.md
-DUPLICATION_ANALYSIS.md
-FIX_CODE_QUALITY.md
-DEPENDENCY_MAP_SUMMARY.md
-pytest_output.txt
-fix_fstring_*.py
-test_imports.py
-test_fixed_imports.py
-
-# Test runners (keep only run_tests.py)
-enhanced_test_runner*.py
-
-# Documentation generated files
-docs/setup/complete-directory-structure.md
-
-# Prevent re-accumulation of cleaned files
-*.gif
-demo.*
-package-lock.json
-*.jsonl
-corrupted_*.json
-TEST-*.dat
-
-# HTML coverage reports
-htmlcov/
-
-# ChromaDB runtime files
-chroma_db/
-*.sqlite3
-
-# Temporary Windows files
-*_Users_*_AppData_Local_Temp_*
-*.dat
 
 # Dashboard and notification files (runtime generated)
 dashboard/agent_status.json
@@ -140,8 +99,29 @@ claude-code/
 CLAUDE.md
 
 # Memory engine files
-.memory_engine_key*
-memory_engine_key*
+.memory_engine_key
 
-docs/api/
+# ───── Test & runtime artefacts ─────
+outputs/**
+src/**/outputs/**
+tests/outputs/**
+build/**/logs/**
+logs/**
+runtime/cache/**
+*.jsonl
 
+# ───── CI reports ─────
+coverage.json
+bandit-report.json
+security_scan.json
+validation_report*.json
+
+# ───── Archives & backups ─────
+archives/**
+*.tar.gz
+*.backup
+*_backup.*
+
+# ───── Generated docs/visuals ─────
+*.html
+*.sql

@@ -2,22 +2,33 @@
 
 from enum import Enum
 
-
 class TaskStatus(Enum):
     """Task status enumeration."""
 
-    CREATED = "created"
-    PENDING = "pending"
-    IN_PROGRESS = "in_progress"
-    COMPLETED = "completed"
-    FAILED = "failed"
-    BLOCKED = "blocked"
-    CANCELLED = "cancelled"
-    DONE = "done"
-    QA_PENDING = "qa_pending"
-    DOCUMENTATION = "documentation"
-    HUMAN_REVIEW = "human_review"
-    PLANNED = "planned"
+    CREATED = "CREATED"
+    PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+    BLOCKED = "BLOCKED"
+    CANCELLED = "CANCELLED"
+    DONE = "DONE"
+    QA_PENDING = "QA_PENDING"
+    DOCUMENTATION = "DOCUMENTATION"
+    HUMAN_REVIEW = "HUMAN_REVIEW"
+    PLANNED = "PLANNED"
+    
+    def __str__(self):
+        """Return just the value string."""
+        return self.value
+    
+    @classmethod
+    def from_string(cls, status_str):
+        """Convert string to TaskStatus, defaulting to IN_PROGRESS for invalid values."""
+        try:
+            return cls(status_str)
+        except ValueError:
+            return cls.IN_PROGRESS
 
 
 class WorkflowState:
@@ -51,18 +62,43 @@ def get_next_status(current_status, agent_role, is_success=True):
     if not is_success:
         return TaskStatus.BLOCKED
 
-    # Simple status progression logic
+    # Agent-specific transitions
     if current_status == TaskStatus.CREATED:
-        return TaskStatus.IN_PROGRESS
+        if agent_role == "coordinator":
+            return TaskStatus.PLANNED
+        else:
+            return TaskStatus.IN_PROGRESS
+    elif current_status == TaskStatus.BLOCKED:
+        if agent_role == "coordinator":
+            return TaskStatus.PLANNED
+        else:
+            return TaskStatus.IN_PROGRESS
+    elif current_status == TaskStatus.PLANNED:
+        if agent_role == "technical":
+            return TaskStatus.IN_PROGRESS
+        elif agent_role in ["backend", "frontend"]:
+            return TaskStatus.QA_PENDING
+        else:
+            return TaskStatus.IN_PROGRESS
     elif current_status == TaskStatus.IN_PROGRESS:
-        if agent_role in ["qa", "QA"]:
+        if agent_role in ["backend", "frontend"]:
+            return TaskStatus.QA_PENDING
+        elif agent_role == "qa":
             return TaskStatus.QA_PENDING
         else:
             return TaskStatus.QA_PENDING
     elif current_status == TaskStatus.QA_PENDING:
-        return TaskStatus.DOCUMENTATION
+        if agent_role == "qa":
+            return TaskStatus.DOCUMENTATION
+        else:
+            return TaskStatus.DOCUMENTATION
     elif current_status == TaskStatus.DOCUMENTATION:
-        return TaskStatus.COMPLETED
+        if agent_role == "documentation":
+            return TaskStatus.DONE
+        else:
+            return TaskStatus.COMPLETED
+    elif current_status == TaskStatus.COMPLETED:
+        return TaskStatus.DONE
     else:
         return current_status
 
@@ -75,30 +111,42 @@ def get_valid_transitions(current_status):
         current_status: Current TaskStatus
 
     Returns:
-        List of valid TaskStatus transitions
+        Dict mapping agent roles to their target status transitions
     """
     transitions = {
-        TaskStatus.CREATED: [TaskStatus.IN_PROGRESS, TaskStatus.PLANNED],
-        TaskStatus.PLANNED: [TaskStatus.IN_PROGRESS],
-        TaskStatus.IN_PROGRESS: [
-            TaskStatus.QA_PENDING,
-            TaskStatus.COMPLETED,
-            TaskStatus.BLOCKED,
-        ],
-        TaskStatus.QA_PENDING: [
-            TaskStatus.DOCUMENTATION,
-            TaskStatus.IN_PROGRESS,
-            TaskStatus.HUMAN_REVIEW,
-        ],
-        TaskStatus.DOCUMENTATION: [TaskStatus.COMPLETED, TaskStatus.DONE],
-        TaskStatus.HUMAN_REVIEW: [TaskStatus.IN_PROGRESS, TaskStatus.BLOCKED],
-        TaskStatus.COMPLETED: [TaskStatus.DONE],
-        TaskStatus.BLOCKED: [TaskStatus.IN_PROGRESS, TaskStatus.HUMAN_REVIEW],
-        TaskStatus.FAILED: [TaskStatus.IN_PROGRESS, TaskStatus.BLOCKED],
-        TaskStatus.CANCELLED: [],
-        TaskStatus.DONE: [],
+        TaskStatus.CREATED: {"coordinator": TaskStatus.PLANNED},
+        TaskStatus.PLANNED: {"coordinator": TaskStatus.IN_PROGRESS},
+        TaskStatus.IN_PROGRESS: {"qa": TaskStatus.QA_PENDING},
+        TaskStatus.QA_PENDING: {"qa": TaskStatus.DOCUMENTATION},
+        TaskStatus.DOCUMENTATION: {"documentation": TaskStatus.COMPLETED},
+        TaskStatus.COMPLETED: {"coordinator": TaskStatus.DONE},
+        TaskStatus.BLOCKED: {"coordinator": TaskStatus.IN_PROGRESS},
+        TaskStatus.FAILED: {"coordinator": TaskStatus.IN_PROGRESS},
+        TaskStatus.CANCELLED: {},
+        TaskStatus.DONE: {},
+        TaskStatus.HUMAN_REVIEW: {"coordinator": TaskStatus.IN_PROGRESS},
     }
-    return transitions.get(current_status, [])
+    return transitions.get(current_status, {})
+
+
+def is_terminal_status(status):
+    """
+    Check if a status is terminal (no further transitions possible).
+    
+    Args:
+        status: TaskStatus to check
+    
+    Returns:
+        bool: True if status is terminal
+    """
+    terminal_statuses = {
+        TaskStatus.DONE,
+        TaskStatus.BLOCKED, 
+        TaskStatus.HUMAN_REVIEW,
+        TaskStatus.CANCELLED,
+        TaskStatus.FAILED
+    }
+    return status in terminal_statuses
 
 
 __all__ = [
@@ -106,4 +154,5 @@ __all__ = [
     "WorkflowState",
     "get_next_status",
     "get_valid_transitions",
+    "is_terminal_status",
 ]

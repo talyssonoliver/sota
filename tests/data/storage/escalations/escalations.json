@@ -1,0 +1,1798 @@
+[
+  {
+    "task_id": "LOAD-0",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.298114",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 0"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-1",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.304704",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 1"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-2",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.323955",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 2"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-3",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.349317",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 3"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-4",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.374834",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 4"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-5",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.401745",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 5"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-6",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.424408",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 6"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-7",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.445242",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 7"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-8",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.469769",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 8"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-9",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.492670",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 9"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-10",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.520579",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 10"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-11",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.550093",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 11"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-12",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.572707",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 12"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-13",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.596658",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 13"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-14",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.621553",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 14"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-15",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.643819",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 15"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-16",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.665416",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 16"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-17",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.691270",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 17"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-18",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.717998",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 18"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-19",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.741983",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 19"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-20",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.763959",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 20"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-21",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.785686",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 21"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-22",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.810271",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 22"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-23",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.831224",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 23"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-24",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.853319",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 24"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-25",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.876893",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 25"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-26",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.900496",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 26"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-27",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.922300",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 27"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-28",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.954275",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 28"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-29",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:42.982857",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 29"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-30",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.011425",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 30"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-31",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.040962",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 31"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-32",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.083806",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 32"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-33",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.118823",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 33"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-34",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.147724",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 34"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-35",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.174443",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 35"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-36",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.203802",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 36"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-37",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.229555",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 37"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-38",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.255915",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 38"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-39",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.290795",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 39"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-40",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.316858",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 40"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-41",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.349174",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 41"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-42",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.384258",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 42"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-43",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.410415",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 43"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-44",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.439573",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 44"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-45",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.467406",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 45"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-46",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.491336",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 46"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-47",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.516130",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 47"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-48",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.540954",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 48"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-49",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.570451",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 49"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-50",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.605677",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 50"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-51",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.645874",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 51"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-52",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.694500",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 52"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-53",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.741297",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 53"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-54",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.782495",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 54"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-55",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.830166",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 55"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-56",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.866708",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 56"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-57",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.901891",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 57"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-58",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.939278",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 58"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-59",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:43.977621",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 59"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-60",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.014467",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 60"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-61",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.042845",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 61"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-62",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.075065",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 62"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-63",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.108839",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 63"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-64",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.151105",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 64"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-65",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.197389",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 65"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-66",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.236955",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 66"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-67",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.269779",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 67"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-68",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.304384",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 68"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-69",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.354449",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 69"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-70",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.388810",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 70"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-71",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.423349",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 71"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-72",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.463881",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 72"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-73",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.495187",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 73"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-74",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.530252",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 74"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-75",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.564016",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 75"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-76",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.595062",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 76"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-77",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.626133",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 77"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-78",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.659377",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 78"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-79",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.692019",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 79"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-80",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.729285",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 80"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-81",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.757555",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 81"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-82",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.784618",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 82"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-83",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.819661",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 83"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-84",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.852042",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 84"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-85",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.891464",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 85"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-86",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.926062",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 86"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-87",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.960774",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 87"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-88",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:44.991966",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 88"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-89",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:45.021466",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 89"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-90",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:45.053184",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 90"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-91",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:45.085473",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 91"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-92",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:45.135622",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 92"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-93",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:45.166085",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 93"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-94",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:45.199952",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 94"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-95",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:45.234320",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 95"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-96",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:45.264038",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 96"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-97",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:45.293171",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 97"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-98",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:45.329192",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 98"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "LOAD-99",
+    "trigger": "load_test",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:45.371798",
+    "triggered_by": "system",
+    "context": {
+      "description": "Performance test escalation 99"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": []
+  },
+  {
+    "task_id": "FE-666",
+    "trigger": "manual",
+    "level": {
+      "name": "Management Review",
+      "value": 2,
+      "timeout_hours": 6
+    },
+    "triggered_at": "2025-07-25T18:38:46.392922",
+    "triggered_by": "cli_user",
+    "context": {
+      "reason": "urgent_deadline",
+      "manual_trigger": true,
+      "cli_initiated": true
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-07-25T18:38:46.393115",
+      "slack_2025-07-25T18:38:46.393218",
+      "dashboard_2025-07-25T18:38:46.393267"
+    ]
+  },
+  {
+    "task_id": "FE-888",
+    "trigger": "rejection",
+    "level": {
+      "name": "Director Review",
+      "value": 3,
+      "timeout_hours": 12
+    },
+    "triggered_at": "2025-07-25T18:38:46.519980",
+    "triggered_by": "reviewer",
+    "context": {
+      "rejection_count": 3,
+      "rejection_reason": "design_guidelines",
+      "reviewer": "alice.reviewer",
+      "task_type": "frontend",
+      "risk_level": "medium"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-07-25T18:38:46.520246",
+      "slack_2025-07-25T18:38:46.520274",
+      "dashboard_2025-07-25T18:38:46.520331",
+      "phone_2025-07-25T18:38:46.520353"
+    ]
+  },
+  {
+    "task_id": "QA-999",
+    "trigger": "timeout",
+    "level": {
+      "name": "Team Lead Review",
+      "value": 1,
+      "timeout_hours": 2
+    },
+    "triggered_at": "2025-07-25T18:38:46.599555",
+    "triggered_by": "system",
+    "context": {
+      "timeout_duration": "unknown",
+      "reviewer": "unknown",
+      "task_type": "qa",
+      "risk_level": "high"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-07-25T18:38:46.599677",
+      "slack_2025-07-25T18:38:46.599705"
+    ]
+  },
+  {
+    "task_id": "QA-999",
+    "trigger": "timeout",
+    "level": {
+      "name": "Management Review",
+      "value": 2,
+      "timeout_hours": 6
+    },
+    "triggered_at": "2025-07-25T18:38:46.616800",
+    "triggered_by": "system",
+    "context": {
+      "timeout_duration": "unknown",
+      "reviewer": "unknown",
+      "task_type": "qa",
+      "risk_level": "high"
+    },
+    "resolved_at": null,
+    "resolution": null,
+    "notifications_sent": [
+      "email_2025-07-25T18:38:46.616950",
+      "slack_2025-07-25T18:38:46.616974",
+      "dashboard_2025-07-25T18:38:46.616983"
+    ]
+  }
+]

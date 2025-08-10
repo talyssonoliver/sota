@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import logging, os, sys
 """
 Usage Examples for MCP Context Integration
 
@@ -6,36 +8,19 @@ This script demonstrates how to use the enhanced memory-enabled agents
 to execute tasks with contextual knowledge.
 """
 
-import logging
-import os
-import sys
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 
-try:
-    from src.core.agents import agent_builder
-except ImportError:
-    pass
-try:
-    from src.core.agents.backend import (build_backend_agent,
-                                         get_backend_context)
-except ImportError:
-    pass
-try:
-    from src.core.agents.frontend import (build_frontend_agent,
-                                          get_frontend_context)
-except ImportError:
-    pass
-try:
-    from src.core.workflows.inject_context import context_injector
-except ImportError:
-    pass
-try:
-    from src.infrastructure.memory import MemoryEngine
+from agents import agent_builder
+from agents.backend import build_backend_agent, get_backend_context
+from agents.frontend import build_frontend_agent, get_frontend_context
+from src.core.workflows.inject_context import context_injector
+from src.infrastructure.memory import get_memory_instance
 
-    memory = MemoryEngine()
-except ImportError:
-    pass
-
+# Add parent directory to path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -71,11 +56,15 @@ def example_2_memory_enhanced_agent_creation():
             "id": "BE-07",
             "title": "Implement User Service Functions",
             "description": "Create Supabase service layer for user management",
-            "context_topics": ["db-schema", "service-patterns", "user-management"],
+            "context_topics": [
+                "db-schema",
+                "service-patterns",
+                "user-management"],
             "owner": "backend_engineer",
-            "dependencies": ["BE-01", "BE-02"],
-            "priority": "HIGH",
-        }
+            "dependencies": [
+                "BE-01",
+                "BE-02"],
+            "priority": "HIGH"}
 
         # Create backend agent with context
         backend_agent = build_backend_agent(task_metadata=task_metadata)
@@ -85,10 +74,9 @@ def example_2_memory_enhanced_agent_creation():
             f"Agent has memory retriever: {
                 hasattr(
                     backend_agent,
-                    '_memory_retriever')}"
-        )
+                    '_memory_retriever')}")
 
-        if hasattr(backend_agent, "_context"):
+        if hasattr(backend_agent, '_context'):
             context_length = len(backend_agent._context)
             print(f"Context Length: {context_length} characters")
 
@@ -109,13 +97,15 @@ def example_3_context_injector_usage():
         print(f"Preparing agent for task {task_id} with role {agent_role}")
 
         # Get context data without creating agent
-        context_data = context_injector.inject_task_context(task_id, agent_role)
+        context_data = context_injector.inject_task_context(
+            task_id, agent_role)
 
         if context_data:
             print("Context injection successful!")
             print(f"Task ID: {context_data.get('task_id')}")
             print(f"Agent Role: {context_data.get('agent_role')}")
-            print(f"Context Length: {len(context_data.get('context', ''))} characters")
+            print(
+                f"Context Length: {len(context_data.get('context', ''))} characters")
         else:
             print("Context injection failed - task metadata not found")
 
@@ -127,7 +117,8 @@ def example_4_direct_memory_queries():
     """Example 4: Direct memory engine queries"""
     print("\n=== Example 4: Direct Memory Engine Queries ===")
 
-    try:  # Query specific domains
+    try:        # Query specific domains
+        memory = get_memory_instance()
         domains = ["db-schema", "service-patterns"]
         context = memory.get_context_by_domains(domains, max_results=3)
         print(f"Context for domains {domains}:")
@@ -136,7 +127,9 @@ def example_4_direct_memory_queries():
 
         # Query for specific task
         task_context = memory.retrieve_context_for_task(
-            "BE-07", context_topics=["user-management", "authentication"], max_results=2
+            "BE-07",
+            context_topics=["user-management", "authentication"],
+            max_results=2
         )
         print("\nTask-specific context:")
         print(f"Length: {len(task_context)} characters")
@@ -157,8 +150,6 @@ def example_5_prompt_enhancement():
     try:
         # Sample prompt template
         prompt_template = """# Backend Development Task
-    except ImportError:
-        pass
 
 ## Role
 You are a backend developer specializing in Supabase implementations.
@@ -191,7 +182,7 @@ Follow the established patterns and ensure proper error handling.
             "id": "BE-07",
             "title": "User Service Implementation",
             "description": "Create user management service functions",
-            "priority": "HIGH",
+            "priority": "HIGH"
         }
 
         # Enhance prompt with context
@@ -219,7 +210,7 @@ def example_6_agent_comparison():
             "title": "Create Product Listing Component",
             "description": "Build a responsive product grid component",
             "context_topics": ["design-system", "component-patterns"],
-            "owner": "frontend_engineer",
+            "owner": "frontend_engineer"
         }
 
         # Create agent with context
@@ -231,15 +222,20 @@ def example_6_agent_comparison():
         print("Agent with context:")
         print(f"- Has context: {hasattr(agent_with_context, '_context')}")
         print(
-            f"- Has memory retriever: {hasattr(agent_with_context, '_memory_retriever')}"
-        )
+            f"- Has memory retriever: {hasattr(agent_with_context, '_memory_retriever')}")
 
         print("\nBasic agent:")
         print(f"- Has context: {hasattr(agent_basic, '_context')}")
-        print(f"- Has memory retriever: {hasattr(agent_basic, '_memory_retriever')}")
+        print(
+            f"- Has memory retriever: {hasattr(agent_basic, '_memory_retriever')}")
 
-        if hasattr(agent_with_context, "_context") and hasattr(agent_basic, "_context"):
-            context_diff = len(agent_with_context._context) - len(agent_basic._context)
+        if hasattr(
+                agent_with_context,
+                '_context') and hasattr(
+                agent_basic,
+                '_context'):
+            context_diff = len(agent_with_context._context) - \
+                len(agent_basic._context)
             print(f"\nContext difference: {context_diff} characters")
 
     except Exception as e:
@@ -270,9 +266,7 @@ def main():
 
     print("\n=== Examples Complete ===")
     print("To use in your own code:")
-    print(
-        "1. Import the agent builders: from src.core.agents.backend import build_backend_agent"
-    )
+    print("1. Import the agent builders: from agents.backend import build_backend_agent")
     print("2. Create task metadata with context_topics")
     print("3. Build agents with task_metadata parameter")
     print("4. Access agent._context for the retrieved context")

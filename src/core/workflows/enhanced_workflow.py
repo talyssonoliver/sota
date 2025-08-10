@@ -1,24 +1,28 @@
+
 """
 Enhanced Workflow Executor
 Integrates all PHASE 2 enhancements: auto-generated graphs, resilience features,
 notifications, and support for monitoring.
 """
 
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    json,
+    logging,
+    os,
+    sys
+)
+
 import argparse
-import json
-import logging
-import os
-import sys
-from datetime import datetime
-from pathlib import Path
 from typing import Any, Dict, Optional
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 try:
@@ -28,22 +32,24 @@ except ImportError:
 try:
     from dotenv import load_dotenv
 except ImportError:
+
     def load_dotenv():
         pass
 
+
 try:
     import logging
+
     from pythonjsonlogger import jsonlogger
 except ImportError:
     jsonlogger = None
 
 try:
-    from src.core.workflows.graph.graph_builder import (build_advanced_workflow_graph,
-                                     build_dynamic_workflow_graph,
-                                     build_workflow_graph)
-
     from src.core.workflows.graph.auto_generate_graph import \
         build_auto_generated_workflow_graph
+    from src.core.workflows.graph.graph_builder import (
+        build_advanced_workflow_graph, build_dynamic_workflow_graph,
+        build_workflow_graph)
     from src.core.workflows.graph.notifications import (
         NotificationLevel, SlackNotifier, attach_notifications_to_workflow)
     from src.core.workflows.graph.resilient_workflow import \
@@ -114,8 +120,6 @@ logger.setLevel(logging.INFO)
 
 # LangSmith tracing integration
 try:
-    import os
-
     from langsmith import traceable
 
     os.environ["LANGCHAIN_TRACING_V2"] = "true"

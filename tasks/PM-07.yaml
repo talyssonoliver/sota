@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: PM-07
+title: Establish Sprint 0 Goals and Success Metrics
+owner: product
+depends_on:
+  - PM-01
+  - PM-02
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task PM-07: Establish Sprint 0 Goals and Success Metrics"
+artefacts:
+  - docs/sprint/sprint0-goals.md
+context_topics:
+  - project-overview

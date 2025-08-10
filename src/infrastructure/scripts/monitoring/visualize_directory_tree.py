@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 """
 Directory Tree Visualization Utility
 Generates comprehensive directory tree including files, sizes, and line counts
@@ -12,9 +13,8 @@ Enhanced to include:
 """
 
 import argparse
-from datetime import datetime
-from pathlib import Path
-from typing import Optional, Set, Tuple, Union, cast
+from typing import List, Optional, Set, Tuple, Union, cast
+from src.infrastructure.utils.common_imports import Path, datetime
 
 
 def count_lines_in_file(file_path: Path) -> Optional[int]:
@@ -43,7 +43,7 @@ def count_lines_in_file(file_path: Path) -> Optional[int]:
 
         with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             return sum(1 for _ in f)
-    except (OSError, PermissionError, UnicodeDecodeError):
+    except (OSError, UnicodeDecodeError):
         return None
 
 
@@ -82,10 +82,167 @@ def should_exclude(path: Path, exclude_patterns: Set[str]) -> bool:
         try:
             if not any(path.iterdir()):  # Empty __pycache__ directory
                 return True
-        except (PermissionError, OSError):
+        except OSError:
             return True
 
     return False
+
+
+def _get_safe_sort_key(item: Path) -> Tuple[bool, str]:
+    """Get sort key for directory items, handling OSError gracefully."""
+    try:
+        return (item.is_file(), item.name.lower())
+    except OSError:
+        # Treat problematic items as files and sort by name only
+        return (True, item.name.lower())
+
+
+def _is_directory_safe(item: Path) -> bool:
+    """Check if item is directory, handling OSError gracefully."""
+    try:
+        return item.is_dir()
+    except OSError:
+        # Treat problematic items as files
+        return False
+
+
+def _get_file_metadata(item: Path, show_sizes: bool, show_lines: bool) -> Tuple[str, int]:
+    """Get file metadata (size and line count) for display."""
+    metadata_parts = []
+    total_lines = 0
+    
+    if show_sizes:
+        try:
+            size = item.stat().st_size
+            metadata_parts.append(format_size(size))
+        except OSError:
+            pass
+    
+    if show_lines:
+        line_count = count_lines_in_file(item)
+        if line_count is not None:
+            metadata_parts.append(f"{line_count:,} lines")
+            total_lines = line_count
+    
+    metadata_str = f" ({', '.join(metadata_parts)})" if metadata_parts else ""
+    return metadata_str, total_lines
+
+
+def _get_default_exclude_patterns() -> Set[str]:
+    """Get default patterns to exclude from directory traversal."""
+    return {
+        "__pycache__",
+        ".git",
+        ".venv",
+        "node_modules",
+        ".pytest_cache",
+        "htmlcov",
+        ".coverage",
+        ".mypy_cache",
+        ".tox",
+        "dist",
+        "build/archives",
+        "runtime/cache",
+        "runtime/temp",
+        "runtime/logs",
+        "logs/",
+        "test_logs/",
+        ".log",
+    }
+
+
+def _process_directory_items(
+    items: List[Path],
+    exclude_patterns: Set[str],
+    show_files: bool
+) -> List[Path]:
+    """Filter and process directory items."""
+    # Filter out excluded patterns
+    filtered_items = [
+        item for item in items if not should_exclude(item, exclude_patterns)
+    ]
+    
+    # Filter files if not showing them
+    if not show_files:
+        filtered_items = [item for item in filtered_items if _is_directory_safe(item)]
+    
+    return filtered_items
+
+
+def _create_tree_traverser(
+    tree_lines: List[str],
+    exclude_patterns: Set[str],
+    max_depth: Optional[int],
+    show_files: bool,
+    show_sizes: bool,
+    show_lines: bool
+):
+    """Create a closure for tree traversal with shared state."""
+    file_count = 0
+    dir_count = 0
+    total_lines = 0
+    
+    def handle_access_denied(next_prefix: str):
+        tree_lines.append(f"{next_prefix}└── [Access Denied]")
+
+    def handle_permission_denied(prefix: str):
+        tree_lines.append(f"{prefix}└── [Permission Denied]")
+
+    def build_prefixes(i: int, n: int, prefix: str):
+        is_last = i == n - 1
+        current_prefix = "└── " if is_last else "├── "
+        next_prefix = prefix + ("    " if is_last else "│   ")
+        return is_last, current_prefix, next_prefix
+
+    def append_item(item: Path, prefix: str, current_prefix: str):
+        nonlocal file_count, dir_count, total_lines
+        is_dir = _is_directory_safe(item)
+        if is_dir:
+            item_name = f"{item.name}/"
+            dir_count += 1
+        else:
+            file_count += 1
+            item_name = item.name
+            metadata_str, line_count = _get_file_metadata(item, show_sizes, show_lines)
+            item_name += metadata_str
+            total_lines += line_count
+        tree_lines.append(f"{prefix}{current_prefix}{item_name}")
+        return is_dir
+
+
+    def should_skip(path: Path, depth: int) -> bool:
+        if (max_depth is not None and depth >= max_depth) or should_exclude(path, exclude_patterns):
+            return True
+        return False
+
+    def get_sorted_items(path: Path, prefix: str) -> Optional[list]:
+        try:
+            items = list(path.iterdir())
+            items.sort(key=_get_safe_sort_key)
+            return _process_directory_items(items, exclude_patterns, show_files)
+        except OSError:
+            handle_permission_denied(prefix)
+            return None
+
+    def traverse_items(items: list, prefix: str, depth: int):
+        for i, item in enumerate(items):
+            _, current_prefix, next_prefix = build_prefixes(i, len(items), prefix)
+            is_dir = append_item(item, prefix, current_prefix)
+            if is_dir:
+                try:
+                    traverse_directory(item, next_prefix, depth + 1)
+                except OSError:
+                    handle_access_denied(next_prefix)
+
+    def traverse_directory(path: Path, prefix: str = "", depth: int = 0) -> None:
+        nonlocal file_count, dir_count, total_lines
+        if should_skip(path, depth):
+            return
+        items = get_sorted_items(path, prefix)
+        if items is not None:
+            traverse_items(items, prefix, depth)
+
+    return traverse_directory, lambda: (file_count, dir_count, total_lines)
 
 
 def generate_tree_structure(
@@ -110,130 +267,28 @@ def generate_tree_structure(
     Returns:
         Tuple of (ASCII tree representation, file_count, dir_count, total_lines)
     """
-    if exclude_patterns is None:
-        exclude_patterns = {
-            "__pycache__",
-            ".git",
-            ".venv",
-            "node_modules",
-            ".pytest_cache",
-            "htmlcov",
-            ".coverage",
-            ".mypy_cache",
-            ".tox",
-            "dist",
-            "build/archives",
-            "runtime/cache",
-            "runtime/temp",
-            "runtime/logs",
-            "logs/",
-            "test_logs/",
-            ".log",
-        }
 
-    root = Path(root_path)
-    if not root.exists():
-        return f"Error: Path {root_path} does not exist", 0, 0, 0
+    def get_exclude_patterns(exclude_patterns):
+        return exclude_patterns if exclude_patterns is not None else _get_default_exclude_patterns()
+
+    def get_root_path(root_path):
+        root = Path(root_path)
+        if not root.exists():
+            return None, f"Error: Path {root_path} does not exist"
+        return root, None
+
+    exclude_patterns = get_exclude_patterns(exclude_patterns)
+    root, error = get_root_path(root_path)
+    if error or root is None:
+        return (error or "Unknown error"), 0, 0, 0
 
     tree_lines = [f"{root.name}/"]
-    file_count = 0
-    dir_count = 0
-    total_lines = 0
 
-    def _traverse_directory(path: Path, prefix: str = "", depth: int = 0) -> None:
-        """Recursively traverse directory using DFS."""
-        nonlocal file_count, dir_count, total_lines
-
-        if max_depth is not None and depth >= max_depth:
-            return
-
-        if should_exclude(path, exclude_patterns):
-            return
-
-        try:
-            # Get all items in directory
-            items = list(path.iterdir())
-
-            # Sort: directories first, then files (both alphabetically)
-            # Handle potential OSError for broken symlinks or inaccessible files
-            def safe_sort_key(item):
-                try:
-                    return (item.is_file(), item.name.lower())
-                except (OSError, PermissionError):
-                    # Treat problematic items as files and sort by name only
-                    return (True, item.name.lower())
-
-            items.sort(key=safe_sort_key)
-
-            # Filter out excluded patterns
-            items = [
-                item for item in items if not should_exclude(item, exclude_patterns)
-            ]
-
-            # Filter files if not showing them
-            if not show_files:
-                items = [item for item in items if item.is_dir()]
-
-            for i, item in enumerate(items):
-                is_last = i == len(items) - 1
-
-                # Determine tree characters
-                if is_last:
-                    current_prefix = "└── "
-                    next_prefix = prefix + "    "
-                else:
-                    current_prefix = "├── "
-                    next_prefix = prefix + "│   "
-
-                # Format item name with metadata - handle OSError for broken symlinks
-                try:
-                    is_dir = item.is_dir()
-                except (OSError, PermissionError):
-                    # Treat problematic items as files
-                    is_dir = False
-
-                if is_dir:
-                    item_name = f"{item.name}/"
-                    dir_count += 1
-                else:
-                    file_count += 1
-                    item_name = item.name
-
-                    # Add file size and line count if requested
-                    metadata_parts = []
-
-                    if show_sizes:
-                        try:
-                            size = item.stat().st_size
-                            metadata_parts.append(format_size(size))
-                        except (OSError, PermissionError):
-                            pass
-
-                    if show_lines:
-                        line_count = count_lines_in_file(item)
-                        if line_count is not None:
-                            metadata_parts.append(f"{line_count:,} lines")
-                            total_lines += line_count
-
-                    if metadata_parts:
-                        item_name += f" ({', '.join(metadata_parts)})"
-
-                tree_lines.append(f"{prefix}{current_prefix}{item_name}")
-
-                # Recursively traverse subdirectories
-                if is_dir:
-                    try:
-                        _traverse_directory(item, next_prefix, depth + 1)
-                    except (OSError, PermissionError):
-                        # Skip directories that can't be accessed
-                        tree_lines.append(f"{next_prefix}└── [Access Denied]")
-
-        except PermissionError:
-            tree_lines.append(f"{prefix}└── [Permission Denied]")
-
-    # Start traversal from root
-    _traverse_directory(root)
-
+    traverse_func, get_counts = _create_tree_traverser(
+        tree_lines, exclude_patterns, max_depth, show_files, show_sizes, show_lines
+    )
+    traverse_func(root)
+    file_count, dir_count, total_lines = get_counts()
     return "\n".join(tree_lines), file_count, dir_count, total_lines
 
 

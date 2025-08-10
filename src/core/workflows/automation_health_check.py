@@ -1,22 +1,37 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Path,
+    asyncio,
+    datetime,
+    json,
+    logging,
+    os,
+    requests,
+    sys,
+    timedelta
+)
 """
 Automation Health Check - Phase 6 Enhancement
 
 Comprehensive health monitoring for the daily automation system,
 providing diagnostics and system status validation.
 """
-import asyncio
-import json
-import logging
-import sys
+# import asyncio  # Consolidated to common_imports
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 
 try:
-    import requests
+    from src.infrastructure.utils.common_imports import requests
 except ImportError:
     pass
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Any, Dict, List
+# from datetime import datetime, timedelta  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List  # Consolidated to common_imports
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -180,14 +195,16 @@ class AutomationHealthChecker:
     async def _check_dashboard_api(self) -> Dict[str, Any]:
         """Check dashboard API server status."""
         try:
-            # Try to connect to dashboard API
-            response = requests.get("http://localhost:5000/health", timeout=5)
+            # Try to connect to dashboard API using configured URL
+#             import os  # Consolidated to common_imports
+            api_url = os.environ.get("API_BASE_URL", "http://localhost:5000")
+            response = requests.get(f"{api_url}/health", timeout=5)
             api_running = response.status_code == 200
 
             return {
                 "status": "healthy" if api_running else "warning",
                 "api_running": api_running,
-                "api_url": "http://localhost:5000",
+                "api_url": api_url,
                 "response_code": response.status_code if api_running else None,
                 "issues": [] if api_running else ["Dashboard API not responding"],
             }
@@ -195,7 +212,7 @@ class AutomationHealthChecker:
             return {
                 "status": "warning",
                 "api_running": False,
-                "api_url": "http://localhost:5000",
+                "api_url": api_url,
                 "issues": ["Dashboard API not accessible - may not be running"],
             }
         except Exception as e:

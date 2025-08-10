@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    datetime,
+    json,
+    sys,
+    yaml
+)
 """
 QA Validation System for Phase 5
 
@@ -7,14 +19,14 @@ Provides comprehensive QA reporting and quality gate validation.
 """
 
 import argparse
-import json
-import sys
+# import json  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 from dataclasses import asdict, dataclass
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
-import yaml
+# import yaml  # Consolidated to common_imports
 
 
 @dataclass
@@ -242,9 +254,7 @@ class QAValidationEngine:
             # Use mock coverage calculation
             coverage_data = self._calculate_mock_coverage(task_id)
             qa_result.coverage_percentage = coverage_data["overall"]
-            print(
-                f"    📊 Using mock coverage: {qa_result.coverage_percentage:.1f}%"
-            )
+            print(f"    📊 Using mock coverage: {qa_result.coverage_percentage:.1f}%")
 
         return qa_result
 

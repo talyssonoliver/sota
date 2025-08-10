@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-03
+title: Create High-Fidelity Prototype for Product Detail
+owner: ux
+depends_on:
+  - BE-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-03: Create High-Fidelity Prototype for Product Detail"
+artefacts:
+  - docs/design/product-detail-spec.md
+  - designs/product-detail-desktop.pdf
+context_topics:
+  - project-overview

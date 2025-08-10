@@ -6,32 +6,21 @@ Flask API endpoints for Gantt chart data, critical path analysis,
 and timeline optimization functionality.
 """
 
-
-import sys
-
-try:
-    from datetime import datetime, timedelta
-except ImportError:
-    pass
-try:
-    from pathlib import Path
-except ImportError:
-    pass
-try:
-    from flask import Blueprint, jsonify, request
-except ImportError:
-    pass
-try:
-    from typing import Any, Dict, List
-except ImportError:
-    pass
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    logging,
+    sys,
+    timedelta
+)
+from src.infrastructure.security.input_validator import validate_input
+from flask import Blueprint, jsonify, request
 sys.path.append(str(Path(__file__).parent.parent))
 
 try:
     from src.core.workflows.gantt_analyzer import GanttAnalyzer
-    from src.core.workflows.states import TaskStatus
-    from src.infrastructure.utils.completion_metrics import \
-        CompletionMetricsCalculator
+    # TaskStatus import removed as unused
+    # CompletionMetricsCalculator import removed as unused
 except ImportError as e:
     print(f"Import error: {e}")
 
@@ -48,9 +37,6 @@ except ImportError as e:
 
         def optimize_timeline(self, **kwargs):
             return {}
-
-
-import logging
 
 # Create Blueprint
 gantt_bp = Blueprint("gantt", __name__, url_prefix="/api/gantt")
@@ -323,6 +309,9 @@ def get_optimization_recommendations():
 
 
 @gantt_bp.route("/optimize", methods=["POST"])
+@validate_input(
+    {}, json_schema={"data": {"type": "string", "required": False, "max_length": 2000}}
+)
 def optimize_timeline():
     """
     Run timeline optimization based on specified parameters.
@@ -367,6 +356,18 @@ def optimize_timeline():
 
 
 @gantt_bp.route("/tasks/<task_id>", methods=["PUT"])
+@validate_input(
+    {},
+    json_schema={
+        "task_id": {"type": "string", "required": True, "max_length": 100},
+        "description": {"type": "string", "required": True, "max_length": 1000},
+        "priority": {
+            "type": "enum",
+            "required": False,
+            "values": ["low", "medium", "high"],
+        },
+    },
+)
 def update_task(task_id):
     """
     Update a specific task's properties.
@@ -382,7 +383,7 @@ def update_task(task_id):
 
         logger.info(f"Updating task {task_id} with data: {data}")
 
-        # In a real implementation, this would update the task in the database
+        # TODO: Must implement, this would update the task in the database
         # For now, we'll just validate the data and return success
 
         allowed_fields = [

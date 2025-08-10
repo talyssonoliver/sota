@@ -1,3 +1,17 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Enum,
+    List,
+    Optional,
+    Path,
+    dataclass,
+    json,
+    re,
+    subprocess,
+    time
+)
 """
 Validation and Verification (V&V) Validator
 Implements comprehensive V&V based on software engineering principles, coding standards,
@@ -5,14 +19,14 @@ vulnerabilities, and OWASP rules.
 """
 
 import ast
-import json
-import re
-import subprocess
-import time
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# import json  # Consolidated to common_imports
+# import re  # Consolidated to common_imports
+# import subprocess  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 from .base_validator import BaseValidator
 from .issue_model import ValidationIssue
@@ -319,7 +333,7 @@ class VVValidator(BaseValidator):
         print("  🛠️ Running external validation tools...")
 
         results = {}
-        
+
         # Run MyPy
         results["mypy"] = self._run_mypy()
 
@@ -331,7 +345,7 @@ class VVValidator(BaseValidator):
 
         # Run Bandit
         results["bandit"] = self._run_bandit()
-        
+
         return results
 
     def _run_mypy(self):
@@ -342,7 +356,7 @@ class VVValidator(BaseValidator):
                 cwd=self.root_path,
                 capture_output=True,
                 text=True,
-                encoding='utf-8',
+                encoding="utf-8",
                 timeout=120,
             )
 
@@ -371,12 +385,12 @@ class VVValidator(BaseValidator):
                 "returncode": result.returncode,
                 "issues_found": len([i for i in self.issues if "MyPy" in i.message]),
             }
-            
+
             return {
                 "success": True,
                 "issues_found": len([i for i in self.issues if "MyPy" in i.message]),
                 "output": result.stdout,
-                "returncode": result.returncode
+                "returncode": result.returncode,
             }
 
         except Exception as e:
@@ -386,7 +400,7 @@ class VVValidator(BaseValidator):
                 "error": str(e),
                 "issues_found": 0,
                 "output": "",
-                "returncode": -1
+                "returncode": -1,
             }
 
     def _run_black(self):
@@ -398,7 +412,7 @@ class VVValidator(BaseValidator):
                 cwd=self.root_path,
                 capture_output=True,
                 text=True,
-                encoding='utf-8',
+                encoding="utf-8",
                 timeout=60,
             )
 
@@ -422,12 +436,12 @@ class VVValidator(BaseValidator):
                 "returncode": result.returncode,
                 "issues_found": len([i for i in self.issues if "Black" in i.message]),
             }
-            
+
             return {
                 "success": True,
                 "issues_found": len([i for i in self.issues if "Black" in i.message]),
                 "output": result.stdout,
-                "returncode": result.returncode
+                "returncode": result.returncode,
             }
 
         except Exception as e:
@@ -437,7 +451,7 @@ class VVValidator(BaseValidator):
                 "error": str(e),
                 "issues_found": 0,
                 "output": "",
-                "returncode": -1
+                "returncode": -1,
             }
 
     def _run_ruff(self):
@@ -448,7 +462,7 @@ class VVValidator(BaseValidator):
                 cwd=self.root_path,
                 capture_output=True,
                 text=True,
-                encoding='utf-8',
+                encoding="utf-8",
                 timeout=120,
             )
 
@@ -473,12 +487,12 @@ class VVValidator(BaseValidator):
                 "returncode": result.returncode,
                 "issues_found": len([i for i in self.issues if "Ruff" in i.message]),
             }
-            
+
             return {
                 "success": True,
                 "issues_found": len([i for i in self.issues if "Ruff" in i.message]),
                 "output": result.stdout,
-                "returncode": result.returncode
+                "returncode": result.returncode,
             }
 
         except Exception as e:
@@ -488,7 +502,7 @@ class VVValidator(BaseValidator):
                 "error": str(e),
                 "issues_found": 0,
                 "output": "",
-                "returncode": -1
+                "returncode": -1,
             }
 
     def _run_bandit(self):
@@ -509,7 +523,7 @@ class VVValidator(BaseValidator):
                 cwd=self.root_path,
                 capture_output=True,
                 text=True,
-                encoding='utf-8',
+                encoding="utf-8",
                 timeout=120,
             )
 
@@ -544,12 +558,12 @@ class VVValidator(BaseValidator):
                 "returncode": result.returncode,
                 "issues_found": len([i for i in self.issues if "Bandit" in i.message]),
             }
-            
+
             return {
                 "success": True,
                 "issues_found": len([i for i in self.issues if "Bandit" in i.message]),
                 "output": result.stdout,
-                "returncode": result.returncode
+                "returncode": result.returncode,
             }
 
         except Exception as e:
@@ -559,7 +573,7 @@ class VVValidator(BaseValidator):
                 "error": str(e),
                 "issues_found": 0,
                 "output": "",
-                "returncode": -1
+                "returncode": -1,
             }
 
     def _validate_coding_standards(self):
@@ -747,7 +761,7 @@ class VVValidator(BaseValidator):
         for issue in issues:
             if issue is None:
                 continue
-            severity = getattr(issue, 'severity', 'unknown')
+            severity = getattr(issue, "severity", "unknown")
             if severity in breakdown:
                 breakdown[severity] += 1
 
@@ -760,11 +774,15 @@ class VVValidator(BaseValidator):
             "validation_verification": {
                 "summary": {
                     "total_issues": len(self.issues),
-                    "critical_issues": len([i for i in self.issues if i.severity == "error"]),
-                    "warnings": len([i for i in self.issues if i.severity == "warning"]),
+                    "critical_issues": len(
+                        [i for i in self.issues if i.severity == "error"]
+                    ),
+                    "warnings": len(
+                        [i for i in self.issues if i.severity == "warning"]
+                    ),
                     "info": len([i for i in self.issues if i.severity == "info"]),
                     "files_analyzed": len(self.python_files),
-                    "validation_passed": not self.has_errors()
+                    "validation_passed": not self.has_errors(),
                 },
                 "coding_standards": {
                     "total_violations": len(

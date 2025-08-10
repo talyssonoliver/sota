@@ -1,0 +1,63 @@
+# Ignore node_modules markdown files that cause compilation issues
+**/node_modules/**/*.md
+**/node_modules/**/*.mdx
+
+# Ignore specific problematic files
+**/README.md
+**/CHANGELOG.md
+**/HISTORY.md
+**/LICENSE.md
+
+# Ignore babel and webpack specific readme files
+**/babel-*/README.md
+**/webpack-*/README.md
+**/semver/README.md
+
+# Ignore CSS tools readmes
+**/@csstools/**/README.md
+**/@csstools/**/LICENSE.md
+
+# Ignore Algolia readmes
+**/@algolia/**/README.md
+
+# Ignore type definitions
+**/@types/**/README.md
+
+# Ignore other problematic library readmes
+**/ajv/README.md
+**/ansi-*/README.md
+**/aggregate-error/readme.md
+**/autoprefixer/README.md
+**/browserslist/README.md
+**/cheerio/Readme.md
+**/chokidar/README.md
+**/clean-css/History.md
+**/compression/README.md
+**/colorette/README.md
+**/colorette/LICENSE.md
+**/clsx/readme.md
+**/cli-*/README.md
+**/chalk/readme.md
+**/boxen/readme.md
+**/big.js/README.md
+**/body-parser/**/README.md
+**/body-parser/**/CHANGELOG.md
+**/algoliasearch/README.md
+**/acorn/CHANGELOG.md
+
+# Ignore all babel plugin and preset readmes
+**/babel-plugin-*/README.md
+**/babel-preset-*/README.md
+
+# Ignore config chain readmes
+**/config-chain/**/README.md
+
+# Ignore all mdx and utility readmes in node_modules
+**/@mdx-js/**/readme.md
+**/@polka/**/readme.md
+**/@sideway/**/README.md
+**/@sindresorhus/**/readme.md
+**/@webassemblyjs/**/README.md
+
+# Ignore specific problem files that can't be fixed
+src/pages/markdown-page.md

@@ -1,17 +1,23 @@
+
+
 """
 Management Dashboard for Engineering Teams
 Provides comprehensive dashboards for engineering teams and tech leads to monitor
 code quality, technical debt, and software engineering metrics.
 """
 
-import json
 import sqlite3
-from dataclasses import dataclass
-from datetime import datetime
-from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional
-
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Enum,
+    List,
+    Optional,
+    Path,
+    dataclass,
+    datetime,
+    json
+)
 from ..core.nfr_validator import NFRValidator
 from ..core.quality_gates import QualityGatesEngine
 from ..core.validator import Validator
@@ -232,15 +238,17 @@ class ManagementDashboard:
         # Calculate health score (0-100) - base it on coverage if available
         phase_results = validation_report.get("phase_results", {})
         quality_gates = phase_results.get("quality_gates", {}).get("details", {})
-        coverage_percentage = quality_gates.get("metrics", {}).get("coverage_percentage")
-        
+        coverage_percentage = quality_gates.get("metrics", {}).get(
+            "coverage_percentage"
+        )
+
         if coverage_percentage is not None:
             # Use coverage as base score and adjust for issues
             health_score = coverage_percentage
         else:
             # Fallback to default calculation
             health_score = 100
-            
+
         if summary["critical_issues"] > 0:
             health_score -= min(summary["critical_issues"] * 20, 80)
         if summary["warnings"] > 10:
@@ -651,27 +659,31 @@ class ManagementDashboard:
 
         return recommendations
 
-    def _calculate_overall_health_score(self, validation_report: Dict[str, Any]) -> float:
+    def _calculate_overall_health_score(
+        self, validation_report: Dict[str, Any]
+    ) -> float:
         """Calculate overall health score using same logic as executive summary."""
         summary = validation_report["summary"]
-        
+
         # Calculate health score (0-100) - base it on coverage if available
         phase_results = validation_report.get("phase_results", {})
         quality_gates = phase_results.get("quality_gates", {}).get("details", {})
-        coverage_percentage = quality_gates.get("metrics", {}).get("coverage_percentage")
-        
+        coverage_percentage = quality_gates.get("metrics", {}).get(
+            "coverage_percentage"
+        )
+
         if coverage_percentage is not None:
             # Use coverage as base score and adjust for issues
             health_score = coverage_percentage
         else:
             # Fallback to default calculation
             health_score = 100
-            
+
         if summary["critical_issues"] > 0:
             health_score -= min(summary["critical_issues"] * 20, 80)
         if summary["warnings"] > 10:
             health_score -= min((summary["warnings"] - 10) * 2, 20)
-            
+
         return health_score
 
     def _generate_alerts(
@@ -899,7 +911,7 @@ class ManagementDashboard:
                 value_display = f"{int(metric.current_value)}{metric.unit}"
             else:
                 value_display = f"{metric.current_value:.1f} {metric.unit}"
-                
+
             html += f"""
             <div class="metric-card">
                 <h3>{metric.name}</h3>

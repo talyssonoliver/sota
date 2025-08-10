@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional,
+    Path,
+    datetime,
+    json,
+    logging
+)
 """
 Step 3.7 Implementation: Context Tracking per Task
 
@@ -9,7 +20,7 @@ task run and stores the information under /outputs/[TASK-ID]/context_log.json.
 Usage:
 
     1. Import the functions you need:
-       >>> from tools.context_tracker import track_context_usage, get_context_log
+       >>> from src.infrastructure.tools.context_tracker import track_context_usage, get_context_log
 
     2. Track context usage for a task:
        >>> track_context_usage(
@@ -23,11 +34,11 @@ Usage:
        >>> log = get_context_log("BE-07")
 """
 
-import json
-import logging
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 logger = logging.getLogger(__name__)
 

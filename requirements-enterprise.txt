@@ -1,0 +1,16 @@
+# Enterprise optional dependencies for Memory Engine
+# Install with: pip install -r requirements-enterprise.txt
+# Or use optional dependency: pip install -e .[enterprise]
+
+-r requirements.txt
+
+# Azure Key Vault support (for Azure-based secrets management)
+azure-keyvault-secrets>=4.7.0,<5.0.0
+azure-identity>=1.15.0,<2.0.0
+
+# AWS Secrets Manager support (for AWS-based secrets management)
+boto3>=1.34.0,<2.0.0
+botocore>=1.34.0,<2.0.0
+
+# HashiCorp Vault support (for self-hosted secrets management)
+hvac>=2.1.0,<3.0.0

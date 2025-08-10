@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """
-import sys
 Step 3.9 Demo: Visualise Context Coverage
 
 This script demonstrates and validates the Step 3.9 implementation
@@ -9,17 +8,20 @@ CSV and HTML reports showing context usage patterns.
 
 """
 
-import os
-import sys
-from pathlib import Path
+from src.infrastructure.utils.common_imports import Path, os, sys
 
-from src.infrastructure.tools.context_tracker import get_all_context_logs
-from src.infrastructure.tools.context_visualizer import (
-    analyze_context_coverage, generate_context_coverage_report,
-    generate_csv_report, generate_html_report, generate_json_report)
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 # Add parent directory to Python path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.infrastructure.tools.context_tracker import get_all_context_logs
+from src.infrastructure.tools.context_visualizer import (analyze_context_coverage,
+                                      generate_context_coverage_report,
+                                      generate_csv_report,
+                                      generate_html_report)
 
 
 def test_context_coverage_analysis():
@@ -46,28 +48,24 @@ def test_context_coverage_analysis():
         f"   Avg topics per task: {
             summary_stats.get(
                 'avg_topics_per_task',
-                0):.1f}"
-    )
+                0):.1f}")
     print(
         f"   Avg context length: {
             summary_stats.get(
                 'avg_context_length',
-                0):.0f}"
-    )
+                0):.0f}")
 
-    most_active_topic = summary_stats.get("most_active_topic", ("none", 0))
+    most_active_topic = summary_stats.get('most_active_topic', ('none', 0))
     print(
         f"   Most active topic: {
             most_active_topic[0]} ({
-            most_active_topic[1]} uses)"
-    )
+            most_active_topic[1]} uses)")
 
-    most_active_agent = summary_stats.get("most_active_agent", ("none", 0))
+    most_active_agent = summary_stats.get('most_active_agent', ('none', 0))
     print(
         f"   Most active agent: {
             most_active_agent[0]} ({
-            most_active_agent[1]} tasks)"
-    )
+            most_active_agent[1]} tasks)")
 
     # Display some coverage matrix data
     coverage_matrix = coverage_data.get("coverage_matrix", [])
@@ -77,9 +75,8 @@ def test_context_coverage_analysis():
         for i, task_data in enumerate(coverage_matrix[:3]):
             task_id = task_data["task_id"]
             agent_role = task_data["agent_role"]
-            topics = [
-                topic for topic, count in task_data["topics"].items() if count > 0
-            ]
+            topics = [topic for topic,
+                      count in task_data["topics"].items() if count > 0]
             print(f"   {task_id} ({agent_role}): {', '.join(topics)}")
 
         if len(coverage_matrix) > 3:
@@ -114,7 +111,7 @@ def test_csv_generation():
             print(f"   File size: {file_size} bytes")
 
             # Read first few lines to verify format
-            with open(csv_path, "r", encoding="utf-8") as f:
+            with open(csv_path, 'r', encoding='utf-8') as f:
                 lines = f.readlines()[:5]
 
             print("   First few lines:")
@@ -145,9 +142,7 @@ def test_html_generation():
     json_path = "reports/step_3_9_test_coverage.json"
     success_html = generate_html_report(coverage_data, html_path)
     # Also generate the JSON file for dynamic HTML
-    from src.infrastructure.tools.context_visualizer import \
-        generate_json_report
-
+    from src.infrastructure.tools.context_visualizer import generate_json_report
     success_json = generate_json_report(coverage_data, json_path)
 
     if success_html and success_json:
@@ -162,7 +157,7 @@ def test_html_generation():
 
         # Read and check basic HTML structure
         if os.path.exists(html_path):
-            with open(html_path, "r", encoding="utf-8") as f:
+            with open(html_path, 'r', encoding='utf-8') as f:
                 content = f.read()
             # Verify key HTML elements
             checks = [
@@ -173,7 +168,7 @@ def test_html_generation():
                 ("plotly" in content.lower(), "Plotly integration"),
                 ("heatmap" in content.lower(), "Heatmap element"),
                 ("topicChart" in content, "Topic chart element"),
-                ("agentChart" in content, "Agent chart element"),
+                ("agentChart" in content, "Agent chart element")
             ]
             print("   HTML validation checks:")
             all_passed = True
@@ -202,6 +197,7 @@ def test_json_generation():
         print("⚠️  Skipping JSON test - no context data available")
         return False
     json_path = "reports/context-coverage.json"
+    from src.infrastructure.tools.context_visualizer import generate_json_report
     success_json = generate_json_report(coverage_data, json_path)
     if success_json:
         print(f"✅ JSON data generated: {json_path}")
@@ -224,7 +220,7 @@ def test_full_report_generation():
     success = generate_context_coverage_report(
         format="both",
         csv_path="reports/step_3_9_demo_coverage.csv",
-        html_path="reports/step_3_9_demo_coverage.html",
+        html_path="reports/step_3_9_demo_coverage.html"
     )
 
     if success:
@@ -261,7 +257,7 @@ def run_step_3_9_validation():
         ("CSV Report Generation", test_csv_generation),
         ("HTML Report Generation", test_html_generation),
         ("JSON Data Generation for context-coverage.html", test_json_generation),
-        ("Full Report Generation", test_full_report_generation),
+        ("Full Report Generation", test_full_report_generation)
     ]
     results = []
     for test_name, test_func in tests:
@@ -291,7 +287,7 @@ def run_step_3_9_validation():
         print("\n📄 Generated Reports:")
         reports = [
             "reports/step_3_9_demo_coverage.csv",
-            "reports/step_3_9_demo_coverage.html",
+            "reports/step_3_9_demo_coverage.html"
         ]
         for report in reports:
             if os.path.exists(report):

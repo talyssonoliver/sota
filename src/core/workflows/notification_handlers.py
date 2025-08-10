@@ -5,15 +5,19 @@ This module provides various notification handlers for sending alerts
 and updates about Human-in-the-Loop checkpoints.
 """
 
-import json
-import logging
-import os
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Path,
+    datetime,
+    json,
+    logging,
+    os,
+    requests
+)
 import smtplib
-from datetime import datetime
-from typing import Any, Dict, List
-
-import requests
-
 try:
     from abc import ABC, abstractmethod
 except ImportError:
@@ -27,12 +31,7 @@ try:
 except ImportError:
     pass
 try:
-    from pathlib import Path
-except ImportError:
-    pass
-try:
-    import logging
-    import os
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
 logger = logging.getLogger(__name__)
@@ -57,10 +56,11 @@ class DashboardNotificationHandler(NotificationHandler):
     """Handler for dashboard notifications"""
 
     def __init__(self, config=None, test_mode=False):
-        self.test_mode = test_mode or os.getenv('PYTEST_CURRENT_TEST') is not None
-        
+        self.test_mode = test_mode or os.getenv("PYTEST_CURRENT_TEST") is not None
+
         if not self.test_mode:
             from config.build_paths import DASHBOARD_NOTIFICATIONS_DIR
+
             self.storage_dir = DASHBOARD_NOTIFICATIONS_DIR
             self.storage_dir.mkdir(parents=True, exist_ok=True)
         else:
@@ -107,7 +107,9 @@ class DashboardNotificationHandler(NotificationHandler):
         if self.test_mode:
             # In test mode, store in memory instead of writing files
             self.test_notifications.append(notification)
-            logger.info(f"Test mode: Dashboard notification stored in memory: {notification['title']}")
+            logger.info(
+                f"Test mode: Dashboard notification stored in memory: {notification['title']}"
+            )
         else:
             notification_file = self.storage_dir / f"{notification['id']}.json"
             with open(notification_file, "w", encoding="utf-8") as f:
@@ -191,7 +193,7 @@ class DashboardNotificationHandler(NotificationHandler):
         if self.test_mode:
             # In test mode, don't write to filesystem
             return
-            
+
         dashboard_data_file = Path("dashboard/hitl_data.json")
 
         # Load existing data
@@ -262,7 +264,7 @@ class EmailNotificationHandler(NotificationHandler):
 
     def _load_email_templates(self) -> Dict[str, Dict[str, str]]:
         """Load email templates from configuration"""
-        # In a real implementation, these would come from the HITL policies file
+        # TODO: Must implement, these would come from the HITL policies file
         return {
             "checkpoint_created": {
                 "subject": "🔍 HITL Review Required: {task_id} - {checkpoint_type}",
@@ -388,7 +390,7 @@ HITL System
 
     def _get_email_recipients(self, checkpoint, notification_type: str) -> List[str]:
         """Get email recipients for notification"""
-        # In a real implementation, this would map reviewers to email addresses
+        # TODO: Must implement, this would map reviewers to email addresses
         # For now, we'll use environment variables or default addresses
         recipients = []
 

@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    List,
+    Optional,
+    dataclass,
+    datetime,
+    json,
+    sys
+)
 """
 HITL Kanban Board Demo - Simple Version
 
@@ -7,19 +17,19 @@ Demonstrates the Kanban-style HITL board with mock data for testing.
 
 
 try:
-    from datetime import datetime, timedelta
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    from dataclasses import dataclass
+    from src.infrastructure.utils.common_imports import dataclass
 except ImportError:
     pass
 try:
-    from enum import Enum
+    from src.infrastructure.utils.common_imports import Enum
 except ImportError:
     pass
 try:
-    from typing import List, Optional
+    from src.infrastructure.utils.common_imports import List, Optional  
 except ImportError:
     pass
 try:
@@ -32,8 +42,8 @@ try:
 except ImportError:
     RICH_AVAILABLE = False
 
-import json
-import sys
+# import json  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 
 
 class ReviewStatus(str, Enum):
@@ -65,7 +75,8 @@ class KanbanItem:
 
 def get_mock_kanban_data() -> List[KanbanItem]:
     """Get mock data for demonstration."""
-    now = datetime.now()
+    current_time = datetime.now()
+    print(f"🗂️ Generating mock kanban data at: {current_time}")
 
     return [
         KanbanItem(

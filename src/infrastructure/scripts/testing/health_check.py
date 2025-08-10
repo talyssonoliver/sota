@@ -1,13 +1,21 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    os,
+    requests,
+    sys
+)
 """
 Comprehensive Health Check for AI System
 Checks all critical components and dependencies
 """
 
-import os
-import sys
-from datetime import datetime
-from pathlib import Path
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 from typing import Dict, List, Tuple
 
 
@@ -115,11 +123,16 @@ def check_dependencies() -> Dict[str, Tuple[bool, str]]:
     except ImportError:
         dependencies["langchain"] = (False, "Not installed")
 
-    try:
-        import langchain_openai
-
-        dependencies["langchain_openai"] = (True, "Installed")
-    except ImportError:
+    # Improved dependency check using importlib.util.find_spec
+    import importlib.util
+    
+    if importlib.util.find_spec("langchain_openai") is not None:
+        try:
+            import langchain_openai  # noqa: F401
+            dependencies["langchain_openai"] = (True, "Installed")
+        except ImportError:
+            dependencies["langchain_openai"] = (False, "Import failed")
+    else:
         dependencies["langchain_openai"] = (False, "Not installed")
 
     try:
@@ -143,11 +156,14 @@ def check_dependencies() -> Dict[str, Tuple[bool, str]]:
     except ImportError:
         dependencies["crewai"] = (False, "Not installed")
 
-    try:
-        import dotenv
-
-        dependencies["python-dotenv"] = (True, "Installed")
-    except ImportError:
+    # Improved dependency check using importlib.util.find_spec
+    if importlib.util.find_spec("dotenv") is not None:
+        try:
+            import dotenv  # noqa: F401
+            dependencies["python-dotenv"] = (True, "Installed")
+        except ImportError:
+            dependencies["python-dotenv"] = (False, "Import failed")
+    else:
         dependencies["python-dotenv"] = (False, "Not installed")
 
     return dependencies
@@ -233,7 +249,7 @@ def check_deployment_readiness(environment: str) -> Dict[str, bool]:
 
     try:
         # Health endpoint check
-        import requests
+#         import requests  # Consolidated to common_imports
 
         response = requests.get("http://localhost:8000/health", timeout=5)
         checks["health_endpoint"] = response.status_code == 200

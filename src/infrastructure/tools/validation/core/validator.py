@@ -1,16 +1,28 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Enum,
+    List,
+    Optional,
+    Path,
+    dataclass,
+    json,
+    time
+)
 """
 Validation Pipeline
 Integrates SonarQube, MyPy, Black, Ruff, and all custom validators into a single,
 comprehensive validation system based on software engineering principles.
 """
 
-import json
-import time
+# import json  # Consolidated to common_imports
+# import time  # Consolidated to common_imports
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass
-from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# from dataclasses import dataclass  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 from ..sonarqube_integrator import SonarQubeIntegrator
 from .base_validator import BaseValidator
@@ -22,6 +34,7 @@ from .shared_file_collector import shared_file_collector
 from .structure_validator import StructureValidator
 from .syntax_validator import SyntaxValidator
 from .vv_validator import VVValidator
+
 # Lazy import to avoid circular imports
 # from ..ai.business_logic_protector import BusinessLogicProtector
 # from ..ai.pattern_detector import AIPatternDetector
@@ -137,6 +150,7 @@ class Validator(BaseValidator):
         """Lazy-loaded AI pattern detector."""
         if self._pattern_detector is None:
             from ..ai.pattern_detector import AIPatternDetector
+
             self._pattern_detector = AIPatternDetector(self.root_path)
             self._pattern_detector.shared_collector = shared_file_collector
         return self._pattern_detector
@@ -146,6 +160,7 @@ class Validator(BaseValidator):
         """Lazy-loaded business logic protector."""
         if self._business_logic_protector is None:
             from ..ai.business_logic_protector import BusinessLogicProtector
+
             self._business_logic_protector = BusinessLogicProtector(self.root_path)
             self._business_logic_protector.shared_collector = shared_file_collector
         return self._business_logic_protector
@@ -295,69 +310,86 @@ class Validator(BaseValidator):
             "files_collected": len(self.python_files),
         }
 
-    def _static_analysis_phase(self) -> Dict[str, Any]:
-        """Static analysis phase - comprehensive validation."""
-        validators = [
-            ("syntax", self.syntax_validator),
-            ("dependencies", self.dependency_validator),
-            ("structure", self.structure_validator),
-            ("performance", self.performance_validator),
-            ("ai_patterns", self.pattern_detector),
-            ("business_logic", self.business_logic_protector),
+    def _get_validator_configurations(self) -> List[tuple]:
+        """Get validator configurations with their execution methods.
+        
+        Returns:
+            List of (name, validator, method_name, args) tuples
+        """
+        return [
+            ("syntax", self.syntax_validator, "validate_all_imports", (self.python_files,)),
+            ("dependencies", self.dependency_validator, "validate_dependencies", ()),
+            ("structure", self.structure_validator, "validate_structure", ()),
+            ("performance", self.performance_validator, "validate_performance", ()),
+            ("ai_patterns", self.pattern_detector, "analyze_patterns", ()),
+            ("business_logic", self.business_logic_protector, "protect_business_logic", ()),
         ]
 
+    def _execute_validator(self, name: str, validator: Any, method_name: str, args: tuple) -> bool:
+        """Execute a single validator and handle its result.
+        
+        Args:
+            name: Name of the validator
+            validator: Validator instance
+            method_name: Method to call on the validator
+            args: Arguments to pass to the method
+            
+        Returns:
+            Success status of the validation
+        """
+        try:
+            if not validator:
+                print(f"  ⚠️  {name} validator not available")
+                return True
+                
+            method = getattr(validator, method_name)
+            success = method(*args) if args else method()
+            
+            # Merge issues from validator
+            for issue in validator.issues:
+                if issue not in self.issues:
+                    self.issues.append(issue)
+            
+            return bool(success) if success is not None else False
+            
+        except Exception as e:
+            print(f"  ❌ {name} validation failed: {e}")
+            return False
+
+    def _generate_issues_by_category(self) -> Dict[str, int]:
+        """Generate count of issues by category.
+        
+        Returns:
+            Dictionary mapping category names to issue counts
+        """
+        categories = [
+            "syntax", "dependencies", "structure", "performance", 
+            "ai_analysis", "business_logic"
+        ]
+        
+        return {
+            category: len([i for i in self.issues if i.category == category])
+            for category in categories
+        }
+
+    def _static_analysis_phase(self) -> Dict[str, Any]:
+        """Static analysis phase - comprehensive validation."""
+        validator_configs = self._get_validator_configurations()
+        
         results = {}
         overall_success = True
 
-        for name, validator in validators:
-            try:
-                if name == "syntax":
-                    success = validator.validate_all_imports(self.python_files)
-                elif name == "dependencies":
-                    success = validator.validate_dependencies()
-                elif name == "structure":
-                    success = validator.validate_structure()
-                elif name == "performance":
-                    success = validator.validate_performance()
-                elif name == "ai_patterns":
-                    success = validator.analyze_patterns()
-                elif name == "business_logic":
-                    success = validator.protect_business_logic()
-                else:
-                    success = True
-
-                results[name] = success
-                # Ensure success is a boolean to avoid NoneType &= error
-                if success is not None:
-                    overall_success &= bool(success)
-                else:
-                    overall_success = False
-
-                # Merge issues
-                for issue in validator.issues:
-                    if issue not in self.issues:
-                        self.issues.append(issue)
-
-            except Exception as e:
-                results[name] = False
-                overall_success = False
-                print(f"  ❌ {name} validation failed: {e}")
+        # Execute each validator
+        for name, validator, method_name, args in validator_configs:
+            success = self._execute_validator(name, validator, method_name, args)
+            results[name] = success
+            overall_success &= success
 
         return {
             "success": overall_success,
             "validators_run": list(results.keys()),
             "results": results,
-            "issues_by_category": {
-                category: len([i for i in self.issues if i.category == category])
-                for category in [
-                    "syntax",
-                    "dependencies",
-                    "structure",
-                    "performance",
-                    "ai_analysis",
-                    "business_logic",
-                ]
-            },
+            "issues_by_category": self._generate_issues_by_category(),
         }
 
     def _run_parallel_static_analysis(self):
@@ -586,13 +618,11 @@ class Validator(BaseValidator):
 
         # Generate validation report
         validation_report = self._generate_final_report()
-        validation_report_path = (
-            self.root_path / "reports" / "validation_report.json"
-        )
+        validation_report_path = self.root_path / "reports" / "validation_report.json"
         try:
             # Ensure reports directory exists
             validation_report_path.parent.mkdir(parents=True, exist_ok=True)
-            
+
             with open(validation_report_path, "w", encoding="utf-8") as f:
                 json.dump(validation_report, f, indent=2, default=str)
             reports_generated.append(str(validation_report_path))
@@ -631,31 +661,45 @@ class Validator(BaseValidator):
             issues_by_category[issue.category].append(issue)
 
             # By severity (convert enum to string for JSON serialization)
-            severity_key = str(issue.severity.value) if hasattr(issue.severity, 'value') else str(issue.severity)
+            severity_key = (
+                str(issue.severity.value)
+                if hasattr(issue.severity, "value")
+                else str(issue.severity)
+            )
             if severity_key not in issues_by_severity:
                 issues_by_severity[severity_key] = []
             issues_by_severity[severity_key].append(issue)
-            
+
             # Group by type to identify patterns
-            issue_type_str = str(issue.issue_type.value) if hasattr(issue.issue_type, 'value') else str(issue.issue_type)
+            issue_type_str = (
+                str(issue.issue_type.value)
+                if hasattr(issue.issue_type, "value")
+                else str(issue.issue_type)
+            )
             type_key = f"{issue.category}:{issue_type_str}"
             if type_key not in issues_by_type:
                 issues_by_type[type_key] = {
                     "category": issue.category,
                     "type": issue_type_str,
-                    "severity": str(issue.severity.value) if hasattr(issue.severity, 'value') else str(issue.severity),
+                    "severity": (
+                        str(issue.severity.value)
+                        if hasattr(issue.severity, "value")
+                        else str(issue.severity)
+                    ),
                     "message_pattern": issue.message,
                     "fix_suggestion": issue.fix_suggestion,
                     "auto_fixable": issue.auto_fixable,
                     "occurrences": [],
-                    "count": 0
+                    "count": 0,
                 }
             issues_by_type[type_key]["count"] += 1
             # Only store file and line info for occurrences
-            issues_by_type[type_key]["occurrences"].append({
-                "file": str(issue.file_path),
-                "line": issue.line if issue.line is not None else 0
-            })
+            issues_by_type[type_key]["occurrences"].append(
+                {
+                    "file": str(issue.file_path),
+                    "line": issue.line if issue.line is not None else 0,
+                }
+            )
 
         # Calculate overall success
         overall_success = all(result.success for result in self.validation_results)
@@ -713,14 +757,18 @@ class Validator(BaseValidator):
                     "type": str(group["type"]),
                     "severity": str(group["severity"]),
                     "message_pattern": str(group["message_pattern"]),
-                    "fix_suggestion": str(group["fix_suggestion"]) if group["fix_suggestion"] else "",
+                    "fix_suggestion": (
+                        str(group["fix_suggestion"]) if group["fix_suggestion"] else ""
+                    ),
                     "auto_fixable": bool(group["auto_fixable"]),
                     "count": group["count"],
                     # Limit occurrences to prevent huge reports
                     "sample_occurrences": group["occurrences"][:10],
-                    "total_occurrences": len(group["occurrences"])
+                    "total_occurrences": len(group["occurrences"]),
                 }
-                for group in sorted(issues_by_type.values(), key=lambda x: x["count"], reverse=True)
+                for group in sorted(
+                    issues_by_type.values(), key=lambda x: x["count"], reverse=True
+                )
             ],
         }
 
@@ -840,18 +888,26 @@ class Validator(BaseValidator):
             )
 
         return recommendations
-    
-    def _generate_top_issues_summary(self, issues_by_type: Dict[str, Dict]) -> List[Dict[str, Any]]:
+
+    def _generate_top_issues_summary(
+        self, issues_by_type: Dict[str, Dict]
+    ) -> List[Dict[str, Any]]:
         """Generate summary of top issues for quick insights."""
         # Sort by count and take top 10
-        sorted_issues = sorted(issues_by_type.values(), key=lambda x: x["count"], reverse=True)[:10]
-        
+        sorted_issues = sorted(
+            issues_by_type.values(), key=lambda x: x["count"], reverse=True
+        )[:10]
+
         return [
             {
                 "issue": f"{issue['category']}:{issue['type']}",
                 "count": issue["count"],
                 "severity": str(issue["severity"]),
-                "message": str(issue["message_pattern"])[:100] + "..." if len(str(issue["message_pattern"])) > 100 else str(issue["message_pattern"])
+                "message": (
+                    str(issue["message_pattern"])[:100] + "..."
+                    if len(str(issue["message_pattern"])) > 100
+                    else str(issue["message_pattern"])
+                ),
             }
             for issue in sorted_issues
         ]

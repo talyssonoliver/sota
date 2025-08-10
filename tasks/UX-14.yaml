@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=./task-schema.json
+id: UX-14
+title: Export Design Tokens for Developer Integration
+owner: ux
+depends_on:
+  - UX-06
+  - FE-01
+state: PLANNED
+priority: MEDIUM
+estimation_hours: 2
+description: "Task UX-14: Export Design Tokens for Developer Integration"
+artefacts:
+  - design-tokens/colors.json
+  - design-tokens/typography.json
+  - docs/design/design-tokens.md
+context_topics:
+  - project-overview

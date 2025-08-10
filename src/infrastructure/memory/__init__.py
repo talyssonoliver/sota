@@ -1,22 +1,38 @@
-"""Infrastructure memory module."""
+"""Infrastructure memory module.
+
+Provides memory management functionality including:
+- Memory engines for context storage and retrieval
+- Caching mechanisms for performance optimization  
+- Chunking for large data processing
+- Security and encryption support
+
+Usage:
+    from src.infrastructure.memory import MemoryEngine, get_memory_instance
+    
+    # Initialize memory engine
+    memory = MemoryEngine()
+    context = memory.get_context("query", k=5)
+    
+    # Or use convenience function
+    memory = get_memory_instance()
+"""
 
 try:
-    from .caching import CacheManager, get_cache_manager
-    from .chunking import ChunkingManager, get_chunking_manager
-    from .config import MemoryEngineConfig
-    from .engines.memory_engine import MemoryEngine
-    from .exceptions import *
-    from .security import SecurityManager
+    from .caching import CacheManager, get_cache_manager  # noqa: F401 - Public API re-export
+    from .chunking import ChunkingManager, get_chunking_manager  # noqa: F401 - Public API re-export
+    from .config import MemoryEngineConfig  # noqa: F401 - Public API re-export
+    from .engines.memory_engine import MemoryEngine  # noqa: F401 - Public API re-export
+    from .exceptions import *  # noqa: F401,F403 - Public API re-export
+    from .security import SecurityManager  # noqa: F401 - Public API re-export
 except ImportError:
     pass
 
 try:
-    from .engines.caching import CacheManager
-    from .engines.chunking import ChunkProcessor
-    from .engines.storage import StorageManager
+    from .engines.caching import CacheManager  # noqa: F401 - Fallback import
+    from .engines.chunking import ChunkProcessor  # noqa: F401 - Fallback import
+    from .engines.storage import StorageManager  # noqa: F401 - Fallback import
 except ImportError:
-
-    # Fallback implementations
+    # Fallback implementations for when core modules are not available
     class MemoryEngine:
         def __init__(self, config=None):
             self.config = config or {}
@@ -75,22 +91,35 @@ def get_memory_system():
 
 def initialize_memory(config=None):
     """Initialize memory engine."""
-    if config is None:
-        # Import here to avoid circular imports
-        try:
-            from .config.memory_config import MemoryEngineConfig
+    try:
+        if config is None:
+            # Import here to avoid circular imports
+            try:
+                from .config.memory_config import MemoryEngineConfig
 
-            config = MemoryEngineConfig()
-        except ImportError:
-            # Fallback to basic config
-            config = {}
-    return MemoryEngine(config)
+                config = MemoryEngineConfig()
+            except ImportError:
+                # Fallback to basic config
+                config = {}
+        return MemoryEngine(config)
+    except Exception:
+        # Return fallback memory engine if initialization fails
+        return MemoryEngine({})
 
 
 def get_relevant_context(query, k=5, user="system"):
     """Get relevant context for a query."""
-    memory_engine = get_memory_instance()
-    return memory_engine.get_context(query, k=k, user=user)
+    try:
+        memory_engine = get_memory_instance()
+        if memory_engine is None:
+            return "Context unavailable: Memory engine not initialized"
+        
+        if not hasattr(memory_engine, 'get_context'):
+            return "Context unavailable: Memory engine does not support get_context"
+            
+        return memory_engine.get_context(query, k=k, user=user)
+    except Exception as e:
+        return f"Context unavailable: {str(e)}"
 
 
 __all__ = [

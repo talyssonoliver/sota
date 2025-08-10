@@ -1,166 +1,122 @@
+# Agent Configuration YAML
+# Defines all agents in the system with their roles, tools, and prompt templates
+
 coordinator:
   name: Coordinator Agent
   role: Project Manager
   goal: Oversee task flow and assign agents
-  backstory: Experienced project coordinator with deep understanding of development
-    workflows
+  backstory: Experienced project coordinator with deep understanding of development workflows
   prompt_template: prompts/coordinator.md
   tools: []
-  context_domains:
-  - project-overview
-  - workflow-patterns
-  - coordination-standards
+  context_domains: [project-overview, workflow-patterns, coordination-standards]
   memory_settings:
     max_context_length: 4000
     retrieval_threshold: 0.7
   output_format: markdown-summary
   memory: chroma
   temperature: 0.2
+
 technical_lead:
   name: Technical Lead Agent
   role: DevOps Architect
   goal: Configure infrastructure and CI/CD
-  backstory: Senior technical architect with expertise in cloud infrastructure and
-    DevOps
+  backstory: Senior technical architect with expertise in cloud infrastructure and DevOps
   prompt_template: prompts/technical-lead.md
-  tools:
-  - vercel
-  - github
-  context_domains:
-  - infrastructure
-  - deployment
-  - architecture
+  tools: [vercel, github]
+  context_domains: [infrastructure, deployment, architecture]
   memory_settings:
     max_context_length: 4000
     retrieval_threshold: 0.7
   memory: chroma
   temperature: 0.1
   output_format: code-snippet
+
 backend_engineer:
   name: Backend Engineer Agent
   role: Supabase Engineer
   goal: Implement Supabase services and APIs
-  backstory: Expert backend developer with deep knowledge of Node.js, TypeScript,
-    and Supabase
+  backstory: Expert backend developer with deep knowledge of Node.js, TypeScript, and Supabase
   prompt_template: prompts/backend-engineer.md
-  tools:
-  - supabase
-  - github
-  context_domains:
-  - db-schema
-  - service-patterns
-  - supabase-setup
+  tools: [supabase, github]
+  context_domains: [db-schema, service-patterns, supabase-setup]
   memory_settings:
     max_context_length: 4000
     retrieval_threshold: 0.7
   memory: chroma
   temperature: 0.1
   output_format: typescript-file
+
 frontend_engineer:
   name: Frontend Engineer Agent
   role: React/Tailwind Developer
   goal: Build UI components and pages
-  backstory: Expert frontend developer with extensive React, TypeScript, and modern
-    CSS knowledge
+  backstory: Expert frontend developer with extensive React, TypeScript, and modern CSS knowledge
   prompt_template: prompts/frontend-engineer.md
-  tools:
-  - tailwind
-  - github
-  context_domains:
-  - design-system
-  - ui-patterns
-  - component-library
+  tools: [tailwind, github]
+  context_domains: [design-system, ui-patterns, component-library]
   memory_settings:
     max_context_length: 4000
     retrieval_threshold: 0.7
   memory: chroma
   temperature: 0.2
   output_format: react-component
+
 ux_designer:
   name: UX/UI Designer Agent
   role: User Experience Designer
   goal: Design interfaces and user flows
   backstory: Expert UX/UI designer with deep understanding of user experience principles
   prompt_template: prompts/ux-designer.md
-  tools:
-  - design_system
-  context_domains:
-  - design-system
-  - ui-patterns
-  - user-experience
+  tools: [design_system]
+  context_domains: [design-system, ui-patterns, user-experience]
   memory_settings:
     max_context_length: 4000
     retrieval_threshold: 0.7
   memory: chroma
   temperature: 0.4
   output_format: figma-design
+
 product_manager:
   name: Product Manager Agent
   role: Product Owner
   goal: Define product requirements and roadmap
   backstory: Experienced product manager with deep understanding of e-commerce requirements
   prompt_template: prompts/product-manager.md
-  tools:
-  - markdown
-  - github
-  context_domains:
-  - product-requirements
-  - business-logic
-  - user-stories
+  tools: [markdown, github]
+  context_domains: [product-requirements, business-logic, user-stories]
   memory_settings:
     max_context_length: 4000
     retrieval_threshold: 0.7
   memory: chroma
   temperature: 0.3
   output_format: markdown-summary
+
 qa:
   name: Quality Assurance Agent
   role: Quality Assurance Engineer
   goal: Generate test cases and validate implementations
   backstory: Expert QA engineer with deep testing knowledge and quality standards
   prompt_template: prompts/qa-agent.md
-  tools:
-  - jest
-  - cypress
-  - coverage
-  context_domains:
-  - testing-patterns
-  - quality-standards
-  - coverage-requirements
+  tools: [jest, cypress, coverage]
+  context_domains: [testing-patterns, quality-standards, coverage-requirements]
   memory_settings:
     max_context_length: 4000
     retrieval_threshold: 0.7
   memory: chroma
   temperature: 0.1
   output_format: test-report
+
 doc:
   name: Documentation Agent
   role: Technical Writer
   goal: Create task reports and markdown docs
   backstory: Technical writer with expertise in software documentation
   prompt_template: prompts/doc-agent.md
-  tools:
-  - markdown
-  - github
-  - readme
-  context_domains:
-  - documentation-standards
-  - template-patterns
+  tools: [markdown, github, readme]
+  context_domains: [documentation-standards, template-patterns]
   memory_settings:
     max_context_length: 4000
     retrieval_threshold: 0.7
   memory: chroma
   temperature: 0.2
   output_format: markdown-summary
-testagent:
-  name: A test agent for validation Agent
-  role: A test agent for validation
-  goal: A test agent for validation
-  prompt_template: prompts/testagent.md
-  tools: []
-testvalidation:
-  name: Validation test agent Agent
-  role: Validation test agent
-  goal: Validation test agent
-  prompt_template: prompts/testvalidation.md
-  tools: []

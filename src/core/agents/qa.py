@@ -1,8 +1,16 @@
+
+from src.infrastructure.utils.common_imports import (
+    Enum,
+    Path,
+    datetime,
+    json,
+    logging
+)
 """Quality Assurance agent for testing and validating implementations."""
 
-import logging
-from datetime import datetime
-from enum import Enum
+# import logging  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
 from typing import Any, Dict, List, Optional, Type
 
 logger = logging.getLogger(__name__)
@@ -13,7 +21,15 @@ _crewai_available = None
 
 
 def _get_agent_class() -> Type[Any]:
-    """Lazy import of CrewAI Agent class to avoid loading heavy dependencies on module import."""
+    """Lazy import of CrewAI Agent class to avoid loading heavy dependencies on module import.
+    
+    This function implements lazy loading to prevent the 1.6s import cascade
+    from CrewAI. It loads the Agent class only when actually needed and provides
+    a mock class for testing environments.
+    
+    Returns:
+        Type[Any]: CrewAI Agent class or MockAgent class for testing
+    """
     global _agent_class, _crewai_available
 
     if _crewai_available is None:
@@ -28,7 +44,15 @@ def _get_agent_class() -> Type[Any]:
 
             # Mock class for testing
             class MockAgent:
+                """Mock Agent class for testing when CrewAI is not available."""
+                
                 def __init__(self, *args, **kwargs):
+                    """Initialize mock agent with basic properties.
+                    
+                    Args:
+                        *args: Positional arguments (ignored)
+                        **kwargs: Keyword arguments to configure the mock agent
+                    """
                     self.role = kwargs.get("role", "QAEngineer")
                     self.goal = kwargs.get("goal", "")
                     self.backstory = kwargs.get("backstory", "")
@@ -56,13 +80,24 @@ class QATestFrameworkImpl:
     """Framework for QA testing operations."""
 
     def __init__(self, config: Optional[Dict[str, Any]] = None):
-        """Initialize QA test framework."""
+        """Initialize QA test framework.
+        
+        Args:
+            config: Optional configuration dictionary for test framework settings
+        """
         self.config = config or {}
         self.test_results = []
         self.logger = logging.getLogger(__name__)
 
     def run_unit_tests(self, test_suite: str) -> Dict[str, Any]:
-        """Run unit tests for a given test suite."""
+        """Run unit tests for a given test suite.
+        
+        Args:
+            test_suite: Name of the test suite to run
+            
+        Returns:
+            Dict[str, Any]: Test results including status, tests run, failures, errors
+        """
         self.logger.info(f"Running unit tests for: {test_suite}")
 
         result = {
@@ -78,7 +113,14 @@ class QATestFrameworkImpl:
         return result
 
     def run_integration_tests(self, components: List[str]) -> Dict[str, Any]:
-        """Run integration tests for components."""
+        """Run integration tests for components.
+        
+        Args:
+            components: List of component names to test integration between
+            
+        Returns:
+            Dict[str, Any]: Integration test results including status and metrics
+        """
         self.logger.info(f"Running integration tests for: {components}")
 
         result = {
@@ -94,7 +136,14 @@ class QATestFrameworkImpl:
         return result
 
     def run_performance_tests(self, metrics: Dict[str, Any]) -> Dict[str, Any]:
-        """Run performance tests."""
+        """Run performance tests.
+        
+        Args:
+            metrics: Dictionary of performance metrics to test against
+            
+        Returns:
+            Dict[str, Any]: Performance test results including response time, throughput, memory usage
+        """
         self.logger.info("Running performance tests")
 
         result = {
@@ -110,7 +159,14 @@ class QATestFrameworkImpl:
         return result
 
     def validate_code_quality(self, code_path: str) -> Dict[str, Any]:
-        """Validate code quality metrics."""
+        """Validate code quality metrics.
+        
+        Args:
+            code_path: Path to the code to validate
+            
+        Returns:
+            Dict[str, Any]: Quality metrics including coverage, complexity, style and security issues
+        """
         self.logger.info(f"Validating code quality for: {code_path}")
 
         result = {
@@ -127,7 +183,13 @@ class QATestFrameworkImpl:
         return result
 
     def generate_test_report(self) -> Dict[str, Any]:
-        """Generate comprehensive test report."""
+        """Generate comprehensive test report.
+        
+        Aggregates all test results and calculates summary statistics.
+        
+        Returns:
+            Dict[str, Any]: Test report with summary statistics and detailed results
+        """
         total_tests = sum(result.get("tests_run", 0) for result in self.test_results)
         total_failures = sum(result.get("failures", 0) for result in self.test_results)
         total_errors = sum(result.get("errors", 0) for result in self.test_results)
@@ -153,7 +215,12 @@ class QAEngineer:
     def __init__(
         self, tools: Optional[List] = None, memory_engine: Optional[Any] = None
     ):
-        """Initialize QA Engineer."""
+        """Initialize QA Engineer.
+        
+        Args:
+            tools: Optional list of tools for the agent to use
+            memory_engine: Optional memory engine for context integration
+        """
         self.tools = tools or []
         self.memory_engine = memory_engine
         self.test_framework = QATestFrameworkImpl()
@@ -161,7 +228,14 @@ class QAEngineer:
 
     @property
     def agent(self) -> Any:
-        """Get the agent instance, loading CrewAI only when needed."""
+        """Get the agent instance, loading CrewAI only when needed.
+        
+        This property implements lazy loading to defer CrewAI import until
+        the agent is actually needed, preventing unnecessary startup delays.
+        
+        Returns:
+            Any: CrewAI Agent instance or mock agent for testing
+        """
         if self._agent is None:
             agent_class = _get_agent_class()
 
@@ -183,7 +257,14 @@ class QAEngineer:
         return self._agent
 
     def create_test_plan(self, requirements: Dict[str, Any]) -> Dict[str, Any]:
-        """Create comprehensive test plan."""
+        """Create comprehensive test plan.
+        
+        Args:
+            requirements: Dictionary containing project requirements
+            
+        Returns:
+            Dict[str, Any]: Test plan with unit, integration, performance, security and UAT tests
+        """
         logger.info("Creating test plan")
 
         test_plan = {
@@ -197,7 +278,14 @@ class QAEngineer:
         return test_plan
 
     def execute_test_suite(self, test_plan: Dict[str, Any]) -> Dict[str, Any]:
-        """Execute comprehensive test suite."""
+        """Execute comprehensive test suite.
+        
+        Args:
+            test_plan: Test plan dictionary containing test configurations
+            
+        Returns:
+            Dict[str, Any]: Results from all executed test types
+        """
         logger.info("Executing test suite")
 
         results = {}
@@ -223,7 +311,14 @@ class QAEngineer:
         return results
 
     def validate_implementation(self, implementation: Dict[str, Any]) -> Dict[str, Any]:
-        """Validate implementation against requirements."""
+        """Validate implementation against requirements.
+        
+        Args:
+            implementation: Dictionary containing implementation details
+            
+        Returns:
+            Dict[str, Any]: Validation results for functional, non-functional, quality and security aspects
+        """
         logger.info("Validating implementation")
 
         validation_results = {
@@ -309,7 +404,14 @@ class QAEngineer:
     def generate_comprehensive_tests(
         self, source_files: Optional[List[str]] = None
     ) -> Dict[str, Any]:
-        """Generate comprehensive tests for source files."""
+        """Generate comprehensive tests for source files.
+        
+        Args:
+            source_files: Optional list of source files to generate tests for
+            
+        Returns:
+            Dict[str, Any]: Generated test information including files, coverage analysis and metrics
+        """
         return {
             "status": "success",
             "test_files": ["test_sample.py", "test_integration.py"],
@@ -326,16 +428,21 @@ class EnhancedQAAgent:
     """Enhanced QA Agent with comprehensive testing and analysis capabilities."""
 
     def __init__(self, project_root, config_path=None):
-        """Initialize the Enhanced QA Agent."""
-        import json
-        from pathlib import Path
+        """Initialize the Enhanced QA Agent.
+        
+        Args:
+            project_root: Root directory of the project to analyze
+            config_path: Optional path to custom configuration file
+        """
+#         import json  # Consolidated to common_imports
+#         from pathlib import Path  # Consolidated to common_imports
 
         self.project_root = Path(project_root)
         self.config_path = config_path
 
         # Initialize components
         try:
-            from tests.unit.core.test_generator import QATestGenerator
+            from src.infrastructure.utils.test_generator import QATestGenerator
 
             self.test_generator = QATestGenerator()
         except ImportError:
@@ -383,7 +490,11 @@ class EnhancedQAAgent:
                 logger.warning(f"Failed to load config from {config_path}: {e}")
 
     def _create_fallback_test_generator(self):
-        """Create a fallback test generator."""
+        """Create a fallback test generator.
+        
+        Returns:
+            FallbackTestGenerator: Mock test generator for when imports fail
+        """
 
         class FallbackTestGenerator:
             def detect_language(self, file_path):
@@ -410,7 +521,11 @@ class EnhancedQAAgent:
         return FallbackTestGenerator()
 
     def _create_fallback_coverage_analyzer(self):
-        """Create a fallback coverage analyzer."""
+        """Create a fallback coverage analyzer.
+        
+        Returns:
+            FallbackCoverageAnalyzer: Mock coverage analyzer for when imports fail
+        """
 
         class FallbackCoverageAnalyzer:
             def analyze_coverage(self, files):
@@ -423,7 +538,11 @@ class EnhancedQAAgent:
         return FallbackCoverageAnalyzer()
 
     def _create_fallback_integration_analyzer(self):
-        """Create a fallback integration analyzer."""
+        """Create a fallback integration analyzer.
+        
+        Returns:
+            FallbackIntegrationAnalyzer: Mock integration analyzer for when imports fail
+        """
 
         class FallbackIntegrationAnalyzer:
             def analyze_integrations(self, components):
@@ -441,7 +560,11 @@ class EnhancedQAAgent:
         return FallbackIntegrationAnalyzer()
 
     def discover_source_files(self):
-        """Discover source files in the project."""
+        """Discover source files in the project.
+        
+        Returns:
+            List[str]: List of source file paths found in the project
+        """
         source_files = []
         for ext in [".py", ".js", ".ts", ".java"]:
             source_files.extend(
@@ -456,7 +579,16 @@ class EnhancedQAAgent:
         return source_files
 
     def determine_test_framework(self, file_or_language="python"):
-        """Determine the test framework for a file or language."""
+        """Determine the test framework for a file or language.
+        
+        Args:
+            file_or_language: Either a filename with extension or a language name
+            
+        Returns:
+            str: QATestFramework constant for the appropriate test framework
+        """
+        from src.infrastructure.utils.test_generator import QATestFramework
+        
         # If it's a filename, extract the language from extension
         if "." in file_or_language:
             if file_or_language.endswith(".py"):
@@ -470,38 +602,73 @@ class EnhancedQAAgent:
         # Try different method names for framework detection
         # For e2e tests, use more reliable fallback logic
         if language == "python":
-            return "pytest"
+            return QATestFramework.PYTEST
         elif language == "javascript":
-            return "jest"
+            return QATestFramework.JEST
         elif hasattr(self.test_generator, "detect_framework"):
             try:
-                return self.test_generator.detect_framework(language)  # type: ignore
+                framework_str = self.test_generator.detect_framework(language)  # type: ignore
+                # Convert string to QATestFramework constant
+                if framework_str == "pytest":
+                    return QATestFramework.PYTEST
+                elif framework_str == "jest":
+                    return QATestFramework.JEST
+                elif framework_str == "unittest":
+                    return QATestFramework.UNITTEST
+                else:
+                    return QATestFramework.PYTEST  # Default fallback
             except AttributeError:
-                return "unknown"
+                return QATestFramework.PYTEST  # Default fallback
         elif hasattr(self.test_generator, "_suggest_framework"):
             try:
-                return self.test_generator._suggest_framework(language)  # type: ignore
+                framework_str = self.test_generator._suggest_framework(language)  # type: ignore
+                # Convert string to QATestFramework constant
+                if framework_str == "pytest":
+                    return QATestFramework.PYTEST
+                elif framework_str == "jest":
+                    return QATestFramework.JEST
+                elif framework_str == "unittest":
+                    return QATestFramework.UNITTEST
+                else:
+                    return QATestFramework.PYTEST  # Default fallback
             except (AttributeError, TypeError):
-                return "unknown"
+                return QATestFramework.PYTEST  # Default fallback
         else:
-            return "unknown"
+            return QATestFramework.PYTEST  # Default fallback
 
     def get_test_file_path(self, source_file, framework="pytest"):
-        """Get the test file path for a source file."""
-        from pathlib import Path
+        """Get the test file path for a source file.
+        
+        Args:
+            source_file: Path to the source file
+            framework: Test framework being used (default: 'pytest')
+            
+        Returns:
+            Path: Path object where the test file should be created
+        """
+#         from pathlib import Path  # Consolidated to common_imports
+        from src.infrastructure.utils.test_generator import QATestFramework
 
         source_path = Path(source_file)
-        if framework == "pytest":
-            test_dir = self.project_root / "tests"
+        
+        # Handle both string and QATestFramework constant inputs
+        if hasattr(framework, 'value'):  # It's a QATestFramework enum-like
+            pass
+        elif framework == QATestFramework.PYTEST or framework == "pytest":
+            test_dir = self.project_root / "tests" / "generated"
             test_file = f"test_{source_path.stem}.py"
-        elif framework == "jest":
-            test_dir = source_path.parent
+        elif framework == QATestFramework.JEST or framework == "jest":
+            test_dir = source_path.parent / "tests" / "generated"
             test_file = f"{source_path.stem}.test.js"
+        elif framework == QATestFramework.UNITTEST or framework == "unittest":
+            test_dir = self.project_root / "tests" / "generated"
+            test_file = f"test_{source_path.stem}.py"
         else:
-            test_dir = self.project_root / "tests"
+            # Default fallback
+            test_dir = self.project_root / "tests" / "generated" 
             test_file = f"test_{source_path.stem}.py"
 
-        return str(test_dir / test_file)
+        return test_dir / test_file
 
     # Underscore-prefixed aliases for backwards compatibility with tests
     def _discover_source_files(self):
@@ -517,7 +684,14 @@ class EnhancedQAAgent:
         return self.get_test_file_path(source_file, framework)
 
     def _calculate_quality_metrics(self, test_results):
-        """Calculate quality metrics from comprehensive test results."""
+        """Calculate quality metrics from comprehensive test results.
+        
+        Args:
+            test_results: Dictionary containing test generation results
+            
+        Returns:
+            Dict[str, Any]: Quality metrics including coverage, success rates, and scores
+        """
         # Handle the format that comes from generate_comprehensive_tests
         if "generated_tests" in test_results:
             # Process generated tests
@@ -583,7 +757,14 @@ class EnhancedQAAgent:
         return self.generate_recommendations(results)
 
     def calculate_quality_metrics(self, source_files):
-        """Calculate quality metrics for source files."""
+        """Calculate quality metrics for source files.
+        
+        Args:
+            source_files: List of source files to analyze
+            
+        Returns:
+            Dict[str, float]: Quality metrics including test coverage, code quality, complexity
+        """
         if not source_files:
             return {
                 "test_coverage": 0.0,
@@ -608,7 +789,14 @@ class EnhancedQAAgent:
         }
 
     def calculate_overall_quality_score(self, metrics_or_results):
-        """Calculate overall quality score from metrics or test results."""
+        """Calculate overall quality score from metrics or test results.
+        
+        Args:
+            metrics_or_results: Either quality metrics dict or full test results dict
+            
+        Returns:
+            float: Overall quality score (0-100)
+        """
         weights = {
             "test_coverage": 0.4,
             "code_quality": 0.3,
@@ -660,7 +848,14 @@ class EnhancedQAAgent:
         return min(score, 100.0)
 
     def generate_recommendations(self, metrics_or_results):
-        """Generate recommendations based on quality metrics or full results."""
+        """Generate recommendations based on quality metrics or full results.
+        
+        Args:
+            metrics_or_results: Either quality metrics dict or full test results dict
+            
+        Returns:
+            List[str]: List of actionable recommendations for improvement
+        """
         recommendations = []
 
         # Handle both metrics dict and full results dict
@@ -724,7 +919,14 @@ class EnhancedQAAgent:
         return recommendations
 
     def validate_quality_gates(self, metrics):
-        """Validate if metrics meet quality gates."""
+        """Validate if metrics meet quality gates.
+        
+        Args:
+            metrics: Dictionary containing quality metrics to validate
+            
+        Returns:
+            Dict[str, Any]: Gate validation results including pass/fail status and details
+        """
         gates_config = self.config["quality_gates"]
 
         gate_results = {
@@ -782,7 +984,20 @@ class EnhancedQAAgent:
         }
 
     def generate_comprehensive_tests(self, source_files=None):
-        """Generate comprehensive tests for source files."""
+        """Generate comprehensive tests for source files.
+        
+        This method orchestrates the complete test generation process including
+        discovery, framework detection, test generation, coverage analysis, and
+        quality assessment.
+        
+        Args:
+            source_files: Optional list of source files. If None, will auto-discover.
+            
+        Returns:
+            Dict[str, Any]: Comprehensive test results including generated tests,
+                           coverage analysis, integration gaps, quality metrics,
+                           and recommendations
+        """
         # Auto-discover source files if not provided
         if source_files is None:
             source_files = self.discover_source_files()
@@ -876,7 +1091,14 @@ class EnhancedQAAgent:
         }
 
     def _generate_test_for_file(self, source_file):
-        """Generate test for a single file."""
+        """Generate test for a single file.
+        
+        Args:
+            source_file: Path to the source file to generate tests for
+            
+        Returns:
+            Dict[str, Any]: Test generation result including status, framework, and content
+        """
         try:
             language = getattr(self.test_generator, "detect_language", lambda x: "python")(source_file)  # type: ignore
             framework = getattr(self.test_generator, "detect_framework", lambda x: "pytest")(language)  # type: ignore
@@ -903,7 +1125,17 @@ class EnhancedQAAgent:
 
 
 def create_enhanced_qa_workflow(project_root, config_path=None):
-    """Create an enhanced QA workflow."""
+    """Create an enhanced QA workflow.
+    
+    Factory function to create and initialize an EnhancedQAAgent.
+    
+    Args:
+        project_root: Root directory of the project
+        config_path: Optional path to custom configuration
+        
+    Returns:
+        Dict[str, Any]: Workflow status including agent instance and capabilities
+    """
     try:
         agent = EnhancedQAAgent(project_root, config_path)
         return {

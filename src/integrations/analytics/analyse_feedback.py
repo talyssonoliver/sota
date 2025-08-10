@@ -1,3 +1,18 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Counter,
+    Dict,
+    List,
+    Optional,
+    Path,
+    datetime,
+    defaultdict,
+    json,
+    logging,
+    os,
+    sys
+)
 """
 Feedback Analysis and Agent Refinement - Phase 7 Step 7.8 Implementation
 
@@ -18,14 +33,18 @@ Outputs:
 - Examples for fine-tuning
 """
 
-import os
-import sys
-from collections import Counter, defaultdict
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+import argparse
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from collections import Counter, defaultdict  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 from pydantic import BaseModel, Field
+from src.infrastructure.utils.feedback_system import FeedbackSystem
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -40,12 +59,6 @@ class FeedbackEntry(BaseModel):
     category_scores: Dict[str, float] = Field(default_factory=dict)
     agent_output: Optional[str] = None
 
-
-import argparse
-import json
-import logging
-
-from src.infrastructure.utils.feedback_system import FeedbackSystem
 
 # Configure logger
 logger = logging.getLogger("feedback_analysis")

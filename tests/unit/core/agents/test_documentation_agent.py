@@ -1,304 +1,319 @@
-"""
-Comprehensive tests for DocumentationWriter agent.
-Tests the actual functionality of the documentation agent including
-initialization, task execution, and integration with memory engine.
-"""
-
-import sys
+import json
+import os
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 
-# Add project root to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
-
-from src.core.agents.doc import DocumentationWriter
+from src.core.workflows.documentation_agent import (DocumentationAgent,
+                                               DocumentationReport, QASummary,
+                                               TaskArtifact, TaskSummary)
+
+
+def test_documentation_report_exists():
+    """Test that the documentation report for BE-07 is generated and non-empty."""
+    report_path = Path('docs/website/docs/completions/BE-07.md')
+    assert report_path.exists(), f"Report not found: {report_path}"
+    content = report_path.read_text(encoding='utf-8')
+    assert '# Task Completion Report:' in content or '# Task Completion Summary:' in content
+    assert 'Artifacts Generated' in content or 'Generated Artifacts' in content
+    assert 'QA Validation' in content or 'Quality Assurance Results' in content
+    assert 'Next Steps' in content or 'Recommended Next Steps' in content
+
+
+def test_documentation_report_structure():
+    """Test that the documentation report has the correct structure."""
+    report_path = Path('docs/website/docs/completions/BE-07.md')
+    assert report_path.exists(), f"Report not found: {report_path}"
+    content = report_path.read_text(encoding='utf-8')
+
+    # Check required sections
+    required_sections = [
+        "## Summary",
+        "## QA Validation",
+        "## Implementation Summary",
+        "## Artifacts Generated",
+        "## Next Steps",
+        "## References"
+    ]
+
+    for section in required_sections:
+        assert section in content, f"Missing section: {section}"
+
+
+def test_documentation_agent_initialization():
+    """Test that the documentation agent initializes correctly."""
+    agent = DocumentationAgent()
+    assert agent.outputs_dir == Path("outputs")
+    assert agent.docs_dir == Path("docs/completions")
+    assert agent.context_store == Path("context-store")
+    assert agent.tasks_dir == Path("tasks")
+
+
+def test_documentation_json_output():
+    """Test that JSON documentation is also generated."""
+    json_path = Path('docs/website/docs/completions/BE-07.json')
+    assert json_path.exists(), f"JSON report not found: {json_path}"
+
+    with open(json_path) as f:
+        data = json.load(f)
+
+    # Check required top-level keys
+    required_keys = [
+        "task_summary", "artifacts", "qa_summary",
+        "implementation_notes", "technical_details",
+        "next_steps", "references", "generated_at"
+    ]
+
+    for key in required_keys:
+        assert key in data, f"Missing key in JSON: {key}"
+
+
+def test_both_output_files_exist():
+    """Test that both markdown and task output files are generated."""
+    md_path = Path('docs/website/docs/completions/BE-07.md')
+    task_md_path = Path('outputs/BE-07/completion_report.md')
+
+    assert md_path.exists(), f"Main report not found: {md_path}"
+    assert task_md_path.exists(), f"Task report not found: {task_md_path}"
+
+    # Both should have similar content
+    main_content = md_path.read_text(encoding='utf-8')
+    task_content = task_md_path.read_text(encoding='utf-8')
+
+    assert '# Task Completion Report: BE-07' in main_content
+    assert '# Task Completion Report: BE-07' in task_content
+
+
+@pytest.mark.integration
+def test_documentation_agent_cli():
+    """Test the CLI interface of the documentation agent."""
+    # This would be an integration test that actually runs the CLI
+    # For now, we'll test that the main function exists and can be imported
+    from src.core.workflows.documentation_agent import main
+    assert callable(main)
+
+
+def test_task_summary_creation():
+    """Test creation of TaskSummary dataclass"""
+    summary = TaskSummary(
+        task_id="TEST-01",
+        title="Test Task",
+        description="Test description",
+        owner="test_agent",
+        status="COMPLETED",
+        start_date="2025-05-26T10:00:00",
+        completion_date="2025-05-26T12:00:00",
+        duration_hours=2.0
+    )
+    assert summary.task_id == "TEST-01"
+    assert summary.duration_hours == 2.0
 
-
-class TestDocumentationWriter:
-    """Test DocumentationWriter agent functionality."""
 
-    def test_initialization_without_tools_or_memory(self):
-        """Test DocumentationWriter can be initialized without tools or memory engine."""
-        mock_agent = Mock()
-        mock_agent.role = "Documentation Writer"
-        mock_agent_class = Mock(return_value=mock_agent)
-
-        with patch(
-            "src.core.agents.doc._get_agent_class", return_value=mock_agent_class
-        ):
-            doc_writer = DocumentationWriter()
+def test_qa_summary_creation():
+    """Test creation of QASummary dataclass"""
+    qa = QASummary(
+        overall_status="PASSED",
+        tests_passed=5,
+        tests_failed=0,
+        coverage_percentage=85.0,
+        critical_issues=0,
+        recommendations_count=2
+    )
+    assert qa.overall_status == "PASSED"
+    assert qa.coverage_percentage == 85.0
 
-            assert doc_writer.tools == []
-            assert doc_writer.memory_engine is None
-            assert doc_writer.agent is not None
-            assert doc_writer.agent.role == "Documentation Writer"
 
-            # Verify agent was created with correct parameters
-            mock_agent_class.assert_called_once_with(
-                role="Documentation Writer",
-                goal="Documentation Writer Agent for creating technical documentation",
-                backstory="Expert documentationwriter with deep knowledge and expertise",
-                verbose=True,
-                allow_delegation=False,
-                tools=[],
-            )
-
-    def test_initialization_with_tools(self):
-        """Test DocumentationWriter initialization with tools."""
-        mock_tools = [Mock(name="tool1"), Mock(name="tool2")]
-        doc_writer = DocumentationWriter(tools=mock_tools)
-
-        assert doc_writer.tools == mock_tools
-        assert len(doc_writer.tools) == 2
-
-    def test_initialization_with_memory_engine(self):
-        """Test DocumentationWriter initialization with memory engine."""
-        mock_memory = Mock()
-        doc_writer = DocumentationWriter(memory_engine=mock_memory)
-
-        assert doc_writer.memory_engine == mock_memory
-
-    def test_initialization_with_tools_and_memory(self):
-        """Test DocumentationWriter initialization with both tools and memory."""
-        mock_tools = [Mock(name="markdown_tool")]
-        mock_memory = Mock()
-
-        doc_writer = DocumentationWriter(tools=mock_tools, memory_engine=mock_memory)
-
-        assert doc_writer.tools == mock_tools
-        assert doc_writer.memory_engine == mock_memory
-
-    def test_agent_configuration(self):
-        """Test that the CrewAI agent is properly configured."""
-        mock_agent = Mock()
-        mock_agent.role = "Documentation Writer"
-        mock_agent_class = Mock(return_value=mock_agent)
-
-        with patch(
-            "src.core.agents.doc._get_agent_class", return_value=mock_agent_class
-        ):
-            doc_writer = DocumentationWriter()
-
-            assert doc_writer.agent.role == "Documentation Writer"
-            # Note: Other properties may not be accessible due to mock implementation
-
-    def test_execute_task_basic(self):
-        """Test basic task execution."""
-        doc_writer = DocumentationWriter()
-        task = {"id": "DOC-01", "description": "Create API documentation"}
-
-        result = doc_writer.execute_task(task)
-
-        assert result["task_id"] == "DOC-01"
-        assert result["status"] == "completed"
-        assert result["agent"] == "DocumentationWriter"
-        assert "output" in result
-
-    def test_execute_task_without_id(self):
-        """Test task execution when task has no ID."""
-        doc_writer = DocumentationWriter()
-        task = {"description": "Create user guide"}
-
-        result = doc_writer.execute_task(task)
-
-        assert result["task_id"] == "unknown"
-        assert result["status"] == "completed"
-        assert result["agent"] == "DocumentationWriter"
-
-    def test_execute_task_empty_task(self):
-        """Test task execution with empty task dictionary."""
-        doc_writer = DocumentationWriter()
-        task = {}
-
-        result = doc_writer.execute_task(task)
-
-        assert result["task_id"] == "unknown"
-        assert result["status"] == "completed"
-        assert result["agent"] == "DocumentationWriter"
-
-    @patch("src.core.agents.doc.logger")
-    def test_execute_task_logging(self, mock_logger):
-        """Test that task execution is properly logged."""
-        doc_writer = DocumentationWriter()
-        task = {"id": "DOC-02", "description": "Create technical specification"}
-
-        doc_writer.execute_task(task)
-
-        mock_logger.info.assert_called_once_with("Executing task: DOC-02")
-
-    def test_execute_task_with_tools_integration(self):
-        """Test task execution when tools are available."""
-        mock_tool = Mock()
-        mock_tool.name = "markdown_generator"
-        doc_writer = DocumentationWriter(tools=[mock_tool])
-
-        task = {"id": "DOC-03", "type": "markdown", "content": "# API Documentation"}
-        result = doc_writer.execute_task(task)
-
-        assert result["task_id"] == "DOC-03"
-        assert result["status"] == "completed"
-        # Verify tools are accessible (though not used in current implementation)
-        assert len(doc_writer.tools) == 1
-
-    def test_execute_task_with_memory_integration(self):
-        """Test task execution when memory engine is available."""
-        mock_memory = Mock()
-        mock_memory.get_relevant_context.return_value = {
-            "context": "Previous documentation patterns"
-        }
-
-        doc_writer = DocumentationWriter(memory_engine=mock_memory)
-        task = {"id": "DOC-04", "description": "Create consistent documentation"}
-
-        result = doc_writer.execute_task(task)
-
-        assert result["task_id"] == "DOC-04"
-        assert result["status"] == "completed"
-        # Verify memory engine is accessible
-        assert doc_writer.memory_engine == mock_memory
-
-    def test_multiple_task_execution(self):
-        """Test executing multiple tasks in sequence."""
-        doc_writer = DocumentationWriter()
-
-        tasks = [
-            {"id": "DOC-05", "description": "Create README"},
-            {"id": "DOC-06", "description": "Create API docs"},
-            {"id": "DOC-07", "description": "Create user guide"},
-        ]
-
-        results = []
-        for task in tasks:
-            result = doc_writer.execute_task(task)
-            results.append(result)
-
-        assert len(results) == 3
-        assert all(result["status"] == "completed" for result in results)
-        assert [result["task_id"] for result in results] == [
-            "DOC-05",
-            "DOC-06",
-            "DOC-07",
-        ]
-
-    def test_agent_attributes_access(self):
-        """Test accessing agent attributes."""
-        mock_agent = Mock()
-        mock_agent.role = "Documentation Writer"
-        mock_agent_class = Mock(return_value=mock_agent)
-
-        with patch(
-            "src.core.agents.doc._get_agent_class", return_value=mock_agent_class
-        ):
-            doc_writer = DocumentationWriter()
-
-            # Test that we can access the agent and its basic properties
-            assert hasattr(doc_writer, "agent")
-            assert hasattr(doc_writer.agent, "role")
-            assert doc_writer.agent.role == "Documentation Writer"
-
-
-class TestDocumentationWriterErrorHandling:
-    """Test error handling scenarios for DocumentationWriter."""
-
-    def test_task_execution_with_none_task(self):
-        """Test task execution with None task."""
-        doc_writer = DocumentationWriter()
-
-        # This should handle gracefully
-        with pytest.raises(AttributeError):
-            doc_writer.execute_task(None)
-
-    @patch("src.core.agents.doc.logger")
-    def test_logging_with_complex_task_id(self, mock_logger):
-        """Test logging with various task ID formats."""
-        doc_writer = DocumentationWriter()
-
-        test_cases = [
-            {"id": "DOC-123", "expected": "DOC-123"},
-            {"id": "", "expected": ""},
-            {"id": "COMPLEX-DOC-456-SUBPART", "expected": "COMPLEX-DOC-456-SUBPART"},
-        ]
-
-        for test_case in test_cases:
-            mock_logger.reset_mock()
-            task = {"id": test_case["id"]}
-            doc_writer.execute_task(task)
-            mock_logger.info.assert_called_once_with(
-                f"Executing task: {test_case['expected']}"
-            )
-
-
-class TestDocumentationWriterIntegration:
-    """Integration tests for DocumentationWriter with other components."""
-
-    def test_end_to_end_documentation_workflow(self):
-        """Test complete documentation generation workflow."""
-        # Mock tools that might be used for documentation
-        mock_markdown_tool = Mock()
-        mock_markdown_tool.name = "markdown_generator"
-
-        mock_file_tool = Mock()
-        mock_file_tool.name = "file_writer"
-
-        # Mock memory engine with documentation context
-        mock_memory = Mock()
-        mock_memory.get_relevant_context.return_value = {
-            "documentation_style": "technical",
-            "previous_docs": ["API reference", "User guide"],
-        }
-
-        # Create documentation writer with full setup
-        doc_writer = DocumentationWriter(
-            tools=[mock_markdown_tool, mock_file_tool], memory_engine=mock_memory
-        )
-
-        # Execute documentation task
-        task = {
-            "id": "DOC-INTEGRATION-01",
-            "type": "api_documentation",
-            "target": "REST API endpoints",
-            "format": "markdown",
-        }
-
-        result = doc_writer.execute_task(task)
-
-        # Verify result structure
-        assert result["task_id"] == "DOC-INTEGRATION-01"
-        assert result["status"] == "completed"
-        assert result["agent"] == "DocumentationWriter"
-        assert "output" in result
-
-        # Verify tools and memory are properly integrated
-        assert len(doc_writer.tools) == 2
-        assert doc_writer.memory_engine == mock_memory
-
-    def test_documentation_writer_factory_compatibility(self):
-        """Test that DocumentationWriter works with factory pattern."""
-        # This tests compatibility with the agent factory system
-        from src.core.agents.factory import Agent, create_documentation_agent
-
-        # Test that factory can create documentation agent
-        doc_agent = create_documentation_agent()
-
-        # Factory creates CrewAI Agent, not DocumentationWriter
-        assert isinstance(doc_agent, Agent)
-
-        # Test that our DocumentationWriter can coexist with factory system
-        doc_writer = DocumentationWriter()
-
-        # Test that both types of agents have the expected interfaces
-        assert hasattr(doc_writer, "execute_task")
-        assert doc_agent is not None  # Factory agent exists
-
-        # Test task execution with our DocumentationWriter
-        task = {
-            "id": "FACTORY-DOC-01",
-            "description": "Factory-created documentation task",
-        }
-        result = doc_writer.execute_task(task)
-
-        assert result["task_id"] == "FACTORY-DOC-01"
-        assert result["status"] == "completed"
+def test_task_artifact_creation():
+    """Test creation of TaskArtifact dataclass"""
+    artifact = TaskArtifact(
+        name="test.py",
+        path="code/test.py",
+        type="code",
+        size_bytes=1024,
+        description="Test Python file"
+    )
+    assert artifact.name == "test.py"
+    assert artifact.type == "code"
 
+
+def test_documentation_agent_error_handling():
+    """Test error handling when task directory doesn't exist"""
+    agent = DocumentationAgent()
+
+    with pytest.raises(ValueError, match="Task directory not found"):
+        agent.generate_documentation("NONEXISTENT-TASK")
+
+
+def test_artifact_collection_empty_directory():
+    """Test artifact collection with empty task directory"""
+    agent = DocumentationAgent()
+
+    # Mock empty directory
+    with patch.object(Path, 'exists', return_value=True), \
+            patch.object(Path, 'glob', return_value=[]):
+        artifacts = agent._collect_artifacts("EMPTY-TASK")
+        assert artifacts == []
+
+
+def test_qa_summary_fallback():
+    """Test QA summary fallback when QA report doesn't exist"""
+    agent = DocumentationAgent()
+
+    with patch.object(Path, 'exists', return_value=False):
+        qa_summary = agent._load_qa_summary("NO-QA-TASK")
+        assert qa_summary.overall_status == "NOT_RUN"
+        assert qa_summary.tests_passed == 0
+
+
+def test_file_size_formatting():
+    """Test file size formatting utility"""
+    agent = DocumentationAgent()
+
+    assert agent._format_file_size(500) == "500 B"
+    assert agent._format_file_size(2048) == "2.0 KB"
+    assert agent._format_file_size(2097152) == "2.0 MB"
+
+
+def test_lines_of_code_counting():
+    """Test lines of code counting functionality"""
+    agent = DocumentationAgent()
+
+    # Create a temporary directory structure for testing
+    import tempfile
+    with tempfile.TemporaryDirectory() as temp_dir:
+        code_dir = Path(temp_dir)
+
+        # Create test files
+        (code_dir / "test.py").write_text("print('hello')\n# comment\n\n")
+        (code_dir / "test.ts").write_text("console.log('hello');\n// comment\n")
+        (code_dir / "readme.txt").write_text("not code")  # Should be ignored
+
+        loc = agent._count_lines_of_code(code_dir)
+        assert loc == 4  # Only non-empty lines from .py and .ts files
+
+
+def test_artifact_description_generation():
+    """Test artifact description generation"""
+    agent = DocumentationAgent()
+
+    test_file = Path("test.py")
+    desc = agent._generate_artifact_description(test_file, "code")
+    assert "Source code file" in desc
+    assert "(Python)" in desc
+
+    test_file = Path("config.json")
+    desc = agent._generate_artifact_description(test_file, "configuration")
+    assert "Configuration file" in desc
+    assert "(JSON data)" in desc
+
+
+def test_next_steps_generation():
+    """Test next steps generation based on QA status"""
+    agent = DocumentationAgent()
+
+    # Test with passed QA
+    qa_passed = QASummary("PASSED", 5, 0, 90.0, 0, 1)
+    steps = agent._generate_next_steps(qa_passed)
+    assert any("ready for integration" in step for step in steps)
+
+    # Test with failed QA
+    qa_failed = QASummary("FAILED", 2, 3, 60.0, 2, 5)
+    steps = agent._generate_next_steps(qa_failed)
+    assert any("Fix critical issues" in step for step in steps)
+
+    # Test with low coverage
+    qa_low_coverage = QASummary("PASSED", 5, 0, 70.0, 0, 1)
+    steps = agent._generate_next_steps(qa_low_coverage)
+    assert any("more comprehensive tests" in step for step in steps)
+
+
+def test_github_pr_links_collection():
+    """Test GitHub PR links collection with mocked GitHub tool"""
+    agent = DocumentationAgent()
+
+    # Test fallback when GitHub token is not available
+    with patch.dict(os.environ, {}, clear=True):
+        pr_links = agent._collect_github_pr_links()
+        assert len(pr_links) == 1
+        assert "manual entry needed" in pr_links[0]["title"]
+
+
+def test_markdown_report_generation():
+    """Test complete markdown report generation"""
+    # Create a complete documentation report
+    task = TaskSummary(
+        "TEST-01",
+        "Test Task",
+        "Test description",
+        "test_agent",
+        "COMPLETED",
+        "2025-05-26T10:00:00",
+        "2025-05-26T12:00:00",
+        2.0)
+    qa = QASummary("PASSED", 5, 0, 85.0, 0, 2)
+    artifacts = [TaskArtifact(
+        "test.py", "code/test.py", "code", 1024, "Test file")]
+
+    doc_report = DocumentationReport(
+        task_summary=task,
+        artifacts=artifacts,
+        qa_summary=qa,
+        implementation_notes=["Implementation completed"],
+        technical_details={"technologies": [
+            "Python"], "metrics": {"total_files": 1}},
+        next_steps=["Deploy to production"],
+        references=[{"type": "task", "title": "Task", "url": "#"}],
+        generated_at="2025-05-26T12:00:00"
+    )
+
+    agent = DocumentationAgent()
+
+    # Test markdown generation doesn't crash
+    import tempfile
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as f:
+        temp_path = Path(f.name)
+
+    try:
+        agent._generate_markdown_report(doc_report, temp_path)
+        content = temp_path.read_text(encoding='utf-8')
+
+        # Verify content
+        assert "# Task Completion Report: TEST-01" in content
+        assert "## Summary" in content
+        # Check for QA section with checkmark (may be rendered as different
+        # encoding)
+        assert "## QA Validation" in content and (
+            "✅" in content or "âœ…" in content)
+        assert "Test Task" in content
+        assert "85.0%" in content
+
+    finally:
+        temp_path.unlink()  # Clean up
+
+
+@pytest.mark.integration
+def test_complete_documentation_workflow():
+    """Integration test for complete documentation workflow"""
+    # This test requires BE-07 to exist
+    outputs_dir = Path("outputs/BE-07")
+    if not outputs_dir.exists():
+        pytest.skip("BE-07 outputs not found for integration test")
+
+    agent = DocumentationAgent()
+
+    # Should not raise an exception
+    doc_report = agent.generate_documentation("BE-07")
+
+    # Verify report structure
+    assert doc_report.task_summary.task_id == "BE-07"
+    assert isinstance(doc_report.artifacts, list)
+    assert isinstance(doc_report.qa_summary, QASummary)
+    assert isinstance(doc_report.implementation_notes, list)
+    assert isinstance(doc_report.next_steps, list)
+    assert isinstance(doc_report.references, list)
+
+    # Verify files were created
+    assert Path("docs/website/docs/completions/BE-07.md").exists()
+    assert Path("docs/website/docs/completions/BE-07.json").exists()
+    assert Path("outputs/BE-07/completion_report.md").exists()

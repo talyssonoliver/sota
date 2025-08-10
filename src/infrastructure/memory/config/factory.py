@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    List,
+    Optional
+)
 """
 factory.py - Unified Memory System
 
@@ -7,18 +14,19 @@ New location: src/platform/memory/config/factory.py
 
 Part of the unified memory architecture eliminating fragmentation
 across tools/memory/, memory-bank/, and runtime/ locations.
-"""
 
-"""
 Memory Engine Factory Functions
 Provides factory functions for backward compatibility and easy initialization
 """
 
-
 try:
-    from typing import Any, Dict, List, Optional
+    from src.infrastructure.utils.common_imports import Any, Dict, List, Optional  
 except ImportError:
     pass
+
+# Import consolidated functions from main memory module  
+from .. import get_relevant_context
+
 try:
     from .memory_config import MemoryEngineConfig
 except ImportError:
@@ -31,6 +39,7 @@ except ImportError:
     class MemoryEngine:
         def __init__(self, config=None):
             self.config = config
+
 
 # Global singleton instance
 _memory_instance: Optional[Any] = None
@@ -72,10 +81,6 @@ def get_memory_instance() -> Any:
         _memory_instance = initialize_memory()
 
     return _memory_instance
-
-
-# Import consolidated functions from main memory module
-from .. import get_relevant_context
 
 
 def get_context_by_keys(keys: List[str], **kwargs) -> List[str]:

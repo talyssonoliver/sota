@@ -3,6 +3,7 @@ Mock API Components for Tests
 """
 
 from typing import List
+
 try:
     pass
 except ImportError:
@@ -11,6 +12,7 @@ try:
     pass
 except ImportError:
     pass
+
 
 class MockFlaskApp:
     """Mock Flask app for testing."""
@@ -19,17 +21,19 @@ class MockFlaskApp:
         self.routes = {}
         self.responses = {}
 
-    def route(self, path: str, methods: List[str]=None):
+    def route(self, path: str, methods: List[str] = None):
         """Mock route decorator."""
 
         def decorator(func):
             self.routes[path] = func
             return func
+
         return decorator
 
     def test_client(self):
         """Return mock test client."""
         return MockTestClient(self)
+
 
 class MockTestClient:
     """Mock test client."""
@@ -39,11 +43,12 @@ class MockTestClient:
 
     def get(self, path: str, **kwargs):
         """Mock GET request."""
-        return MockResponse(200, {'path': path, 'method': 'GET'})
+        return MockResponse(200, {"path": path, "method": "GET"})
 
     def post(self, path: str, **kwargs):
         """Mock POST request."""
-        return MockResponse(200, {'path': path, 'method': 'POST'})
+        return MockResponse(200, {"path": path, "method": "POST"})
+
 
 class MockResponse:
     """Mock HTTP response."""

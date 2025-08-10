@@ -1,67 +1,45 @@
-[build-system]
-requires = ["setuptools>=65", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "sota"
-version = "0.1.0"
-description = "A Python package"
-
-[tool.ruff]
-# Same as flake8 max-line-length
+[tool.black]
 line-length = 88
-target-version = "py312"
+target-version = ["py310", "py311", "py312", "py313"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.pytest_cache
+  | \.venv
+  | venv
+  | build
+  | dist
+)/
+'''
 
-# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
-select = ["E", "F", "W", "I"]
-ignore = ["E203", "W503"]
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
 
-# Exclude a variety of commonly ignored directories.
-exclude = [
-    ".bzr",
-    ".direnv",
-    ".eggs",
-    ".git",
-    ".git-rewrite",
-    ".hg",
-    ".mypy_cache",
-    ".nox",
-    ".pants.d",
-    ".pytype",
-    ".ruff_cache",
-    ".svn",
-    ".tox",
-    ".venv",
-    "__pypackages__",
-    "_build",
-    "buck-out",
-    "build",
-    "dist",
-    "node_modules",
-    "venv",
-    ".pytest_cache",
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --cov=src --cov-report=json:coverage.json --cov-report=term --cov-fail-under=0"
+testpaths = [
+    "tests",
 ]
-
-[tool.ruff.format]
-# Use single quotes for strings.
-quote-style = "double"
-indent-style = "space"
-skip-magic-trailing-comma = false
-line-ending = "auto"
-
-[tool.ruff.isort]
-known-first-party = ["src"]
 
 [tool.coverage.run]
 source = ["src"]
-branch = true
-parallel = true
-data_file = ".coverage"
-
-[tool.coverage.paths]
-source = [
-    "src/",
-    "*/site-packages/src/",
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/.venv/*",
 ]
 
 [tool.coverage.report]
@@ -77,50 +55,33 @@ exclude_lines = [
     "class .*\\bProtocol\\):",
     "@(abc\\.)?abstractmethod",
 ]
+show_missing = true
+precision = 2
 
-[tool.coverage.html]
-directory = "htmlcov"
-
-[tool.coverage.xml]
-output = "coverage.xml"
-
-# SonarQube integration configuration
-[tool.sonar]
-projectKey = "sota-ai-system"
-projectName = "SOTA Multi-Agent AI System"
-projectVersion = "0.1.0"
-sources = "src"
-tests = "tests"
-sourceEncoding = "UTF-8"
-
-# Python-specific settings for SonarQube
-python.version = "3.12"
-python.coverage.reportPaths = "coverage.xml"
-python.xunit.reportPath = "test-results.xml"
-
-# Quality gate integration with existing validation
-qualitygate.wait = true
-
-# Exclusions aligned with existing validation system
-exclusions = [
-    "**/__pycache__/**",
-    "**/venv/**",
-    "**/.venv/**",
-    "**/node_modules/**",
-    "**/dist/**",
-    "**/build/**",
-    "**/.git/**",
-    "**/.pytest_cache/**",
-    "**/.mypy_cache/**",
-    "**/.ruff_cache/**",
-    "**/backup/**",
-    "**/test_outputs/**",
-    "**/outputs/**"
+[project]
+name = "ai-system"
+requires-python = ">=3.10,<3.14"
+description = "Production-ready multi-agent AI system for automating software development workflows"
+authors = [
+    {name = "AI System Team"}
 ]
+license = {text = "MIT"}
+dynamic = ["version"]
 
-test.exclusions = [
-    "**/test_**",
-    "**/*_test.py",
-    "**/tests/**",
-    "**/conftest.py"
+[project.optional-dependencies]
+enterprise = [
+    "azure-keyvault-secrets>=4.7.0",
+    "azure-identity>=1.15.0",
+    "boto3>=1.34.0",
+    "hvac>=2.1.0"
+]
+dev = [
+    "pytest>=8.3.5",
+    "pytest-cov>=6.1.1",
+    "pytest-asyncio>=0.25.2",
+    "black>=25.1.0",
+    "isort>=6.0.1",
+    "mypy>=1.13.0",
+    "ruff>=0.4.0",
+    "jupyterlab>=4.4.1"
 ]

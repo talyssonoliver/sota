@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import Path, datetime, sys
 """
 Unified Dashboard API Routes
 
@@ -12,23 +14,26 @@ with zero code duplication and optimized performance.
 """
 
 
-import sys
+# import sys  # Consolidated to common_imports
+
+from src.infrastructure.security.input_validator import validate_input
 
 try:
-    from datetime import datetime
+    from src.infrastructure.utils.common_imports import datetime
 except ImportError:
     pass
 try:
-    from pathlib import Path
+    from src.infrastructure.utils.common_imports import Path
 except ImportError:
     pass
+# Removed unused typing imports: Any, Dict, List not used in implementation
 try:
-    from typing import Any, Dict, List
-except ImportError:
-    pass
-try:
-    from flask import (Blueprint, Flask, jsonify, render_template_string,
-                       request, send_from_directory)
+    from flask import (
+        Blueprint,
+        Flask,
+        jsonify,
+        request,
+    )
 except ImportError:
     pass
 try:
@@ -38,12 +43,13 @@ except ImportError:
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
 try:
-    from src.interfaces.dashboard.components.hitl_kanban_board import \
-        HITLKanbanBoard
+    from src.interfaces.dashboard.components.hitl_kanban_board import HITLKanbanBoard
 
-    from ..components.hitl_widgets import (HITLDashboardManager,
-                                           get_hitl_kanban_data,
-                                           process_hitl_action)
+    from ..components.hitl_widgets import (
+        HITLDashboardManager,
+        get_hitl_kanban_data,
+        process_hitl_action,
+    )
 
     DASHBOARD_AVAILABLE = True
 except ImportError as e:
@@ -110,6 +116,9 @@ def get_dashboard_data():
 
 
 @dashboard_bp.route("/hitl/action", methods=["POST"])
+@validate_input(
+    {}, json_schema={"data": {"type": "string", "required": False, "max_length": 2000}}
+)
 def process_action():
     """Process a HITL approval action."""
     try:
@@ -185,10 +194,14 @@ def get_gantt_data():
 
 
 @dashboard_bp.route("/gantt/optimize", methods=["POST"])
+@validate_input(
+    {}, json_schema={"data": {"type": "string", "required": False, "max_length": 2000}}
+)
 def optimize_gantt():
     """Optimize Gantt chart timeline."""
     try:
         request_data = request.get_json()
+        print(f"🔧 Optimizing Gantt chart with data: {request_data is not None}")
 
         # Mock optimization - integrate with actual optimizer
         optimization_result = {

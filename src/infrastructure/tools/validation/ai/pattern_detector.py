@@ -1,3 +1,12 @@
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    hashlib,
+    json,
+    os,
+    re,
+    time
+)
 """
 AI Pattern Detector
 Advanced pattern detection using AI-assisted analysis for code quality and consistency.
@@ -5,15 +14,18 @@ Advanced pattern detection using AI-assisted analysis for code quality and consi
 
 import ast
 import difflib
-import hashlib
-import json
-import re
-import time
 from collections import defaultdict
-from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from ..core.base_validator import BaseValidator
+
+# Security pattern constants to avoid duplication
+EVAL_PATTERN = r"eval\s*\("
+EVAL_MESSAGE = "Use of eval() is dangerous"
+EXEC_PATTERN = r"exec\s*\("
+EXEC_MESSAGE = "Use of exec() is dangerous"
+OS_SYSTEM_PATTERN = r"os\.system\s*\("
+OS_SYSTEM_MESSAGE = "Use of os.system() is dangerous"
 
 
 class AIPatternDetector(BaseValidator):
@@ -27,7 +39,7 @@ class AIPatternDetector(BaseValidator):
         self.duplicate_blocks: List[Tuple[str, str, float]] = []
         self.naming_inconsistencies: List[Dict] = []
         self.architectural_violations: List[Dict] = []
-        
+
         # Add caching for performance
         self._ast_cache: Dict[str, ast.AST] = {}
         self._hash_cache: Dict[str, str] = {}
@@ -81,14 +93,16 @@ class AIPatternDetector(BaseValidator):
             self._collect_files()
 
         print("🤖 AI Pattern Detection Analysis...")
-        
+
         # Load cache for faster analysis
         self._load_cache()
-        
+
         # Only analyze changed files
         changed_files = self._get_changed_files()
         if changed_files:
-            print(f"   📝 Analyzing {len(changed_files)} changed files (cached: {len(self.python_files) - len(changed_files)})")
+            print(
+                f"   📝 Analyzing {len(changed_files)} changed files (cached: {len(self.python_files) - len(changed_files)})"
+            )
         else:
             print("   ✓ All files cached, using previous analysis")
             # Still run lightweight checks even for cached files
@@ -97,17 +111,23 @@ class AIPatternDetector(BaseValidator):
         # Optimize analysis based on number of files
         total_files = len(self.python_files)
         analysis_mode = "full"
-        
+
         if total_files > 500:
             analysis_mode = "sample"
-            print(f"   ⚡ Large codebase detected ({total_files} files), using sampled analysis")
+            print(
+                f"   ⚡ Large codebase detected ({total_files} files), using sampled analysis"
+            )
         elif total_files > 200:
             analysis_mode = "optimized"
-            print(f"   ⚡ Medium codebase detected ({total_files} files), using optimized analysis")
+            print(
+                f"   ⚡ Medium codebase detected ({total_files} files), using optimized analysis"
+            )
 
         # Only analyze changed files for performance
-        files_to_analyze = changed_files if changed_files else self.python_files[:50]  # Limit to 50 files max
-        
+        files_to_analyze = (
+            changed_files if changed_files else self.python_files[:50]
+        )  # Limit to 50 files max
+
         # Detect duplicate code patterns (optimized)
         self._detect_duplicate_code_optimized(files_to_analyze, analysis_mode)
 
@@ -131,29 +151,31 @@ class AIPatternDetector(BaseValidator):
         self._save_cache()
 
         return not self.has_errors()
-    
+
     def _run_lightweight_analysis(self) -> bool:
         """Run only lightweight analysis when all files are cached."""
         # Quick check for critical issues only
         critical_patterns = [
-            (r"eval\s*\(", "Use of eval() is dangerous"),
-            (r"exec\s*\(", "Use of exec() is dangerous"),
-            (r"os\.system\s*\(", "Use of os.system() is dangerous"),
+            (EVAL_PATTERN, EVAL_MESSAGE),
+            (EXEC_PATTERN, EXEC_MESSAGE),
+            (OS_SYSTEM_PATTERN, OS_SYSTEM_MESSAGE),
         ]
-        
+
         # Sample only a few files for quick check
-        sample_files = self.python_files[:10] if len(self.python_files) > 10 else self.python_files
-        
+        sample_files = (
+            self.python_files[:10] if len(self.python_files) > 10 else self.python_files
+        )
+
         for file_path in sample_files:
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     content = f.read()
-                
+
                 for pattern, message in critical_patterns:
                     if re.search(pattern, content):
                         self.add_issue(
                             category="ai_analysis",
-                            issue_type="SECURITY_ISSUE", 
+                            issue_type="SECURITY_ISSUE",
                             file_path=str(file_path),
                             message=f"Critical security issue: {message}",
                             severity="error",
@@ -162,27 +184,29 @@ class AIPatternDetector(BaseValidator):
                         )
             except Exception:
                 continue
-        
+
         return not self.has_errors()
 
     def _detect_duplicate_code(self):
         """Detect duplicate code blocks using similarity analysis with parallel processing."""
         import concurrent.futures
-        
+
         threshold = self.config.get("duplicate_code_threshold", 0.8)
         min_lines = self.config.get("ai_pattern_detection", {}).get(
             "min_duplicate_lines", 5
         )
 
-        print(f"   🔍 Analyzing {len(self.python_files)} files for duplicate code patterns...")
-        
+        print(
+            f"   🔍 Analyzing {len(self.python_files)} files for duplicate code patterns..."
+        )
+
         def process_file_for_blocks(file_path):
             """Process a single file to extract code blocks."""
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     lines = f.readlines()
-                
-                blocks = self._extract_code_blocks(file_path, lines)
+
+                blocks = self._extract_code_blocks(lines)
                 return [(file_path, block) for block in blocks]
             except Exception:
                 return []
@@ -191,10 +215,10 @@ class AIPatternDetector(BaseValidator):
         all_blocks = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
             future_to_file = {
-                executor.submit(process_file_for_blocks, file_path): file_path 
+                executor.submit(process_file_for_blocks, file_path): file_path
                 for file_path in self.python_files
             }
-            
+
             for future in concurrent.futures.as_completed(future_to_file):
                 try:
                     blocks = future.result()
@@ -203,11 +227,11 @@ class AIPatternDetector(BaseValidator):
                     continue
 
         print(f"   📊 Found {len(all_blocks)} code blocks to analyze")
-        
+
         # Build hash map for duplicate detection
         code_blocks = {}
         duplicate_count = 0
-        
+
         for file_path, block_info in all_blocks:
             block_hash = self._calculate_block_hash(block_info["content"])
 
@@ -218,10 +242,7 @@ class AIPatternDetector(BaseValidator):
                     original["content"], block_info["content"]
                 )
 
-                if (
-                    similarity >= threshold
-                    and len(block_info["content"]) >= min_lines
-                ):
+                if similarity >= threshold and len(block_info["content"]) >= min_lines:
                     self.add_issue(
                         category="ai_analysis",
                         issue_type="CODE_SMELL",
@@ -247,11 +268,11 @@ class AIPatternDetector(BaseValidator):
                     "line": block_info["line"],
                     "content": block_info["content"],
                 }
-        
+
         if duplicate_count > 0:
             print(f"   ⚠️  Found {duplicate_count} duplicate code blocks")
 
-    def _extract_code_blocks(self, file_path: Path, lines: List[str]) -> List[Dict]:
+    def _extract_code_blocks(self, lines: List[str]) -> List[Dict]:
         """Extract meaningful code blocks from file."""
         blocks = []
 
@@ -295,7 +316,7 @@ class AIPatternDetector(BaseValidator):
 
         # Create hash of normalized content
         content_str = "\n".join(normalized)
-        return hashlib.md5(content_str.encode()).hexdigest()
+        return hashlib.sha256(content_str.encode()).hexdigest()
 
     def _calculate_similarity(self, content1: List[str], content2: List[str]) -> float:
         """Calculate similarity between two code blocks."""
@@ -533,9 +554,11 @@ class AIPatternDetector(BaseValidator):
         if not self.config.get("unused_code_detection", True):
             return
 
-        # This would be enhanced with more sophisticated analysis
-        # For now, check for basic unused imports (already handled by other validators)
-        pass
+        # Enhanced unused code detection could include:
+        # - Unused imports analysis
+        # - Unused variable detection
+        # - Dead code identification
+        # For now, this is handled by other validators
 
     def _analyze_security_patterns(self):
         """Analyze security patterns and vulnerabilities."""
@@ -543,9 +566,9 @@ class AIPatternDetector(BaseValidator):
             return
 
         security_patterns = [
-            (r"eval\s*\(", "Use of eval() is dangerous"),
-            (r"exec\s*\(", "Use of exec() is dangerous"),
-            (r"os\.system\s*\(", "Use of os.system() is dangerous"),
+            (EVAL_PATTERN, EVAL_MESSAGE),
+            (EXEC_PATTERN, EXEC_MESSAGE),
+            (OS_SYSTEM_PATTERN, OS_SYSTEM_MESSAGE),
             (
                 r"subprocess\.shell\s*=\s*True",
                 "Shell=True in subprocess is dangerous",
@@ -655,13 +678,13 @@ class AIPatternDetector(BaseValidator):
 
     def _load_cache(self):
         """Load cached analysis results."""
-        import json
+
         try:
             if self._cache_file.exists():
-                with open(self._cache_file, 'r') as f:
+                with open(self._cache_file, "r") as f:
                     cache_data = json.load(f)
-                    self._file_mtime_cache = cache_data.get('file_mtimes', {})
-                    self._hash_cache = cache_data.get('file_hashes', {})
+                    self._file_mtime_cache = cache_data.get("file_mtimes", {})
+                    self._hash_cache = cache_data.get("file_hashes", {})
                     print(f"   📋 Loaded cache for {len(self._file_mtime_cache)} files")
         except Exception:
             # Cache loading failed, continue without cache
@@ -669,15 +692,15 @@ class AIPatternDetector(BaseValidator):
 
     def _save_cache(self):
         """Save analysis results to cache."""
-        import json
+
         try:
             self._cache_file.parent.mkdir(parents=True, exist_ok=True)
             cache_data = {
-                'file_mtimes': self._file_mtime_cache,
-                'file_hashes': self._hash_cache,
-                'last_updated': time.time()
+                "file_mtimes": self._file_mtime_cache,
+                "file_hashes": self._hash_cache,
+                "last_updated": time.time(),
             }
-            with open(self._cache_file, 'w') as f:
+            with open(self._cache_file, "w") as f:
                 json.dump(cache_data, f, indent=2)
         except Exception:
             # Cache saving failed, continue without cache
@@ -685,49 +708,54 @@ class AIPatternDetector(BaseValidator):
 
     def _get_changed_files(self) -> List[Path]:
         """Get list of files that have changed since last analysis."""
-        import os
         changed_files = []
-        
+
         for file_path in self.python_files:
             file_str = str(file_path)
             try:
                 current_mtime = os.path.getmtime(file_path)
                 cached_mtime = self._file_mtime_cache.get(file_str, 0)
-                
+
                 if current_mtime > cached_mtime:
                     changed_files.append(file_path)
                     self._file_mtime_cache[file_str] = current_mtime
             except Exception:
                 # If we can't get mtime, assume file changed
                 changed_files.append(file_path)
-        
+
         return changed_files
 
-    def _detect_duplicate_code_optimized(self, files_to_analyze: List[Path], analysis_mode: str):
+    def _detect_duplicate_code_optimized(
+        self, files_to_analyze: List[Path], analysis_mode: str
+    ):
         """Optimized duplicate code detection with sampling."""
         if analysis_mode == "sample":
             # Sample-based analysis for large codebases
             sample_size = min(50, len(files_to_analyze))
             files_to_analyze = files_to_analyze[:sample_size]
             print(f"   🔍 Sampling {sample_size} files for duplicate detection")
-        
+
         threshold = self.config.get("duplicate_code_threshold", 0.8)
-        min_lines = self.config.get("ai_pattern_detection", {}).get("min_duplicate_lines", 5)
+        min_lines = self.config.get("ai_pattern_detection", {}).get(
+            "min_duplicate_lines", 5
+        )
+        
+        print(f"   🎯 Using similarity threshold: {threshold}, min lines: {min_lines}")
 
         # Use hash-based quick filtering before expensive similarity calculation
         code_hashes = {}
         duplicate_count = 0
-        
+
         for file_path in files_to_analyze:
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     lines = f.readlines()
-                
-                blocks = self._extract_code_blocks(file_path, lines)
-                
+
+                blocks = self._extract_code_blocks(lines)
+
                 for block_info in blocks:
                     block_hash = self._calculate_block_hash(block_info["content"])
-                    
+
                     if block_hash in code_hashes:
                         # Quick duplicate found
                         original = code_hashes[block_hash]
@@ -751,7 +779,7 @@ class AIPatternDetector(BaseValidator):
                         }
             except Exception:
                 continue
-        
+
         if duplicate_count > 0:
             print(f"   ⚠️  Found {duplicate_count} duplicate code blocks")
 
@@ -761,7 +789,9 @@ class AIPatternDetector(BaseValidator):
             return
 
         # Limit analysis to prevent performance issues
-        sample_files = files_to_analyze[:30] if len(files_to_analyze) > 30 else files_to_analyze
+        sample_files = (
+            files_to_analyze[:30] if len(files_to_analyze) > 30 else files_to_analyze
+        )
         naming_patterns = defaultdict(set)
 
         for file_path in sample_files:
@@ -772,7 +802,7 @@ class AIPatternDetector(BaseValidator):
                 # Quick check - only parse if file size is reasonable
                 if len(content) > 50000:  # Skip very large files
                     continue
-                    
+
                 tree = ast.parse(content)
 
                 for node in ast.walk(tree):
@@ -794,9 +824,11 @@ class AIPatternDetector(BaseValidator):
                 continue
 
             # Simple heuristic: check for mixed snake_case/camelCase
-            snake_case_count = sum(1 for name in names if '_' in name)
-            camel_case_count = sum(1 for name in names if any(c.isupper() for c in name[1:]))
-            
+            snake_case_count = sum(1 for name in names if "_" in name)
+            camel_case_count = sum(
+                1 for name in names if any(c.isupper() for c in name[1:])
+            )
+
             if snake_case_count > 0 and camel_case_count > 0:
                 self.add_issue(
                     category="ai_analysis",
@@ -814,12 +846,20 @@ class AIPatternDetector(BaseValidator):
             return
 
         suspicious_imports = {
-            "ai_utils", "ml_helpers", "data_processor", "model_utils",
-            "config_manager", "base_handler", "utils_helper", "common_utils"
+            "ai_utils",
+            "ml_helpers",
+            "data_processor",
+            "model_utils",
+            "config_manager",
+            "base_handler",
+            "utils_helper",
+            "common_utils",
         }
 
         # Sample files for quick check
-        sample_files = files_to_analyze[:20] if len(files_to_analyze) > 20 else files_to_analyze
+        sample_files = (
+            files_to_analyze[:20] if len(files_to_analyze) > 20 else files_to_analyze
+        )
 
         for file_path in sample_files:
             try:
@@ -828,7 +868,10 @@ class AIPatternDetector(BaseValidator):
 
                 # Quick regex check instead of AST parsing
                 for suspicious in suspicious_imports:
-                    if re.search(rf'\bimport\s+{suspicious}\b|\bfrom\s+{suspicious}\s+import', content):
+                    if re.search(
+                        rf"\bimport\s+{suspicious}\b|\bfrom\s+{suspicious}\s+import",
+                        content,
+                    ):
                         self.add_issue(
                             category="ai_analysis",
                             issue_type="IMPORT_ERROR",
@@ -849,14 +892,16 @@ class AIPatternDetector(BaseValidator):
 
         # Focus on most critical security patterns only
         critical_patterns = [
-            (r"eval\s*\(", "Use of eval() is dangerous"),
-            (r"exec\s*\(", "Use of exec() is dangerous"),
-            (r"os\.system\s*\(", "Use of os.system() is dangerous"),
+            (EVAL_PATTERN, EVAL_MESSAGE),
+            (EXEC_PATTERN, EXEC_MESSAGE),
+            (OS_SYSTEM_PATTERN, OS_SYSTEM_MESSAGE),
             (r"subprocess.*shell\s*=\s*True", "Shell=True in subprocess is dangerous"),
         ]
 
         # Sample files for performance
-        sample_files = files_to_analyze[:25] if len(files_to_analyze) > 25 else files_to_analyze
+        sample_files = (
+            files_to_analyze[:25] if len(files_to_analyze) > 25 else files_to_analyze
+        )
 
         for file_path in sample_files:
             try:
@@ -867,7 +912,7 @@ class AIPatternDetector(BaseValidator):
                 for pattern, message in critical_patterns:
                     matches = list(re.finditer(pattern, content))
                     for match in matches:
-                        line_num = content[:match.start()].count('\n') + 1
+                        line_num = content[: match.start()].count("\n") + 1
                         self.add_issue(
                             category="ai_analysis",
                             issue_type="SECURITY_ISSUE",
@@ -891,8 +936,10 @@ class AIPatternDetector(BaseValidator):
             (r"except\s*:", "Bare except clause"),
         ]
 
-        # Sample files for performance  
-        sample_files = files_to_analyze[:20] if len(files_to_analyze) > 20 else files_to_analyze
+        # Sample files for performance
+        sample_files = (
+            files_to_analyze[:20] if len(files_to_analyze) > 20 else files_to_analyze
+        )
 
         for file_path in sample_files:
             try:
@@ -903,7 +950,7 @@ class AIPatternDetector(BaseValidator):
                 for pattern, message in important_smells:
                     matches = list(re.finditer(pattern, content))
                     for match in matches:
-                        line_num = content[:match.start()].count('\n') + 1
+                        line_num = content[: match.start()].count("\n") + 1
                         self.add_issue(
                             category="ai_analysis",
                             issue_type="CODE_SMELL",

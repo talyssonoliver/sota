@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
+
+from src.infrastructure.utils.common_imports import (
+    Path,
+    datetime,
+    sys,
+    traceback
+)
 """
-import sys
 Step 4.1 Implementation Demo: Task Declaration & Preparation
 
 This script demonstrates the complete Step 4.1 workflow for transforming
@@ -16,26 +22,26 @@ The demo shows:
 Usage:
     python examples/step_4_1_demo.py [--task-id BE-07] [--verbose]
 """
-import logging
-import sys
-from datetime import datetime
-from pathlib import Path
+
+# import logging  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
+# from datetime import datetime  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
 
 from src.core.workflows.task_declaration import (TaskDeclarationManager,
-                                                 TaskPreparationStatus)
+                                            TaskPreparationStatus)
 from src.infrastructure.memory import MemoryEngine
+from src.infrastructure.utils.logging_utils import setup_logging
 
 # Add project root to path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 
-def setup_logging(verbose: bool = False):
+def setup_logging_wrapper(verbose: bool = False):
     """Set up logging configuration"""
-    log_level = logging.DEBUG if verbose else logging.INFO
-    logging.basicConfig(
-        level=log_level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    level = "DEBUG" if verbose else "INFO"
+    return setup_logging(__name__, level)
 
 
 def print_section_header(title: str):
@@ -51,7 +57,9 @@ def print_subsection(title: str):
     print("-" * 40)
 
 
-def demo_task_declaration(manager: TaskDeclarationManager, task_id: str = "BE-07"):
+def demo_task_declaration(
+        manager: TaskDeclarationManager,
+        task_id: str = "BE-07"):
     """Demonstrate task declaration functionality"""
     print_section_header("STEP 4.1 DEMO: Task Declaration & Preparation")
 
@@ -73,10 +81,10 @@ def demo_task_declaration(manager: TaskDeclarationManager, task_id: str = "BE-07
         print(
             f"   📦 Dependencies: {
                 ', '.join(
-                    declaration.depends_on) if declaration.depends_on else 'None'}"
-        )
+                    declaration.depends_on) if declaration.depends_on else 'None'}")
         print(f"   📄 Artifacts: {len(declaration.artefacts)} items")
-        print(f"   🏷️  Context Topics: {', '.join(declaration.context_topics)}")
+        print(
+            f"   🏷️  Context Topics: {', '.join(declaration.context_topics)}")
 
         return declaration
 
@@ -85,7 +93,9 @@ def demo_task_declaration(manager: TaskDeclarationManager, task_id: str = "BE-07
         return None
 
 
-def demo_task_preparation(manager: TaskDeclarationManager, task_id: str = "BE-07"):
+def demo_task_preparation(
+        manager: TaskDeclarationManager,
+        task_id: str = "BE-07"):
     """Demonstrate complete task preparation"""
     print_subsection("Step 2: Complete Task Preparation")
 
@@ -94,22 +104,18 @@ def demo_task_preparation(manager: TaskDeclarationManager, task_id: str = "BE-07
 
         print(
             f"⚙️  Task preparation completed with status: {
-                declaration.preparation_status}"
-        )
+                declaration.preparation_status}")
 
         # Show preparation details
         print(
             f"   🔍 Context Loaded: {
-                '✅' if declaration.context_loaded else '❌'}"
-        )
+                '✅' if declaration.context_loaded else '❌'}")
         print(
             f"   📝 Prompt Generated: {
-                '✅' if declaration.prompt_generated else '❌'}"
-        )
+                '✅' if declaration.prompt_generated else '❌'}")
         print(
             f"   🔗 Dependencies Satisfied: {
-                '✅' if declaration.dependencies_satisfied else '❌'}"
-        )
+                '✅' if declaration.dependencies_satisfied else '❌'}")
 
         if declaration.context_content:
             context_length = len(declaration.context_content)
@@ -142,7 +148,7 @@ def demo_context_analysis(declaration):
     print_subsection("Step 3: Context Analysis")
 
     context = declaration.context_content
-    lines = context.split("\n")
+    lines = context.split('\n')
 
     print("📊 Context Statistics:")
     print(f"   Total lines: {len(lines)}")
@@ -165,7 +171,7 @@ def demo_prompt_analysis(declaration):
     print_subsection("Step 4: Generated Prompt Analysis")
 
     prompt = declaration.generated_prompt
-    lines = prompt.split("\n")
+    lines = prompt.split('\n')
 
     print("📊 Prompt Statistics:")
     print(f"   Total lines: {len(lines)}")
@@ -192,8 +198,7 @@ def demo_execution_readiness(declaration):
     print(
         f"🎯 Task {
             declaration.id} execution readiness: {
-            '✅ READY' if ready else '❌ NOT READY'}"
-    )
+            '✅ READY' if ready else '❌ NOT READY'}")
 
     if ready:
         print("🚀 Task is fully prepared for LangGraph execution!")
@@ -207,8 +212,10 @@ def demo_execution_readiness(declaration):
 
         if declaration.execution_plan:
             print("\n🎮 Ready to execute with:")
-            print(f"   Entry point: {declaration.execution_plan['entry_point']}")
-            print(f"   Workflow: {declaration.execution_plan['workflow_type']}")
+            print(
+                f"   Entry point: {declaration.execution_plan['entry_point']}")
+            print(
+                f"   Workflow: {declaration.execution_plan['workflow_type']}")
     else:
         print("⚠️  Task preparation incomplete:")
         if not declaration.context_loaded:
@@ -233,11 +240,7 @@ def demo_batch_processing(manager: TaskDeclarationManager):
 
     # Show declaration summary
     for task_id, declaration in declarations.items():
-        status_icon = (
-            "✅"
-            if declaration.preparation_status != TaskPreparationStatus.FAILED
-            else "❌"
-        )
+        status_icon = "✅" if declaration.preparation_status != TaskPreparationStatus.FAILED else "❌"
         print(f"   {status_icon} {task_id}: {declaration.title[:50]}...")
 
     # Prepare all tasks
@@ -283,7 +286,8 @@ def demo_file_outputs(task_id: str = "BE-07"):
         print("   No files generated yet")
 
     # Show content of key files
-    key_files = ["task_declaration.json", "prompt_backend.md", "context_log.json"]
+    key_files = ["task_declaration.json",
+                 "prompt_backend.md", "context_log.json"]
 
     for filename in key_files:
         file_path = outputs_dir / filename
@@ -291,7 +295,7 @@ def demo_file_outputs(task_id: str = "BE-07"):
             print(f"\n📖 Content preview: {filename}")
             print("─" * 30)
             try:
-                content = file_path.read_text(encoding="utf-8")
+                content = file_path.read_text(encoding='utf-8')
                 preview = content[:300] + ("..." if len(content) > 300 else "")
                 print(preview)
             except Exception as e:
@@ -304,23 +308,20 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Step 4.1 Task Declaration & Preparation Demo"
-    )
-    parser.add_argument(
-        "--task-id", "-t", default="BE-07", help="Task ID to demonstrate"
-    )
-    parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
-    parser.add_argument(
-        "--batch", "-b", action="store_true", help="Run batch processing demo"
-    )
-    parser.add_argument(
-        "--skip-memory", action="store_true", help="Skip memory engine initialization"
-    )
+        description="Step 4.1 Task Declaration & Preparation Demo")
+    parser.add_argument("--task-id", "-t", default="BE-07",
+                        help="Task ID to demonstrate")
+    parser.add_argument("--verbose", "-v",
+                        action="store_true", help="Verbose output")
+    parser.add_argument("--batch", "-b", action="store_true",
+                        help="Run batch processing demo")
+    parser.add_argument("--skip-memory", action="store_true",
+                        help="Skip memory engine initialization")
 
     args = parser.parse_args()
 
     # Set up logging
-    setup_logging(args.verbose)
+    setup_logging_wrapper(args.verbose)
 
     try:
         # Initialize memory engine unless skipped
@@ -364,25 +365,21 @@ def main():
                     print_section_header("DEMO COMPLETED")
                     if ready:
                         print(
-                            "🎉 SUCCESS: Task is fully prepared for LangGraph execution!"
-                        )
+                            "🎉 SUCCESS: Task is fully prepared for LangGraph execution!")
                         print(
                             f"✨ Task {
-                                args.task_id} is now ready to be executed through the workflow."
-                        )
+                                args.task_id} is now ready to be executed through the workflow.")
                     else:
                         print("⚠️  Task preparation completed with issues.")
                         print(
-                            "🔧 Review the preparation steps and resolve any problems before execution."
-                        )
+                            "🔧 Review the preparation steps and resolve any problems before execution.")
 
         print(f"\n📅 Demo completed at: {datetime.now().isoformat()}")
 
     except Exception as e:
         print(f"\n❌ Demo failed with error: {e}")
         if args.verbose:
-            import traceback
-
+#             import traceback  # Consolidated to common_imports
             traceback.print_exc()
         sys.exit(1)
 

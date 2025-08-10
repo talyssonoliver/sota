@@ -1,3 +1,17 @@
+
+from src.infrastructure.utils.common_imports import (
+    Any,
+    Dict,
+    Enum,
+    List,
+    Optional,
+    Path,
+    datetime,
+    json,
+    logging,
+    os,
+    sys
+)
 """
 Step 4.1 - Task Declaration & Preparation
 Transform task plans into live executions using defined agents, prompts, and memory context.
@@ -10,15 +24,15 @@ This module provides the complete task declaration and preparation system that:
 """
 
 import argparse
-import json
-import logging
-import os
-import sys
+# import json  # Consolidated to common_imports
+# import logging  # Consolidated to common_imports
+# import os  # Consolidated to common_imports
+# import sys  # Consolidated to common_imports
 from dataclasses import asdict, dataclass
-from datetime import datetime
-from enum import Enum
-from pathlib import Path
-from typing import Any, Dict, List, Optional
+# from datetime import datetime  # Consolidated to common_imports
+# from enum import Enum  # Consolidated to common_imports
+# from pathlib import Path  # Consolidated to common_imports
+# from typing import Any, Dict, List, Optional  # Consolidated to common_imports
 
 from src.infrastructure.memory import MemoryEngine, get_memory_instance
 from src.infrastructure.tools.context_tracker import track_context_usage

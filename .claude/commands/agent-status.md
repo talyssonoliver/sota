@@ -87,9 +87,9 @@ Get comprehensive status of all AI agents and system components.
    fi
    
    if [ -f "CLAUDE.md" ]; then
-       echo "✅ Claude Config: Present"
+       echo "✅ Project Config: Present"
    else
-       echo "❌ Claude Config: Missing"
+       echo "❌ Project Config: Missing"
    fi
    ```
 
